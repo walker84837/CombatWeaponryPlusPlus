@@ -1,10 +1,4 @@
-/*
- * Decompiled with CFR 0.152.
- * 
- * Could not load the following classes:
- *  org.bukkit.entity.Player
- */
-package me.helleo.cwp;
+package org.winlogon.combatweaponryplus;
 
 import java.util.HashMap;
 import java.util.UUID;

@@ -1,78 +1,15 @@
-/*
- * Decompiled with CFR 0.152.
- * 
- * Could not load the following classes:
- *  net.md_5.bungee.api.ChatColor
- *  org.bukkit.Bukkit
- *  org.bukkit.Location
- *  org.bukkit.Material
- *  org.bukkit.NamespacedKey
- *  org.bukkit.Particle
- *  org.bukkit.Sound
- *  org.bukkit.World
- *  org.bukkit.attribute.Attribute
- *  org.bukkit.attribute.AttributeModifier
- *  org.bukkit.attribute.AttributeModifier$Operation
- *  org.bukkit.enchantments.Enchantment
- *  org.bukkit.entity.AbstractArrow$PickupStatus
- *  org.bukkit.entity.ArmorStand
- *  org.bukkit.entity.ArmorStand$LockType
- *  org.bukkit.entity.Arrow
- *  org.bukkit.entity.Damageable
- *  org.bukkit.entity.EnderPearl
- *  org.bukkit.entity.Entity
- *  org.bukkit.entity.EntityCategory
- *  org.bukkit.entity.EntityType
- *  org.bukkit.entity.ExperienceOrb
- *  org.bukkit.entity.LivingEntity
- *  org.bukkit.entity.Player
- *  org.bukkit.entity.Trident
- *  org.bukkit.event.EventHandler
- *  org.bukkit.event.Listener
- *  org.bukkit.event.block.Action
- *  org.bukkit.event.entity.EntityDamageByEntityEvent
- *  org.bukkit.event.entity.EntityDamageEvent
- *  org.bukkit.event.entity.EntityDamageEvent$DamageCause
- *  org.bukkit.event.entity.EntityDeathEvent
- *  org.bukkit.event.entity.EntityShootBowEvent
- *  org.bukkit.event.entity.EntityToggleGlideEvent
- *  org.bukkit.event.inventory.PrepareSmithingEvent
- *  org.bukkit.event.player.PlayerInteractEntityEvent
- *  org.bukkit.event.player.PlayerInteractEvent
- *  org.bukkit.event.player.PlayerJoinEvent
- *  org.bukkit.inventory.EquipmentSlot
- *  org.bukkit.inventory.ItemFlag
- *  org.bukkit.inventory.ItemStack
- *  org.bukkit.inventory.Recipe
- *  org.bukkit.inventory.RecipeChoice
- *  org.bukkit.inventory.RecipeChoice$ExactChoice
- *  org.bukkit.inventory.RecipeChoice$MaterialChoice
- *  org.bukkit.inventory.ShapedRecipe
- *  org.bukkit.inventory.SmithingInventory
- *  org.bukkit.inventory.SmithingRecipe
- *  org.bukkit.inventory.SmithingTransformRecipe
- *  org.bukkit.inventory.meta.CrossbowMeta
- *  org.bukkit.inventory.meta.Damageable
- *  org.bukkit.inventory.meta.ItemMeta
- *  org.bukkit.metadata.FixedMetadataValue
- *  org.bukkit.metadata.MetadataValue
- *  org.bukkit.plugin.Plugin
- *  org.bukkit.plugin.java.JavaPlugin
- *  org.bukkit.potion.PotionEffect
- *  org.bukkit.potion.PotionEffectType
- *  org.bukkit.scheduler.BukkitRunnable
- *  org.bukkit.util.RayTraceResult
- *  org.bukkit.util.Vector
- */
-package me.helleo.cwp;
+package org.winlogon.combatweaponryplus;
 
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 import java.util.Random;
 import java.util.UUID;
-import me.helleo.cwp.Cooldown;
-import me.helleo.cwp.Items;
+import org.winlogon.combatweaponryplus.Cooldown;
+import org.winlogon.combatweaponryplus.Items;
+
+import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.serializer.legacy.LegacyComponentSerializer;
 import net.md_5.bungee.api.ChatColor;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
@@ -414,9 +351,9 @@ implements Listener {
             def = this.getConfig().getDouble("aEmeraldChestplate.Armor");
         }
         AttributeModifier modifier = new AttributeModifier(UUID.randomUUID(), "Health", hp, AttributeModifier.Operation.ADD_NUMBER, EquipmentSlot.CHEST);
-        meta.addAttributeModifier(Attribute.GENERIC_MAX_HEALTH, modifier);
+        meta.addAttributeModifier(Attribute.MAX_HEALTH, modifier);
         AttributeModifier modifier2 = new AttributeModifier(UUID.randomUUID(), "Defense", def, AttributeModifier.Operation.ADD_NUMBER, EquipmentSlot.CHEST);
-        meta.addAttributeModifier(Attribute.GENERIC_ARMOR, modifier2);
+        meta.addAttributeModifier(Attribute.ARMOR, modifier2);
         meta.setDisplayName(ChatColor.DARK_GREEN + "Emerald Chestplate");
         if (this.getConfig().getString("EnchantmentsOnEmeraldArmor") == "true") {
             int num = this.getConfig().getInt("EmeraldArmorEnchantLevels.Unbreaking");
@@ -444,9 +381,9 @@ implements Listener {
             def = this.getConfig().getDouble("aEmeraldLeggings.Armor");
         }
         AttributeModifier modifier = new AttributeModifier(UUID.randomUUID(), "Health", hp, AttributeModifier.Operation.ADD_NUMBER, EquipmentSlot.LEGS);
-        meta.addAttributeModifier(Attribute.GENERIC_MAX_HEALTH, modifier);
+        meta.addAttributeModifier(Attribute.MAX_HEALTH, modifier);
         AttributeModifier modifier2 = new AttributeModifier(UUID.randomUUID(), "Defense", def, AttributeModifier.Operation.ADD_NUMBER, EquipmentSlot.LEGS);
-        meta.addAttributeModifier(Attribute.GENERIC_ARMOR, modifier2);
+        meta.addAttributeModifier(Attribute.ARMOR, modifier2);
         meta.setDisplayName(ChatColor.DARK_GREEN + "Emerald Leggings");
         if (this.getConfig().getString("EnchantmentsOnEmeraldArmor") == "true") {
             int num = this.getConfig().getInt("EmeraldArmorEnchantLevels.Unbreaking");
@@ -474,9 +411,9 @@ implements Listener {
             def = this.getConfig().getDouble("aEmeraldBoots.Armor");
         }
         AttributeModifier modifier = new AttributeModifier(UUID.randomUUID(), "Health", hp, AttributeModifier.Operation.ADD_NUMBER, EquipmentSlot.FEET);
-        meta.addAttributeModifier(Attribute.GENERIC_MAX_HEALTH, modifier);
+        meta.addAttributeModifier(Attribute.MAX_HEALTH, modifier);
         AttributeModifier modifier2 = new AttributeModifier(UUID.randomUUID(), "Defense", def, AttributeModifier.Operation.ADD_NUMBER, EquipmentSlot.FEET);
-        meta.addAttributeModifier(Attribute.GENERIC_ARMOR, modifier2);
+        meta.addAttributeModifier(Attribute.ARMOR, modifier2);
         meta.setDisplayName(ChatColor.DARK_GREEN + "Emerald Boots");
         if (this.getConfig().getString("EnchantmentsOnEmeraldArmor") == "true") {
             int num = this.getConfig().getInt("EmeraldArmorEnchantLevels.Unbreaking");
@@ -525,14 +462,14 @@ implements Listener {
             spd = this.getConfig().getDouble("aEmeraldSword.speed") - 4.0;
         }
         AttributeModifier modifier = new AttributeModifier(UUID.randomUUID(), "Attack Speed", spd, AttributeModifier.Operation.ADD_NUMBER, EquipmentSlot.HAND);
-        meta.addAttributeModifier(Attribute.GENERIC_ATTACK_SPEED, modifier);
+        meta.addAttributeModifier(Attribute.ATTACK_SPEED, modifier);
         AttributeModifier modifier2 = new AttributeModifier(UUID.randomUUID(), "Attack Damage", dmg, AttributeModifier.Operation.ADD_NUMBER, EquipmentSlot.HAND);
-        meta.addAttributeModifier(Attribute.GENERIC_ATTACK_DAMAGE, modifier2);
+        meta.addAttributeModifier(Attribute.ATTACK_DAMAGE, modifier2);
         ArrayList<String> lore = new ArrayList<String>();
         lore.add("");
-        lore.add(ChatColor.translateAlternateColorCodes((char)'&', (String)"&7When in Main Hand:"));
-        lore.add(ChatColor.translateAlternateColorCodes((char)'&', (String)"&9 6 Attack Damage"));
-        lore.add(ChatColor.translateAlternateColorCodes((char)'&', (String)"&9 1.8 Attack Speed"));
+        lore.add(convertLegacyToSection("&7When in Main Hand:"));
+        lore.add(convertLegacyToSection("&9 6 Attack Damage"));
+        lore.add(convertLegacyToSection("&9 1.8 Attack Speed"));
         meta.setLore(lore);
         meta.addItemFlags(new ItemFlag[]{ItemFlag.HIDE_ATTRIBUTES});
         meta.setDisplayName(ChatColor.DARK_GREEN + "Emerald Sword");
@@ -619,7 +556,7 @@ implements Listener {
     public ShapedRecipe getSworddRecipe() {
         ItemStack item = new ItemStack(Material.IRON_SWORD);
         ItemMeta meta = item.getItemMeta();
-        meta.setDisplayName(ChatColor.translateAlternateColorCodes((char)'&', (String)this.getConfig().getString("dChorusBlade.name")));
+        meta.setDisplayName(convertLegacyToSection(this.getConfig().getString("dChorusBlade.name")));
         if (this.getConfig().getString("EnchantsChorusBlade") == "true") {
             int num = this.getConfig().getInt("ChorusEnchantLevels.Unbreaking");
             int num2 = this.getConfig().getInt("ChorusEnchantLevels.Knockback");
@@ -627,15 +564,15 @@ implements Listener {
             meta.addEnchant(Enchantment.KNOCKBACK, num2, true);
         }
         ArrayList<String> lore = new ArrayList<String>();
-        lore.add(ChatColor.translateAlternateColorCodes((char)'&', (String)this.getConfig().getString("dChorusBlade.line1")));
-        lore.add(ChatColor.translateAlternateColorCodes((char)'&', (String)this.getConfig().getString("dChorusBlade.line2")));
-        lore.add(ChatColor.translateAlternateColorCodes((char)'&', (String)this.getConfig().getString("dChorusBlade.line3")));
-        lore.add(ChatColor.translateAlternateColorCodes((char)'&', (String)this.getConfig().getString("dChorusBlade.line4")));
-        lore.add(ChatColor.translateAlternateColorCodes((char)'&', (String)this.getConfig().getString("dChorusBlade.line5")));
-        lore.add(ChatColor.translateAlternateColorCodes((char)'&', (String)this.getConfig().getString("dChorusBlade.line6")));
-        lore.add(ChatColor.translateAlternateColorCodes((char)'&', (String)this.getConfig().getString("dChorusBlade.line7")));
-        lore.add(ChatColor.translateAlternateColorCodes((char)'&', (String)this.getConfig().getString("dChorusBlade.line8")));
-        lore.add(ChatColor.translateAlternateColorCodes((char)'&', (String)this.getConfig().getString("dChorusBlade.line9")));
+        lore.add(convertLegacyToSection(this.getConfig().getString("dChorusBlade.line1")));
+        lore.add(convertLegacyToSection(this.getConfig().getString("dChorusBlade.line2")));
+        lore.add(convertLegacyToSection(this.getConfig().getString("dChorusBlade.line3")));
+        lore.add(convertLegacyToSection(this.getConfig().getString("dChorusBlade.line4")));
+        lore.add(convertLegacyToSection(this.getConfig().getString("dChorusBlade.line5")));
+        lore.add(convertLegacyToSection(this.getConfig().getString("dChorusBlade.line6")));
+        lore.add(convertLegacyToSection(this.getConfig().getString("dChorusBlade.line7")));
+        lore.add(convertLegacyToSection(this.getConfig().getString("dChorusBlade.line8")));
+        lore.add(convertLegacyToSection(this.getConfig().getString("dChorusBlade.line9")));
         meta.setLore(lore);
         meta.addItemFlags(new ItemFlag[]{ItemFlag.HIDE_ATTRIBUTES});
         meta.setLore(lore);
@@ -646,9 +583,9 @@ implements Listener {
             spd = this.getConfig().getDouble("aChorusBlade.speed") - 4.0;
         }
         AttributeModifier modifier = new AttributeModifier(UUID.randomUUID(), "Attack Speed", spd, AttributeModifier.Operation.ADD_NUMBER, EquipmentSlot.HAND);
-        meta.addAttributeModifier(Attribute.GENERIC_ATTACK_SPEED, modifier);
+        meta.addAttributeModifier(Attribute.ATTACK_SPEED, modifier);
         AttributeModifier modifier2 = new AttributeModifier(UUID.randomUUID(), "Attack Damage", dmg, AttributeModifier.Operation.ADD_NUMBER, EquipmentSlot.HAND);
-        meta.addAttributeModifier(Attribute.GENERIC_ATTACK_DAMAGE, modifier2);
+        meta.addAttributeModifier(Attribute.ATTACK_DAMAGE, modifier2);
         meta.addItemFlags(new ItemFlag[]{ItemFlag.HIDE_ATTRIBUTES});
         meta.setCustomModelData(Integer.valueOf(1000007));
         item.setItemMeta(meta);
@@ -678,7 +615,7 @@ implements Listener {
     public ShapedRecipe getSwordbowRecipe() {
         ItemStack item = new ItemStack(Material.BOW);
         ItemMeta meta = item.getItemMeta();
-        meta.setDisplayName(ChatColor.translateAlternateColorCodes((char)'&', (String)this.getConfig().getString("dSwordBow.name")));
+        meta.setDisplayName(convertLegacyToSection(this.getConfig().getString("dSwordBow.name")));
         if (this.getConfig().getString("EnchantsSwordBow") == "true") {
             int num = this.getConfig().getInt("SbowEnchantLevels.Smite");
             int num2 = this.getConfig().getInt("SbowEnchantLevels.Unbreaking");
@@ -688,9 +625,9 @@ implements Listener {
             meta.addEnchant(Enchantment.MENDING, num4, true);
         }
         ArrayList<String> lore = new ArrayList<String>();
-        lore.add(ChatColor.translateAlternateColorCodes((char)'&', (String)this.getConfig().getString("dSwordBow.line1")));
-        lore.add(ChatColor.translateAlternateColorCodes((char)'&', (String)this.getConfig().getString("dSwordBow.line2")));
-        lore.add(ChatColor.translateAlternateColorCodes((char)'&', (String)this.getConfig().getString("dSwordBow.line3")));
+        lore.add(convertLegacyToSection(this.getConfig().getString("dSwordBow.line1")));
+        lore.add(convertLegacyToSection(this.getConfig().getString("dSwordBow.line2")));
+        lore.add(convertLegacyToSection(this.getConfig().getString("dSwordBow.line3")));
         meta.setLore(lore);
         double dmg = 8.0;
         double spd = -3.0;
@@ -699,9 +636,9 @@ implements Listener {
             spd = this.getConfig().getDouble("aSwordBow.speed") - 4.0;
         }
         AttributeModifier modifier = new AttributeModifier(UUID.randomUUID(), "Attack Speed", spd, AttributeModifier.Operation.ADD_NUMBER, EquipmentSlot.HAND);
-        meta.addAttributeModifier(Attribute.GENERIC_ATTACK_SPEED, modifier);
+        meta.addAttributeModifier(Attribute.ATTACK_SPEED, modifier);
         AttributeModifier modifier2 = new AttributeModifier(UUID.randomUUID(), "Attack Damage", dmg, AttributeModifier.Operation.ADD_NUMBER, EquipmentSlot.HAND);
-        meta.addAttributeModifier(Attribute.GENERIC_ATTACK_DAMAGE, modifier2);
+        meta.addAttributeModifier(Attribute.ATTACK_DAMAGE, modifier2);
         meta.setCustomModelData(Integer.valueOf(1000001));
         item.setItemMeta(meta);
         NamespacedKey key = new NamespacedKey((Plugin)this, "sword_bow");
@@ -718,7 +655,7 @@ implements Listener {
     public ShapedRecipe getHSwordbowRecipe() {
         ItemStack item = new ItemStack(Material.BOW);
         ItemMeta meta = item.getItemMeta();
-        meta.setDisplayName(ChatColor.translateAlternateColorCodes((char)'&', (String)this.getConfig().getString("dHeavySwordBow.name")));
+        meta.setDisplayName(convertLegacyToSection(this.getConfig().getString("dHeavySwordBow.name")));
         if (this.getConfig().getString("EnchantsHeavySwordBow") == "true") {
             int num = this.getConfig().getInt("HSbowEnchantLevels.Power");
             int num2 = this.getConfig().getInt("HSbowEnchantLevels.Unbreaking");
@@ -730,9 +667,9 @@ implements Listener {
             meta.addEnchant(Enchantment.MENDING, num4, true);
         }
         ArrayList<String> lore = new ArrayList<String>();
-        lore.add(ChatColor.translateAlternateColorCodes((char)'&', (String)this.getConfig().getString("dHeavySwordBow.line1")));
-        lore.add(ChatColor.translateAlternateColorCodes((char)'&', (String)this.getConfig().getString("dHeavySwordBow.line2")));
-        lore.add(ChatColor.translateAlternateColorCodes((char)'&', (String)this.getConfig().getString("dHeavySwordBow.line3")));
+        lore.add(convertLegacyToSection(this.getConfig().getString("dHeavySwordBow.line1")));
+        lore.add(convertLegacyToSection(this.getConfig().getString("dHeavySwordBow.line2")));
+        lore.add(convertLegacyToSection(this.getConfig().getString("dHeavySwordBow.line3")));
         meta.setLore(lore);
         double dmg = 10.0;
         double spd = -3.2;
@@ -749,17 +686,17 @@ implements Listener {
             okbr = this.getConfig().getDouble("aHeavySwordBow.offhandKBResist") / 10.0;
         }
         AttributeModifier modifier = new AttributeModifier(UUID.randomUUID(), "Attack Speed", spd, AttributeModifier.Operation.ADD_NUMBER, EquipmentSlot.HAND);
-        meta.addAttributeModifier(Attribute.GENERIC_ATTACK_SPEED, modifier);
+        meta.addAttributeModifier(Attribute.ATTACK_SPEED, modifier);
         AttributeModifier modifier2 = new AttributeModifier(UUID.randomUUID(), "Attack Damage", dmg, AttributeModifier.Operation.ADD_NUMBER, EquipmentSlot.HAND);
-        meta.addAttributeModifier(Attribute.GENERIC_ATTACK_DAMAGE, modifier2);
+        meta.addAttributeModifier(Attribute.ATTACK_DAMAGE, modifier2);
         AttributeModifier modifier3 = new AttributeModifier(UUID.randomUUID(), "Speed", mspd, AttributeModifier.Operation.ADD_NUMBER, EquipmentSlot.HAND);
-        meta.addAttributeModifier(Attribute.GENERIC_MOVEMENT_SPEED, modifier3);
+        meta.addAttributeModifier(Attribute.MOVEMENT_SPEED, modifier3);
         AttributeModifier modifier4 = new AttributeModifier(UUID.randomUUID(), "Speed", omspd, AttributeModifier.Operation.ADD_NUMBER, EquipmentSlot.OFF_HAND);
-        meta.addAttributeModifier(Attribute.GENERIC_MOVEMENT_SPEED, modifier4);
+        meta.addAttributeModifier(Attribute.MOVEMENT_SPEED, modifier4);
         AttributeModifier modifier5 = new AttributeModifier(UUID.randomUUID(), "KnockbackRes", kbr, AttributeModifier.Operation.ADD_NUMBER, EquipmentSlot.HAND);
-        meta.addAttributeModifier(Attribute.GENERIC_KNOCKBACK_RESISTANCE, modifier5);
+        meta.addAttributeModifier(Attribute.KNOCKBACK_RESISTANCE, modifier5);
         AttributeModifier modifier6 = new AttributeModifier(UUID.randomUUID(), "KnockbackRes", okbr, AttributeModifier.Operation.ADD_NUMBER, EquipmentSlot.OFF_HAND);
-        meta.addAttributeModifier(Attribute.GENERIC_KNOCKBACK_RESISTANCE, modifier6);
+        meta.addAttributeModifier(Attribute.KNOCKBACK_RESISTANCE, modifier6);
         meta.setCustomModelData(Integer.valueOf(1000002));
         item.setItemMeta(meta);
         NamespacedKey key = new NamespacedKey((Plugin)this, "heavy_sword_bow");
@@ -821,7 +758,7 @@ implements Listener {
             def = this.getConfig().getDouble("aPlateChainHelmet.Armor");
         }
         AttributeModifier modifier = new AttributeModifier(UUID.randomUUID(), "Defense", def, AttributeModifier.Operation.ADD_NUMBER, EquipmentSlot.HEAD);
-        meta.addAttributeModifier(Attribute.GENERIC_ARMOR, modifier);
+        meta.addAttributeModifier(Attribute.ARMOR, modifier);
         meta.setDisplayName(ChatColor.BOLD + "Plated Chainmail Helmet");
         if (this.getConfig().getString("EnchantsPlatedChainmail") == "true") {
             int num = this.getConfig().getInt("PChainEnchantLevels.Unbreaking");
@@ -845,7 +782,7 @@ implements Listener {
             def = this.getConfig().getDouble("aPlateChainChestplate.Armor");
         }
         AttributeModifier modifier = new AttributeModifier(UUID.randomUUID(), "Defense", def, AttributeModifier.Operation.ADD_NUMBER, EquipmentSlot.CHEST);
-        meta.addAttributeModifier(Attribute.GENERIC_ARMOR, modifier);
+        meta.addAttributeModifier(Attribute.ARMOR, modifier);
         meta.setDisplayName(ChatColor.BOLD + "Plated Chainmail Chestplate");
         if (this.getConfig().getString("EnchantsPlatedChainmail") == "true") {
             int num = this.getConfig().getInt("PChainEnchantLevels.Unbreaking");
@@ -869,7 +806,7 @@ implements Listener {
             def = this.getConfig().getDouble("aPlateChainLeggings.Armor");
         }
         AttributeModifier modifier = new AttributeModifier(UUID.randomUUID(), "Defense", def, AttributeModifier.Operation.ADD_NUMBER, EquipmentSlot.LEGS);
-        meta.addAttributeModifier(Attribute.GENERIC_ARMOR, modifier);
+        meta.addAttributeModifier(Attribute.ARMOR, modifier);
         meta.setDisplayName(ChatColor.BOLD + "Plated Chainmail Leggings");
         if (this.getConfig().getString("EnchantsPlatedChainmail") == "true") {
             int num = this.getConfig().getInt("PChainEnchantLevels.Unbreaking");
@@ -893,7 +830,7 @@ implements Listener {
             def = this.getConfig().getDouble("aPlateChainBoots.Armor");
         }
         AttributeModifier modifier = new AttributeModifier(UUID.randomUUID(), "Defense", def, AttributeModifier.Operation.ADD_NUMBER, EquipmentSlot.FEET);
-        meta.addAttributeModifier(Attribute.GENERIC_ARMOR, modifier);
+        meta.addAttributeModifier(Attribute.ARMOR, modifier);
         meta.setDisplayName(ChatColor.BOLD + "Plated Chainmail Boots");
         if (this.getConfig().getString("EnchantsPlatedChainmail") == "true") {
             int num = this.getConfig().getInt("PChainEnchantLevels.Unbreaking");
@@ -913,16 +850,16 @@ implements Listener {
         ItemStack item = new ItemStack(Material.WOODEN_SWORD);
         ItemMeta meta = item.getItemMeta();
         ArrayList<String> lore = new ArrayList<String>();
-        lore.add(ChatColor.translateAlternateColorCodes((char)'&', (String)this.getConfig().getString("ScytheDescription.line1")));
-        lore.add(ChatColor.translateAlternateColorCodes((char)'&', (String)this.getConfig().getString("ScytheDescription.line2")));
-        lore.add(ChatColor.translateAlternateColorCodes((char)'&', (String)this.getConfig().getString("ScytheDescription.line3")));
-        lore.add(ChatColor.translateAlternateColorCodes((char)'&', (String)this.getConfig().getString("ScytheDescription.line4")));
-        lore.add(ChatColor.translateAlternateColorCodes((char)'&', (String)this.getConfig().getString("ScytheDescription.line5")));
-        lore.add(ChatColor.translateAlternateColorCodes((char)'&', (String)this.getConfig().getString("ScytheDescription.line6")));
-        lore.add(ChatColor.translateAlternateColorCodes((char)'&', (String)this.getConfig().getString("ScytheDescription.line7")));
-        lore.add(ChatColor.translateAlternateColorCodes((char)'&', (String)this.getConfig().getString("dWoodenScythe.line8")));
-        lore.add(ChatColor.translateAlternateColorCodes((char)'&', (String)this.getConfig().getString("dWoodenScythe.line9")));
-        lore.add(ChatColor.translateAlternateColorCodes((char)'&', (String)this.getConfig().getString("dWoodenScythe.line10")));
+        lore.add(convertLegacyToSection(this.getConfig().getString("ScytheDescription.line1")));
+        lore.add(convertLegacyToSection(this.getConfig().getString("ScytheDescription.line2")));
+        lore.add(convertLegacyToSection(this.getConfig().getString("ScytheDescription.line3")));
+        lore.add(convertLegacyToSection(this.getConfig().getString("ScytheDescription.line4")));
+        lore.add(convertLegacyToSection(this.getConfig().getString("ScytheDescription.line5")));
+        lore.add(convertLegacyToSection(this.getConfig().getString("ScytheDescription.line6")));
+        lore.add(convertLegacyToSection(this.getConfig().getString("ScytheDescription.line7")));
+        lore.add(convertLegacyToSection(this.getConfig().getString("dWoodenScythe.line8")));
+        lore.add(convertLegacyToSection(this.getConfig().getString("dWoodenScythe.line9")));
+        lore.add(convertLegacyToSection(this.getConfig().getString("dWoodenScythe.line10")));
         meta.setLore(lore);
         meta.addItemFlags(new ItemFlag[]{ItemFlag.HIDE_ATTRIBUTES});
         double dmg = 6.0;
@@ -932,10 +869,10 @@ implements Listener {
             spd = this.getConfig().getDouble("aWoodenScythe.speed") - 4.0;
         }
         AttributeModifier modifier = new AttributeModifier(UUID.randomUUID(), "Attack Speed", spd, AttributeModifier.Operation.ADD_NUMBER, EquipmentSlot.HAND);
-        meta.addAttributeModifier(Attribute.GENERIC_ATTACK_SPEED, modifier);
+        meta.addAttributeModifier(Attribute.ATTACK_SPEED, modifier);
         AttributeModifier modifier2 = new AttributeModifier(UUID.randomUUID(), "Attack Damage", dmg, AttributeModifier.Operation.ADD_NUMBER, EquipmentSlot.HAND);
-        meta.addAttributeModifier(Attribute.GENERIC_ATTACK_DAMAGE, modifier2);
-        meta.setDisplayName(ChatColor.translateAlternateColorCodes((char)'&', (String)this.getConfig().getString("dWoodenScythe.name")));
+        meta.addAttributeModifier(Attribute.ATTACK_DAMAGE, modifier2);
+        meta.setDisplayName(convertLegacyToSection(this.getConfig().getString("dWoodenScythe.name")));
         meta.setCustomModelData(Integer.valueOf(1000003));
         item.setItemMeta(meta);
         NamespacedKey key = new NamespacedKey((Plugin)this, "wooden_scythe");
@@ -950,16 +887,16 @@ implements Listener {
         ItemStack item = new ItemStack(Material.STONE_SWORD);
         ItemMeta meta = item.getItemMeta();
         ArrayList<String> lore = new ArrayList<String>();
-        lore.add(ChatColor.translateAlternateColorCodes((char)'&', (String)this.getConfig().getString("ScytheDescription.line1")));
-        lore.add(ChatColor.translateAlternateColorCodes((char)'&', (String)this.getConfig().getString("ScytheDescription.line2")));
-        lore.add(ChatColor.translateAlternateColorCodes((char)'&', (String)this.getConfig().getString("ScytheDescription.line3")));
-        lore.add(ChatColor.translateAlternateColorCodes((char)'&', (String)this.getConfig().getString("ScytheDescription.line4")));
-        lore.add(ChatColor.translateAlternateColorCodes((char)'&', (String)this.getConfig().getString("ScytheDescription.line5")));
-        lore.add(ChatColor.translateAlternateColorCodes((char)'&', (String)this.getConfig().getString("ScytheDescription.line6")));
-        lore.add(ChatColor.translateAlternateColorCodes((char)'&', (String)this.getConfig().getString("ScytheDescription.line7")));
-        lore.add(ChatColor.translateAlternateColorCodes((char)'&', (String)this.getConfig().getString("dStoneScythe.line8")));
-        lore.add(ChatColor.translateAlternateColorCodes((char)'&', (String)this.getConfig().getString("dStoneScythe.line9")));
-        lore.add(ChatColor.translateAlternateColorCodes((char)'&', (String)this.getConfig().getString("dStoneScythe.line10")));
+        lore.add(convertLegacyToSection(this.getConfig().getString("ScytheDescription.line1")));
+        lore.add(convertLegacyToSection(this.getConfig().getString("ScytheDescription.line2")));
+        lore.add(convertLegacyToSection(this.getConfig().getString("ScytheDescription.line3")));
+        lore.add(convertLegacyToSection(this.getConfig().getString("ScytheDescription.line4")));
+        lore.add(convertLegacyToSection(this.getConfig().getString("ScytheDescription.line5")));
+        lore.add(convertLegacyToSection(this.getConfig().getString("ScytheDescription.line6")));
+        lore.add(convertLegacyToSection(this.getConfig().getString("ScytheDescription.line7")));
+        lore.add(convertLegacyToSection(this.getConfig().getString("dStoneScythe.line8")));
+        lore.add(convertLegacyToSection(this.getConfig().getString("dStoneScythe.line9")));
+        lore.add(convertLegacyToSection(this.getConfig().getString("dStoneScythe.line10")));
         meta.setLore(lore);
         meta.addItemFlags(new ItemFlag[]{ItemFlag.HIDE_ATTRIBUTES});
         double dmg = 6.5;
@@ -969,10 +906,10 @@ implements Listener {
             spd = this.getConfig().getDouble("aStoneScythe.speed") - 4.0;
         }
         AttributeModifier modifier = new AttributeModifier(UUID.randomUUID(), "Attack Speed", spd, AttributeModifier.Operation.ADD_NUMBER, EquipmentSlot.HAND);
-        meta.addAttributeModifier(Attribute.GENERIC_ATTACK_SPEED, modifier);
+        meta.addAttributeModifier(Attribute.ATTACK_SPEED, modifier);
         AttributeModifier modifier2 = new AttributeModifier(UUID.randomUUID(), "Attack Damage", dmg, AttributeModifier.Operation.ADD_NUMBER, EquipmentSlot.HAND);
-        meta.addAttributeModifier(Attribute.GENERIC_ATTACK_DAMAGE, modifier2);
-        meta.setDisplayName(ChatColor.translateAlternateColorCodes((char)'&', (String)this.getConfig().getString("dStoneScythe.name")));
+        meta.addAttributeModifier(Attribute.ATTACK_DAMAGE, modifier2);
+        meta.setDisplayName(convertLegacyToSection(this.getConfig().getString("dStoneScythe.name")));
         meta.setCustomModelData(Integer.valueOf(1000003));
         item.setItemMeta(meta);
         NamespacedKey key = new NamespacedKey((Plugin)this, "stone_scythe");
@@ -988,16 +925,16 @@ implements Listener {
         ItemStack item = new ItemStack(Material.GOLDEN_SWORD);
         ItemMeta meta = item.getItemMeta();
         ArrayList<String> lore = new ArrayList<String>();
-        lore.add(ChatColor.translateAlternateColorCodes((char)'&', (String)this.getConfig().getString("ScytheDescription.line1")));
-        lore.add(ChatColor.translateAlternateColorCodes((char)'&', (String)this.getConfig().getString("ScytheDescription.line2")));
-        lore.add(ChatColor.translateAlternateColorCodes((char)'&', (String)this.getConfig().getString("ScytheDescription.line3")));
-        lore.add(ChatColor.translateAlternateColorCodes((char)'&', (String)this.getConfig().getString("ScytheDescription.line4")));
-        lore.add(ChatColor.translateAlternateColorCodes((char)'&', (String)this.getConfig().getString("ScytheDescription.line5")));
-        lore.add(ChatColor.translateAlternateColorCodes((char)'&', (String)this.getConfig().getString("ScytheDescription.line6")));
-        lore.add(ChatColor.translateAlternateColorCodes((char)'&', (String)this.getConfig().getString("ScytheDescription.line7")));
-        lore.add(ChatColor.translateAlternateColorCodes((char)'&', (String)this.getConfig().getString("dGoldenScythe.line8")));
-        lore.add(ChatColor.translateAlternateColorCodes((char)'&', (String)this.getConfig().getString("dGoldenScythe.line9")));
-        lore.add(ChatColor.translateAlternateColorCodes((char)'&', (String)this.getConfig().getString("dGoldenScythe.line10")));
+        lore.add(convertLegacyToSection(this.getConfig().getString("ScytheDescription.line1")));
+        lore.add(convertLegacyToSection(this.getConfig().getString("ScytheDescription.line2")));
+        lore.add(convertLegacyToSection(this.getConfig().getString("ScytheDescription.line3")));
+        lore.add(convertLegacyToSection(this.getConfig().getString("ScytheDescription.line4")));
+        lore.add(convertLegacyToSection(this.getConfig().getString("ScytheDescription.line5")));
+        lore.add(convertLegacyToSection(this.getConfig().getString("ScytheDescription.line6")));
+        lore.add(convertLegacyToSection(this.getConfig().getString("ScytheDescription.line7")));
+        lore.add(convertLegacyToSection(this.getConfig().getString("dGoldenScythe.line8")));
+        lore.add(convertLegacyToSection(this.getConfig().getString("dGoldenScythe.line9")));
+        lore.add(convertLegacyToSection(this.getConfig().getString("dGoldenScythe.line10")));
         meta.setLore(lore);
         meta.addItemFlags(new ItemFlag[]{ItemFlag.HIDE_ATTRIBUTES});
         double dmg = 6.0;
@@ -1007,10 +944,10 @@ implements Listener {
             spd = this.getConfig().getDouble("aGoldenScythe.speed") - 4.0;
         }
         AttributeModifier modifier = new AttributeModifier(UUID.randomUUID(), "Attack Speed", spd, AttributeModifier.Operation.ADD_NUMBER, EquipmentSlot.HAND);
-        meta.addAttributeModifier(Attribute.GENERIC_ATTACK_SPEED, modifier);
+        meta.addAttributeModifier(Attribute.ATTACK_SPEED, modifier);
         AttributeModifier modifier2 = new AttributeModifier(UUID.randomUUID(), "Attack Damage", dmg, AttributeModifier.Operation.ADD_NUMBER, EquipmentSlot.HAND);
-        meta.addAttributeModifier(Attribute.GENERIC_ATTACK_DAMAGE, modifier2);
-        meta.setDisplayName(ChatColor.translateAlternateColorCodes((char)'&', (String)this.getConfig().getString("dGoldenScythe.name")));
+        meta.addAttributeModifier(Attribute.ATTACK_DAMAGE, modifier2);
+        meta.setDisplayName(convertLegacyToSection(this.getConfig().getString("dGoldenScythe.name")));
         meta.setCustomModelData(Integer.valueOf(1000003));
         item.setItemMeta(meta);
         NamespacedKey key = new NamespacedKey((Plugin)this, "golden_scythe");
@@ -1026,21 +963,22 @@ implements Listener {
         ItemStack item = new ItemStack(Material.GOLDEN_SWORD);
         ItemMeta meta = item.getItemMeta();
         ArrayList<String> lore = new ArrayList<String>();
-        lore.add(ChatColor.translateAlternateColorCodes((char)'&', (String)this.getConfig().getString("ScytheDescription.line1")));
-        lore.add(ChatColor.translateAlternateColorCodes((char)'&', (String)this.getConfig().getString("ScytheDescription.line2")));
-        lore.add(ChatColor.translateAlternateColorCodes((char)'&', (String)this.getConfig().getString("ScytheDescription.line3")));
-        lore.add(ChatColor.translateAlternateColorCodes((char)'&', (String)this.getConfig().getString("ScytheDescription.line4")));
-        lore.add(ChatColor.translateAlternateColorCodes((char)'&', (String)this.getConfig().getString("ScytheDescription.line5")));
-        lore.add(ChatColor.translateAlternateColorCodes((char)'&', (String)this.getConfig().getString("ScytheDescription.line6")));
-        lore.add(ChatColor.translateAlternateColorCodes((char)'&', (String)this.getConfig().getString("ScytheDescription.line7")));
-        lore.add(ChatColor.translateAlternateColorCodes((char)'&', (String)this.getConfig().getString("dEmeraldScythe.line8")));
-        lore.add(ChatColor.translateAlternateColorCodes((char)'&', (String)this.getConfig().getString("dEmeraldScythe.line9")));
-        lore.add(ChatColor.translateAlternateColorCodes((char)'&', (String)this.getConfig().getString("dEmeraldScythe.line10")));
+        lore.add(convertLegacyToSection(this.getConfig().getString("ScytheDescription.line1")));
+        lore.add(convertLegacyToSection(this.getConfig().getString("ScytheDescription.line2")));
+        lore.add(convertLegacyToSection(this.getConfig().getString("ScytheDescription.line3")));
+        lore.add(convertLegacyToSection(this.getConfig().getString("ScytheDescription.line4")));
+        lore.add(convertLegacyToSection(this.getConfig().getString("ScytheDescription.line5")));
+        lore.add(convertLegacyToSection(this.getConfig().getString("ScytheDescription.line6")));
+        lore.add(convertLegacyToSection(this.getConfig().getString("ScytheDescription.line7")));
+        lore.add(convertLegacyToSection(this.getConfig().getString("dEmeraldScythe.line8")));
+        lore.add(convertLegacyToSection(this.getConfig().getString("dEmeraldScythe.line9")));
+        lore.add(convertLegacyToSection(this.getConfig().getString("dEmeraldScythe.line10")));
         meta.setLore(lore);
         meta.addItemFlags(new ItemFlag[]{ItemFlag.HIDE_ATTRIBUTES});
         if (this.getConfig().getString("EnchantsOnEmeraldGear") == "true") {
             int num = this.getConfig().getInt("EmeraldGearEnchantLevels.Unbreaking");
             int num2 = this.getConfig().getInt("EmeraldGearEnchantLevels.Mending");
+            // TODO: change this using https://jd.papermc.io/paper/1.21.5/org/bukkit/entity/Damageable.html
             meta.addEnchant(Enchantment.DURABILITY, num, true);
             meta.addEnchant(Enchantment.MENDING, num2, true);
         }
@@ -1050,11 +988,12 @@ implements Listener {
             dmg = this.getConfig().getDouble("aEmeraldScythe.damage") - 1.0;
             spd = this.getConfig().getDouble("aEmeraldScythe.speed") - 4.0;
         }
+        // TODO: find an alternative to this (https://jd.papermc.io/paper/1.21.5/org/bukkit/attribute/AttributeModifier.html)
         AttributeModifier modifier = new AttributeModifier(UUID.randomUUID(), "Attack Speed", spd, AttributeModifier.Operation.ADD_NUMBER, EquipmentSlot.HAND);
-        meta.addAttributeModifier(Attribute.GENERIC_ATTACK_SPEED, modifier);
+        meta.addAttributeModifier(Attribute.ATTACK_SPEED, modifier);
         AttributeModifier modifier2 = new AttributeModifier(UUID.randomUUID(), "Attack Damage", dmg, AttributeModifier.Operation.ADD_NUMBER, EquipmentSlot.HAND);
-        meta.addAttributeModifier(Attribute.GENERIC_ATTACK_DAMAGE, modifier2);
-        meta.setDisplayName(ChatColor.translateAlternateColorCodes((char)'&', (String)this.getConfig().getString("dEmeraldScythe.name")));
+        meta.addAttributeModifier(Attribute.ATTACK_DAMAGE, modifier2);
+        meta.setDisplayName(convertLegacyToSection(this.getConfig().getString("dEmeraldScythe.name")));
         meta.setCustomModelData(Integer.valueOf(1000013));
         item.setItemMeta(meta);
         NamespacedKey key = new NamespacedKey((Plugin)this, "emerald_scythe");
@@ -1070,16 +1009,16 @@ implements Listener {
         ItemStack item = new ItemStack(Material.IRON_SWORD);
         ItemMeta meta = item.getItemMeta();
         ArrayList<String> lore = new ArrayList<String>();
-        lore.add(ChatColor.translateAlternateColorCodes((char)'&', (String)this.getConfig().getString("ScytheDescription.line1")));
-        lore.add(ChatColor.translateAlternateColorCodes((char)'&', (String)this.getConfig().getString("ScytheDescription.line2")));
-        lore.add(ChatColor.translateAlternateColorCodes((char)'&', (String)this.getConfig().getString("ScytheDescription.line3")));
-        lore.add(ChatColor.translateAlternateColorCodes((char)'&', (String)this.getConfig().getString("ScytheDescription.line4")));
-        lore.add(ChatColor.translateAlternateColorCodes((char)'&', (String)this.getConfig().getString("ScytheDescription.line5")));
-        lore.add(ChatColor.translateAlternateColorCodes((char)'&', (String)this.getConfig().getString("ScytheDescription.line6")));
-        lore.add(ChatColor.translateAlternateColorCodes((char)'&', (String)this.getConfig().getString("ScytheDescription.line7")));
-        lore.add(ChatColor.translateAlternateColorCodes((char)'&', (String)this.getConfig().getString("dIronScythe.line8")));
-        lore.add(ChatColor.translateAlternateColorCodes((char)'&', (String)this.getConfig().getString("dIronScythe.line9")));
-        lore.add(ChatColor.translateAlternateColorCodes((char)'&', (String)this.getConfig().getString("dIronScythe.line10")));
+        lore.add(convertLegacyToSection(this.getConfig().getString("ScytheDescription.line1")));
+        lore.add(convertLegacyToSection(this.getConfig().getString("ScytheDescription.line2")));
+        lore.add(convertLegacyToSection(this.getConfig().getString("ScytheDescription.line3")));
+        lore.add(convertLegacyToSection(this.getConfig().getString("ScytheDescription.line4")));
+        lore.add(convertLegacyToSection(this.getConfig().getString("ScytheDescription.line5")));
+        lore.add(convertLegacyToSection(this.getConfig().getString("ScytheDescription.line6")));
+        lore.add(convertLegacyToSection(this.getConfig().getString("ScytheDescription.line7")));
+        lore.add(convertLegacyToSection(this.getConfig().getString("dIronScythe.line8")));
+        lore.add(convertLegacyToSection(this.getConfig().getString("dIronScythe.line9")));
+        lore.add(convertLegacyToSection(this.getConfig().getString("dIronScythe.line10")));
         meta.setLore(lore);
         meta.addItemFlags(new ItemFlag[]{ItemFlag.HIDE_ATTRIBUTES});
         double dmg = 7.0;
@@ -1089,10 +1028,10 @@ implements Listener {
             spd = this.getConfig().getDouble("aIronScythe.speed") - 4.0;
         }
         AttributeModifier modifier = new AttributeModifier(UUID.randomUUID(), "Attack Speed", spd, AttributeModifier.Operation.ADD_NUMBER, EquipmentSlot.HAND);
-        meta.addAttributeModifier(Attribute.GENERIC_ATTACK_SPEED, modifier);
+        meta.addAttributeModifier(Attribute.ATTACK_SPEED, modifier);
         AttributeModifier modifier2 = new AttributeModifier(UUID.randomUUID(), "Attack Damage", dmg, AttributeModifier.Operation.ADD_NUMBER, EquipmentSlot.HAND);
-        meta.addAttributeModifier(Attribute.GENERIC_ATTACK_DAMAGE, modifier2);
-        meta.setDisplayName(ChatColor.translateAlternateColorCodes((char)'&', (String)this.getConfig().getString("dIronScythe.name")));
+        meta.addAttributeModifier(Attribute.ATTACK_DAMAGE, modifier2);
+        meta.setDisplayName(convertLegacyToSection(this.getConfig().getString("dIronScythe.name")));
         meta.setCustomModelData(Integer.valueOf(1000003));
         item.setItemMeta(meta);
         NamespacedKey key = new NamespacedKey((Plugin)this, "iron_scythe");
@@ -1108,16 +1047,16 @@ implements Listener {
         ItemStack item = new ItemStack(Material.DIAMOND_SWORD);
         ItemMeta meta = item.getItemMeta();
         ArrayList<String> lore = new ArrayList<String>();
-        lore.add(ChatColor.translateAlternateColorCodes((char)'&', (String)this.getConfig().getString("ScytheDescription.line1")));
-        lore.add(ChatColor.translateAlternateColorCodes((char)'&', (String)this.getConfig().getString("ScytheDescription.line2")));
-        lore.add(ChatColor.translateAlternateColorCodes((char)'&', (String)this.getConfig().getString("ScytheDescription.line3")));
-        lore.add(ChatColor.translateAlternateColorCodes((char)'&', (String)this.getConfig().getString("ScytheDescription.line4")));
-        lore.add(ChatColor.translateAlternateColorCodes((char)'&', (String)this.getConfig().getString("ScytheDescription.line5")));
-        lore.add(ChatColor.translateAlternateColorCodes((char)'&', (String)this.getConfig().getString("ScytheDescription.line6")));
-        lore.add(ChatColor.translateAlternateColorCodes((char)'&', (String)this.getConfig().getString("ScytheDescription.line7")));
-        lore.add(ChatColor.translateAlternateColorCodes((char)'&', (String)this.getConfig().getString("dDiamondScythe.line8")));
-        lore.add(ChatColor.translateAlternateColorCodes((char)'&', (String)this.getConfig().getString("dDiamondScythe.line9")));
-        lore.add(ChatColor.translateAlternateColorCodes((char)'&', (String)this.getConfig().getString("dDiamondScythe.line10")));
+        lore.add(convertLegacyToSection(this.getConfig().getString("ScytheDescription.line1")));
+        lore.add(convertLegacyToSection(this.getConfig().getString("ScytheDescription.line2")));
+        lore.add(convertLegacyToSection(this.getConfig().getString("ScytheDescription.line3")));
+        lore.add(convertLegacyToSection(this.getConfig().getString("ScytheDescription.line4")));
+        lore.add(convertLegacyToSection(this.getConfig().getString("ScytheDescription.line5")));
+        lore.add(convertLegacyToSection(this.getConfig().getString("ScytheDescription.line6")));
+        lore.add(convertLegacyToSection(this.getConfig().getString("ScytheDescription.line7")));
+        lore.add(convertLegacyToSection(this.getConfig().getString("dDiamondScythe.line8")));
+        lore.add(convertLegacyToSection(this.getConfig().getString("dDiamondScythe.line9")));
+        lore.add(convertLegacyToSection(this.getConfig().getString("dDiamondScythe.line10")));
         meta.setLore(lore);
         meta.addItemFlags(new ItemFlag[]{ItemFlag.HIDE_ATTRIBUTES});
         double dmg = 8.0;
@@ -1127,10 +1066,10 @@ implements Listener {
             spd = this.getConfig().getDouble("aDiamondScythe.speed") - 4.0;
         }
         AttributeModifier modifier = new AttributeModifier(UUID.randomUUID(), "Attack Speed", spd, AttributeModifier.Operation.ADD_NUMBER, EquipmentSlot.HAND);
-        meta.addAttributeModifier(Attribute.GENERIC_ATTACK_SPEED, modifier);
+        meta.addAttributeModifier(Attribute.ATTACK_SPEED, modifier);
         AttributeModifier modifier2 = new AttributeModifier(UUID.randomUUID(), "Attack Damage", dmg, AttributeModifier.Operation.ADD_NUMBER, EquipmentSlot.HAND);
-        meta.addAttributeModifier(Attribute.GENERIC_ATTACK_DAMAGE, modifier2);
-        meta.setDisplayName(ChatColor.translateAlternateColorCodes((char)'&', (String)this.getConfig().getString("dDiamondScythe.name")));
+        meta.addAttributeModifier(Attribute.ATTACK_DAMAGE, modifier2);
+        meta.setDisplayName(convertLegacyToSection(this.getConfig().getString("dDiamondScythe.name")));
         meta.setCustomModelData(Integer.valueOf(1000003));
         item.setItemMeta(meta);
         NamespacedKey key = new NamespacedKey((Plugin)this, "diamond_scythe");
@@ -1146,16 +1085,16 @@ implements Listener {
         ItemStack item = new ItemStack(Material.NETHERITE_SWORD);
         ItemMeta meta = item.getItemMeta();
         ArrayList<String> lore = new ArrayList<String>();
-        lore.add(ChatColor.translateAlternateColorCodes((char)'&', (String)this.getConfig().getString("ScytheDescription.line1")));
-        lore.add(ChatColor.translateAlternateColorCodes((char)'&', (String)this.getConfig().getString("ScytheDescription.line2")));
-        lore.add(ChatColor.translateAlternateColorCodes((char)'&', (String)this.getConfig().getString("ScytheDescription.line3")));
-        lore.add(ChatColor.translateAlternateColorCodes((char)'&', (String)this.getConfig().getString("ScytheDescription.line4")));
-        lore.add(ChatColor.translateAlternateColorCodes((char)'&', (String)this.getConfig().getString("ScytheDescription.line5")));
-        lore.add(ChatColor.translateAlternateColorCodes((char)'&', (String)this.getConfig().getString("ScytheDescription.line6")));
-        lore.add(ChatColor.translateAlternateColorCodes((char)'&', (String)this.getConfig().getString("ScytheDescription.line7")));
-        lore.add(ChatColor.translateAlternateColorCodes((char)'&', (String)this.getConfig().getString("dNetheriteScythe.line8")));
-        lore.add(ChatColor.translateAlternateColorCodes((char)'&', (String)this.getConfig().getString("dNetheriteScythe.line9")));
-        lore.add(ChatColor.translateAlternateColorCodes((char)'&', (String)this.getConfig().getString("dNetheriteScythe.line10")));
+        lore.add(convertLegacyToSection(this.getConfig().getString("ScytheDescription.line1")));
+        lore.add(convertLegacyToSection(this.getConfig().getString("ScytheDescription.line2")));
+        lore.add(convertLegacyToSection(this.getConfig().getString("ScytheDescription.line3")));
+        lore.add(convertLegacyToSection(this.getConfig().getString("ScytheDescription.line4")));
+        lore.add(convertLegacyToSection(this.getConfig().getString("ScytheDescription.line5")));
+        lore.add(convertLegacyToSection(this.getConfig().getString("ScytheDescription.line6")));
+        lore.add(convertLegacyToSection(this.getConfig().getString("ScytheDescription.line7")));
+        lore.add(convertLegacyToSection(this.getConfig().getString("dNetheriteScythe.line8")));
+        lore.add(convertLegacyToSection(this.getConfig().getString("dNetheriteScythe.line9")));
+        lore.add(convertLegacyToSection(this.getConfig().getString("dNetheriteScythe.line10")));
         meta.setLore(lore);
         meta.addItemFlags(new ItemFlag[]{ItemFlag.HIDE_ATTRIBUTES});
         double dmg = 9.0;
@@ -1165,10 +1104,10 @@ implements Listener {
             spd = this.getConfig().getDouble("aNetheriteScythe.speed") - 4.0;
         }
         AttributeModifier modifier = new AttributeModifier(UUID.randomUUID(), "Attack Speed", spd, AttributeModifier.Operation.ADD_NUMBER, EquipmentSlot.HAND);
-        meta.addAttributeModifier(Attribute.GENERIC_ATTACK_SPEED, modifier);
+        meta.addAttributeModifier(Attribute.ATTACK_SPEED, modifier);
         AttributeModifier modifier2 = new AttributeModifier(UUID.randomUUID(), "Attack Damage", dmg, AttributeModifier.Operation.ADD_NUMBER, EquipmentSlot.HAND);
-        meta.addAttributeModifier(Attribute.GENERIC_ATTACK_DAMAGE, modifier2);
-        meta.setDisplayName(ChatColor.translateAlternateColorCodes((char)'&', (String)this.getConfig().getString("dNetheriteScythe.name")));
+        meta.addAttributeModifier(Attribute.ATTACK_DAMAGE, modifier2);
+        meta.setDisplayName(convertLegacyToSection(this.getConfig().getString("dNetheriteScythe.name")));
         meta.setCustomModelData(Integer.valueOf(1000003));
         item.setItemMeta(meta);
         NamespacedKey key = new NamespacedKey((Plugin)this, "netherite_scythe");
@@ -1189,15 +1128,15 @@ implements Listener {
         ItemStack item = new ItemStack(Material.NETHERITE_PICKAXE);
         ItemMeta meta = item.getItemMeta();
         ArrayList<String> lore = new ArrayList<String>();
-        lore.add(ChatColor.translateAlternateColorCodes((char)'&', (String)this.getConfig().getString("dObsidianPickaxe.line1")));
-        lore.add(ChatColor.translateAlternateColorCodes((char)'&', (String)this.getConfig().getString("dObsidianPickaxe.line2")));
-        lore.add(ChatColor.translateAlternateColorCodes((char)'&', (String)this.getConfig().getString("dObsidianPickaxe.line3")));
+        lore.add(convertLegacyToSection(this.getConfig().getString("dObsidianPickaxe.line1")));
+        lore.add(convertLegacyToSection(this.getConfig().getString("dObsidianPickaxe.line2")));
+        lore.add(convertLegacyToSection(this.getConfig().getString("dObsidianPickaxe.line3")));
         meta.setLore(lore);
         if (this.getConfig().getString("EnchantsObsidianPick") == "true") {
             int num = this.getConfig().getInt("OPickEnchantLevels.Unbreaking");
             meta.addEnchant(Enchantment.DURABILITY, num, true);
         }
-        meta.setDisplayName(ChatColor.translateAlternateColorCodes((char)'&', (String)this.getConfig().getString("dObsidianPickaxe.name")));
+        meta.setDisplayName(convertLegacyToSection(this.getConfig().getString("dObsidianPickaxe.name")));
         meta.setCustomModelData(Integer.valueOf(1000001));
         item.setItemMeta(meta);
         NamespacedKey key = new NamespacedKey((Plugin)this, "obsidian_pickaxe");
@@ -1229,7 +1168,7 @@ implements Listener {
                 meta.setDisplayName("GOTTEM");
                 ArrayList<String> lore = new ArrayList<String>();
                 lore.add("");
-                lore.add(ChatColor.translateAlternateColorCodes((char)'&', (String)"&6im sorry"));
+                lore.add(convertLegacyToSection("&6im sorry"));
                 lore.add("");
                 meta.setLore(lore);
                 meta.setCustomModelData(Integer.valueOf(6969420));
@@ -1514,16 +1453,16 @@ implements Listener {
         ItemStack item = new ItemStack(Material.WOODEN_SWORD);
         ItemMeta meta = item.getItemMeta();
         ArrayList<String> lore = new ArrayList<String>();
-        lore.add(ChatColor.translateAlternateColorCodes((char)'&', (String)this.getConfig().getString("RapierDescription.line1")));
-        lore.add(ChatColor.translateAlternateColorCodes((char)'&', (String)this.getConfig().getString("RapierDescription.line2")));
-        lore.add(ChatColor.translateAlternateColorCodes((char)'&', (String)this.getConfig().getString("RapierDescription.line3")));
-        lore.add(ChatColor.translateAlternateColorCodes((char)'&', (String)this.getConfig().getString("RapierDescription.line4")));
-        lore.add(ChatColor.translateAlternateColorCodes((char)'&', (String)this.getConfig().getString("RapierDescription.line5")));
-        lore.add(ChatColor.translateAlternateColorCodes((char)'&', (String)this.getConfig().getString("RapierDescription.line6")));
-        lore.add(ChatColor.translateAlternateColorCodes((char)'&', (String)this.getConfig().getString("RapierDescription.line7")));
-        lore.add(ChatColor.translateAlternateColorCodes((char)'&', (String)this.getConfig().getString("dWoodenRapier.line8")));
-        lore.add(ChatColor.translateAlternateColorCodes((char)'&', (String)this.getConfig().getString("dWoodenRapier.line9")));
-        lore.add(ChatColor.translateAlternateColorCodes((char)'&', (String)this.getConfig().getString("dWoodenRapier.line10")));
+        lore.add(convertLegacyToSection(this.getConfig().getString("RapierDescription.line1")));
+        lore.add(convertLegacyToSection(this.getConfig().getString("RapierDescription.line2")));
+        lore.add(convertLegacyToSection(this.getConfig().getString("RapierDescription.line3")));
+        lore.add(convertLegacyToSection(this.getConfig().getString("RapierDescription.line4")));
+        lore.add(convertLegacyToSection(this.getConfig().getString("RapierDescription.line5")));
+        lore.add(convertLegacyToSection(this.getConfig().getString("RapierDescription.line6")));
+        lore.add(convertLegacyToSection(this.getConfig().getString("RapierDescription.line7")));
+        lore.add(convertLegacyToSection(this.getConfig().getString("dWoodenRapier.line8")));
+        lore.add(convertLegacyToSection(this.getConfig().getString("dWoodenRapier.line9")));
+        lore.add(convertLegacyToSection(this.getConfig().getString("dWoodenRapier.line10")));
         meta.setLore(lore);
         meta.addItemFlags(new ItemFlag[]{ItemFlag.HIDE_ATTRIBUTES});
         double dmg = 2.0;
@@ -1533,10 +1472,10 @@ implements Listener {
             spd = this.getConfig().getDouble("aWoodenRapier.speed") - 4.0;
         }
         AttributeModifier modifier = new AttributeModifier(UUID.randomUUID(), "Attack Speed", spd, AttributeModifier.Operation.ADD_NUMBER, EquipmentSlot.HAND);
-        meta.addAttributeModifier(Attribute.GENERIC_ATTACK_SPEED, modifier);
+        meta.addAttributeModifier(Attribute.ATTACK_SPEED, modifier);
         AttributeModifier modifier2 = new AttributeModifier(UUID.randomUUID(), "Attack Damage", dmg, AttributeModifier.Operation.ADD_NUMBER, EquipmentSlot.HAND);
-        meta.addAttributeModifier(Attribute.GENERIC_ATTACK_DAMAGE, modifier2);
-        meta.setDisplayName(ChatColor.translateAlternateColorCodes((char)'&', (String)this.getConfig().getString("dWoodenRapier.name")));
+        meta.addAttributeModifier(Attribute.ATTACK_DAMAGE, modifier2);
+        meta.setDisplayName(convertLegacyToSection(this.getConfig().getString("dWoodenRapier.name")));
         meta.setCustomModelData(Integer.valueOf(1000005));
         item.setItemMeta(meta);
         NamespacedKey key = new NamespacedKey((Plugin)this, "wooden_rapier");
@@ -1551,16 +1490,16 @@ implements Listener {
         ItemStack item = new ItemStack(Material.STONE_SWORD);
         ItemMeta meta = item.getItemMeta();
         ArrayList<String> lore = new ArrayList<String>();
-        lore.add(ChatColor.translateAlternateColorCodes((char)'&', (String)this.getConfig().getString("RapierDescription.line1")));
-        lore.add(ChatColor.translateAlternateColorCodes((char)'&', (String)this.getConfig().getString("RapierDescription.line2")));
-        lore.add(ChatColor.translateAlternateColorCodes((char)'&', (String)this.getConfig().getString("RapierDescription.line3")));
-        lore.add(ChatColor.translateAlternateColorCodes((char)'&', (String)this.getConfig().getString("RapierDescription.line4")));
-        lore.add(ChatColor.translateAlternateColorCodes((char)'&', (String)this.getConfig().getString("RapierDescription.line5")));
-        lore.add(ChatColor.translateAlternateColorCodes((char)'&', (String)this.getConfig().getString("RapierDescription.line6")));
-        lore.add(ChatColor.translateAlternateColorCodes((char)'&', (String)this.getConfig().getString("RapierDescription.line7")));
-        lore.add(ChatColor.translateAlternateColorCodes((char)'&', (String)this.getConfig().getString("dStoneRapier.line8")));
-        lore.add(ChatColor.translateAlternateColorCodes((char)'&', (String)this.getConfig().getString("dStoneRapier.line9")));
-        lore.add(ChatColor.translateAlternateColorCodes((char)'&', (String)this.getConfig().getString("dStoneRapier.line10")));
+        lore.add(convertLegacyToSection(this.getConfig().getString("RapierDescription.line1")));
+        lore.add(convertLegacyToSection(this.getConfig().getString("RapierDescription.line2")));
+        lore.add(convertLegacyToSection(this.getConfig().getString("RapierDescription.line3")));
+        lore.add(convertLegacyToSection(this.getConfig().getString("RapierDescription.line4")));
+        lore.add(convertLegacyToSection(this.getConfig().getString("RapierDescription.line5")));
+        lore.add(convertLegacyToSection(this.getConfig().getString("RapierDescription.line6")));
+        lore.add(convertLegacyToSection(this.getConfig().getString("RapierDescription.line7")));
+        lore.add(convertLegacyToSection(this.getConfig().getString("dStoneRapier.line8")));
+        lore.add(convertLegacyToSection(this.getConfig().getString("dStoneRapier.line9")));
+        lore.add(convertLegacyToSection(this.getConfig().getString("dStoneRapier.line10")));
         meta.setLore(lore);
         meta.addItemFlags(new ItemFlag[]{ItemFlag.HIDE_ATTRIBUTES});
         double dmg = 2.5;
@@ -1570,10 +1509,10 @@ implements Listener {
             spd = this.getConfig().getDouble("aStoneRapier.speed") - 4.0;
         }
         AttributeModifier modifier = new AttributeModifier(UUID.randomUUID(), "Attack Speed", spd, AttributeModifier.Operation.ADD_NUMBER, EquipmentSlot.HAND);
-        meta.addAttributeModifier(Attribute.GENERIC_ATTACK_SPEED, modifier);
+        meta.addAttributeModifier(Attribute.ATTACK_SPEED, modifier);
         AttributeModifier modifier2 = new AttributeModifier(UUID.randomUUID(), "Attack Damage", dmg, AttributeModifier.Operation.ADD_NUMBER, EquipmentSlot.HAND);
-        meta.addAttributeModifier(Attribute.GENERIC_ATTACK_DAMAGE, modifier2);
-        meta.setDisplayName(ChatColor.translateAlternateColorCodes((char)'&', (String)this.getConfig().getString("dStoneRapier.name")));
+        meta.addAttributeModifier(Attribute.ATTACK_DAMAGE, modifier2);
+        meta.setDisplayName(convertLegacyToSection(this.getConfig().getString("dStoneRapier.name")));
         meta.setCustomModelData(Integer.valueOf(1000005));
         item.setItemMeta(meta);
         NamespacedKey key = new NamespacedKey((Plugin)this, "stone_rapier");
@@ -1589,16 +1528,16 @@ implements Listener {
         ItemStack item = new ItemStack(Material.GOLDEN_SWORD);
         ItemMeta meta = item.getItemMeta();
         ArrayList<String> lore = new ArrayList<String>();
-        lore.add(ChatColor.translateAlternateColorCodes((char)'&', (String)this.getConfig().getString("RapierDescription.line1")));
-        lore.add(ChatColor.translateAlternateColorCodes((char)'&', (String)this.getConfig().getString("RapierDescription.line2")));
-        lore.add(ChatColor.translateAlternateColorCodes((char)'&', (String)this.getConfig().getString("RapierDescription.line3")));
-        lore.add(ChatColor.translateAlternateColorCodes((char)'&', (String)this.getConfig().getString("RapierDescription.line4")));
-        lore.add(ChatColor.translateAlternateColorCodes((char)'&', (String)this.getConfig().getString("RapierDescription.line5")));
-        lore.add(ChatColor.translateAlternateColorCodes((char)'&', (String)this.getConfig().getString("RapierDescription.line6")));
-        lore.add(ChatColor.translateAlternateColorCodes((char)'&', (String)this.getConfig().getString("RapierDescription.line7")));
-        lore.add(ChatColor.translateAlternateColorCodes((char)'&', (String)this.getConfig().getString("dGoldenRapier.line8")));
-        lore.add(ChatColor.translateAlternateColorCodes((char)'&', (String)this.getConfig().getString("dGoldenRapier.line9")));
-        lore.add(ChatColor.translateAlternateColorCodes((char)'&', (String)this.getConfig().getString("dGoldenRapier.line10")));
+        lore.add(convertLegacyToSection(this.getConfig().getString("RapierDescription.line1")));
+        lore.add(convertLegacyToSection(this.getConfig().getString("RapierDescription.line2")));
+        lore.add(convertLegacyToSection(this.getConfig().getString("RapierDescription.line3")));
+        lore.add(convertLegacyToSection(this.getConfig().getString("RapierDescription.line4")));
+        lore.add(convertLegacyToSection(this.getConfig().getString("RapierDescription.line5")));
+        lore.add(convertLegacyToSection(this.getConfig().getString("RapierDescription.line6")));
+        lore.add(convertLegacyToSection(this.getConfig().getString("RapierDescription.line7")));
+        lore.add(convertLegacyToSection(this.getConfig().getString("dGoldenRapier.line8")));
+        lore.add(convertLegacyToSection(this.getConfig().getString("dGoldenRapier.line9")));
+        lore.add(convertLegacyToSection(this.getConfig().getString("dGoldenRapier.line10")));
         meta.setLore(lore);
         meta.addItemFlags(new ItemFlag[]{ItemFlag.HIDE_ATTRIBUTES});
         double dmg = 2.0;
@@ -1608,10 +1547,10 @@ implements Listener {
             spd = this.getConfig().getDouble("aGoldenRapier.speed") - 4.0;
         }
         AttributeModifier modifier = new AttributeModifier(UUID.randomUUID(), "Attack Speed", spd, AttributeModifier.Operation.ADD_NUMBER, EquipmentSlot.HAND);
-        meta.addAttributeModifier(Attribute.GENERIC_ATTACK_SPEED, modifier);
+        meta.addAttributeModifier(Attribute.ATTACK_SPEED, modifier);
         AttributeModifier modifier2 = new AttributeModifier(UUID.randomUUID(), "Attack Damage", dmg, AttributeModifier.Operation.ADD_NUMBER, EquipmentSlot.HAND);
-        meta.addAttributeModifier(Attribute.GENERIC_ATTACK_DAMAGE, modifier2);
-        meta.setDisplayName(ChatColor.translateAlternateColorCodes((char)'&', (String)this.getConfig().getString("dGoldenRapier.name")));
+        meta.addAttributeModifier(Attribute.ATTACK_DAMAGE, modifier2);
+        meta.setDisplayName(convertLegacyToSection(this.getConfig().getString("dGoldenRapier.name")));
         meta.setCustomModelData(Integer.valueOf(1000005));
         item.setItemMeta(meta);
         NamespacedKey key = new NamespacedKey((Plugin)this, "golden_rapier");
@@ -1627,16 +1566,16 @@ implements Listener {
         ItemStack item = new ItemStack(Material.IRON_SWORD);
         ItemMeta meta = item.getItemMeta();
         ArrayList<String> lore = new ArrayList<String>();
-        lore.add(ChatColor.translateAlternateColorCodes((char)'&', (String)this.getConfig().getString("RapierDescription.line1")));
-        lore.add(ChatColor.translateAlternateColorCodes((char)'&', (String)this.getConfig().getString("RapierDescription.line2")));
-        lore.add(ChatColor.translateAlternateColorCodes((char)'&', (String)this.getConfig().getString("RapierDescription.line3")));
-        lore.add(ChatColor.translateAlternateColorCodes((char)'&', (String)this.getConfig().getString("RapierDescription.line4")));
-        lore.add(ChatColor.translateAlternateColorCodes((char)'&', (String)this.getConfig().getString("RapierDescription.line5")));
-        lore.add(ChatColor.translateAlternateColorCodes((char)'&', (String)this.getConfig().getString("RapierDescription.line6")));
-        lore.add(ChatColor.translateAlternateColorCodes((char)'&', (String)this.getConfig().getString("RapierDescription.line7")));
-        lore.add(ChatColor.translateAlternateColorCodes((char)'&', (String)this.getConfig().getString("dIronRapier.line8")));
-        lore.add(ChatColor.translateAlternateColorCodes((char)'&', (String)this.getConfig().getString("dIronRapier.line9")));
-        lore.add(ChatColor.translateAlternateColorCodes((char)'&', (String)this.getConfig().getString("dIronRapier.line10")));
+        lore.add(convertLegacyToSection(this.getConfig().getString("RapierDescription.line1")));
+        lore.add(convertLegacyToSection(this.getConfig().getString("RapierDescription.line2")));
+        lore.add(convertLegacyToSection(this.getConfig().getString("RapierDescription.line3")));
+        lore.add(convertLegacyToSection(this.getConfig().getString("RapierDescription.line4")));
+        lore.add(convertLegacyToSection(this.getConfig().getString("RapierDescription.line5")));
+        lore.add(convertLegacyToSection(this.getConfig().getString("RapierDescription.line6")));
+        lore.add(convertLegacyToSection(this.getConfig().getString("RapierDescription.line7")));
+        lore.add(convertLegacyToSection(this.getConfig().getString("dIronRapier.line8")));
+        lore.add(convertLegacyToSection(this.getConfig().getString("dIronRapier.line9")));
+        lore.add(convertLegacyToSection(this.getConfig().getString("dIronRapier.line10")));
         meta.setLore(lore);
         meta.addItemFlags(new ItemFlag[]{ItemFlag.HIDE_ATTRIBUTES});
         double dmg = 3.0;
@@ -1646,10 +1585,10 @@ implements Listener {
             spd = this.getConfig().getDouble("aIronRapier.speed") - 4.0;
         }
         AttributeModifier modifier = new AttributeModifier(UUID.randomUUID(), "Attack Speed", spd, AttributeModifier.Operation.ADD_NUMBER, EquipmentSlot.HAND);
-        meta.addAttributeModifier(Attribute.GENERIC_ATTACK_SPEED, modifier);
+        meta.addAttributeModifier(Attribute.ATTACK_SPEED, modifier);
         AttributeModifier modifier2 = new AttributeModifier(UUID.randomUUID(), "Attack Damage", dmg, AttributeModifier.Operation.ADD_NUMBER, EquipmentSlot.HAND);
-        meta.addAttributeModifier(Attribute.GENERIC_ATTACK_DAMAGE, modifier2);
-        meta.setDisplayName(ChatColor.translateAlternateColorCodes((char)'&', (String)this.getConfig().getString("dIronRapier.name")));
+        meta.addAttributeModifier(Attribute.ATTACK_DAMAGE, modifier2);
+        meta.setDisplayName(convertLegacyToSection(this.getConfig().getString("dIronRapier.name")));
         meta.setCustomModelData(Integer.valueOf(1000005));
         item.setItemMeta(meta);
         NamespacedKey key = new NamespacedKey((Plugin)this, "iron_rapier");
@@ -1665,16 +1604,16 @@ implements Listener {
         ItemStack item = new ItemStack(Material.GOLDEN_SWORD);
         ItemMeta meta = item.getItemMeta();
         ArrayList<String> lore = new ArrayList<String>();
-        lore.add(ChatColor.translateAlternateColorCodes((char)'&', (String)this.getConfig().getString("RapierDescription.line1")));
-        lore.add(ChatColor.translateAlternateColorCodes((char)'&', (String)this.getConfig().getString("RapierDescription.line2")));
-        lore.add(ChatColor.translateAlternateColorCodes((char)'&', (String)this.getConfig().getString("RapierDescription.line3")));
-        lore.add(ChatColor.translateAlternateColorCodes((char)'&', (String)this.getConfig().getString("RapierDescription.line4")));
-        lore.add(ChatColor.translateAlternateColorCodes((char)'&', (String)this.getConfig().getString("RapierDescription.line5")));
-        lore.add(ChatColor.translateAlternateColorCodes((char)'&', (String)this.getConfig().getString("RapierDescription.line6")));
-        lore.add(ChatColor.translateAlternateColorCodes((char)'&', (String)this.getConfig().getString("RapierDescription.line7")));
-        lore.add(ChatColor.translateAlternateColorCodes((char)'&', (String)this.getConfig().getString("dEmeraldRapier.line8")));
-        lore.add(ChatColor.translateAlternateColorCodes((char)'&', (String)this.getConfig().getString("dEmeraldRapier.line9")));
-        lore.add(ChatColor.translateAlternateColorCodes((char)'&', (String)this.getConfig().getString("dEmeraldRapier.line10")));
+        lore.add(convertLegacyToSection(this.getConfig().getString("RapierDescription.line1")));
+        lore.add(convertLegacyToSection(this.getConfig().getString("RapierDescription.line2")));
+        lore.add(convertLegacyToSection(this.getConfig().getString("RapierDescription.line3")));
+        lore.add(convertLegacyToSection(this.getConfig().getString("RapierDescription.line4")));
+        lore.add(convertLegacyToSection(this.getConfig().getString("RapierDescription.line5")));
+        lore.add(convertLegacyToSection(this.getConfig().getString("RapierDescription.line6")));
+        lore.add(convertLegacyToSection(this.getConfig().getString("RapierDescription.line7")));
+        lore.add(convertLegacyToSection(this.getConfig().getString("dEmeraldRapier.line8")));
+        lore.add(convertLegacyToSection(this.getConfig().getString("dEmeraldRapier.line9")));
+        lore.add(convertLegacyToSection(this.getConfig().getString("dEmeraldRapier.line10")));
         meta.setLore(lore);
         meta.addItemFlags(new ItemFlag[]{ItemFlag.HIDE_ATTRIBUTES});
         double dmg = 3.0;
@@ -1684,10 +1623,10 @@ implements Listener {
             spd = this.getConfig().getDouble("aEmeraldRapier.speed") - 4.0;
         }
         AttributeModifier modifier = new AttributeModifier(UUID.randomUUID(), "Attack Speed", spd, AttributeModifier.Operation.ADD_NUMBER, EquipmentSlot.HAND);
-        meta.addAttributeModifier(Attribute.GENERIC_ATTACK_SPEED, modifier);
+        meta.addAttributeModifier(Attribute.ATTACK_SPEED, modifier);
         AttributeModifier modifier2 = new AttributeModifier(UUID.randomUUID(), "Attack Damage", dmg, AttributeModifier.Operation.ADD_NUMBER, EquipmentSlot.HAND);
-        meta.addAttributeModifier(Attribute.GENERIC_ATTACK_DAMAGE, modifier2);
-        meta.setDisplayName(ChatColor.translateAlternateColorCodes((char)'&', (String)this.getConfig().getString("dEmeraldRapier.name")));
+        meta.addAttributeModifier(Attribute.ATTACK_DAMAGE, modifier2);
+        meta.setDisplayName(convertLegacyToSection(this.getConfig().getString("dEmeraldRapier.name")));
         meta.setCustomModelData(Integer.valueOf(1000015));
         if (this.getConfig().getString("EnchantsOnEmeraldGear") == "true") {
             int num = this.getConfig().getInt("EmeraldGearEnchantLevels.Unbreaking");
@@ -1709,16 +1648,16 @@ implements Listener {
         ItemStack item = new ItemStack(Material.DIAMOND_SWORD);
         ItemMeta meta = item.getItemMeta();
         ArrayList<String> lore = new ArrayList<String>();
-        lore.add(ChatColor.translateAlternateColorCodes((char)'&', (String)this.getConfig().getString("RapierDescription.line1")));
-        lore.add(ChatColor.translateAlternateColorCodes((char)'&', (String)this.getConfig().getString("RapierDescription.line2")));
-        lore.add(ChatColor.translateAlternateColorCodes((char)'&', (String)this.getConfig().getString("RapierDescription.line3")));
-        lore.add(ChatColor.translateAlternateColorCodes((char)'&', (String)this.getConfig().getString("RapierDescription.line4")));
-        lore.add(ChatColor.translateAlternateColorCodes((char)'&', (String)this.getConfig().getString("RapierDescription.line5")));
-        lore.add(ChatColor.translateAlternateColorCodes((char)'&', (String)this.getConfig().getString("RapierDescription.line6")));
-        lore.add(ChatColor.translateAlternateColorCodes((char)'&', (String)this.getConfig().getString("RapierDescription.line7")));
-        lore.add(ChatColor.translateAlternateColorCodes((char)'&', (String)this.getConfig().getString("dDiamondRapier.line8")));
-        lore.add(ChatColor.translateAlternateColorCodes((char)'&', (String)this.getConfig().getString("dDiamondRapier.line9")));
-        lore.add(ChatColor.translateAlternateColorCodes((char)'&', (String)this.getConfig().getString("dDiamondRapier.line10")));
+        lore.add(convertLegacyToSection(this.getConfig().getString("RapierDescription.line1")));
+        lore.add(convertLegacyToSection(this.getConfig().getString("RapierDescription.line2")));
+        lore.add(convertLegacyToSection(this.getConfig().getString("RapierDescription.line3")));
+        lore.add(convertLegacyToSection(this.getConfig().getString("RapierDescription.line4")));
+        lore.add(convertLegacyToSection(this.getConfig().getString("RapierDescription.line5")));
+        lore.add(convertLegacyToSection(this.getConfig().getString("RapierDescription.line6")));
+        lore.add(convertLegacyToSection(this.getConfig().getString("RapierDescription.line7")));
+        lore.add(convertLegacyToSection(this.getConfig().getString("dDiamondRapier.line8")));
+        lore.add(convertLegacyToSection(this.getConfig().getString("dDiamondRapier.line9")));
+        lore.add(convertLegacyToSection(this.getConfig().getString("dDiamondRapier.line10")));
         meta.setLore(lore);
         meta.addItemFlags(new ItemFlag[]{ItemFlag.HIDE_ATTRIBUTES});
         double dmg = 4.0;
@@ -1728,10 +1667,10 @@ implements Listener {
             spd = this.getConfig().getDouble("aDiamondRapier.speed") - 4.0;
         }
         AttributeModifier modifier = new AttributeModifier(UUID.randomUUID(), "Attack Speed", spd, AttributeModifier.Operation.ADD_NUMBER, EquipmentSlot.HAND);
-        meta.addAttributeModifier(Attribute.GENERIC_ATTACK_SPEED, modifier);
+        meta.addAttributeModifier(Attribute.ATTACK_SPEED, modifier);
         AttributeModifier modifier2 = new AttributeModifier(UUID.randomUUID(), "Attack Damage", dmg, AttributeModifier.Operation.ADD_NUMBER, EquipmentSlot.HAND);
-        meta.addAttributeModifier(Attribute.GENERIC_ATTACK_DAMAGE, modifier2);
-        meta.setDisplayName(ChatColor.translateAlternateColorCodes((char)'&', (String)this.getConfig().getString("dDiamondRapier.name")));
+        meta.addAttributeModifier(Attribute.ATTACK_DAMAGE, modifier2);
+        meta.setDisplayName(convertLegacyToSection(this.getConfig().getString("dDiamondRapier.name")));
         meta.setCustomModelData(Integer.valueOf(1000005));
         item.setItemMeta(meta);
         NamespacedKey key = new NamespacedKey((Plugin)this, "diamond_rapier");
@@ -1747,16 +1686,16 @@ implements Listener {
         ItemStack item = new ItemStack(Material.NETHERITE_SWORD);
         ItemMeta meta = item.getItemMeta();
         ArrayList<String> lore = new ArrayList<String>();
-        lore.add(ChatColor.translateAlternateColorCodes((char)'&', (String)this.getConfig().getString("RapierDescription.line1")));
-        lore.add(ChatColor.translateAlternateColorCodes((char)'&', (String)this.getConfig().getString("RapierDescription.line2")));
-        lore.add(ChatColor.translateAlternateColorCodes((char)'&', (String)this.getConfig().getString("RapierDescription.line3")));
-        lore.add(ChatColor.translateAlternateColorCodes((char)'&', (String)this.getConfig().getString("RapierDescription.line4")));
-        lore.add(ChatColor.translateAlternateColorCodes((char)'&', (String)this.getConfig().getString("RapierDescription.line5")));
-        lore.add(ChatColor.translateAlternateColorCodes((char)'&', (String)this.getConfig().getString("RapierDescription.line6")));
-        lore.add(ChatColor.translateAlternateColorCodes((char)'&', (String)this.getConfig().getString("RapierDescription.line7")));
-        lore.add(ChatColor.translateAlternateColorCodes((char)'&', (String)this.getConfig().getString("dNetheriteRapier.line8")));
-        lore.add(ChatColor.translateAlternateColorCodes((char)'&', (String)this.getConfig().getString("dNetheriteRapier.line9")));
-        lore.add(ChatColor.translateAlternateColorCodes((char)'&', (String)this.getConfig().getString("dNetheriteRapier.line10")));
+        lore.add(convertLegacyToSection(this.getConfig().getString("RapierDescription.line1")));
+        lore.add(convertLegacyToSection(this.getConfig().getString("RapierDescription.line2")));
+        lore.add(convertLegacyToSection(this.getConfig().getString("RapierDescription.line3")));
+        lore.add(convertLegacyToSection(this.getConfig().getString("RapierDescription.line4")));
+        lore.add(convertLegacyToSection(this.getConfig().getString("RapierDescription.line5")));
+        lore.add(convertLegacyToSection(this.getConfig().getString("RapierDescription.line6")));
+        lore.add(convertLegacyToSection(this.getConfig().getString("RapierDescription.line7")));
+        lore.add(convertLegacyToSection(this.getConfig().getString("dNetheriteRapier.line8")));
+        lore.add(convertLegacyToSection(this.getConfig().getString("dNetheriteRapier.line9")));
+        lore.add(convertLegacyToSection(this.getConfig().getString("dNetheriteRapier.line10")));
         meta.setLore(lore);
         meta.addItemFlags(new ItemFlag[]{ItemFlag.HIDE_ATTRIBUTES});
         double dmg = 5.0;
@@ -1766,10 +1705,10 @@ implements Listener {
             spd = this.getConfig().getDouble("aNetheriteRapier.speed") - 4.0;
         }
         AttributeModifier modifier = new AttributeModifier(UUID.randomUUID(), "Attack Speed", spd, AttributeModifier.Operation.ADD_NUMBER, EquipmentSlot.HAND);
-        meta.addAttributeModifier(Attribute.GENERIC_ATTACK_SPEED, modifier);
+        meta.addAttributeModifier(Attribute.ATTACK_SPEED, modifier);
         AttributeModifier modifier2 = new AttributeModifier(UUID.randomUUID(), "Attack Damage", dmg, AttributeModifier.Operation.ADD_NUMBER, EquipmentSlot.HAND);
-        meta.addAttributeModifier(Attribute.GENERIC_ATTACK_DAMAGE, modifier2);
-        meta.setDisplayName(ChatColor.translateAlternateColorCodes((char)'&', (String)this.getConfig().getString("dNetheriteRapier.name")));
+        meta.addAttributeModifier(Attribute.ATTACK_DAMAGE, modifier2);
+        meta.setDisplayName(convertLegacyToSection(this.getConfig().getString("dNetheriteRapier.name")));
         meta.setCustomModelData(Integer.valueOf(1000005));
         item.setItemMeta(meta);
         NamespacedKey key = new NamespacedKey((Plugin)this, "netherite_rapier");
@@ -1790,14 +1729,14 @@ implements Listener {
         ItemStack item = new ItemStack(Material.WOODEN_SWORD);
         ItemMeta meta = item.getItemMeta();
         ArrayList<String> lore = new ArrayList<String>();
-        lore.add(ChatColor.translateAlternateColorCodes((char)'&', (String)this.getConfig().getString("LongswordDescription.line1")));
-        lore.add(ChatColor.translateAlternateColorCodes((char)'&', (String)this.getConfig().getString("LongswordDescription.line2")));
-        lore.add(ChatColor.translateAlternateColorCodes((char)'&', (String)this.getConfig().getString("LongswordDescription.line3")));
-        lore.add(ChatColor.translateAlternateColorCodes((char)'&', (String)this.getConfig().getString("LongswordDescription.line4")));
-        lore.add(ChatColor.translateAlternateColorCodes((char)'&', (String)this.getConfig().getString("LongswordDescription.line5")));
-        lore.add(ChatColor.translateAlternateColorCodes((char)'&', (String)this.getConfig().getString("dWoodenLongsword.line6")));
-        lore.add(ChatColor.translateAlternateColorCodes((char)'&', (String)this.getConfig().getString("dWoodenLongsword.line7")));
-        lore.add(ChatColor.translateAlternateColorCodes((char)'&', (String)this.getConfig().getString("dWoodenLongsword.line8")));
+        lore.add(convertLegacyToSection(this.getConfig().getString("LongswordDescription.line1")));
+        lore.add(convertLegacyToSection(this.getConfig().getString("LongswordDescription.line2")));
+        lore.add(convertLegacyToSection(this.getConfig().getString("LongswordDescription.line3")));
+        lore.add(convertLegacyToSection(this.getConfig().getString("LongswordDescription.line4")));
+        lore.add(convertLegacyToSection(this.getConfig().getString("LongswordDescription.line5")));
+        lore.add(convertLegacyToSection(this.getConfig().getString("dWoodenLongsword.line6")));
+        lore.add(convertLegacyToSection(this.getConfig().getString("dWoodenLongsword.line7")));
+        lore.add(convertLegacyToSection(this.getConfig().getString("dWoodenLongsword.line8")));
         meta.setLore(lore);
         meta.addItemFlags(new ItemFlag[]{ItemFlag.HIDE_ATTRIBUTES});
         double dmg = 4.0;
@@ -1807,10 +1746,10 @@ implements Listener {
             spd = this.getConfig().getDouble("aWoodenLongsword.speed") - 4.0;
         }
         AttributeModifier modifier = new AttributeModifier(UUID.randomUUID(), "Attack Speed", spd, AttributeModifier.Operation.ADD_NUMBER, EquipmentSlot.HAND);
-        meta.addAttributeModifier(Attribute.GENERIC_ATTACK_SPEED, modifier);
+        meta.addAttributeModifier(Attribute.ATTACK_SPEED, modifier);
         AttributeModifier modifier2 = new AttributeModifier(UUID.randomUUID(), "Attack Damage", dmg, AttributeModifier.Operation.ADD_NUMBER, EquipmentSlot.HAND);
-        meta.addAttributeModifier(Attribute.GENERIC_ATTACK_DAMAGE, modifier2);
-        meta.setDisplayName(ChatColor.translateAlternateColorCodes((char)'&', (String)this.getConfig().getString("dWoodenLongsword.name")));
+        meta.addAttributeModifier(Attribute.ATTACK_DAMAGE, modifier2);
+        meta.setDisplayName(convertLegacyToSection(this.getConfig().getString("dWoodenLongsword.name")));
         meta.setCustomModelData(Integer.valueOf(1000001));
         item.setItemMeta(meta);
         NamespacedKey key = new NamespacedKey((Plugin)this, "wooden_longsword");
@@ -1825,14 +1764,14 @@ implements Listener {
         ItemStack item = new ItemStack(Material.STONE_SWORD);
         ItemMeta meta = item.getItemMeta();
         ArrayList<String> lore = new ArrayList<String>();
-        lore.add(ChatColor.translateAlternateColorCodes((char)'&', (String)this.getConfig().getString("LongswordDescription.line1")));
-        lore.add(ChatColor.translateAlternateColorCodes((char)'&', (String)this.getConfig().getString("LongswordDescription.line2")));
-        lore.add(ChatColor.translateAlternateColorCodes((char)'&', (String)this.getConfig().getString("LongswordDescription.line3")));
-        lore.add(ChatColor.translateAlternateColorCodes((char)'&', (String)this.getConfig().getString("LongswordDescription.line4")));
-        lore.add(ChatColor.translateAlternateColorCodes((char)'&', (String)this.getConfig().getString("LongswordDescription.line5")));
-        lore.add(ChatColor.translateAlternateColorCodes((char)'&', (String)this.getConfig().getString("dStoneLongsword.line6")));
-        lore.add(ChatColor.translateAlternateColorCodes((char)'&', (String)this.getConfig().getString("dStoneLongsword.line7")));
-        lore.add(ChatColor.translateAlternateColorCodes((char)'&', (String)this.getConfig().getString("dStoneLongsword.line8")));
+        lore.add(convertLegacyToSection(this.getConfig().getString("LongswordDescription.line1")));
+        lore.add(convertLegacyToSection(this.getConfig().getString("LongswordDescription.line2")));
+        lore.add(convertLegacyToSection(this.getConfig().getString("LongswordDescription.line3")));
+        lore.add(convertLegacyToSection(this.getConfig().getString("LongswordDescription.line4")));
+        lore.add(convertLegacyToSection(this.getConfig().getString("LongswordDescription.line5")));
+        lore.add(convertLegacyToSection(this.getConfig().getString("dStoneLongsword.line6")));
+        lore.add(convertLegacyToSection(this.getConfig().getString("dStoneLongsword.line7")));
+        lore.add(convertLegacyToSection(this.getConfig().getString("dStoneLongsword.line8")));
         meta.setLore(lore);
         meta.addItemFlags(new ItemFlag[]{ItemFlag.HIDE_ATTRIBUTES});
         double dmg = 5.0;
@@ -1842,10 +1781,10 @@ implements Listener {
             spd = this.getConfig().getDouble("aStoneLongsword.speed") - 4.0;
         }
         AttributeModifier modifier = new AttributeModifier(UUID.randomUUID(), "Attack Speed", spd, AttributeModifier.Operation.ADD_NUMBER, EquipmentSlot.HAND);
-        meta.addAttributeModifier(Attribute.GENERIC_ATTACK_SPEED, modifier);
+        meta.addAttributeModifier(Attribute.ATTACK_SPEED, modifier);
         AttributeModifier modifier2 = new AttributeModifier(UUID.randomUUID(), "Attack Damage", dmg, AttributeModifier.Operation.ADD_NUMBER, EquipmentSlot.HAND);
-        meta.addAttributeModifier(Attribute.GENERIC_ATTACK_DAMAGE, modifier2);
-        meta.setDisplayName(ChatColor.translateAlternateColorCodes((char)'&', (String)this.getConfig().getString("dStoneLongsword.name")));
+        meta.addAttributeModifier(Attribute.ATTACK_DAMAGE, modifier2);
+        meta.setDisplayName(convertLegacyToSection(this.getConfig().getString("dStoneLongsword.name")));
         meta.setCustomModelData(Integer.valueOf(1000001));
         item.setItemMeta(meta);
         NamespacedKey key = new NamespacedKey((Plugin)this, "stone_longsword");
@@ -1861,14 +1800,14 @@ implements Listener {
         ItemStack item = new ItemStack(Material.GOLDEN_SWORD);
         ItemMeta meta = item.getItemMeta();
         ArrayList<String> lore = new ArrayList<String>();
-        lore.add(ChatColor.translateAlternateColorCodes((char)'&', (String)this.getConfig().getString("LongswordDescription.line1")));
-        lore.add(ChatColor.translateAlternateColorCodes((char)'&', (String)this.getConfig().getString("LongswordDescription.line2")));
-        lore.add(ChatColor.translateAlternateColorCodes((char)'&', (String)this.getConfig().getString("LongswordDescription.line3")));
-        lore.add(ChatColor.translateAlternateColorCodes((char)'&', (String)this.getConfig().getString("LongswordDescription.line4")));
-        lore.add(ChatColor.translateAlternateColorCodes((char)'&', (String)this.getConfig().getString("LongswordDescription.line5")));
-        lore.add(ChatColor.translateAlternateColorCodes((char)'&', (String)this.getConfig().getString("dGoldenLongsword.line6")));
-        lore.add(ChatColor.translateAlternateColorCodes((char)'&', (String)this.getConfig().getString("dGoldenLongsword.line7")));
-        lore.add(ChatColor.translateAlternateColorCodes((char)'&', (String)this.getConfig().getString("dGoldenLongsword.line8")));
+        lore.add(convertLegacyToSection(this.getConfig().getString("LongswordDescription.line1")));
+        lore.add(convertLegacyToSection(this.getConfig().getString("LongswordDescription.line2")));
+        lore.add(convertLegacyToSection(this.getConfig().getString("LongswordDescription.line3")));
+        lore.add(convertLegacyToSection(this.getConfig().getString("LongswordDescription.line4")));
+        lore.add(convertLegacyToSection(this.getConfig().getString("LongswordDescription.line5")));
+        lore.add(convertLegacyToSection(this.getConfig().getString("dGoldenLongsword.line6")));
+        lore.add(convertLegacyToSection(this.getConfig().getString("dGoldenLongsword.line7")));
+        lore.add(convertLegacyToSection(this.getConfig().getString("dGoldenLongsword.line8")));
         meta.setLore(lore);
         meta.addItemFlags(new ItemFlag[]{ItemFlag.HIDE_ATTRIBUTES});
         double dmg = 4.0;
@@ -1878,10 +1817,10 @@ implements Listener {
             spd = this.getConfig().getDouble("aGoldenLongsword.speed") - 4.0;
         }
         AttributeModifier modifier = new AttributeModifier(UUID.randomUUID(), "Attack Speed", spd, AttributeModifier.Operation.ADD_NUMBER, EquipmentSlot.HAND);
-        meta.addAttributeModifier(Attribute.GENERIC_ATTACK_SPEED, modifier);
+        meta.addAttributeModifier(Attribute.ATTACK_SPEED, modifier);
         AttributeModifier modifier2 = new AttributeModifier(UUID.randomUUID(), "Attack Damage", dmg, AttributeModifier.Operation.ADD_NUMBER, EquipmentSlot.HAND);
-        meta.addAttributeModifier(Attribute.GENERIC_ATTACK_DAMAGE, modifier2);
-        meta.setDisplayName(ChatColor.translateAlternateColorCodes((char)'&', (String)this.getConfig().getString("dGoldenLongsword.name")));
+        meta.addAttributeModifier(Attribute.ATTACK_DAMAGE, modifier2);
+        meta.setDisplayName(convertLegacyToSection(this.getConfig().getString("dGoldenLongsword.name")));
         meta.setCustomModelData(Integer.valueOf(1000001));
         item.setItemMeta(meta);
         NamespacedKey key = new NamespacedKey((Plugin)this, "golden_longsword");
@@ -1897,14 +1836,14 @@ implements Listener {
         ItemStack item = new ItemStack(Material.IRON_SWORD);
         ItemMeta meta = item.getItemMeta();
         ArrayList<String> lore = new ArrayList<String>();
-        lore.add(ChatColor.translateAlternateColorCodes((char)'&', (String)this.getConfig().getString("LongswordDescription.line1")));
-        lore.add(ChatColor.translateAlternateColorCodes((char)'&', (String)this.getConfig().getString("LongswordDescription.line2")));
-        lore.add(ChatColor.translateAlternateColorCodes((char)'&', (String)this.getConfig().getString("LongswordDescription.line3")));
-        lore.add(ChatColor.translateAlternateColorCodes((char)'&', (String)this.getConfig().getString("LongswordDescription.line4")));
-        lore.add(ChatColor.translateAlternateColorCodes((char)'&', (String)this.getConfig().getString("LongswordDescription.line5")));
-        lore.add(ChatColor.translateAlternateColorCodes((char)'&', (String)this.getConfig().getString("dIronLongsword.line6")));
-        lore.add(ChatColor.translateAlternateColorCodes((char)'&', (String)this.getConfig().getString("dIronLongsword.line7")));
-        lore.add(ChatColor.translateAlternateColorCodes((char)'&', (String)this.getConfig().getString("dIronLongsword.line8")));
+        lore.add(convertLegacyToSection(this.getConfig().getString("LongswordDescription.line1")));
+        lore.add(convertLegacyToSection(this.getConfig().getString("LongswordDescription.line2")));
+        lore.add(convertLegacyToSection(this.getConfig().getString("LongswordDescription.line3")));
+        lore.add(convertLegacyToSection(this.getConfig().getString("LongswordDescription.line4")));
+        lore.add(convertLegacyToSection(this.getConfig().getString("LongswordDescription.line5")));
+        lore.add(convertLegacyToSection(this.getConfig().getString("dIronLongsword.line6")));
+        lore.add(convertLegacyToSection(this.getConfig().getString("dIronLongsword.line7")));
+        lore.add(convertLegacyToSection(this.getConfig().getString("dIronLongsword.line8")));
         meta.setLore(lore);
         meta.addItemFlags(new ItemFlag[]{ItemFlag.HIDE_ATTRIBUTES});
         double dmg = 6.0;
@@ -1914,10 +1853,10 @@ implements Listener {
             spd = this.getConfig().getDouble("aIronLongsword.speed") - 4.0;
         }
         AttributeModifier modifier = new AttributeModifier(UUID.randomUUID(), "Attack Speed", spd, AttributeModifier.Operation.ADD_NUMBER, EquipmentSlot.HAND);
-        meta.addAttributeModifier(Attribute.GENERIC_ATTACK_SPEED, modifier);
+        meta.addAttributeModifier(Attribute.ATTACK_SPEED, modifier);
         AttributeModifier modifier2 = new AttributeModifier(UUID.randomUUID(), "Attack Damage", dmg, AttributeModifier.Operation.ADD_NUMBER, EquipmentSlot.HAND);
-        meta.addAttributeModifier(Attribute.GENERIC_ATTACK_DAMAGE, modifier2);
-        meta.setDisplayName(ChatColor.translateAlternateColorCodes((char)'&', (String)this.getConfig().getString("dIronLongsword.name")));
+        meta.addAttributeModifier(Attribute.ATTACK_DAMAGE, modifier2);
+        meta.setDisplayName(convertLegacyToSection(this.getConfig().getString("dIronLongsword.name")));
         meta.setCustomModelData(Integer.valueOf(1000001));
         item.setItemMeta(meta);
         NamespacedKey key = new NamespacedKey((Plugin)this, "iron_longsword");
@@ -1933,14 +1872,14 @@ implements Listener {
         ItemStack item = new ItemStack(Material.GOLDEN_SWORD);
         ItemMeta meta = item.getItemMeta();
         ArrayList<String> lore = new ArrayList<String>();
-        lore.add(ChatColor.translateAlternateColorCodes((char)'&', (String)this.getConfig().getString("LongswordDescription.line1")));
-        lore.add(ChatColor.translateAlternateColorCodes((char)'&', (String)this.getConfig().getString("LongswordDescription.line2")));
-        lore.add(ChatColor.translateAlternateColorCodes((char)'&', (String)this.getConfig().getString("LongswordDescription.line3")));
-        lore.add(ChatColor.translateAlternateColorCodes((char)'&', (String)this.getConfig().getString("LongswordDescription.line4")));
-        lore.add(ChatColor.translateAlternateColorCodes((char)'&', (String)this.getConfig().getString("LongswordDescription.line5")));
-        lore.add(ChatColor.translateAlternateColorCodes((char)'&', (String)this.getConfig().getString("dEmeraldLongsword.line6")));
-        lore.add(ChatColor.translateAlternateColorCodes((char)'&', (String)this.getConfig().getString("dEmeraldLongsword.line7")));
-        lore.add(ChatColor.translateAlternateColorCodes((char)'&', (String)this.getConfig().getString("dEmeraldLongsword.line8")));
+        lore.add(convertLegacyToSection(this.getConfig().getString("LongswordDescription.line1")));
+        lore.add(convertLegacyToSection(this.getConfig().getString("LongswordDescription.line2")));
+        lore.add(convertLegacyToSection(this.getConfig().getString("LongswordDescription.line3")));
+        lore.add(convertLegacyToSection(this.getConfig().getString("LongswordDescription.line4")));
+        lore.add(convertLegacyToSection(this.getConfig().getString("LongswordDescription.line5")));
+        lore.add(convertLegacyToSection(this.getConfig().getString("dEmeraldLongsword.line6")));
+        lore.add(convertLegacyToSection(this.getConfig().getString("dEmeraldLongsword.line7")));
+        lore.add(convertLegacyToSection(this.getConfig().getString("dEmeraldLongsword.line8")));
         meta.setLore(lore);
         meta.addItemFlags(new ItemFlag[]{ItemFlag.HIDE_ATTRIBUTES});
         double dmg = 6.0;
@@ -1950,10 +1889,10 @@ implements Listener {
             spd = this.getConfig().getDouble("aEmeraldLongsword.speed") - 4.0;
         }
         AttributeModifier modifier = new AttributeModifier(UUID.randomUUID(), "Attack Speed", spd, AttributeModifier.Operation.ADD_NUMBER, EquipmentSlot.HAND);
-        meta.addAttributeModifier(Attribute.GENERIC_ATTACK_SPEED, modifier);
+        meta.addAttributeModifier(Attribute.ATTACK_SPEED, modifier);
         AttributeModifier modifier2 = new AttributeModifier(UUID.randomUUID(), "Attack Damage", dmg, AttributeModifier.Operation.ADD_NUMBER, EquipmentSlot.HAND);
-        meta.addAttributeModifier(Attribute.GENERIC_ATTACK_DAMAGE, modifier2);
-        meta.setDisplayName(ChatColor.translateAlternateColorCodes((char)'&', (String)this.getConfig().getString("dEmeraldLongsword.name")));
+        meta.addAttributeModifier(Attribute.ATTACK_DAMAGE, modifier2);
+        meta.setDisplayName(convertLegacyToSection(this.getConfig().getString("dEmeraldLongsword.name")));
         meta.setCustomModelData(Integer.valueOf(1000011));
         if (this.getConfig().getString("EnchantsOnEmeraldGear") == "true") {
             int num = this.getConfig().getInt("EmeraldGearEnchantLevels.Unbreaking");
@@ -1975,14 +1914,14 @@ implements Listener {
         ItemStack item = new ItemStack(Material.DIAMOND_SWORD);
         ItemMeta meta = item.getItemMeta();
         ArrayList<String> lore = new ArrayList<String>();
-        lore.add(ChatColor.translateAlternateColorCodes((char)'&', (String)this.getConfig().getString("LongswordDescription.line1")));
-        lore.add(ChatColor.translateAlternateColorCodes((char)'&', (String)this.getConfig().getString("LongswordDescription.line2")));
-        lore.add(ChatColor.translateAlternateColorCodes((char)'&', (String)this.getConfig().getString("LongswordDescription.line3")));
-        lore.add(ChatColor.translateAlternateColorCodes((char)'&', (String)this.getConfig().getString("LongswordDescription.line4")));
-        lore.add(ChatColor.translateAlternateColorCodes((char)'&', (String)this.getConfig().getString("LongswordDescription.line5")));
-        lore.add(ChatColor.translateAlternateColorCodes((char)'&', (String)this.getConfig().getString("dDiamondLongsword.line6")));
-        lore.add(ChatColor.translateAlternateColorCodes((char)'&', (String)this.getConfig().getString("dDiamondLongsword.line7")));
-        lore.add(ChatColor.translateAlternateColorCodes((char)'&', (String)this.getConfig().getString("dDiamondLongsword.line8")));
+        lore.add(convertLegacyToSection(this.getConfig().getString("LongswordDescription.line1")));
+        lore.add(convertLegacyToSection(this.getConfig().getString("LongswordDescription.line2")));
+        lore.add(convertLegacyToSection(this.getConfig().getString("LongswordDescription.line3")));
+        lore.add(convertLegacyToSection(this.getConfig().getString("LongswordDescription.line4")));
+        lore.add(convertLegacyToSection(this.getConfig().getString("LongswordDescription.line5")));
+        lore.add(convertLegacyToSection(this.getConfig().getString("dDiamondLongsword.line6")));
+        lore.add(convertLegacyToSection(this.getConfig().getString("dDiamondLongsword.line7")));
+        lore.add(convertLegacyToSection(this.getConfig().getString("dDiamondLongsword.line8")));
         meta.setLore(lore);
         meta.addItemFlags(new ItemFlag[]{ItemFlag.HIDE_ATTRIBUTES});
         double dmg = 7.0;
@@ -1992,10 +1931,10 @@ implements Listener {
             spd = this.getConfig().getDouble("aDiamondLongsword.speed") - 4.0;
         }
         AttributeModifier modifier = new AttributeModifier(UUID.randomUUID(), "Attack Speed", spd, AttributeModifier.Operation.ADD_NUMBER, EquipmentSlot.HAND);
-        meta.addAttributeModifier(Attribute.GENERIC_ATTACK_SPEED, modifier);
+        meta.addAttributeModifier(Attribute.ATTACK_SPEED, modifier);
         AttributeModifier modifier2 = new AttributeModifier(UUID.randomUUID(), "Attack Damage", dmg, AttributeModifier.Operation.ADD_NUMBER, EquipmentSlot.HAND);
-        meta.addAttributeModifier(Attribute.GENERIC_ATTACK_DAMAGE, modifier2);
-        meta.setDisplayName(ChatColor.translateAlternateColorCodes((char)'&', (String)this.getConfig().getString("dDiamondLongsword.name")));
+        meta.addAttributeModifier(Attribute.ATTACK_DAMAGE, modifier2);
+        meta.setDisplayName(convertLegacyToSection(this.getConfig().getString("dDiamondLongsword.name")));
         meta.setCustomModelData(Integer.valueOf(1000001));
         item.setItemMeta(meta);
         NamespacedKey key = new NamespacedKey((Plugin)this, "diamond_longsword");
@@ -2011,14 +1950,14 @@ implements Listener {
         ItemStack item = new ItemStack(Material.NETHERITE_SWORD);
         ItemMeta meta = item.getItemMeta();
         ArrayList<String> lore = new ArrayList<String>();
-        lore.add(ChatColor.translateAlternateColorCodes((char)'&', (String)this.getConfig().getString("LongswordDescription.line1")));
-        lore.add(ChatColor.translateAlternateColorCodes((char)'&', (String)this.getConfig().getString("LongswordDescription.line2")));
-        lore.add(ChatColor.translateAlternateColorCodes((char)'&', (String)this.getConfig().getString("LongswordDescription.line3")));
-        lore.add(ChatColor.translateAlternateColorCodes((char)'&', (String)this.getConfig().getString("LongswordDescription.line4")));
-        lore.add(ChatColor.translateAlternateColorCodes((char)'&', (String)this.getConfig().getString("LongswordDescription.line5")));
-        lore.add(ChatColor.translateAlternateColorCodes((char)'&', (String)this.getConfig().getString("dNetheriteLongsword.line6")));
-        lore.add(ChatColor.translateAlternateColorCodes((char)'&', (String)this.getConfig().getString("dNetheriteLongsword.line7")));
-        lore.add(ChatColor.translateAlternateColorCodes((char)'&', (String)this.getConfig().getString("dNetheriteLongsword.line8")));
+        lore.add(convertLegacyToSection(this.getConfig().getString("LongswordDescription.line1")));
+        lore.add(convertLegacyToSection(this.getConfig().getString("LongswordDescription.line2")));
+        lore.add(convertLegacyToSection(this.getConfig().getString("LongswordDescription.line3")));
+        lore.add(convertLegacyToSection(this.getConfig().getString("LongswordDescription.line4")));
+        lore.add(convertLegacyToSection(this.getConfig().getString("LongswordDescription.line5")));
+        lore.add(convertLegacyToSection(this.getConfig().getString("dNetheriteLongsword.line6")));
+        lore.add(convertLegacyToSection(this.getConfig().getString("dNetheriteLongsword.line7")));
+        lore.add(convertLegacyToSection(this.getConfig().getString("dNetheriteLongsword.line8")));
         meta.setLore(lore);
         meta.addItemFlags(new ItemFlag[]{ItemFlag.HIDE_ATTRIBUTES});
         double dmg = 8.0;
@@ -2028,10 +1967,10 @@ implements Listener {
             spd = this.getConfig().getDouble("aNetheriteLongsword.speed") - 4.0;
         }
         AttributeModifier modifier = new AttributeModifier(UUID.randomUUID(), "Attack Speed", spd, AttributeModifier.Operation.ADD_NUMBER, EquipmentSlot.HAND);
-        meta.addAttributeModifier(Attribute.GENERIC_ATTACK_SPEED, modifier);
+        meta.addAttributeModifier(Attribute.ATTACK_SPEED, modifier);
         AttributeModifier modifier2 = new AttributeModifier(UUID.randomUUID(), "Attack Damage", dmg, AttributeModifier.Operation.ADD_NUMBER, EquipmentSlot.HAND);
-        meta.addAttributeModifier(Attribute.GENERIC_ATTACK_DAMAGE, modifier2);
-        meta.setDisplayName(ChatColor.translateAlternateColorCodes((char)'&', (String)this.getConfig().getString("dNetheriteLongsword.name")));
+        meta.addAttributeModifier(Attribute.ATTACK_DAMAGE, modifier2);
+        meta.setDisplayName(convertLegacyToSection(this.getConfig().getString("dNetheriteLongsword.name")));
         meta.setCustomModelData(Integer.valueOf(1000001));
         item.setItemMeta(meta);
         NamespacedKey key = new NamespacedKey((Plugin)this, "netherite_longsword");
@@ -2052,15 +1991,15 @@ implements Listener {
         ItemStack item = new ItemStack(Material.WOODEN_SWORD);
         ItemMeta meta = item.getItemMeta();
         ArrayList<String> lore = new ArrayList<String>();
-        lore.add(ChatColor.translateAlternateColorCodes((char)'&', (String)this.getConfig().getString("KnifeDescription.line1")));
-        lore.add(ChatColor.translateAlternateColorCodes((char)'&', (String)this.getConfig().getString("KnifeDescription.line2")));
-        lore.add(ChatColor.translateAlternateColorCodes((char)'&', (String)this.getConfig().getString("KnifeDescription.line3")));
-        lore.add(ChatColor.translateAlternateColorCodes((char)'&', (String)this.getConfig().getString("KnifeDescription.line4")));
-        lore.add(ChatColor.translateAlternateColorCodes((char)'&', (String)this.getConfig().getString("KnifeDescription.line5")));
-        lore.add(ChatColor.translateAlternateColorCodes((char)'&', (String)this.getConfig().getString("KnifeDescription.line6")));
-        lore.add(ChatColor.translateAlternateColorCodes((char)'&', (String)this.getConfig().getString("dWoodenKnife.line7")));
-        lore.add(ChatColor.translateAlternateColorCodes((char)'&', (String)this.getConfig().getString("dWoodenKnife.line8")));
-        lore.add(ChatColor.translateAlternateColorCodes((char)'&', (String)this.getConfig().getString("dWoodenKnife.line9")));
+        lore.add(convertLegacyToSection(this.getConfig().getString("KnifeDescription.line1")));
+        lore.add(convertLegacyToSection(this.getConfig().getString("KnifeDescription.line2")));
+        lore.add(convertLegacyToSection(this.getConfig().getString("KnifeDescription.line3")));
+        lore.add(convertLegacyToSection(this.getConfig().getString("KnifeDescription.line4")));
+        lore.add(convertLegacyToSection(this.getConfig().getString("KnifeDescription.line5")));
+        lore.add(convertLegacyToSection(this.getConfig().getString("KnifeDescription.line6")));
+        lore.add(convertLegacyToSection(this.getConfig().getString("dWoodenKnife.line7")));
+        lore.add(convertLegacyToSection(this.getConfig().getString("dWoodenKnife.line8")));
+        lore.add(convertLegacyToSection(this.getConfig().getString("dWoodenKnife.line9")));
         meta.setLore(lore);
         meta.addItemFlags(new ItemFlag[]{ItemFlag.HIDE_ATTRIBUTES});
         double dmg = 1.0;
@@ -2070,10 +2009,10 @@ implements Listener {
             spd = this.getConfig().getDouble("aWoodenKnife.speed") - 4.0;
         }
         AttributeModifier modifier = new AttributeModifier(UUID.randomUUID(), "Attack Speed", spd, AttributeModifier.Operation.ADD_NUMBER, EquipmentSlot.HAND);
-        meta.addAttributeModifier(Attribute.GENERIC_ATTACK_SPEED, modifier);
+        meta.addAttributeModifier(Attribute.ATTACK_SPEED, modifier);
         AttributeModifier modifier2 = new AttributeModifier(UUID.randomUUID(), "Attack Damage", dmg, AttributeModifier.Operation.ADD_NUMBER, EquipmentSlot.HAND);
-        meta.addAttributeModifier(Attribute.GENERIC_ATTACK_DAMAGE, modifier2);
-        meta.setDisplayName(ChatColor.translateAlternateColorCodes((char)'&', (String)this.getConfig().getString("dWoodenKnife.name")));
+        meta.addAttributeModifier(Attribute.ATTACK_DAMAGE, modifier2);
+        meta.setDisplayName(convertLegacyToSection(this.getConfig().getString("dWoodenKnife.name")));
         meta.setCustomModelData(Integer.valueOf(1000006));
         item.setItemMeta(meta);
         NamespacedKey key = new NamespacedKey((Plugin)this, "wooden_knife");
@@ -2088,15 +2027,15 @@ implements Listener {
         ItemStack item = new ItemStack(Material.STONE_SWORD);
         ItemMeta meta = item.getItemMeta();
         ArrayList<String> lore = new ArrayList<String>();
-        lore.add(ChatColor.translateAlternateColorCodes((char)'&', (String)this.getConfig().getString("KnifeDescription.line1")));
-        lore.add(ChatColor.translateAlternateColorCodes((char)'&', (String)this.getConfig().getString("KnifeDescription.line2")));
-        lore.add(ChatColor.translateAlternateColorCodes((char)'&', (String)this.getConfig().getString("KnifeDescription.line3")));
-        lore.add(ChatColor.translateAlternateColorCodes((char)'&', (String)this.getConfig().getString("KnifeDescription.line4")));
-        lore.add(ChatColor.translateAlternateColorCodes((char)'&', (String)this.getConfig().getString("KnifeDescription.line5")));
-        lore.add(ChatColor.translateAlternateColorCodes((char)'&', (String)this.getConfig().getString("KnifeDescription.line6")));
-        lore.add(ChatColor.translateAlternateColorCodes((char)'&', (String)this.getConfig().getString("dStoneKnife.line7")));
-        lore.add(ChatColor.translateAlternateColorCodes((char)'&', (String)this.getConfig().getString("dStoneKnife.line8")));
-        lore.add(ChatColor.translateAlternateColorCodes((char)'&', (String)this.getConfig().getString("dStoneKnife.line9")));
+        lore.add(convertLegacyToSection(this.getConfig().getString("KnifeDescription.line1")));
+        lore.add(convertLegacyToSection(this.getConfig().getString("KnifeDescription.line2")));
+        lore.add(convertLegacyToSection(this.getConfig().getString("KnifeDescription.line3")));
+        lore.add(convertLegacyToSection(this.getConfig().getString("KnifeDescription.line4")));
+        lore.add(convertLegacyToSection(this.getConfig().getString("KnifeDescription.line5")));
+        lore.add(convertLegacyToSection(this.getConfig().getString("KnifeDescription.line6")));
+        lore.add(convertLegacyToSection(this.getConfig().getString("dStoneKnife.line7")));
+        lore.add(convertLegacyToSection(this.getConfig().getString("dStoneKnife.line8")));
+        lore.add(convertLegacyToSection(this.getConfig().getString("dStoneKnife.line9")));
         meta.setLore(lore);
         meta.addItemFlags(new ItemFlag[]{ItemFlag.HIDE_ATTRIBUTES});
         double dmg = 1.5;
@@ -2106,10 +2045,10 @@ implements Listener {
             spd = this.getConfig().getDouble("aStoneKnife.speed") - 4.0;
         }
         AttributeModifier modifier = new AttributeModifier(UUID.randomUUID(), "Attack Speed", spd, AttributeModifier.Operation.ADD_NUMBER, EquipmentSlot.HAND);
-        meta.addAttributeModifier(Attribute.GENERIC_ATTACK_SPEED, modifier);
+        meta.addAttributeModifier(Attribute.ATTACK_SPEED, modifier);
         AttributeModifier modifier2 = new AttributeModifier(UUID.randomUUID(), "Attack Damage", dmg, AttributeModifier.Operation.ADD_NUMBER, EquipmentSlot.HAND);
-        meta.addAttributeModifier(Attribute.GENERIC_ATTACK_DAMAGE, modifier2);
-        meta.setDisplayName(ChatColor.translateAlternateColorCodes((char)'&', (String)this.getConfig().getString("dStoneKnife.name")));
+        meta.addAttributeModifier(Attribute.ATTACK_DAMAGE, modifier2);
+        meta.setDisplayName(convertLegacyToSection(this.getConfig().getString("dStoneKnife.name")));
         meta.setCustomModelData(Integer.valueOf(1000006));
         item.setItemMeta(meta);
         NamespacedKey key = new NamespacedKey((Plugin)this, "stone_knife");
@@ -2125,15 +2064,15 @@ implements Listener {
         ItemStack item = new ItemStack(Material.GOLDEN_SWORD);
         ItemMeta meta = item.getItemMeta();
         ArrayList<String> lore = new ArrayList<String>();
-        lore.add(ChatColor.translateAlternateColorCodes((char)'&', (String)this.getConfig().getString("KnifeDescription.line1")));
-        lore.add(ChatColor.translateAlternateColorCodes((char)'&', (String)this.getConfig().getString("KnifeDescription.line2")));
-        lore.add(ChatColor.translateAlternateColorCodes((char)'&', (String)this.getConfig().getString("KnifeDescription.line3")));
-        lore.add(ChatColor.translateAlternateColorCodes((char)'&', (String)this.getConfig().getString("KnifeDescription.line4")));
-        lore.add(ChatColor.translateAlternateColorCodes((char)'&', (String)this.getConfig().getString("KnifeDescription.line5")));
-        lore.add(ChatColor.translateAlternateColorCodes((char)'&', (String)this.getConfig().getString("KnifeDescription.line6")));
-        lore.add(ChatColor.translateAlternateColorCodes((char)'&', (String)this.getConfig().getString("dGoldenKnife.line7")));
-        lore.add(ChatColor.translateAlternateColorCodes((char)'&', (String)this.getConfig().getString("dGoldenKnife.line8")));
-        lore.add(ChatColor.translateAlternateColorCodes((char)'&', (String)this.getConfig().getString("dGoldenKnife.line9")));
+        lore.add(convertLegacyToSection(this.getConfig().getString("KnifeDescription.line1")));
+        lore.add(convertLegacyToSection(this.getConfig().getString("KnifeDescription.line2")));
+        lore.add(convertLegacyToSection(this.getConfig().getString("KnifeDescription.line3")));
+        lore.add(convertLegacyToSection(this.getConfig().getString("KnifeDescription.line4")));
+        lore.add(convertLegacyToSection(this.getConfig().getString("KnifeDescription.line5")));
+        lore.add(convertLegacyToSection(this.getConfig().getString("KnifeDescription.line6")));
+        lore.add(convertLegacyToSection(this.getConfig().getString("dGoldenKnife.line7")));
+        lore.add(convertLegacyToSection(this.getConfig().getString("dGoldenKnife.line8")));
+        lore.add(convertLegacyToSection(this.getConfig().getString("dGoldenKnife.line9")));
         meta.setLore(lore);
         meta.addItemFlags(new ItemFlag[]{ItemFlag.HIDE_ATTRIBUTES});
         double dmg = 1.0;
@@ -2143,10 +2082,10 @@ implements Listener {
             spd = this.getConfig().getDouble("aGoldenKnife.speed") - 4.0;
         }
         AttributeModifier modifier = new AttributeModifier(UUID.randomUUID(), "Attack Speed", spd, AttributeModifier.Operation.ADD_NUMBER, EquipmentSlot.HAND);
-        meta.addAttributeModifier(Attribute.GENERIC_ATTACK_SPEED, modifier);
+        meta.addAttributeModifier(Attribute.ATTACK_SPEED, modifier);
         AttributeModifier modifier2 = new AttributeModifier(UUID.randomUUID(), "Attack Damage", dmg, AttributeModifier.Operation.ADD_NUMBER, EquipmentSlot.HAND);
-        meta.addAttributeModifier(Attribute.GENERIC_ATTACK_DAMAGE, modifier2);
-        meta.setDisplayName(ChatColor.translateAlternateColorCodes((char)'&', (String)this.getConfig().getString("dGoldenKnife.name")));
+        meta.addAttributeModifier(Attribute.ATTACK_DAMAGE, modifier2);
+        meta.setDisplayName(convertLegacyToSection(this.getConfig().getString("dGoldenKnife.name")));
         meta.setCustomModelData(Integer.valueOf(1000006));
         item.setItemMeta(meta);
         NamespacedKey key = new NamespacedKey((Plugin)this, "golden_knife");
@@ -2162,15 +2101,15 @@ implements Listener {
         ItemStack item = new ItemStack(Material.IRON_SWORD);
         ItemMeta meta = item.getItemMeta();
         ArrayList<String> lore = new ArrayList<String>();
-        lore.add(ChatColor.translateAlternateColorCodes((char)'&', (String)this.getConfig().getString("KnifeDescription.line1")));
-        lore.add(ChatColor.translateAlternateColorCodes((char)'&', (String)this.getConfig().getString("KnifeDescription.line2")));
-        lore.add(ChatColor.translateAlternateColorCodes((char)'&', (String)this.getConfig().getString("KnifeDescription.line3")));
-        lore.add(ChatColor.translateAlternateColorCodes((char)'&', (String)this.getConfig().getString("KnifeDescription.line4")));
-        lore.add(ChatColor.translateAlternateColorCodes((char)'&', (String)this.getConfig().getString("KnifeDescription.line5")));
-        lore.add(ChatColor.translateAlternateColorCodes((char)'&', (String)this.getConfig().getString("KnifeDescription.line6")));
-        lore.add(ChatColor.translateAlternateColorCodes((char)'&', (String)this.getConfig().getString("dIronKnife.line7")));
-        lore.add(ChatColor.translateAlternateColorCodes((char)'&', (String)this.getConfig().getString("dIronKnife.line8")));
-        lore.add(ChatColor.translateAlternateColorCodes((char)'&', (String)this.getConfig().getString("dIronKnife.line9")));
+        lore.add(convertLegacyToSection(this.getConfig().getString("KnifeDescription.line1")));
+        lore.add(convertLegacyToSection(this.getConfig().getString("KnifeDescription.line2")));
+        lore.add(convertLegacyToSection(this.getConfig().getString("KnifeDescription.line3")));
+        lore.add(convertLegacyToSection(this.getConfig().getString("KnifeDescription.line4")));
+        lore.add(convertLegacyToSection(this.getConfig().getString("KnifeDescription.line5")));
+        lore.add(convertLegacyToSection(this.getConfig().getString("KnifeDescription.line6")));
+        lore.add(convertLegacyToSection(this.getConfig().getString("dIronKnife.line7")));
+        lore.add(convertLegacyToSection(this.getConfig().getString("dIronKnife.line8")));
+        lore.add(convertLegacyToSection(this.getConfig().getString("dIronKnife.line9")));
         meta.setLore(lore);
         meta.addItemFlags(new ItemFlag[]{ItemFlag.HIDE_ATTRIBUTES});
         double dmg = 2.0;
@@ -2180,10 +2119,10 @@ implements Listener {
             spd = this.getConfig().getDouble("aIronKnife.speed") - 4.0;
         }
         AttributeModifier modifier = new AttributeModifier(UUID.randomUUID(), "Attack Speed", spd, AttributeModifier.Operation.ADD_NUMBER, EquipmentSlot.HAND);
-        meta.addAttributeModifier(Attribute.GENERIC_ATTACK_SPEED, modifier);
+        meta.addAttributeModifier(Attribute.ATTACK_SPEED, modifier);
         AttributeModifier modifier2 = new AttributeModifier(UUID.randomUUID(), "Attack Damage", dmg, AttributeModifier.Operation.ADD_NUMBER, EquipmentSlot.HAND);
-        meta.addAttributeModifier(Attribute.GENERIC_ATTACK_DAMAGE, modifier2);
-        meta.setDisplayName(ChatColor.translateAlternateColorCodes((char)'&', (String)this.getConfig().getString("dIronKnife.name")));
+        meta.addAttributeModifier(Attribute.ATTACK_DAMAGE, modifier2);
+        meta.setDisplayName(convertLegacyToSection(this.getConfig().getString("dIronKnife.name")));
         meta.setCustomModelData(Integer.valueOf(1000006));
         item.setItemMeta(meta);
         NamespacedKey key = new NamespacedKey((Plugin)this, "iron_knife");
@@ -2199,15 +2138,15 @@ implements Listener {
         ItemStack item = new ItemStack(Material.GOLDEN_SWORD);
         ItemMeta meta = item.getItemMeta();
         ArrayList<String> lore = new ArrayList<String>();
-        lore.add(ChatColor.translateAlternateColorCodes((char)'&', (String)this.getConfig().getString("KnifeDescription.line1")));
-        lore.add(ChatColor.translateAlternateColorCodes((char)'&', (String)this.getConfig().getString("KnifeDescription.line2")));
-        lore.add(ChatColor.translateAlternateColorCodes((char)'&', (String)this.getConfig().getString("KnifeDescription.line3")));
-        lore.add(ChatColor.translateAlternateColorCodes((char)'&', (String)this.getConfig().getString("KnifeDescription.line4")));
-        lore.add(ChatColor.translateAlternateColorCodes((char)'&', (String)this.getConfig().getString("KnifeDescription.line5")));
-        lore.add(ChatColor.translateAlternateColorCodes((char)'&', (String)this.getConfig().getString("KnifeDescription.line6")));
-        lore.add(ChatColor.translateAlternateColorCodes((char)'&', (String)this.getConfig().getString("dEmeraldKnife.line7")));
-        lore.add(ChatColor.translateAlternateColorCodes((char)'&', (String)this.getConfig().getString("dEmeraldKnife.line8")));
-        lore.add(ChatColor.translateAlternateColorCodes((char)'&', (String)this.getConfig().getString("dEmeraldKnife.line9")));
+        lore.add(convertLegacyToSection(this.getConfig().getString("KnifeDescription.line1")));
+        lore.add(convertLegacyToSection(this.getConfig().getString("KnifeDescription.line2")));
+        lore.add(convertLegacyToSection(this.getConfig().getString("KnifeDescription.line3")));
+        lore.add(convertLegacyToSection(this.getConfig().getString("KnifeDescription.line4")));
+        lore.add(convertLegacyToSection(this.getConfig().getString("KnifeDescription.line5")));
+        lore.add(convertLegacyToSection(this.getConfig().getString("KnifeDescription.line6")));
+        lore.add(convertLegacyToSection(this.getConfig().getString("dEmeraldKnife.line7")));
+        lore.add(convertLegacyToSection(this.getConfig().getString("dEmeraldKnife.line8")));
+        lore.add(convertLegacyToSection(this.getConfig().getString("dEmeraldKnife.line9")));
         meta.setLore(lore);
         meta.addItemFlags(new ItemFlag[]{ItemFlag.HIDE_ATTRIBUTES});
         double dmg = 2.0;
@@ -2217,10 +2156,10 @@ implements Listener {
             spd = this.getConfig().getDouble("aEmeraldKnife.speed") - 4.0;
         }
         AttributeModifier modifier = new AttributeModifier(UUID.randomUUID(), "Attack Speed", spd, AttributeModifier.Operation.ADD_NUMBER, EquipmentSlot.HAND);
-        meta.addAttributeModifier(Attribute.GENERIC_ATTACK_SPEED, modifier);
+        meta.addAttributeModifier(Attribute.ATTACK_SPEED, modifier);
         AttributeModifier modifier2 = new AttributeModifier(UUID.randomUUID(), "Attack Damage", dmg, AttributeModifier.Operation.ADD_NUMBER, EquipmentSlot.HAND);
-        meta.addAttributeModifier(Attribute.GENERIC_ATTACK_DAMAGE, modifier2);
-        meta.setDisplayName(ChatColor.translateAlternateColorCodes((char)'&', (String)this.getConfig().getString("dEmeraldKnife.name")));
+        meta.addAttributeModifier(Attribute.ATTACK_DAMAGE, modifier2);
+        meta.setDisplayName(convertLegacyToSection(this.getConfig().getString("dEmeraldKnife.name")));
         if (this.getConfig().getString("EnchantsOnEmeraldGear") == "true") {
             int num = this.getConfig().getInt("EmeraldGearEnchantLevels.Unbreaking");
             int num2 = this.getConfig().getInt("EmeraldGearEnchantLevels.Mending");
@@ -2242,15 +2181,15 @@ implements Listener {
         ItemStack item = new ItemStack(Material.DIAMOND_SWORD);
         ItemMeta meta = item.getItemMeta();
         ArrayList<String> lore = new ArrayList<String>();
-        lore.add(ChatColor.translateAlternateColorCodes((char)'&', (String)this.getConfig().getString("KnifeDescription.line1")));
-        lore.add(ChatColor.translateAlternateColorCodes((char)'&', (String)this.getConfig().getString("KnifeDescription.line2")));
-        lore.add(ChatColor.translateAlternateColorCodes((char)'&', (String)this.getConfig().getString("KnifeDescription.line3")));
-        lore.add(ChatColor.translateAlternateColorCodes((char)'&', (String)this.getConfig().getString("KnifeDescription.line4")));
-        lore.add(ChatColor.translateAlternateColorCodes((char)'&', (String)this.getConfig().getString("KnifeDescription.line5")));
-        lore.add(ChatColor.translateAlternateColorCodes((char)'&', (String)this.getConfig().getString("KnifeDescription.line6")));
-        lore.add(ChatColor.translateAlternateColorCodes((char)'&', (String)this.getConfig().getString("dDiamondKnife.line7")));
-        lore.add(ChatColor.translateAlternateColorCodes((char)'&', (String)this.getConfig().getString("dDiamondKnife.line8")));
-        lore.add(ChatColor.translateAlternateColorCodes((char)'&', (String)this.getConfig().getString("dDiamondKnife.line9")));
+        lore.add(convertLegacyToSection(this.getConfig().getString("KnifeDescription.line1")));
+        lore.add(convertLegacyToSection(this.getConfig().getString("KnifeDescription.line2")));
+        lore.add(convertLegacyToSection(this.getConfig().getString("KnifeDescription.line3")));
+        lore.add(convertLegacyToSection(this.getConfig().getString("KnifeDescription.line4")));
+        lore.add(convertLegacyToSection(this.getConfig().getString("KnifeDescription.line5")));
+        lore.add(convertLegacyToSection(this.getConfig().getString("KnifeDescription.line6")));
+        lore.add(convertLegacyToSection(this.getConfig().getString("dDiamondKnife.line7")));
+        lore.add(convertLegacyToSection(this.getConfig().getString("dDiamondKnife.line8")));
+        lore.add(convertLegacyToSection(this.getConfig().getString("dDiamondKnife.line9")));
         meta.setLore(lore);
         meta.addItemFlags(new ItemFlag[]{ItemFlag.HIDE_ATTRIBUTES});
         double dmg = 3.0;
@@ -2260,10 +2199,10 @@ implements Listener {
             spd = this.getConfig().getDouble("aDiamondKnife.speed") - 4.0;
         }
         AttributeModifier modifier = new AttributeModifier(UUID.randomUUID(), "Attack Speed", spd, AttributeModifier.Operation.ADD_NUMBER, EquipmentSlot.HAND);
-        meta.addAttributeModifier(Attribute.GENERIC_ATTACK_SPEED, modifier);
+        meta.addAttributeModifier(Attribute.ATTACK_SPEED, modifier);
         AttributeModifier modifier2 = new AttributeModifier(UUID.randomUUID(), "Attack Damage", dmg, AttributeModifier.Operation.ADD_NUMBER, EquipmentSlot.HAND);
-        meta.addAttributeModifier(Attribute.GENERIC_ATTACK_DAMAGE, modifier2);
-        meta.setDisplayName(ChatColor.translateAlternateColorCodes((char)'&', (String)this.getConfig().getString("dDiamondKnife.name")));
+        meta.addAttributeModifier(Attribute.ATTACK_DAMAGE, modifier2);
+        meta.setDisplayName(convertLegacyToSection(this.getConfig().getString("dDiamondKnife.name")));
         meta.setCustomModelData(Integer.valueOf(1000006));
         item.setItemMeta(meta);
         NamespacedKey key = new NamespacedKey((Plugin)this, "diamond_knife");
@@ -2279,15 +2218,15 @@ implements Listener {
         ItemStack item = new ItemStack(Material.NETHERITE_SWORD);
         ItemMeta meta = item.getItemMeta();
         ArrayList<String> lore = new ArrayList<String>();
-        lore.add(ChatColor.translateAlternateColorCodes((char)'&', (String)this.getConfig().getString("KnifeDescription.line1")));
-        lore.add(ChatColor.translateAlternateColorCodes((char)'&', (String)this.getConfig().getString("KnifeDescription.line2")));
-        lore.add(ChatColor.translateAlternateColorCodes((char)'&', (String)this.getConfig().getString("KnifeDescription.line3")));
-        lore.add(ChatColor.translateAlternateColorCodes((char)'&', (String)this.getConfig().getString("KnifeDescription.line4")));
-        lore.add(ChatColor.translateAlternateColorCodes((char)'&', (String)this.getConfig().getString("KnifeDescription.line5")));
-        lore.add(ChatColor.translateAlternateColorCodes((char)'&', (String)this.getConfig().getString("KnifeDescription.line6")));
-        lore.add(ChatColor.translateAlternateColorCodes((char)'&', (String)this.getConfig().getString("dNetheriteKnife.line7")));
-        lore.add(ChatColor.translateAlternateColorCodes((char)'&', (String)this.getConfig().getString("dNetheriteKnife.line8")));
-        lore.add(ChatColor.translateAlternateColorCodes((char)'&', (String)this.getConfig().getString("dNetheriteKnife.line9")));
+        lore.add(convertLegacyToSection(this.getConfig().getString("KnifeDescription.line1")));
+        lore.add(convertLegacyToSection(this.getConfig().getString("KnifeDescription.line2")));
+        lore.add(convertLegacyToSection(this.getConfig().getString("KnifeDescription.line3")));
+        lore.add(convertLegacyToSection(this.getConfig().getString("KnifeDescription.line4")));
+        lore.add(convertLegacyToSection(this.getConfig().getString("KnifeDescription.line5")));
+        lore.add(convertLegacyToSection(this.getConfig().getString("KnifeDescription.line6")));
+        lore.add(convertLegacyToSection(this.getConfig().getString("dNetheriteKnife.line7")));
+        lore.add(convertLegacyToSection(this.getConfig().getString("dNetheriteKnife.line8")));
+        lore.add(convertLegacyToSection(this.getConfig().getString("dNetheriteKnife.line9")));
         meta.setLore(lore);
         meta.addItemFlags(new ItemFlag[]{ItemFlag.HIDE_ATTRIBUTES});
         double dmg = 4.0;
@@ -2297,10 +2236,10 @@ implements Listener {
             spd = this.getConfig().getDouble("aNetheriteKnife.speed") - 4.0;
         }
         AttributeModifier modifier = new AttributeModifier(UUID.randomUUID(), "Attack Speed", spd, AttributeModifier.Operation.ADD_NUMBER, EquipmentSlot.HAND);
-        meta.addAttributeModifier(Attribute.GENERIC_ATTACK_SPEED, modifier);
+        meta.addAttributeModifier(Attribute.ATTACK_SPEED, modifier);
         AttributeModifier modifier2 = new AttributeModifier(UUID.randomUUID(), "Attack Damage", dmg, AttributeModifier.Operation.ADD_NUMBER, EquipmentSlot.HAND);
-        meta.addAttributeModifier(Attribute.GENERIC_ATTACK_DAMAGE, modifier2);
-        meta.setDisplayName(ChatColor.translateAlternateColorCodes((char)'&', (String)this.getConfig().getString("dNetheriteKnife.name")));
+        meta.addAttributeModifier(Attribute.ATTACK_DAMAGE, modifier2);
+        meta.setDisplayName(convertLegacyToSection(this.getConfig().getString("dNetheriteKnife.name")));
         meta.setCustomModelData(Integer.valueOf(1000006));
         item.setItemMeta(meta);
         NamespacedKey key = new NamespacedKey((Plugin)this, "netherite_knife");
@@ -2321,18 +2260,18 @@ implements Listener {
         ItemStack item = new ItemStack(Material.WOODEN_SWORD);
         ItemMeta meta = item.getItemMeta();
         ArrayList<String> lore = new ArrayList<String>();
-        lore.add(ChatColor.translateAlternateColorCodes((char)'&', (String)this.getConfig().getString("SpearDescription.line1")));
-        lore.add(ChatColor.translateAlternateColorCodes((char)'&', (String)this.getConfig().getString("SpearDescription.line2")));
-        lore.add(ChatColor.translateAlternateColorCodes((char)'&', (String)this.getConfig().getString("SpearDescription.line3")));
-        lore.add(ChatColor.translateAlternateColorCodes((char)'&', (String)this.getConfig().getString("SpearDescription.line4")));
-        lore.add(ChatColor.translateAlternateColorCodes((char)'&', (String)this.getConfig().getString("SpearDescription.line5")));
-        lore.add(ChatColor.translateAlternateColorCodes((char)'&', (String)this.getConfig().getString("SpearDescription.line6")));
-        lore.add(ChatColor.translateAlternateColorCodes((char)'&', (String)this.getConfig().getString("SpearDescription.line7")));
-        lore.add(ChatColor.translateAlternateColorCodes((char)'&', (String)this.getConfig().getString("SpearDescription.line8")));
-        lore.add(ChatColor.translateAlternateColorCodes((char)'&', (String)this.getConfig().getString("SpearDescription.line9")));
-        lore.add(ChatColor.translateAlternateColorCodes((char)'&', (String)this.getConfig().getString("dWoodenSpear.line10")));
-        lore.add(ChatColor.translateAlternateColorCodes((char)'&', (String)this.getConfig().getString("dWoodenSpear.line11")));
-        lore.add(ChatColor.translateAlternateColorCodes((char)'&', (String)this.getConfig().getString("dWoodenSpear.line12")));
+        lore.add(convertLegacyToSection(this.getConfig().getString("SpearDescription.line1")));
+        lore.add(convertLegacyToSection(this.getConfig().getString("SpearDescription.line2")));
+        lore.add(convertLegacyToSection(this.getConfig().getString("SpearDescription.line3")));
+        lore.add(convertLegacyToSection(this.getConfig().getString("SpearDescription.line4")));
+        lore.add(convertLegacyToSection(this.getConfig().getString("SpearDescription.line5")));
+        lore.add(convertLegacyToSection(this.getConfig().getString("SpearDescription.line6")));
+        lore.add(convertLegacyToSection(this.getConfig().getString("SpearDescription.line7")));
+        lore.add(convertLegacyToSection(this.getConfig().getString("SpearDescription.line8")));
+        lore.add(convertLegacyToSection(this.getConfig().getString("SpearDescription.line9")));
+        lore.add(convertLegacyToSection(this.getConfig().getString("dWoodenSpear.line10")));
+        lore.add(convertLegacyToSection(this.getConfig().getString("dWoodenSpear.line11")));
+        lore.add(convertLegacyToSection(this.getConfig().getString("dWoodenSpear.line12")));
         meta.setLore(lore);
         meta.addItemFlags(new ItemFlag[]{ItemFlag.HIDE_ATTRIBUTES});
         double dmg = 1.0;
@@ -2342,10 +2281,10 @@ implements Listener {
             spd = this.getConfig().getDouble("aWoodenSpear.speed") - 4.0;
         }
         AttributeModifier modifier = new AttributeModifier(UUID.randomUUID(), "Attack Speed", spd, AttributeModifier.Operation.ADD_NUMBER, EquipmentSlot.HAND);
-        meta.addAttributeModifier(Attribute.GENERIC_ATTACK_SPEED, modifier);
+        meta.addAttributeModifier(Attribute.ATTACK_SPEED, modifier);
         AttributeModifier modifier2 = new AttributeModifier(UUID.randomUUID(), "Attack Damage", dmg, AttributeModifier.Operation.ADD_NUMBER, EquipmentSlot.HAND);
-        meta.addAttributeModifier(Attribute.GENERIC_ATTACK_DAMAGE, modifier2);
-        meta.setDisplayName(ChatColor.translateAlternateColorCodes((char)'&', (String)this.getConfig().getString("dWoodenSpear.name")));
+        meta.addAttributeModifier(Attribute.ATTACK_DAMAGE, modifier2);
+        meta.setDisplayName(convertLegacyToSection(this.getConfig().getString("dWoodenSpear.name")));
         meta.setCustomModelData(Integer.valueOf(1000004));
         item.setItemMeta(meta);
         NamespacedKey key = new NamespacedKey((Plugin)this, "wooden_spear");
@@ -2360,18 +2299,18 @@ implements Listener {
         ItemStack item = new ItemStack(Material.STONE_SWORD);
         ItemMeta meta = item.getItemMeta();
         ArrayList<String> lore = new ArrayList<String>();
-        lore.add(ChatColor.translateAlternateColorCodes((char)'&', (String)this.getConfig().getString("SpearDescription.line1")));
-        lore.add(ChatColor.translateAlternateColorCodes((char)'&', (String)this.getConfig().getString("SpearDescription.line2")));
-        lore.add(ChatColor.translateAlternateColorCodes((char)'&', (String)this.getConfig().getString("SpearDescription.line3")));
-        lore.add(ChatColor.translateAlternateColorCodes((char)'&', (String)this.getConfig().getString("SpearDescription.line4")));
-        lore.add(ChatColor.translateAlternateColorCodes((char)'&', (String)this.getConfig().getString("SpearDescription.line5")));
-        lore.add(ChatColor.translateAlternateColorCodes((char)'&', (String)this.getConfig().getString("SpearDescription.line6")));
-        lore.add(ChatColor.translateAlternateColorCodes((char)'&', (String)this.getConfig().getString("SpearDescription.line7")));
-        lore.add(ChatColor.translateAlternateColorCodes((char)'&', (String)this.getConfig().getString("SpearDescription.line8")));
-        lore.add(ChatColor.translateAlternateColorCodes((char)'&', (String)this.getConfig().getString("SpearDescription.line9")));
-        lore.add(ChatColor.translateAlternateColorCodes((char)'&', (String)this.getConfig().getString("dStoneSpear.line10")));
-        lore.add(ChatColor.translateAlternateColorCodes((char)'&', (String)this.getConfig().getString("dStoneSpear.line11")));
-        lore.add(ChatColor.translateAlternateColorCodes((char)'&', (String)this.getConfig().getString("dStoneSpear.line12")));
+        lore.add(convertLegacyToSection(this.getConfig().getString("SpearDescription.line1")));
+        lore.add(convertLegacyToSection(this.getConfig().getString("SpearDescription.line2")));
+        lore.add(convertLegacyToSection(this.getConfig().getString("SpearDescription.line3")));
+        lore.add(convertLegacyToSection(this.getConfig().getString("SpearDescription.line4")));
+        lore.add(convertLegacyToSection(this.getConfig().getString("SpearDescription.line5")));
+        lore.add(convertLegacyToSection(this.getConfig().getString("SpearDescription.line6")));
+        lore.add(convertLegacyToSection(this.getConfig().getString("SpearDescription.line7")));
+        lore.add(convertLegacyToSection(this.getConfig().getString("SpearDescription.line8")));
+        lore.add(convertLegacyToSection(this.getConfig().getString("SpearDescription.line9")));
+        lore.add(convertLegacyToSection(this.getConfig().getString("dStoneSpear.line10")));
+        lore.add(convertLegacyToSection(this.getConfig().getString("dStoneSpear.line11")));
+        lore.add(convertLegacyToSection(this.getConfig().getString("dStoneSpear.line12")));
         meta.setLore(lore);
         meta.addItemFlags(new ItemFlag[]{ItemFlag.HIDE_ATTRIBUTES});
         double dmg = 1.5;
@@ -2381,10 +2320,10 @@ implements Listener {
             spd = this.getConfig().getDouble("aStoneSpear.speed") - 4.0;
         }
         AttributeModifier modifier = new AttributeModifier(UUID.randomUUID(), "Attack Speed", spd, AttributeModifier.Operation.ADD_NUMBER, EquipmentSlot.HAND);
-        meta.addAttributeModifier(Attribute.GENERIC_ATTACK_SPEED, modifier);
+        meta.addAttributeModifier(Attribute.ATTACK_SPEED, modifier);
         AttributeModifier modifier2 = new AttributeModifier(UUID.randomUUID(), "Attack Damage", dmg, AttributeModifier.Operation.ADD_NUMBER, EquipmentSlot.HAND);
-        meta.addAttributeModifier(Attribute.GENERIC_ATTACK_DAMAGE, modifier2);
-        meta.setDisplayName(ChatColor.translateAlternateColorCodes((char)'&', (String)this.getConfig().getString("dStoneSpear.name")));
+        meta.addAttributeModifier(Attribute.ATTACK_DAMAGE, modifier2);
+        meta.setDisplayName(convertLegacyToSection(this.getConfig().getString("dStoneSpear.name")));
         meta.setCustomModelData(Integer.valueOf(1000004));
         item.setItemMeta(meta);
         NamespacedKey key = new NamespacedKey((Plugin)this, "stone_spear");
@@ -2400,18 +2339,18 @@ implements Listener {
         ItemStack item = new ItemStack(Material.GOLDEN_SWORD);
         ItemMeta meta = item.getItemMeta();
         ArrayList<String> lore = new ArrayList<String>();
-        lore.add(ChatColor.translateAlternateColorCodes((char)'&', (String)this.getConfig().getString("SpearDescription.line1")));
-        lore.add(ChatColor.translateAlternateColorCodes((char)'&', (String)this.getConfig().getString("SpearDescription.line2")));
-        lore.add(ChatColor.translateAlternateColorCodes((char)'&', (String)this.getConfig().getString("SpearDescription.line3")));
-        lore.add(ChatColor.translateAlternateColorCodes((char)'&', (String)this.getConfig().getString("SpearDescription.line4")));
-        lore.add(ChatColor.translateAlternateColorCodes((char)'&', (String)this.getConfig().getString("SpearDescription.line5")));
-        lore.add(ChatColor.translateAlternateColorCodes((char)'&', (String)this.getConfig().getString("SpearDescription.line6")));
-        lore.add(ChatColor.translateAlternateColorCodes((char)'&', (String)this.getConfig().getString("SpearDescription.line7")));
-        lore.add(ChatColor.translateAlternateColorCodes((char)'&', (String)this.getConfig().getString("SpearDescription.line8")));
-        lore.add(ChatColor.translateAlternateColorCodes((char)'&', (String)this.getConfig().getString("SpearDescription.line9")));
-        lore.add(ChatColor.translateAlternateColorCodes((char)'&', (String)this.getConfig().getString("dGoldenSpear.line10")));
-        lore.add(ChatColor.translateAlternateColorCodes((char)'&', (String)this.getConfig().getString("dGoldenSpear.line11")));
-        lore.add(ChatColor.translateAlternateColorCodes((char)'&', (String)this.getConfig().getString("dGoldenSpear.line12")));
+        lore.add(convertLegacyToSection(this.getConfig().getString("SpearDescription.line1")));
+        lore.add(convertLegacyToSection(this.getConfig().getString("SpearDescription.line2")));
+        lore.add(convertLegacyToSection(this.getConfig().getString("SpearDescription.line3")));
+        lore.add(convertLegacyToSection(this.getConfig().getString("SpearDescription.line4")));
+        lore.add(convertLegacyToSection(this.getConfig().getString("SpearDescription.line5")));
+        lore.add(convertLegacyToSection(this.getConfig().getString("SpearDescription.line6")));
+        lore.add(convertLegacyToSection(this.getConfig().getString("SpearDescription.line7")));
+        lore.add(convertLegacyToSection(this.getConfig().getString("SpearDescription.line8")));
+        lore.add(convertLegacyToSection(this.getConfig().getString("SpearDescription.line9")));
+        lore.add(convertLegacyToSection(this.getConfig().getString("dGoldenSpear.line10")));
+        lore.add(convertLegacyToSection(this.getConfig().getString("dGoldenSpear.line11")));
+        lore.add(convertLegacyToSection(this.getConfig().getString("dGoldenSpear.line12")));
         meta.setLore(lore);
         meta.addItemFlags(new ItemFlag[]{ItemFlag.HIDE_ATTRIBUTES});
         double dmg = 1.0;
@@ -2421,10 +2360,10 @@ implements Listener {
             spd = this.getConfig().getDouble("aGoldenSpear.speed") - 4.0;
         }
         AttributeModifier modifier = new AttributeModifier(UUID.randomUUID(), "Attack Speed", spd, AttributeModifier.Operation.ADD_NUMBER, EquipmentSlot.HAND);
-        meta.addAttributeModifier(Attribute.GENERIC_ATTACK_SPEED, modifier);
+        meta.addAttributeModifier(Attribute.ATTACK_SPEED, modifier);
         AttributeModifier modifier2 = new AttributeModifier(UUID.randomUUID(), "Attack Damage", dmg, AttributeModifier.Operation.ADD_NUMBER, EquipmentSlot.HAND);
-        meta.addAttributeModifier(Attribute.GENERIC_ATTACK_DAMAGE, modifier2);
-        meta.setDisplayName(ChatColor.translateAlternateColorCodes((char)'&', (String)this.getConfig().getString("dGoldenSpear.name")));
+        meta.addAttributeModifier(Attribute.ATTACK_DAMAGE, modifier2);
+        meta.setDisplayName(convertLegacyToSection(this.getConfig().getString("dGoldenSpear.name")));
         meta.setCustomModelData(Integer.valueOf(1000004));
         item.setItemMeta(meta);
         NamespacedKey key = new NamespacedKey((Plugin)this, "golden_spear");
@@ -2440,18 +2379,18 @@ implements Listener {
         ItemStack item = new ItemStack(Material.IRON_SWORD);
         ItemMeta meta = item.getItemMeta();
         ArrayList<String> lore = new ArrayList<String>();
-        lore.add(ChatColor.translateAlternateColorCodes((char)'&', (String)this.getConfig().getString("SpearDescription.line1")));
-        lore.add(ChatColor.translateAlternateColorCodes((char)'&', (String)this.getConfig().getString("SpearDescription.line2")));
-        lore.add(ChatColor.translateAlternateColorCodes((char)'&', (String)this.getConfig().getString("SpearDescription.line3")));
-        lore.add(ChatColor.translateAlternateColorCodes((char)'&', (String)this.getConfig().getString("SpearDescription.line4")));
-        lore.add(ChatColor.translateAlternateColorCodes((char)'&', (String)this.getConfig().getString("SpearDescription.line5")));
-        lore.add(ChatColor.translateAlternateColorCodes((char)'&', (String)this.getConfig().getString("SpearDescription.line6")));
-        lore.add(ChatColor.translateAlternateColorCodes((char)'&', (String)this.getConfig().getString("SpearDescription.line7")));
-        lore.add(ChatColor.translateAlternateColorCodes((char)'&', (String)this.getConfig().getString("SpearDescription.line8")));
-        lore.add(ChatColor.translateAlternateColorCodes((char)'&', (String)this.getConfig().getString("SpearDescription.line9")));
-        lore.add(ChatColor.translateAlternateColorCodes((char)'&', (String)this.getConfig().getString("dIronSpear.line10")));
-        lore.add(ChatColor.translateAlternateColorCodes((char)'&', (String)this.getConfig().getString("dIronSpear.line11")));
-        lore.add(ChatColor.translateAlternateColorCodes((char)'&', (String)this.getConfig().getString("dIronSpear.line12")));
+        lore.add(convertLegacyToSection(this.getConfig().getString("SpearDescription.line1")));
+        lore.add(convertLegacyToSection(this.getConfig().getString("SpearDescription.line2")));
+        lore.add(convertLegacyToSection(this.getConfig().getString("SpearDescription.line3")));
+        lore.add(convertLegacyToSection(this.getConfig().getString("SpearDescription.line4")));
+        lore.add(convertLegacyToSection(this.getConfig().getString("SpearDescription.line5")));
+        lore.add(convertLegacyToSection(this.getConfig().getString("SpearDescription.line6")));
+        lore.add(convertLegacyToSection(this.getConfig().getString("SpearDescription.line7")));
+        lore.add(convertLegacyToSection(this.getConfig().getString("SpearDescription.line8")));
+        lore.add(convertLegacyToSection(this.getConfig().getString("SpearDescription.line9")));
+        lore.add(convertLegacyToSection(this.getConfig().getString("dIronSpear.line10")));
+        lore.add(convertLegacyToSection(this.getConfig().getString("dIronSpear.line11")));
+        lore.add(convertLegacyToSection(this.getConfig().getString("dIronSpear.line12")));
         meta.setLore(lore);
         meta.addItemFlags(new ItemFlag[]{ItemFlag.HIDE_ATTRIBUTES});
         double dmg = 2.0;
@@ -2461,10 +2400,10 @@ implements Listener {
             spd = this.getConfig().getDouble("aIronSpear.speed") - 4.0;
         }
         AttributeModifier modifier = new AttributeModifier(UUID.randomUUID(), "Attack Speed", spd, AttributeModifier.Operation.ADD_NUMBER, EquipmentSlot.HAND);
-        meta.addAttributeModifier(Attribute.GENERIC_ATTACK_SPEED, modifier);
+        meta.addAttributeModifier(Attribute.ATTACK_SPEED, modifier);
         AttributeModifier modifier2 = new AttributeModifier(UUID.randomUUID(), "Attack Damage", dmg, AttributeModifier.Operation.ADD_NUMBER, EquipmentSlot.HAND);
-        meta.addAttributeModifier(Attribute.GENERIC_ATTACK_DAMAGE, modifier2);
-        meta.setDisplayName(ChatColor.translateAlternateColorCodes((char)'&', (String)this.getConfig().getString("dIronSpear.name")));
+        meta.addAttributeModifier(Attribute.ATTACK_DAMAGE, modifier2);
+        meta.setDisplayName(convertLegacyToSection(this.getConfig().getString("dIronSpear.name")));
         meta.setCustomModelData(Integer.valueOf(1000004));
         item.setItemMeta(meta);
         NamespacedKey key = new NamespacedKey((Plugin)this, "iron_spear");
@@ -2480,18 +2419,18 @@ implements Listener {
         ItemStack item = new ItemStack(Material.GOLDEN_SWORD);
         ItemMeta meta = item.getItemMeta();
         ArrayList<String> lore = new ArrayList<String>();
-        lore.add(ChatColor.translateAlternateColorCodes((char)'&', (String)this.getConfig().getString("SpearDescription.line1")));
-        lore.add(ChatColor.translateAlternateColorCodes((char)'&', (String)this.getConfig().getString("SpearDescription.line2")));
-        lore.add(ChatColor.translateAlternateColorCodes((char)'&', (String)this.getConfig().getString("SpearDescription.line3")));
-        lore.add(ChatColor.translateAlternateColorCodes((char)'&', (String)this.getConfig().getString("SpearDescription.line4")));
-        lore.add(ChatColor.translateAlternateColorCodes((char)'&', (String)this.getConfig().getString("SpearDescription.line5")));
-        lore.add(ChatColor.translateAlternateColorCodes((char)'&', (String)this.getConfig().getString("SpearDescription.line6")));
-        lore.add(ChatColor.translateAlternateColorCodes((char)'&', (String)this.getConfig().getString("SpearDescription.line7")));
-        lore.add(ChatColor.translateAlternateColorCodes((char)'&', (String)this.getConfig().getString("SpearDescription.line8")));
-        lore.add(ChatColor.translateAlternateColorCodes((char)'&', (String)this.getConfig().getString("SpearDescription.line9")));
-        lore.add(ChatColor.translateAlternateColorCodes((char)'&', (String)this.getConfig().getString("dEmeraldSpear.line10")));
-        lore.add(ChatColor.translateAlternateColorCodes((char)'&', (String)this.getConfig().getString("dEmeraldSpear.line11")));
-        lore.add(ChatColor.translateAlternateColorCodes((char)'&', (String)this.getConfig().getString("dEmeraldSpear.line12")));
+        lore.add(convertLegacyToSection(this.getConfig().getString("SpearDescription.line1")));
+        lore.add(convertLegacyToSection(this.getConfig().getString("SpearDescription.line2")));
+        lore.add(convertLegacyToSection(this.getConfig().getString("SpearDescription.line3")));
+        lore.add(convertLegacyToSection(this.getConfig().getString("SpearDescription.line4")));
+        lore.add(convertLegacyToSection(this.getConfig().getString("SpearDescription.line5")));
+        lore.add(convertLegacyToSection(this.getConfig().getString("SpearDescription.line6")));
+        lore.add(convertLegacyToSection(this.getConfig().getString("SpearDescription.line7")));
+        lore.add(convertLegacyToSection(this.getConfig().getString("SpearDescription.line8")));
+        lore.add(convertLegacyToSection(this.getConfig().getString("SpearDescription.line9")));
+        lore.add(convertLegacyToSection(this.getConfig().getString("dEmeraldSpear.line10")));
+        lore.add(convertLegacyToSection(this.getConfig().getString("dEmeraldSpear.line11")));
+        lore.add(convertLegacyToSection(this.getConfig().getString("dEmeraldSpear.line12")));
         meta.setLore(lore);
         meta.addItemFlags(new ItemFlag[]{ItemFlag.HIDE_ATTRIBUTES});
         double dmg = 2.0;
@@ -2501,10 +2440,10 @@ implements Listener {
             spd = this.getConfig().getDouble("aEmeraldSpear.speed") - 4.0;
         }
         AttributeModifier modifier = new AttributeModifier(UUID.randomUUID(), "Attack Speed", spd, AttributeModifier.Operation.ADD_NUMBER, EquipmentSlot.HAND);
-        meta.addAttributeModifier(Attribute.GENERIC_ATTACK_SPEED, modifier);
+        meta.addAttributeModifier(Attribute.ATTACK_SPEED, modifier);
         AttributeModifier modifier2 = new AttributeModifier(UUID.randomUUID(), "Attack Damage", dmg, AttributeModifier.Operation.ADD_NUMBER, EquipmentSlot.HAND);
-        meta.addAttributeModifier(Attribute.GENERIC_ATTACK_DAMAGE, modifier2);
-        meta.setDisplayName(ChatColor.translateAlternateColorCodes((char)'&', (String)this.getConfig().getString("dEmeraldSpear.name")));
+        meta.addAttributeModifier(Attribute.ATTACK_DAMAGE, modifier2);
+        meta.setDisplayName(convertLegacyToSection(this.getConfig().getString("dEmeraldSpear.name")));
         meta.setCustomModelData(Integer.valueOf(1000014));
         if (this.getConfig().getString("EnchantsOnEmeraldGear") == "true") {
             int num = this.getConfig().getInt("EmeraldGearEnchantLevels.Unbreaking");
@@ -2526,18 +2465,18 @@ implements Listener {
         ItemStack item = new ItemStack(Material.DIAMOND_SWORD);
         ItemMeta meta = item.getItemMeta();
         ArrayList<String> lore = new ArrayList<String>();
-        lore.add(ChatColor.translateAlternateColorCodes((char)'&', (String)this.getConfig().getString("SpearDescription.line1")));
-        lore.add(ChatColor.translateAlternateColorCodes((char)'&', (String)this.getConfig().getString("SpearDescription.line2")));
-        lore.add(ChatColor.translateAlternateColorCodes((char)'&', (String)this.getConfig().getString("SpearDescription.line3")));
-        lore.add(ChatColor.translateAlternateColorCodes((char)'&', (String)this.getConfig().getString("SpearDescription.line4")));
-        lore.add(ChatColor.translateAlternateColorCodes((char)'&', (String)this.getConfig().getString("SpearDescription.line5")));
-        lore.add(ChatColor.translateAlternateColorCodes((char)'&', (String)this.getConfig().getString("SpearDescription.line6")));
-        lore.add(ChatColor.translateAlternateColorCodes((char)'&', (String)this.getConfig().getString("SpearDescription.line7")));
-        lore.add(ChatColor.translateAlternateColorCodes((char)'&', (String)this.getConfig().getString("SpearDescription.line8")));
-        lore.add(ChatColor.translateAlternateColorCodes((char)'&', (String)this.getConfig().getString("SpearDescription.line9")));
-        lore.add(ChatColor.translateAlternateColorCodes((char)'&', (String)this.getConfig().getString("dDiamondSpear.line10")));
-        lore.add(ChatColor.translateAlternateColorCodes((char)'&', (String)this.getConfig().getString("dDiamondSpear.line11")));
-        lore.add(ChatColor.translateAlternateColorCodes((char)'&', (String)this.getConfig().getString("dDiamondSpear.line12")));
+        lore.add(convertLegacyToSection(this.getConfig().getString("SpearDescription.line1")));
+        lore.add(convertLegacyToSection(this.getConfig().getString("SpearDescription.line2")));
+        lore.add(convertLegacyToSection(this.getConfig().getString("SpearDescription.line3")));
+        lore.add(convertLegacyToSection(this.getConfig().getString("SpearDescription.line4")));
+        lore.add(convertLegacyToSection(this.getConfig().getString("SpearDescription.line5")));
+        lore.add(convertLegacyToSection(this.getConfig().getString("SpearDescription.line6")));
+        lore.add(convertLegacyToSection(this.getConfig().getString("SpearDescription.line7")));
+        lore.add(convertLegacyToSection(this.getConfig().getString("SpearDescription.line8")));
+        lore.add(convertLegacyToSection(this.getConfig().getString("SpearDescription.line9")));
+        lore.add(convertLegacyToSection(this.getConfig().getString("dDiamondSpear.line10")));
+        lore.add(convertLegacyToSection(this.getConfig().getString("dDiamondSpear.line11")));
+        lore.add(convertLegacyToSection(this.getConfig().getString("dDiamondSpear.line12")));
         meta.setLore(lore);
         meta.addItemFlags(new ItemFlag[]{ItemFlag.HIDE_ATTRIBUTES});
         double dmg = 3.0;
@@ -2547,10 +2486,10 @@ implements Listener {
             spd = this.getConfig().getDouble("aDiamondSpear.speed") - 4.0;
         }
         AttributeModifier modifier = new AttributeModifier(UUID.randomUUID(), "Attack Speed", spd, AttributeModifier.Operation.ADD_NUMBER, EquipmentSlot.HAND);
-        meta.addAttributeModifier(Attribute.GENERIC_ATTACK_SPEED, modifier);
+        meta.addAttributeModifier(Attribute.ATTACK_SPEED, modifier);
         AttributeModifier modifier2 = new AttributeModifier(UUID.randomUUID(), "Attack Damage", dmg, AttributeModifier.Operation.ADD_NUMBER, EquipmentSlot.HAND);
-        meta.addAttributeModifier(Attribute.GENERIC_ATTACK_DAMAGE, modifier2);
-        meta.setDisplayName(ChatColor.translateAlternateColorCodes((char)'&', (String)this.getConfig().getString("dDiamondSpear.name")));
+        meta.addAttributeModifier(Attribute.ATTACK_DAMAGE, modifier2);
+        meta.setDisplayName(convertLegacyToSection(this.getConfig().getString("dDiamondSpear.name")));
         meta.setCustomModelData(Integer.valueOf(1000004));
         item.setItemMeta(meta);
         NamespacedKey key = new NamespacedKey((Plugin)this, "diamond_spear");
@@ -2566,18 +2505,18 @@ implements Listener {
         ItemStack item = new ItemStack(Material.NETHERITE_SWORD);
         ItemMeta meta = item.getItemMeta();
         ArrayList<String> lore = new ArrayList<String>();
-        lore.add(ChatColor.translateAlternateColorCodes((char)'&', (String)this.getConfig().getString("SpearDescription.line1")));
-        lore.add(ChatColor.translateAlternateColorCodes((char)'&', (String)this.getConfig().getString("SpearDescription.line2")));
-        lore.add(ChatColor.translateAlternateColorCodes((char)'&', (String)this.getConfig().getString("SpearDescription.line3")));
-        lore.add(ChatColor.translateAlternateColorCodes((char)'&', (String)this.getConfig().getString("SpearDescription.line4")));
-        lore.add(ChatColor.translateAlternateColorCodes((char)'&', (String)this.getConfig().getString("SpearDescription.line5")));
-        lore.add(ChatColor.translateAlternateColorCodes((char)'&', (String)this.getConfig().getString("SpearDescription.line6")));
-        lore.add(ChatColor.translateAlternateColorCodes((char)'&', (String)this.getConfig().getString("SpearDescription.line7")));
-        lore.add(ChatColor.translateAlternateColorCodes((char)'&', (String)this.getConfig().getString("SpearDescription.line8")));
-        lore.add(ChatColor.translateAlternateColorCodes((char)'&', (String)this.getConfig().getString("SpearDescription.line9")));
-        lore.add(ChatColor.translateAlternateColorCodes((char)'&', (String)this.getConfig().getString("dNetheriteSpear.line10")));
-        lore.add(ChatColor.translateAlternateColorCodes((char)'&', (String)this.getConfig().getString("dNetheriteSpear.line11")));
-        lore.add(ChatColor.translateAlternateColorCodes((char)'&', (String)this.getConfig().getString("dNetheriteSpear.line12")));
+        lore.add(convertLegacyToSection(this.getConfig().getString("SpearDescription.line1")));
+        lore.add(convertLegacyToSection(this.getConfig().getString("SpearDescription.line2")));
+        lore.add(convertLegacyToSection(this.getConfig().getString("SpearDescription.line3")));
+        lore.add(convertLegacyToSection(this.getConfig().getString("SpearDescription.line4")));
+        lore.add(convertLegacyToSection(this.getConfig().getString("SpearDescription.line5")));
+        lore.add(convertLegacyToSection(this.getConfig().getString("SpearDescription.line6")));
+        lore.add(convertLegacyToSection(this.getConfig().getString("SpearDescription.line7")));
+        lore.add(convertLegacyToSection(this.getConfig().getString("SpearDescription.line8")));
+        lore.add(convertLegacyToSection(this.getConfig().getString("SpearDescription.line9")));
+        lore.add(convertLegacyToSection(this.getConfig().getString("dNetheriteSpear.line10")));
+        lore.add(convertLegacyToSection(this.getConfig().getString("dNetheriteSpear.line11")));
+        lore.add(convertLegacyToSection(this.getConfig().getString("dNetheriteSpear.line12")));
         meta.setLore(lore);
         meta.addItemFlags(new ItemFlag[]{ItemFlag.HIDE_ATTRIBUTES});
         double dmg = 4.0;
@@ -2587,10 +2526,10 @@ implements Listener {
             spd = this.getConfig().getDouble("aNetheriteSpear.speed") - 4.0;
         }
         AttributeModifier modifier = new AttributeModifier(UUID.randomUUID(), "Attack Speed", spd, AttributeModifier.Operation.ADD_NUMBER, EquipmentSlot.HAND);
-        meta.addAttributeModifier(Attribute.GENERIC_ATTACK_SPEED, modifier);
+        meta.addAttributeModifier(Attribute.ATTACK_SPEED, modifier);
         AttributeModifier modifier2 = new AttributeModifier(UUID.randomUUID(), "Attack Damage", dmg, AttributeModifier.Operation.ADD_NUMBER, EquipmentSlot.HAND);
-        meta.addAttributeModifier(Attribute.GENERIC_ATTACK_DAMAGE, modifier2);
-        meta.setDisplayName(ChatColor.translateAlternateColorCodes((char)'&', (String)this.getConfig().getString("dNetheriteSpear.name")));
+        meta.addAttributeModifier(Attribute.ATTACK_DAMAGE, modifier2);
+        meta.setDisplayName(convertLegacyToSection(this.getConfig().getString("dNetheriteSpear.name")));
         meta.setCustomModelData(Integer.valueOf(1000004));
         item.setItemMeta(meta);
         NamespacedKey key = new NamespacedKey((Plugin)this, "netherite_spear");
@@ -2611,20 +2550,20 @@ implements Listener {
         ItemStack item = new ItemStack(Material.WOODEN_SWORD);
         ItemMeta meta = item.getItemMeta();
         ArrayList<String> lore = new ArrayList<String>();
-        lore.add(ChatColor.translateAlternateColorCodes((char)'&', (String)this.getConfig().getString("KatanaDescription.line1")));
-        lore.add(ChatColor.translateAlternateColorCodes((char)'&', (String)this.getConfig().getString("KatanaDescription.line2")));
-        lore.add(ChatColor.translateAlternateColorCodes((char)'&', (String)this.getConfig().getString("KatanaDescription.line3")));
-        lore.add(ChatColor.translateAlternateColorCodes((char)'&', (String)this.getConfig().getString("KatanaDescription.line4")));
-        lore.add(ChatColor.translateAlternateColorCodes((char)'&', (String)this.getConfig().getString("KatanaDescription.line5")));
-        lore.add(ChatColor.translateAlternateColorCodes((char)'&', (String)this.getConfig().getString("KatanaDescription.line6")));
-        lore.add(ChatColor.translateAlternateColorCodes((char)'&', (String)this.getConfig().getString("KatanaDescription.line7")));
-        lore.add(ChatColor.translateAlternateColorCodes((char)'&', (String)this.getConfig().getString("KatanaDescription.line8")));
-        lore.add(ChatColor.translateAlternateColorCodes((char)'&', (String)this.getConfig().getString("KatanaDescription.line9")));
-        lore.add(ChatColor.translateAlternateColorCodes((char)'&', (String)this.getConfig().getString("KatanaDescription.line10")));
-        lore.add(ChatColor.translateAlternateColorCodes((char)'&', (String)this.getConfig().getString("KatanaDescription.line11")));
-        lore.add(ChatColor.translateAlternateColorCodes((char)'&', (String)this.getConfig().getString("dWoodenKatana.line12")));
-        lore.add(ChatColor.translateAlternateColorCodes((char)'&', (String)this.getConfig().getString("dWoodenKatana.line13")));
-        lore.add(ChatColor.translateAlternateColorCodes((char)'&', (String)this.getConfig().getString("dWoodenKatana.line14")));
+        lore.add(convertLegacyToSection(this.getConfig().getString("KatanaDescription.line1")));
+        lore.add(convertLegacyToSection(this.getConfig().getString("KatanaDescription.line2")));
+        lore.add(convertLegacyToSection(this.getConfig().getString("KatanaDescription.line3")));
+        lore.add(convertLegacyToSection(this.getConfig().getString("KatanaDescription.line4")));
+        lore.add(convertLegacyToSection(this.getConfig().getString("KatanaDescription.line5")));
+        lore.add(convertLegacyToSection(this.getConfig().getString("KatanaDescription.line6")));
+        lore.add(convertLegacyToSection(this.getConfig().getString("KatanaDescription.line7")));
+        lore.add(convertLegacyToSection(this.getConfig().getString("KatanaDescription.line8")));
+        lore.add(convertLegacyToSection(this.getConfig().getString("KatanaDescription.line9")));
+        lore.add(convertLegacyToSection(this.getConfig().getString("KatanaDescription.line10")));
+        lore.add(convertLegacyToSection(this.getConfig().getString("KatanaDescription.line11")));
+        lore.add(convertLegacyToSection(this.getConfig().getString("dWoodenKatana.line12")));
+        lore.add(convertLegacyToSection(this.getConfig().getString("dWoodenKatana.line13")));
+        lore.add(convertLegacyToSection(this.getConfig().getString("dWoodenKatana.line14")));
         meta.setLore(lore);
         meta.addItemFlags(new ItemFlag[]{ItemFlag.HIDE_ATTRIBUTES});
         double dmg = 2.5;
@@ -2636,12 +2575,12 @@ implements Listener {
             mspd = this.getConfig().getDouble("aWoodenKatana.moveSpeed");
         }
         AttributeModifier modifier = new AttributeModifier(UUID.randomUUID(), "Attack Speed", spd, AttributeModifier.Operation.ADD_NUMBER, EquipmentSlot.HAND);
-        meta.addAttributeModifier(Attribute.GENERIC_ATTACK_SPEED, modifier);
+        meta.addAttributeModifier(Attribute.ATTACK_SPEED, modifier);
         AttributeModifier modifier2 = new AttributeModifier(UUID.randomUUID(), "Attack Damage", dmg, AttributeModifier.Operation.ADD_NUMBER, EquipmentSlot.HAND);
-        meta.addAttributeModifier(Attribute.GENERIC_ATTACK_DAMAGE, modifier2);
+        meta.addAttributeModifier(Attribute.ATTACK_DAMAGE, modifier2);
         AttributeModifier modifier3 = new AttributeModifier(UUID.randomUUID(), "Move SPeed", mspd, AttributeModifier.Operation.ADD_NUMBER, EquipmentSlot.HAND);
-        meta.addAttributeModifier(Attribute.GENERIC_MOVEMENT_SPEED, modifier3);
-        meta.setDisplayName(ChatColor.translateAlternateColorCodes((char)'&', (String)this.getConfig().getString("dWoodenKatana.name")));
+        meta.addAttributeModifier(Attribute.MOVEMENT_SPEED, modifier3);
+        meta.setDisplayName(convertLegacyToSection(this.getConfig().getString("dWoodenKatana.name")));
         meta.setCustomModelData(Integer.valueOf(1000002));
         item.setItemMeta(meta);
         NamespacedKey key = new NamespacedKey((Plugin)this, "wooden_katana");
@@ -2656,20 +2595,20 @@ implements Listener {
         ItemStack item = new ItemStack(Material.GOLDEN_SWORD);
         ItemMeta meta = item.getItemMeta();
         ArrayList<String> lore = new ArrayList<String>();
-        lore.add(ChatColor.translateAlternateColorCodes((char)'&', (String)this.getConfig().getString("KatanaDescription.line1")));
-        lore.add(ChatColor.translateAlternateColorCodes((char)'&', (String)this.getConfig().getString("KatanaDescription.line2")));
-        lore.add(ChatColor.translateAlternateColorCodes((char)'&', (String)this.getConfig().getString("KatanaDescription.line3")));
-        lore.add(ChatColor.translateAlternateColorCodes((char)'&', (String)this.getConfig().getString("KatanaDescription.line4")));
-        lore.add(ChatColor.translateAlternateColorCodes((char)'&', (String)this.getConfig().getString("KatanaDescription.line5")));
-        lore.add(ChatColor.translateAlternateColorCodes((char)'&', (String)this.getConfig().getString("KatanaDescription.line6")));
-        lore.add(ChatColor.translateAlternateColorCodes((char)'&', (String)this.getConfig().getString("KatanaDescription.line7")));
-        lore.add(ChatColor.translateAlternateColorCodes((char)'&', (String)this.getConfig().getString("KatanaDescription.line8")));
-        lore.add(ChatColor.translateAlternateColorCodes((char)'&', (String)this.getConfig().getString("KatanaDescription.line9")));
-        lore.add(ChatColor.translateAlternateColorCodes((char)'&', (String)this.getConfig().getString("KatanaDescription.line10")));
-        lore.add(ChatColor.translateAlternateColorCodes((char)'&', (String)this.getConfig().getString("KatanaDescription.line11")));
-        lore.add(ChatColor.translateAlternateColorCodes((char)'&', (String)this.getConfig().getString("dGoldenKatana.line12")));
-        lore.add(ChatColor.translateAlternateColorCodes((char)'&', (String)this.getConfig().getString("dGoldenKatana.line13")));
-        lore.add(ChatColor.translateAlternateColorCodes((char)'&', (String)this.getConfig().getString("dGoldenKatana.line14")));
+        lore.add(convertLegacyToSection(this.getConfig().getString("KatanaDescription.line1")));
+        lore.add(convertLegacyToSection(this.getConfig().getString("KatanaDescription.line2")));
+        lore.add(convertLegacyToSection(this.getConfig().getString("KatanaDescription.line3")));
+        lore.add(convertLegacyToSection(this.getConfig().getString("KatanaDescription.line4")));
+        lore.add(convertLegacyToSection(this.getConfig().getString("KatanaDescription.line5")));
+        lore.add(convertLegacyToSection(this.getConfig().getString("KatanaDescription.line6")));
+        lore.add(convertLegacyToSection(this.getConfig().getString("KatanaDescription.line7")));
+        lore.add(convertLegacyToSection(this.getConfig().getString("KatanaDescription.line8")));
+        lore.add(convertLegacyToSection(this.getConfig().getString("KatanaDescription.line9")));
+        lore.add(convertLegacyToSection(this.getConfig().getString("KatanaDescription.line10")));
+        lore.add(convertLegacyToSection(this.getConfig().getString("KatanaDescription.line11")));
+        lore.add(convertLegacyToSection(this.getConfig().getString("dGoldenKatana.line12")));
+        lore.add(convertLegacyToSection(this.getConfig().getString("dGoldenKatana.line13")));
+        lore.add(convertLegacyToSection(this.getConfig().getString("dGoldenKatana.line14")));
         meta.setLore(lore);
         meta.addItemFlags(new ItemFlag[]{ItemFlag.HIDE_ATTRIBUTES});
         double dmg = 2.5;
@@ -2681,12 +2620,12 @@ implements Listener {
             mspd = this.getConfig().getDouble("aGoldenKatana.moveSpeed");
         }
         AttributeModifier modifier = new AttributeModifier(UUID.randomUUID(), "Attack Speed", spd, AttributeModifier.Operation.ADD_NUMBER, EquipmentSlot.HAND);
-        meta.addAttributeModifier(Attribute.GENERIC_ATTACK_SPEED, modifier);
+        meta.addAttributeModifier(Attribute.ATTACK_SPEED, modifier);
         AttributeModifier modifier2 = new AttributeModifier(UUID.randomUUID(), "Attack Damage", dmg, AttributeModifier.Operation.ADD_NUMBER, EquipmentSlot.HAND);
-        meta.addAttributeModifier(Attribute.GENERIC_ATTACK_DAMAGE, modifier2);
+        meta.addAttributeModifier(Attribute.ATTACK_DAMAGE, modifier2);
         AttributeModifier modifier3 = new AttributeModifier(UUID.randomUUID(), "Move SPeed", mspd, AttributeModifier.Operation.ADD_NUMBER, EquipmentSlot.HAND);
-        meta.addAttributeModifier(Attribute.GENERIC_MOVEMENT_SPEED, modifier3);
-        meta.setDisplayName(ChatColor.translateAlternateColorCodes((char)'&', (String)this.getConfig().getString("dGoldenKatana.name")));
+        meta.addAttributeModifier(Attribute.MOVEMENT_SPEED, modifier3);
+        meta.setDisplayName(convertLegacyToSection(this.getConfig().getString("dGoldenKatana.name")));
         meta.setCustomModelData(Integer.valueOf(1000002));
         item.setItemMeta(meta);
         NamespacedKey key = new NamespacedKey((Plugin)this, "golden_katana");
@@ -2702,20 +2641,20 @@ implements Listener {
         ItemStack item = new ItemStack(Material.STONE_SWORD);
         ItemMeta meta = item.getItemMeta();
         ArrayList<String> lore = new ArrayList<String>();
-        lore.add(ChatColor.translateAlternateColorCodes((char)'&', (String)this.getConfig().getString("KatanaDescription.line1")));
-        lore.add(ChatColor.translateAlternateColorCodes((char)'&', (String)this.getConfig().getString("KatanaDescription.line2")));
-        lore.add(ChatColor.translateAlternateColorCodes((char)'&', (String)this.getConfig().getString("KatanaDescription.line3")));
-        lore.add(ChatColor.translateAlternateColorCodes((char)'&', (String)this.getConfig().getString("KatanaDescription.line4")));
-        lore.add(ChatColor.translateAlternateColorCodes((char)'&', (String)this.getConfig().getString("KatanaDescription.line5")));
-        lore.add(ChatColor.translateAlternateColorCodes((char)'&', (String)this.getConfig().getString("KatanaDescription.line6")));
-        lore.add(ChatColor.translateAlternateColorCodes((char)'&', (String)this.getConfig().getString("KatanaDescription.line7")));
-        lore.add(ChatColor.translateAlternateColorCodes((char)'&', (String)this.getConfig().getString("KatanaDescription.line8")));
-        lore.add(ChatColor.translateAlternateColorCodes((char)'&', (String)this.getConfig().getString("KatanaDescription.line9")));
-        lore.add(ChatColor.translateAlternateColorCodes((char)'&', (String)this.getConfig().getString("KatanaDescription.line10")));
-        lore.add(ChatColor.translateAlternateColorCodes((char)'&', (String)this.getConfig().getString("KatanaDescription.line11")));
-        lore.add(ChatColor.translateAlternateColorCodes((char)'&', (String)this.getConfig().getString("dStoneKatana.line12")));
-        lore.add(ChatColor.translateAlternateColorCodes((char)'&', (String)this.getConfig().getString("dStoneKatana.line13")));
-        lore.add(ChatColor.translateAlternateColorCodes((char)'&', (String)this.getConfig().getString("dStoneKatana.line14")));
+        lore.add(convertLegacyToSection(this.getConfig().getString("KatanaDescription.line1")));
+        lore.add(convertLegacyToSection(this.getConfig().getString("KatanaDescription.line2")));
+        lore.add(convertLegacyToSection(this.getConfig().getString("KatanaDescription.line3")));
+        lore.add(convertLegacyToSection(this.getConfig().getString("KatanaDescription.line4")));
+        lore.add(convertLegacyToSection(this.getConfig().getString("KatanaDescription.line5")));
+        lore.add(convertLegacyToSection(this.getConfig().getString("KatanaDescription.line6")));
+        lore.add(convertLegacyToSection(this.getConfig().getString("KatanaDescription.line7")));
+        lore.add(convertLegacyToSection(this.getConfig().getString("KatanaDescription.line8")));
+        lore.add(convertLegacyToSection(this.getConfig().getString("KatanaDescription.line9")));
+        lore.add(convertLegacyToSection(this.getConfig().getString("KatanaDescription.line10")));
+        lore.add(convertLegacyToSection(this.getConfig().getString("KatanaDescription.line11")));
+        lore.add(convertLegacyToSection(this.getConfig().getString("dStoneKatana.line12")));
+        lore.add(convertLegacyToSection(this.getConfig().getString("dStoneKatana.line13")));
+        lore.add(convertLegacyToSection(this.getConfig().getString("dStoneKatana.line14")));
         meta.setLore(lore);
         meta.addItemFlags(new ItemFlag[]{ItemFlag.HIDE_ATTRIBUTES});
         double dmg = 3.0;
@@ -2727,12 +2666,12 @@ implements Listener {
             mspd = this.getConfig().getDouble("aStoneKatana.moveSpeed");
         }
         AttributeModifier modifier = new AttributeModifier(UUID.randomUUID(), "Attack Speed", spd, AttributeModifier.Operation.ADD_NUMBER, EquipmentSlot.HAND);
-        meta.addAttributeModifier(Attribute.GENERIC_ATTACK_SPEED, modifier);
+        meta.addAttributeModifier(Attribute.ATTACK_SPEED, modifier);
         AttributeModifier modifier2 = new AttributeModifier(UUID.randomUUID(), "Attack Damage", dmg, AttributeModifier.Operation.ADD_NUMBER, EquipmentSlot.HAND);
-        meta.addAttributeModifier(Attribute.GENERIC_ATTACK_DAMAGE, modifier2);
+        meta.addAttributeModifier(Attribute.ATTACK_DAMAGE, modifier2);
         AttributeModifier modifier3 = new AttributeModifier(UUID.randomUUID(), "Move SPeed", mspd, AttributeModifier.Operation.ADD_NUMBER, EquipmentSlot.HAND);
-        meta.addAttributeModifier(Attribute.GENERIC_MOVEMENT_SPEED, modifier3);
-        meta.setDisplayName(ChatColor.translateAlternateColorCodes((char)'&', (String)this.getConfig().getString("dStoneKatana.name")));
+        meta.addAttributeModifier(Attribute.MOVEMENT_SPEED, modifier3);
+        meta.setDisplayName(convertLegacyToSection(this.getConfig().getString("dStoneKatana.name")));
         meta.setCustomModelData(Integer.valueOf(1000002));
         item.setItemMeta(meta);
         NamespacedKey key = new NamespacedKey((Plugin)this, "stone_katana");
@@ -2748,20 +2687,20 @@ implements Listener {
         ItemStack item = new ItemStack(Material.IRON_SWORD);
         ItemMeta meta = item.getItemMeta();
         ArrayList<String> lore = new ArrayList<String>();
-        lore.add(ChatColor.translateAlternateColorCodes((char)'&', (String)this.getConfig().getString("KatanaDescription.line1")));
-        lore.add(ChatColor.translateAlternateColorCodes((char)'&', (String)this.getConfig().getString("KatanaDescription.line2")));
-        lore.add(ChatColor.translateAlternateColorCodes((char)'&', (String)this.getConfig().getString("KatanaDescription.line3")));
-        lore.add(ChatColor.translateAlternateColorCodes((char)'&', (String)this.getConfig().getString("KatanaDescription.line4")));
-        lore.add(ChatColor.translateAlternateColorCodes((char)'&', (String)this.getConfig().getString("KatanaDescription.line5")));
-        lore.add(ChatColor.translateAlternateColorCodes((char)'&', (String)this.getConfig().getString("KatanaDescription.line6")));
-        lore.add(ChatColor.translateAlternateColorCodes((char)'&', (String)this.getConfig().getString("KatanaDescription.line7")));
-        lore.add(ChatColor.translateAlternateColorCodes((char)'&', (String)this.getConfig().getString("KatanaDescription.line8")));
-        lore.add(ChatColor.translateAlternateColorCodes((char)'&', (String)this.getConfig().getString("KatanaDescription.line9")));
-        lore.add(ChatColor.translateAlternateColorCodes((char)'&', (String)this.getConfig().getString("KatanaDescription.line10")));
-        lore.add(ChatColor.translateAlternateColorCodes((char)'&', (String)this.getConfig().getString("KatanaDescription.line11")));
-        lore.add(ChatColor.translateAlternateColorCodes((char)'&', (String)this.getConfig().getString("dIronKatana.line12")));
-        lore.add(ChatColor.translateAlternateColorCodes((char)'&', (String)this.getConfig().getString("dIronKatana.line13")));
-        lore.add(ChatColor.translateAlternateColorCodes((char)'&', (String)this.getConfig().getString("dIronKatana.line14")));
+        lore.add(convertLegacyToSection(this.getConfig().getString("KatanaDescription.line1")));
+        lore.add(convertLegacyToSection(this.getConfig().getString("KatanaDescription.line2")));
+        lore.add(convertLegacyToSection(this.getConfig().getString("KatanaDescription.line3")));
+        lore.add(convertLegacyToSection(this.getConfig().getString("KatanaDescription.line4")));
+        lore.add(convertLegacyToSection(this.getConfig().getString("KatanaDescription.line5")));
+        lore.add(convertLegacyToSection(this.getConfig().getString("KatanaDescription.line6")));
+        lore.add(convertLegacyToSection(this.getConfig().getString("KatanaDescription.line7")));
+        lore.add(convertLegacyToSection(this.getConfig().getString("KatanaDescription.line8")));
+        lore.add(convertLegacyToSection(this.getConfig().getString("KatanaDescription.line9")));
+        lore.add(convertLegacyToSection(this.getConfig().getString("KatanaDescription.line10")));
+        lore.add(convertLegacyToSection(this.getConfig().getString("KatanaDescription.line11")));
+        lore.add(convertLegacyToSection(this.getConfig().getString("dIronKatana.line12")));
+        lore.add(convertLegacyToSection(this.getConfig().getString("dIronKatana.line13")));
+        lore.add(convertLegacyToSection(this.getConfig().getString("dIronKatana.line14")));
         meta.setLore(lore);
         meta.addItemFlags(new ItemFlag[]{ItemFlag.HIDE_ATTRIBUTES});
         double dmg = 4.0;
@@ -2773,12 +2712,12 @@ implements Listener {
             mspd = this.getConfig().getDouble("aIronKatana.moveSpeed");
         }
         AttributeModifier modifier = new AttributeModifier(UUID.randomUUID(), "Attack Speed", spd, AttributeModifier.Operation.ADD_NUMBER, EquipmentSlot.HAND);
-        meta.addAttributeModifier(Attribute.GENERIC_ATTACK_SPEED, modifier);
+        meta.addAttributeModifier(Attribute.ATTACK_SPEED, modifier);
         AttributeModifier modifier2 = new AttributeModifier(UUID.randomUUID(), "Attack Damage", dmg, AttributeModifier.Operation.ADD_NUMBER, EquipmentSlot.HAND);
-        meta.addAttributeModifier(Attribute.GENERIC_ATTACK_DAMAGE, modifier2);
+        meta.addAttributeModifier(Attribute.ATTACK_DAMAGE, modifier2);
         AttributeModifier modifier3 = new AttributeModifier(UUID.randomUUID(), "Move SPeed", mspd, AttributeModifier.Operation.ADD_NUMBER, EquipmentSlot.HAND);
-        meta.addAttributeModifier(Attribute.GENERIC_MOVEMENT_SPEED, modifier3);
-        meta.setDisplayName(ChatColor.translateAlternateColorCodes((char)'&', (String)this.getConfig().getString("dIronKatana.name")));
+        meta.addAttributeModifier(Attribute.MOVEMENT_SPEED, modifier3);
+        meta.setDisplayName(convertLegacyToSection(this.getConfig().getString("dIronKatana.name")));
         meta.setCustomModelData(Integer.valueOf(1000002));
         item.setItemMeta(meta);
         NamespacedKey key = new NamespacedKey((Plugin)this, "iron_katana");
@@ -2794,20 +2733,20 @@ implements Listener {
         ItemStack item = new ItemStack(Material.GOLDEN_SWORD);
         ItemMeta meta = item.getItemMeta();
         ArrayList<String> lore = new ArrayList<String>();
-        lore.add(ChatColor.translateAlternateColorCodes((char)'&', (String)this.getConfig().getString("KatanaDescription.line1")));
-        lore.add(ChatColor.translateAlternateColorCodes((char)'&', (String)this.getConfig().getString("KatanaDescription.line2")));
-        lore.add(ChatColor.translateAlternateColorCodes((char)'&', (String)this.getConfig().getString("KatanaDescription.line3")));
-        lore.add(ChatColor.translateAlternateColorCodes((char)'&', (String)this.getConfig().getString("KatanaDescription.line4")));
-        lore.add(ChatColor.translateAlternateColorCodes((char)'&', (String)this.getConfig().getString("KatanaDescription.line5")));
-        lore.add(ChatColor.translateAlternateColorCodes((char)'&', (String)this.getConfig().getString("KatanaDescription.line6")));
-        lore.add(ChatColor.translateAlternateColorCodes((char)'&', (String)this.getConfig().getString("KatanaDescription.line7")));
-        lore.add(ChatColor.translateAlternateColorCodes((char)'&', (String)this.getConfig().getString("KatanaDescription.line8")));
-        lore.add(ChatColor.translateAlternateColorCodes((char)'&', (String)this.getConfig().getString("KatanaDescription.line9")));
-        lore.add(ChatColor.translateAlternateColorCodes((char)'&', (String)this.getConfig().getString("KatanaDescription.line10")));
-        lore.add(ChatColor.translateAlternateColorCodes((char)'&', (String)this.getConfig().getString("KatanaDescription.line11")));
-        lore.add(ChatColor.translateAlternateColorCodes((char)'&', (String)this.getConfig().getString("dEmeraldKatana.line12")));
-        lore.add(ChatColor.translateAlternateColorCodes((char)'&', (String)this.getConfig().getString("dEmeraldKatana.line13")));
-        lore.add(ChatColor.translateAlternateColorCodes((char)'&', (String)this.getConfig().getString("dEmeraldKatana.line14")));
+        lore.add(convertLegacyToSection(this.getConfig().getString("KatanaDescription.line1")));
+        lore.add(convertLegacyToSection(this.getConfig().getString("KatanaDescription.line2")));
+        lore.add(convertLegacyToSection(this.getConfig().getString("KatanaDescription.line3")));
+        lore.add(convertLegacyToSection(this.getConfig().getString("KatanaDescription.line4")));
+        lore.add(convertLegacyToSection(this.getConfig().getString("KatanaDescription.line5")));
+        lore.add(convertLegacyToSection(this.getConfig().getString("KatanaDescription.line6")));
+        lore.add(convertLegacyToSection(this.getConfig().getString("KatanaDescription.line7")));
+        lore.add(convertLegacyToSection(this.getConfig().getString("KatanaDescription.line8")));
+        lore.add(convertLegacyToSection(this.getConfig().getString("KatanaDescription.line9")));
+        lore.add(convertLegacyToSection(this.getConfig().getString("KatanaDescription.line10")));
+        lore.add(convertLegacyToSection(this.getConfig().getString("KatanaDescription.line11")));
+        lore.add(convertLegacyToSection(this.getConfig().getString("dEmeraldKatana.line12")));
+        lore.add(convertLegacyToSection(this.getConfig().getString("dEmeraldKatana.line13")));
+        lore.add(convertLegacyToSection(this.getConfig().getString("dEmeraldKatana.line14")));
         meta.setLore(lore);
         meta.addItemFlags(new ItemFlag[]{ItemFlag.HIDE_ATTRIBUTES});
         double dmg = 4.0;
@@ -2819,12 +2758,12 @@ implements Listener {
             mspd = this.getConfig().getDouble("aEmeraldKatana.moveSpeed");
         }
         AttributeModifier modifier = new AttributeModifier(UUID.randomUUID(), "Attack Speed", spd, AttributeModifier.Operation.ADD_NUMBER, EquipmentSlot.HAND);
-        meta.addAttributeModifier(Attribute.GENERIC_ATTACK_SPEED, modifier);
+        meta.addAttributeModifier(Attribute.ATTACK_SPEED, modifier);
         AttributeModifier modifier2 = new AttributeModifier(UUID.randomUUID(), "Attack Damage", dmg, AttributeModifier.Operation.ADD_NUMBER, EquipmentSlot.HAND);
-        meta.addAttributeModifier(Attribute.GENERIC_ATTACK_DAMAGE, modifier2);
+        meta.addAttributeModifier(Attribute.ATTACK_DAMAGE, modifier2);
         AttributeModifier modifier3 = new AttributeModifier(UUID.randomUUID(), "Move SPeed", mspd, AttributeModifier.Operation.ADD_NUMBER, EquipmentSlot.HAND);
-        meta.addAttributeModifier(Attribute.GENERIC_MOVEMENT_SPEED, modifier3);
-        meta.setDisplayName(ChatColor.translateAlternateColorCodes((char)'&', (String)this.getConfig().getString("dEmeraldKatana.name")));
+        meta.addAttributeModifier(Attribute.MOVEMENT_SPEED, modifier3);
+        meta.setDisplayName(convertLegacyToSection(this.getConfig().getString("dEmeraldKatana.name")));
         meta.setCustomModelData(Integer.valueOf(1000012));
         if (this.getConfig().getString("EnchantsOnEmeraldGear") == "true") {
             int num = this.getConfig().getInt("EmeraldGearEnchantLevels.Unbreaking");
@@ -2846,20 +2785,20 @@ implements Listener {
         ItemStack item = new ItemStack(Material.DIAMOND_SWORD);
         ItemMeta meta = item.getItemMeta();
         ArrayList<String> lore = new ArrayList<String>();
-        lore.add(ChatColor.translateAlternateColorCodes((char)'&', (String)this.getConfig().getString("KatanaDescription.line1")));
-        lore.add(ChatColor.translateAlternateColorCodes((char)'&', (String)this.getConfig().getString("KatanaDescription.line2")));
-        lore.add(ChatColor.translateAlternateColorCodes((char)'&', (String)this.getConfig().getString("KatanaDescription.line3")));
-        lore.add(ChatColor.translateAlternateColorCodes((char)'&', (String)this.getConfig().getString("KatanaDescription.line4")));
-        lore.add(ChatColor.translateAlternateColorCodes((char)'&', (String)this.getConfig().getString("KatanaDescription.line5")));
-        lore.add(ChatColor.translateAlternateColorCodes((char)'&', (String)this.getConfig().getString("KatanaDescription.line6")));
-        lore.add(ChatColor.translateAlternateColorCodes((char)'&', (String)this.getConfig().getString("KatanaDescription.line7")));
-        lore.add(ChatColor.translateAlternateColorCodes((char)'&', (String)this.getConfig().getString("KatanaDescription.line8")));
-        lore.add(ChatColor.translateAlternateColorCodes((char)'&', (String)this.getConfig().getString("KatanaDescription.line9")));
-        lore.add(ChatColor.translateAlternateColorCodes((char)'&', (String)this.getConfig().getString("KatanaDescription.line10")));
-        lore.add(ChatColor.translateAlternateColorCodes((char)'&', (String)this.getConfig().getString("KatanaDescription.line11")));
-        lore.add(ChatColor.translateAlternateColorCodes((char)'&', (String)this.getConfig().getString("dDiamondKatana.line12")));
-        lore.add(ChatColor.translateAlternateColorCodes((char)'&', (String)this.getConfig().getString("dDiamondKatana.line13")));
-        lore.add(ChatColor.translateAlternateColorCodes((char)'&', (String)this.getConfig().getString("dDiamondKatana.line14")));
+        lore.add(convertLegacyToSection(this.getConfig().getString("KatanaDescription.line1")));
+        lore.add(convertLegacyToSection(this.getConfig().getString("KatanaDescription.line2")));
+        lore.add(convertLegacyToSection(this.getConfig().getString("KatanaDescription.line3")));
+        lore.add(convertLegacyToSection(this.getConfig().getString("KatanaDescription.line4")));
+        lore.add(convertLegacyToSection(this.getConfig().getString("KatanaDescription.line5")));
+        lore.add(convertLegacyToSection(this.getConfig().getString("KatanaDescription.line6")));
+        lore.add(convertLegacyToSection(this.getConfig().getString("KatanaDescription.line7")));
+        lore.add(convertLegacyToSection(this.getConfig().getString("KatanaDescription.line8")));
+        lore.add(convertLegacyToSection(this.getConfig().getString("KatanaDescription.line9")));
+        lore.add(convertLegacyToSection(this.getConfig().getString("KatanaDescription.line10")));
+        lore.add(convertLegacyToSection(this.getConfig().getString("KatanaDescription.line11")));
+        lore.add(convertLegacyToSection(this.getConfig().getString("dDiamondKatana.line12")));
+        lore.add(convertLegacyToSection(this.getConfig().getString("dDiamondKatana.line13")));
+        lore.add(convertLegacyToSection(this.getConfig().getString("dDiamondKatana.line14")));
         meta.setLore(lore);
         meta.addItemFlags(new ItemFlag[]{ItemFlag.HIDE_ATTRIBUTES});
         double dmg = 5.0;
@@ -2871,12 +2810,12 @@ implements Listener {
             mspd = this.getConfig().getDouble("aDiamondKatana.moveSpeed");
         }
         AttributeModifier modifier = new AttributeModifier(UUID.randomUUID(), "Attack Speed", spd, AttributeModifier.Operation.ADD_NUMBER, EquipmentSlot.HAND);
-        meta.addAttributeModifier(Attribute.GENERIC_ATTACK_SPEED, modifier);
+        meta.addAttributeModifier(Attribute.ATTACK_SPEED, modifier);
         AttributeModifier modifier2 = new AttributeModifier(UUID.randomUUID(), "Attack Damage", dmg, AttributeModifier.Operation.ADD_NUMBER, EquipmentSlot.HAND);
-        meta.addAttributeModifier(Attribute.GENERIC_ATTACK_DAMAGE, modifier2);
+        meta.addAttributeModifier(Attribute.ATTACK_DAMAGE, modifier2);
         AttributeModifier modifier3 = new AttributeModifier(UUID.randomUUID(), "Move SPeed", mspd, AttributeModifier.Operation.ADD_NUMBER, EquipmentSlot.HAND);
-        meta.addAttributeModifier(Attribute.GENERIC_MOVEMENT_SPEED, modifier3);
-        meta.setDisplayName(ChatColor.translateAlternateColorCodes((char)'&', (String)this.getConfig().getString("dDiamondKatana.name")));
+        meta.addAttributeModifier(Attribute.MOVEMENT_SPEED, modifier3);
+        meta.setDisplayName(convertLegacyToSection(this.getConfig().getString("dDiamondKatana.name")));
         meta.setCustomModelData(Integer.valueOf(1000002));
         item.setItemMeta(meta);
         NamespacedKey key = new NamespacedKey((Plugin)this, "diamond_katana");
@@ -2892,20 +2831,20 @@ implements Listener {
         ItemStack item = new ItemStack(Material.NETHERITE_SWORD);
         ItemMeta meta = item.getItemMeta();
         ArrayList<String> lore = new ArrayList<String>();
-        lore.add(ChatColor.translateAlternateColorCodes((char)'&', (String)this.getConfig().getString("KatanaDescription.line1")));
-        lore.add(ChatColor.translateAlternateColorCodes((char)'&', (String)this.getConfig().getString("KatanaDescription.line2")));
-        lore.add(ChatColor.translateAlternateColorCodes((char)'&', (String)this.getConfig().getString("KatanaDescription.line3")));
-        lore.add(ChatColor.translateAlternateColorCodes((char)'&', (String)this.getConfig().getString("KatanaDescription.line4")));
-        lore.add(ChatColor.translateAlternateColorCodes((char)'&', (String)this.getConfig().getString("KatanaDescription.line5")));
-        lore.add(ChatColor.translateAlternateColorCodes((char)'&', (String)this.getConfig().getString("KatanaDescription.line6")));
-        lore.add(ChatColor.translateAlternateColorCodes((char)'&', (String)this.getConfig().getString("KatanaDescription.line7")));
-        lore.add(ChatColor.translateAlternateColorCodes((char)'&', (String)this.getConfig().getString("KatanaDescription.line8")));
-        lore.add(ChatColor.translateAlternateColorCodes((char)'&', (String)this.getConfig().getString("KatanaDescription.line9")));
-        lore.add(ChatColor.translateAlternateColorCodes((char)'&', (String)this.getConfig().getString("KatanaDescription.line10")));
-        lore.add(ChatColor.translateAlternateColorCodes((char)'&', (String)this.getConfig().getString("KatanaDescription.line11")));
-        lore.add(ChatColor.translateAlternateColorCodes((char)'&', (String)this.getConfig().getString("dNetheriteKatana.line12")));
-        lore.add(ChatColor.translateAlternateColorCodes((char)'&', (String)this.getConfig().getString("dNetheriteKatana.line13")));
-        lore.add(ChatColor.translateAlternateColorCodes((char)'&', (String)this.getConfig().getString("dNetheriteKatana.line14")));
+        lore.add(convertLegacyToSection(this.getConfig().getString("KatanaDescription.line1")));
+        lore.add(convertLegacyToSection(this.getConfig().getString("KatanaDescription.line2")));
+        lore.add(convertLegacyToSection(this.getConfig().getString("KatanaDescription.line3")));
+        lore.add(convertLegacyToSection(this.getConfig().getString("KatanaDescription.line4")));
+        lore.add(convertLegacyToSection(this.getConfig().getString("KatanaDescription.line5")));
+        lore.add(convertLegacyToSection(this.getConfig().getString("KatanaDescription.line6")));
+        lore.add(convertLegacyToSection(this.getConfig().getString("KatanaDescription.line7")));
+        lore.add(convertLegacyToSection(this.getConfig().getString("KatanaDescription.line8")));
+        lore.add(convertLegacyToSection(this.getConfig().getString("KatanaDescription.line9")));
+        lore.add(convertLegacyToSection(this.getConfig().getString("KatanaDescription.line10")));
+        lore.add(convertLegacyToSection(this.getConfig().getString("KatanaDescription.line11")));
+        lore.add(convertLegacyToSection(this.getConfig().getString("dNetheriteKatana.line12")));
+        lore.add(convertLegacyToSection(this.getConfig().getString("dNetheriteKatana.line13")));
+        lore.add(convertLegacyToSection(this.getConfig().getString("dNetheriteKatana.line14")));
         meta.setLore(lore);
         meta.addItemFlags(new ItemFlag[]{ItemFlag.HIDE_ATTRIBUTES});
         double dmg = 6.0;
@@ -2917,12 +2856,12 @@ implements Listener {
             mspd = this.getConfig().getDouble("aNetheriteKatana.moveSpeed");
         }
         AttributeModifier modifier = new AttributeModifier(UUID.randomUUID(), "Attack Speed", spd, AttributeModifier.Operation.ADD_NUMBER, EquipmentSlot.HAND);
-        meta.addAttributeModifier(Attribute.GENERIC_ATTACK_SPEED, modifier);
+        meta.addAttributeModifier(Attribute.ATTACK_SPEED, modifier);
         AttributeModifier modifier2 = new AttributeModifier(UUID.randomUUID(), "Attack Damage", dmg, AttributeModifier.Operation.ADD_NUMBER, EquipmentSlot.HAND);
-        meta.addAttributeModifier(Attribute.GENERIC_ATTACK_DAMAGE, modifier2);
+        meta.addAttributeModifier(Attribute.ATTACK_DAMAGE, modifier2);
         AttributeModifier modifier3 = new AttributeModifier(UUID.randomUUID(), "Move SPeed", mspd, AttributeModifier.Operation.ADD_NUMBER, EquipmentSlot.HAND);
-        meta.addAttributeModifier(Attribute.GENERIC_MOVEMENT_SPEED, modifier3);
-        meta.setDisplayName(ChatColor.translateAlternateColorCodes((char)'&', (String)this.getConfig().getString("dNetheriteKatana.name")));
+        meta.addAttributeModifier(Attribute.MOVEMENT_SPEED, modifier3);
+        meta.setDisplayName(convertLegacyToSection(this.getConfig().getString("dNetheriteKatana.name")));
         meta.setCustomModelData(Integer.valueOf(1000002));
         item.setItemMeta(meta);
         NamespacedKey key = new NamespacedKey((Plugin)this, "netherite_katana");
@@ -2943,10 +2882,10 @@ implements Listener {
         ItemStack item = new ItemStack(Material.FEATHER);
         ItemMeta meta = item.getItemMeta();
         ArrayList<String> lore = new ArrayList<String>();
-        lore.add(ChatColor.translateAlternateColorCodes((char)'&', (String)this.getConfig().getString("dFeatherCharm.line1")));
-        lore.add(ChatColor.translateAlternateColorCodes((char)'&', (String)this.getConfig().getString("dFeatherCharm.line2")));
+        lore.add(convertLegacyToSection(this.getConfig().getString("dFeatherCharm.line1")));
+        lore.add(convertLegacyToSection(this.getConfig().getString("dFeatherCharm.line2")));
         meta.setLore(lore);
-        meta.setDisplayName(ChatColor.translateAlternateColorCodes((char)'&', (String)this.getConfig().getString("dFeatherCharm.name")));
+        meta.setDisplayName(convertLegacyToSection(this.getConfig().getString("dFeatherCharm.name")));
         meta.addEnchant(Enchantment.DURABILITY, 5, true);
         meta.addItemFlags(new ItemFlag[]{ItemFlag.HIDE_ENCHANTS});
         meta.addItemFlags(new ItemFlag[]{ItemFlag.HIDE_ATTRIBUTES});
@@ -2981,15 +2920,15 @@ implements Listener {
             def = this.getConfig().getDouble("aEmeraldCharm.BonusArmor");
         }
         AttributeModifier modifier = new AttributeModifier(UUID.randomUUID(), "Health", hp, AttributeModifier.Operation.ADD_NUMBER, EquipmentSlot.OFF_HAND);
-        meta.addAttributeModifier(Attribute.GENERIC_MAX_HEALTH, modifier);
+        meta.addAttributeModifier(Attribute.MAX_HEALTH, modifier);
         AttributeModifier modifier2 = new AttributeModifier(UUID.randomUUID(), "Armor", def, AttributeModifier.Operation.ADD_NUMBER, EquipmentSlot.OFF_HAND);
-        meta.addAttributeModifier(Attribute.GENERIC_ARMOR, modifier2);
+        meta.addAttributeModifier(Attribute.ARMOR, modifier2);
         ArrayList<String> lore = new ArrayList<String>();
-        lore.add(ChatColor.translateAlternateColorCodes((char)'&', (String)this.getConfig().getString("dEmeraldCharm.line1")));
-        lore.add(ChatColor.translateAlternateColorCodes((char)'&', (String)this.getConfig().getString("dEmeraldCharm.line2")));
-        lore.add(ChatColor.translateAlternateColorCodes((char)'&', (String)this.getConfig().getString("dEmeraldCharm.line3")));
+        lore.add(convertLegacyToSection(this.getConfig().getString("dEmeraldCharm.line1")));
+        lore.add(convertLegacyToSection(this.getConfig().getString("dEmeraldCharm.line2")));
+        lore.add(convertLegacyToSection(this.getConfig().getString("dEmeraldCharm.line3")));
         meta.setLore(lore);
-        meta.setDisplayName(ChatColor.translateAlternateColorCodes((char)'&', (String)this.getConfig().getString("dEmeraldCharm.name")));
+        meta.setDisplayName(convertLegacyToSection(this.getConfig().getString("dEmeraldCharm.name")));
         meta.addEnchant(Enchantment.DURABILITY, 5, true);
         meta.addItemFlags(new ItemFlag[]{ItemFlag.HIDE_ENCHANTS});
         item.setItemMeta(meta);
@@ -3013,15 +2952,15 @@ implements Listener {
             hp = this.getConfig().getDouble("aBlazeCharm.BonusHealth");
         }
         AttributeModifier modifier = new AttributeModifier(UUID.randomUUID(), "Damage", dmg, AttributeModifier.Operation.ADD_NUMBER, EquipmentSlot.OFF_HAND);
-        meta.addAttributeModifier(Attribute.GENERIC_ATTACK_DAMAGE, modifier);
+        meta.addAttributeModifier(Attribute.ATTACK_DAMAGE, modifier);
         AttributeModifier modifier2 = new AttributeModifier(UUID.randomUUID(), "Health", hp, AttributeModifier.Operation.ADD_NUMBER, EquipmentSlot.OFF_HAND);
-        meta.addAttributeModifier(Attribute.GENERIC_MAX_HEALTH, modifier2);
+        meta.addAttributeModifier(Attribute.MAX_HEALTH, modifier2);
         ArrayList<String> lore = new ArrayList<String>();
-        lore.add(ChatColor.translateAlternateColorCodes((char)'&', (String)this.getConfig().getString("dBlazeCharm.line1")));
-        lore.add(ChatColor.translateAlternateColorCodes((char)'&', (String)this.getConfig().getString("dBlazeCharm.line2")));
-        lore.add(ChatColor.translateAlternateColorCodes((char)'&', (String)this.getConfig().getString("dBlazeCharm.line3")));
+        lore.add(convertLegacyToSection(this.getConfig().getString("dBlazeCharm.line1")));
+        lore.add(convertLegacyToSection(this.getConfig().getString("dBlazeCharm.line2")));
+        lore.add(convertLegacyToSection(this.getConfig().getString("dBlazeCharm.line3")));
         meta.setLore(lore);
-        meta.setDisplayName(ChatColor.translateAlternateColorCodes((char)'&', (String)this.getConfig().getString("dBlazeCharm.name")));
+        meta.setDisplayName(convertLegacyToSection(this.getConfig().getString("dBlazeCharm.name")));
         meta.addEnchant(Enchantment.DURABILITY, 5, true);
         meta.addItemFlags(new ItemFlag[]{ItemFlag.HIDE_ENCHANTS});
         item.setItemMeta(meta);
@@ -3045,15 +2984,15 @@ implements Listener {
             mvspd = this.getConfig().getDouble("aGoldCharm.BonusMoveSpeedPercent") / 100.0;
         }
         AttributeModifier modifier = new AttributeModifier(UUID.randomUUID(), "Attack Speed", atkspd, AttributeModifier.Operation.MULTIPLY_SCALAR_1, EquipmentSlot.OFF_HAND);
-        meta.addAttributeModifier(Attribute.GENERIC_ATTACK_SPEED, modifier);
+        meta.addAttributeModifier(Attribute.ATTACK_SPEED, modifier);
         AttributeModifier modifier2 = new AttributeModifier(UUID.randomUUID(), "Move Speed", mvspd, AttributeModifier.Operation.MULTIPLY_SCALAR_1, EquipmentSlot.OFF_HAND);
-        meta.addAttributeModifier(Attribute.GENERIC_MOVEMENT_SPEED, modifier2);
+        meta.addAttributeModifier(Attribute.MOVEMENT_SPEED, modifier2);
         ArrayList<String> lore = new ArrayList<String>();
-        lore.add(ChatColor.translateAlternateColorCodes((char)'&', (String)this.getConfig().getString("dGoldCharm.line1")));
-        lore.add(ChatColor.translateAlternateColorCodes((char)'&', (String)this.getConfig().getString("dGoldCharm.line2")));
-        lore.add(ChatColor.translateAlternateColorCodes((char)'&', (String)this.getConfig().getString("dGoldCharm.line3")));
+        lore.add(convertLegacyToSection(this.getConfig().getString("dGoldCharm.line1")));
+        lore.add(convertLegacyToSection(this.getConfig().getString("dGoldCharm.line2")));
+        lore.add(convertLegacyToSection(this.getConfig().getString("dGoldCharm.line3")));
         meta.setLore(lore);
-        meta.setDisplayName(ChatColor.translateAlternateColorCodes((char)'&', (String)this.getConfig().getString("dGoldCharm.name")));
+        meta.setDisplayName(convertLegacyToSection(this.getConfig().getString("dGoldCharm.name")));
         meta.addEnchant(Enchantment.DURABILITY, 5, true);
         meta.addItemFlags(new ItemFlag[]{ItemFlag.HIDE_ENCHANTS});
         item.setItemMeta(meta);
@@ -3097,16 +3036,16 @@ implements Listener {
             dmg = this.getConfig().getDouble("aPrismarineSword.damage") - 1.0;
             spd = this.getConfig().getDouble("aPrismarineSword.speed") - 4.0;
         }
-        resultm.setDisplayName(ChatColor.translateAlternateColorCodes((char)'&', (String)this.getConfig().getString("dPrismarineSword.name")));
+        resultm.setDisplayName(convertLegacyToSection(this.getConfig().getString("dPrismarineSword.name")));
         AttributeModifier modifier1 = new AttributeModifier(UUID.randomUUID(), "Damage", dmg, AttributeModifier.Operation.ADD_NUMBER, EquipmentSlot.HAND);
-        resultm.addAttributeModifier(Attribute.GENERIC_ATTACK_DAMAGE, modifier1);
+        resultm.addAttributeModifier(Attribute.ATTACK_DAMAGE, modifier1);
         AttributeModifier modifier2 = new AttributeModifier(UUID.randomUUID(), "Atackspeed", spd, AttributeModifier.Operation.ADD_NUMBER, EquipmentSlot.HAND);
-        resultm.addAttributeModifier(Attribute.GENERIC_ATTACK_SPEED, modifier2);
+        resultm.addAttributeModifier(Attribute.ATTACK_SPEED, modifier2);
         ArrayList<String> lore = new ArrayList<String>();
-        lore.add(ChatColor.translateAlternateColorCodes((char)'&', (String)this.getConfig().getString("dPrismarineSword.line1")));
-        lore.add(ChatColor.translateAlternateColorCodes((char)'&', (String)this.getConfig().getString("dPrismarineSword.line2")));
-        lore.add(ChatColor.translateAlternateColorCodes((char)'&', (String)this.getConfig().getString("dPrismarineSword.line3")));
-        lore.add(ChatColor.translateAlternateColorCodes((char)'&', (String)this.getConfig().getString("dPrismarineSword.line4")));
+        lore.add(convertLegacyToSection(this.getConfig().getString("dPrismarineSword.line1")));
+        lore.add(convertLegacyToSection(this.getConfig().getString("dPrismarineSword.line2")));
+        lore.add(convertLegacyToSection(this.getConfig().getString("dPrismarineSword.line3")));
+        lore.add(convertLegacyToSection(this.getConfig().getString("dPrismarineSword.line4")));
         resultm.setLore(lore);
         resultm.addItemFlags(new ItemFlag[]{ItemFlag.HIDE_ATTRIBUTES});
         result.setItemMeta(resultm);
@@ -3146,18 +3085,18 @@ implements Listener {
         if (this.getConfig().getString("UseCustomValues") == "true") {
             dmg = this.getConfig().getDouble("aPrismarineLongsword.damageAdded");
         }
-        resultm.setDisplayName(ChatColor.translateAlternateColorCodes((char)'&', (String)this.getConfig().getString("dPrismarineLongsword.name")));
+        resultm.setDisplayName(convertLegacyToSection(this.getConfig().getString("dPrismarineLongsword.name")));
         AttributeModifier modifier1 = new AttributeModifier(UUID.randomUUID(), "Damage", dmg, AttributeModifier.Operation.ADD_NUMBER, EquipmentSlot.HAND);
-        resultm.addAttributeModifier(Attribute.GENERIC_ATTACK_DAMAGE, modifier1);
+        resultm.addAttributeModifier(Attribute.ATTACK_DAMAGE, modifier1);
         ArrayList<String> lore = new ArrayList<String>();
-        lore.add(ChatColor.translateAlternateColorCodes((char)'&', (String)this.getConfig().getString("LongswordDescription.line1")));
-        lore.add(ChatColor.translateAlternateColorCodes((char)'&', (String)this.getConfig().getString("LongswordDescription.line2")));
-        lore.add(ChatColor.translateAlternateColorCodes((char)'&', (String)this.getConfig().getString("LongswordDescription.line3")));
-        lore.add(ChatColor.translateAlternateColorCodes((char)'&', (String)this.getConfig().getString("LongswordDescription.line4")));
-        lore.add(ChatColor.translateAlternateColorCodes((char)'&', (String)this.getConfig().getString("LongswordDescription.line5")));
-        lore.add(ChatColor.translateAlternateColorCodes((char)'&', (String)this.getConfig().getString("dPrismarineLongsword.line6")));
-        lore.add(ChatColor.translateAlternateColorCodes((char)'&', (String)this.getConfig().getString("dPrismarineLongsword.line7")));
-        lore.add(ChatColor.translateAlternateColorCodes((char)'&', (String)this.getConfig().getString("dPrismarineLongsword.line8")));
+        lore.add(convertLegacyToSection(this.getConfig().getString("LongswordDescription.line1")));
+        lore.add(convertLegacyToSection(this.getConfig().getString("LongswordDescription.line2")));
+        lore.add(convertLegacyToSection(this.getConfig().getString("LongswordDescription.line3")));
+        lore.add(convertLegacyToSection(this.getConfig().getString("LongswordDescription.line4")));
+        lore.add(convertLegacyToSection(this.getConfig().getString("LongswordDescription.line5")));
+        lore.add(convertLegacyToSection(this.getConfig().getString("dPrismarineLongsword.line6")));
+        lore.add(convertLegacyToSection(this.getConfig().getString("dPrismarineLongsword.line7")));
+        lore.add(convertLegacyToSection(this.getConfig().getString("dPrismarineLongsword.line8")));
         resultm.setLore(lore);
         resultm.addItemFlags(new ItemFlag[]{ItemFlag.HIDE_ATTRIBUTES});
         result.setItemMeta(resultm);
@@ -3197,20 +3136,20 @@ implements Listener {
         if (this.getConfig().getString("UseCustomValues") == "true") {
             dmg = this.getConfig().getDouble("aPrismarineScythe.damageAdded");
         }
-        resultm.setDisplayName(ChatColor.translateAlternateColorCodes((char)'&', (String)this.getConfig().getString("dPrismarineScythe.name")));
+        resultm.setDisplayName(convertLegacyToSection(this.getConfig().getString("dPrismarineScythe.name")));
         AttributeModifier modifier1 = new AttributeModifier(UUID.randomUUID(), "Damage", dmg, AttributeModifier.Operation.ADD_NUMBER, EquipmentSlot.HAND);
-        resultm.addAttributeModifier(Attribute.GENERIC_ATTACK_DAMAGE, modifier1);
+        resultm.addAttributeModifier(Attribute.ATTACK_DAMAGE, modifier1);
         ArrayList<String> lore = new ArrayList<String>();
-        lore.add(ChatColor.translateAlternateColorCodes((char)'&', (String)this.getConfig().getString("ScytheDescription.line1")));
-        lore.add(ChatColor.translateAlternateColorCodes((char)'&', (String)this.getConfig().getString("ScytheDescription.line2")));
-        lore.add(ChatColor.translateAlternateColorCodes((char)'&', (String)this.getConfig().getString("ScytheDescription.line3")));
-        lore.add(ChatColor.translateAlternateColorCodes((char)'&', (String)this.getConfig().getString("ScytheDescription.line4")));
-        lore.add(ChatColor.translateAlternateColorCodes((char)'&', (String)this.getConfig().getString("ScytheDescription.line5")));
-        lore.add(ChatColor.translateAlternateColorCodes((char)'&', (String)this.getConfig().getString("ScytheDescription.line6")));
-        lore.add(ChatColor.translateAlternateColorCodes((char)'&', (String)this.getConfig().getString("ScytheDescription.line7")));
-        lore.add(ChatColor.translateAlternateColorCodes((char)'&', (String)this.getConfig().getString("dPrismarineScythe.line8")));
-        lore.add(ChatColor.translateAlternateColorCodes((char)'&', (String)this.getConfig().getString("dPrismarineScythe.line9")));
-        lore.add(ChatColor.translateAlternateColorCodes((char)'&', (String)this.getConfig().getString("dPrismarineScythe.line10")));
+        lore.add(convertLegacyToSection(this.getConfig().getString("ScytheDescription.line1")));
+        lore.add(convertLegacyToSection(this.getConfig().getString("ScytheDescription.line2")));
+        lore.add(convertLegacyToSection(this.getConfig().getString("ScytheDescription.line3")));
+        lore.add(convertLegacyToSection(this.getConfig().getString("ScytheDescription.line4")));
+        lore.add(convertLegacyToSection(this.getConfig().getString("ScytheDescription.line5")));
+        lore.add(convertLegacyToSection(this.getConfig().getString("ScytheDescription.line6")));
+        lore.add(convertLegacyToSection(this.getConfig().getString("ScytheDescription.line7")));
+        lore.add(convertLegacyToSection(this.getConfig().getString("dPrismarineScythe.line8")));
+        lore.add(convertLegacyToSection(this.getConfig().getString("dPrismarineScythe.line9")));
+        lore.add(convertLegacyToSection(this.getConfig().getString("dPrismarineScythe.line10")));
         resultm.setLore(lore);
         resultm.addItemFlags(new ItemFlag[]{ItemFlag.HIDE_ATTRIBUTES});
         result.setItemMeta(resultm);
@@ -3250,20 +3189,20 @@ implements Listener {
         if (this.getConfig().getString("UseCustomValues") == "true") {
             dmg = this.getConfig().getDouble("aPrismarineRapier.damageAdded");
         }
-        resultm.setDisplayName(ChatColor.translateAlternateColorCodes((char)'&', (String)this.getConfig().getString("dPrismarineRapier.name")));
+        resultm.setDisplayName(convertLegacyToSection(this.getConfig().getString("dPrismarineRapier.name")));
         AttributeModifier modifier1 = new AttributeModifier(UUID.randomUUID(), "Damage", dmg, AttributeModifier.Operation.ADD_NUMBER, EquipmentSlot.HAND);
-        resultm.addAttributeModifier(Attribute.GENERIC_ATTACK_DAMAGE, modifier1);
+        resultm.addAttributeModifier(Attribute.ATTACK_DAMAGE, modifier1);
         ArrayList<String> lore = new ArrayList<String>();
-        lore.add(ChatColor.translateAlternateColorCodes((char)'&', (String)this.getConfig().getString("RapierDescription.line1")));
-        lore.add(ChatColor.translateAlternateColorCodes((char)'&', (String)this.getConfig().getString("RapierDescription.line2")));
-        lore.add(ChatColor.translateAlternateColorCodes((char)'&', (String)this.getConfig().getString("RapierDescription.line3")));
-        lore.add(ChatColor.translateAlternateColorCodes((char)'&', (String)this.getConfig().getString("RapierDescription.line4")));
-        lore.add(ChatColor.translateAlternateColorCodes((char)'&', (String)this.getConfig().getString("RapierDescription.line5")));
-        lore.add(ChatColor.translateAlternateColorCodes((char)'&', (String)this.getConfig().getString("RapierDescription.line6")));
-        lore.add(ChatColor.translateAlternateColorCodes((char)'&', (String)this.getConfig().getString("RapierDescription.line7")));
-        lore.add(ChatColor.translateAlternateColorCodes((char)'&', (String)this.getConfig().getString("dPrismarineRapier.line8")));
-        lore.add(ChatColor.translateAlternateColorCodes((char)'&', (String)this.getConfig().getString("dPrismarineRapier.line9")));
-        lore.add(ChatColor.translateAlternateColorCodes((char)'&', (String)this.getConfig().getString("dPrismarineRapier.line10")));
+        lore.add(convertLegacyToSection(this.getConfig().getString("RapierDescription.line1")));
+        lore.add(convertLegacyToSection(this.getConfig().getString("RapierDescription.line2")));
+        lore.add(convertLegacyToSection(this.getConfig().getString("RapierDescription.line3")));
+        lore.add(convertLegacyToSection(this.getConfig().getString("RapierDescription.line4")));
+        lore.add(convertLegacyToSection(this.getConfig().getString("RapierDescription.line5")));
+        lore.add(convertLegacyToSection(this.getConfig().getString("RapierDescription.line6")));
+        lore.add(convertLegacyToSection(this.getConfig().getString("RapierDescription.line7")));
+        lore.add(convertLegacyToSection(this.getConfig().getString("dPrismarineRapier.line8")));
+        lore.add(convertLegacyToSection(this.getConfig().getString("dPrismarineRapier.line9")));
+        lore.add(convertLegacyToSection(this.getConfig().getString("dPrismarineRapier.line10")));
         resultm.setLore(lore);
         resultm.addItemFlags(new ItemFlag[]{ItemFlag.HIDE_ATTRIBUTES});
         result.setItemMeta(resultm);
@@ -3306,22 +3245,22 @@ implements Listener {
         if (this.getConfig().getString("UseCustomValues") == "true") {
             dmg = this.getConfig().getDouble("aPrismarineSpear.damageAdded");
         }
-        resultm.setDisplayName(ChatColor.translateAlternateColorCodes((char)'&', (String)this.getConfig().getString("dPrismarineSpear.name")));
+        resultm.setDisplayName(convertLegacyToSection(this.getConfig().getString("dPrismarineSpear.name")));
         AttributeModifier modifier1 = new AttributeModifier(UUID.randomUUID(), "Damage", dmg, AttributeModifier.Operation.ADD_NUMBER, EquipmentSlot.HAND);
-        resultm.addAttributeModifier(Attribute.GENERIC_ATTACK_DAMAGE, modifier1);
+        resultm.addAttributeModifier(Attribute.ATTACK_DAMAGE, modifier1);
         ArrayList<String> lore = new ArrayList<String>();
-        lore.add(ChatColor.translateAlternateColorCodes((char)'&', (String)this.getConfig().getString("SpearDescription.line1")));
-        lore.add(ChatColor.translateAlternateColorCodes((char)'&', (String)this.getConfig().getString("SpearDescription.line2")));
-        lore.add(ChatColor.translateAlternateColorCodes((char)'&', (String)this.getConfig().getString("SpearDescription.line3")));
-        lore.add(ChatColor.translateAlternateColorCodes((char)'&', (String)this.getConfig().getString("SpearDescription.line4")));
-        lore.add(ChatColor.translateAlternateColorCodes((char)'&', (String)this.getConfig().getString("SpearDescription.line5")));
-        lore.add(ChatColor.translateAlternateColorCodes((char)'&', (String)this.getConfig().getString("SpearDescription.line6")));
-        lore.add(ChatColor.translateAlternateColorCodes((char)'&', (String)this.getConfig().getString("SpearDescription.line7")));
-        lore.add(ChatColor.translateAlternateColorCodes((char)'&', (String)this.getConfig().getString("SpearDescription.line8")));
-        lore.add(ChatColor.translateAlternateColorCodes((char)'&', (String)this.getConfig().getString("SpearDescription.line9")));
-        lore.add(ChatColor.translateAlternateColorCodes((char)'&', (String)this.getConfig().getString("dPrismarineSpear.line10")));
-        lore.add(ChatColor.translateAlternateColorCodes((char)'&', (String)this.getConfig().getString("dPrismarineSpear.line11")));
-        lore.add(ChatColor.translateAlternateColorCodes((char)'&', (String)this.getConfig().getString("dPrismarineSpear.line12")));
+        lore.add(convertLegacyToSection(this.getConfig().getString("SpearDescription.line1")));
+        lore.add(convertLegacyToSection(this.getConfig().getString("SpearDescription.line2")));
+        lore.add(convertLegacyToSection(this.getConfig().getString("SpearDescription.line3")));
+        lore.add(convertLegacyToSection(this.getConfig().getString("SpearDescription.line4")));
+        lore.add(convertLegacyToSection(this.getConfig().getString("SpearDescription.line5")));
+        lore.add(convertLegacyToSection(this.getConfig().getString("SpearDescription.line6")));
+        lore.add(convertLegacyToSection(this.getConfig().getString("SpearDescription.line7")));
+        lore.add(convertLegacyToSection(this.getConfig().getString("SpearDescription.line8")));
+        lore.add(convertLegacyToSection(this.getConfig().getString("SpearDescription.line9")));
+        lore.add(convertLegacyToSection(this.getConfig().getString("dPrismarineSpear.line10")));
+        lore.add(convertLegacyToSection(this.getConfig().getString("dPrismarineSpear.line11")));
+        lore.add(convertLegacyToSection(this.getConfig().getString("dPrismarineSpear.line12")));
         resultm.setLore(lore);
         resultm.addItemFlags(new ItemFlag[]{ItemFlag.HIDE_ATTRIBUTES});
         result.setItemMeta(resultm);
@@ -3361,24 +3300,24 @@ implements Listener {
         if (this.getConfig().getString("UseCustomValues") == "true") {
             dmg = this.getConfig().getDouble("aPrismarineKatana.damageAdded");
         }
-        resultm.setDisplayName(ChatColor.translateAlternateColorCodes((char)'&', (String)this.getConfig().getString("dPrismarineKatana.name")));
+        resultm.setDisplayName(convertLegacyToSection(this.getConfig().getString("dPrismarineKatana.name")));
         AttributeModifier modifier1 = new AttributeModifier(UUID.randomUUID(), "Damage", dmg, AttributeModifier.Operation.ADD_NUMBER, EquipmentSlot.HAND);
-        resultm.addAttributeModifier(Attribute.GENERIC_ATTACK_DAMAGE, modifier1);
+        resultm.addAttributeModifier(Attribute.ATTACK_DAMAGE, modifier1);
         ArrayList<String> lore = new ArrayList<String>();
-        lore.add(ChatColor.translateAlternateColorCodes((char)'&', (String)this.getConfig().getString("KatanaDescription.line1")));
-        lore.add(ChatColor.translateAlternateColorCodes((char)'&', (String)this.getConfig().getString("KatanaDescription.line2")));
-        lore.add(ChatColor.translateAlternateColorCodes((char)'&', (String)this.getConfig().getString("KatanaDescription.line3")));
-        lore.add(ChatColor.translateAlternateColorCodes((char)'&', (String)this.getConfig().getString("KatanaDescription.line4")));
-        lore.add(ChatColor.translateAlternateColorCodes((char)'&', (String)this.getConfig().getString("KatanaDescription.line5")));
-        lore.add(ChatColor.translateAlternateColorCodes((char)'&', (String)this.getConfig().getString("KatanaDescription.line6")));
-        lore.add(ChatColor.translateAlternateColorCodes((char)'&', (String)this.getConfig().getString("KatanaDescription.line7")));
-        lore.add(ChatColor.translateAlternateColorCodes((char)'&', (String)this.getConfig().getString("KatanaDescription.line8")));
-        lore.add(ChatColor.translateAlternateColorCodes((char)'&', (String)this.getConfig().getString("KatanaDescription.line9")));
-        lore.add(ChatColor.translateAlternateColorCodes((char)'&', (String)this.getConfig().getString("KatanaDescription.line10")));
-        lore.add(ChatColor.translateAlternateColorCodes((char)'&', (String)this.getConfig().getString("KatanaDescription.line11")));
-        lore.add(ChatColor.translateAlternateColorCodes((char)'&', (String)this.getConfig().getString("dPrismarineKatana.line12")));
-        lore.add(ChatColor.translateAlternateColorCodes((char)'&', (String)this.getConfig().getString("dPrismarineKatana.line13")));
-        lore.add(ChatColor.translateAlternateColorCodes((char)'&', (String)this.getConfig().getString("dPrismarineKatana.line14")));
+        lore.add(convertLegacyToSection(this.getConfig().getString("KatanaDescription.line1")));
+        lore.add(convertLegacyToSection(this.getConfig().getString("KatanaDescription.line2")));
+        lore.add(convertLegacyToSection(this.getConfig().getString("KatanaDescription.line3")));
+        lore.add(convertLegacyToSection(this.getConfig().getString("KatanaDescription.line4")));
+        lore.add(convertLegacyToSection(this.getConfig().getString("KatanaDescription.line5")));
+        lore.add(convertLegacyToSection(this.getConfig().getString("KatanaDescription.line6")));
+        lore.add(convertLegacyToSection(this.getConfig().getString("KatanaDescription.line7")));
+        lore.add(convertLegacyToSection(this.getConfig().getString("KatanaDescription.line8")));
+        lore.add(convertLegacyToSection(this.getConfig().getString("KatanaDescription.line9")));
+        lore.add(convertLegacyToSection(this.getConfig().getString("KatanaDescription.line10")));
+        lore.add(convertLegacyToSection(this.getConfig().getString("KatanaDescription.line11")));
+        lore.add(convertLegacyToSection(this.getConfig().getString("dPrismarineKatana.line12")));
+        lore.add(convertLegacyToSection(this.getConfig().getString("dPrismarineKatana.line13")));
+        lore.add(convertLegacyToSection(this.getConfig().getString("dPrismarineKatana.line14")));
         resultm.setLore(lore);
         resultm.addItemFlags(new ItemFlag[]{ItemFlag.HIDE_ATTRIBUTES});
         result.setItemMeta(resultm);
@@ -3418,19 +3357,19 @@ implements Listener {
         if (this.getConfig().getString("UseCustomValues") == "true") {
             dmg = this.getConfig().getDouble("aPrismarineKnife.damageAdded");
         }
-        resultm.setDisplayName(ChatColor.translateAlternateColorCodes((char)'&', (String)this.getConfig().getString("dPrismarineKnife.name")));
+        resultm.setDisplayName(convertLegacyToSection(this.getConfig().getString("dPrismarineKnife.name")));
         AttributeModifier modifier1 = new AttributeModifier(UUID.randomUUID(), "Damage", dmg, AttributeModifier.Operation.ADD_NUMBER, EquipmentSlot.HAND);
-        resultm.addAttributeModifier(Attribute.GENERIC_ATTACK_DAMAGE, modifier1);
+        resultm.addAttributeModifier(Attribute.ATTACK_DAMAGE, modifier1);
         ArrayList<String> lore = new ArrayList<String>();
-        lore.add(ChatColor.translateAlternateColorCodes((char)'&', (String)this.getConfig().getString("KnifeDescription.line1")));
-        lore.add(ChatColor.translateAlternateColorCodes((char)'&', (String)this.getConfig().getString("KnifeDescription.line2")));
-        lore.add(ChatColor.translateAlternateColorCodes((char)'&', (String)this.getConfig().getString("KnifeDescription.line3")));
-        lore.add(ChatColor.translateAlternateColorCodes((char)'&', (String)this.getConfig().getString("KnifeDescription.line4")));
-        lore.add(ChatColor.translateAlternateColorCodes((char)'&', (String)this.getConfig().getString("KnifeDescription.line5")));
-        lore.add(ChatColor.translateAlternateColorCodes((char)'&', (String)this.getConfig().getString("KnifeDescription.line6")));
-        lore.add(ChatColor.translateAlternateColorCodes((char)'&', (String)this.getConfig().getString("dPrismarineKnife.line7")));
-        lore.add(ChatColor.translateAlternateColorCodes((char)'&', (String)this.getConfig().getString("dPrismarineKnife.line8")));
-        lore.add(ChatColor.translateAlternateColorCodes((char)'&', (String)this.getConfig().getString("dPrismarineKnife.line9")));
+        lore.add(convertLegacyToSection(this.getConfig().getString("KnifeDescription.line1")));
+        lore.add(convertLegacyToSection(this.getConfig().getString("KnifeDescription.line2")));
+        lore.add(convertLegacyToSection(this.getConfig().getString("KnifeDescription.line3")));
+        lore.add(convertLegacyToSection(this.getConfig().getString("KnifeDescription.line4")));
+        lore.add(convertLegacyToSection(this.getConfig().getString("KnifeDescription.line5")));
+        lore.add(convertLegacyToSection(this.getConfig().getString("KnifeDescription.line6")));
+        lore.add(convertLegacyToSection(this.getConfig().getString("dPrismarineKnife.line7")));
+        lore.add(convertLegacyToSection(this.getConfig().getString("dPrismarineKnife.line8")));
+        lore.add(convertLegacyToSection(this.getConfig().getString("dPrismarineKnife.line9")));
         resultm.setLore(lore);
         resultm.addItemFlags(new ItemFlag[]{ItemFlag.HIDE_ATTRIBUTES});
         result.setItemMeta(resultm);
@@ -3470,17 +3409,17 @@ implements Listener {
         if (this.getConfig().getString("UseCustomValues") == "true") {
             dmg = this.getConfig().getDouble("aPrismarineSaber.damageAdded");
         }
-        resultm.setDisplayName(ChatColor.translateAlternateColorCodes((char)'&', (String)this.getConfig().getString("dPrismarineSaber.name")));
+        resultm.setDisplayName(convertLegacyToSection(this.getConfig().getString("dPrismarineSaber.name")));
         AttributeModifier modifier1 = new AttributeModifier(UUID.randomUUID(), "Damage", dmg, AttributeModifier.Operation.ADD_NUMBER, EquipmentSlot.HAND);
-        resultm.addAttributeModifier(Attribute.GENERIC_ATTACK_DAMAGE, modifier1);
+        resultm.addAttributeModifier(Attribute.ATTACK_DAMAGE, modifier1);
         ArrayList<String> lore = new ArrayList<String>();
-        lore.add(ChatColor.translateAlternateColorCodes((char)'&', (String)this.getConfig().getString("SaberDescription.line1")));
-        lore.add(ChatColor.translateAlternateColorCodes((char)'&', (String)this.getConfig().getString("SaberDescription.line2")));
-        lore.add(ChatColor.translateAlternateColorCodes((char)'&', (String)this.getConfig().getString("SaberDescription.line3")));
-        lore.add(ChatColor.translateAlternateColorCodes((char)'&', (String)this.getConfig().getString("SaberDescription.line4")));
-        lore.add(ChatColor.translateAlternateColorCodes((char)'&', (String)this.getConfig().getString("dPrismarineSaber.line5")));
-        lore.add(ChatColor.translateAlternateColorCodes((char)'&', (String)this.getConfig().getString("dPrismarineSaber.line6")));
-        lore.add(ChatColor.translateAlternateColorCodes((char)'&', (String)this.getConfig().getString("dPrismarineSaber.line7")));
+        lore.add(convertLegacyToSection(this.getConfig().getString("SaberDescription.line1")));
+        lore.add(convertLegacyToSection(this.getConfig().getString("SaberDescription.line2")));
+        lore.add(convertLegacyToSection(this.getConfig().getString("SaberDescription.line3")));
+        lore.add(convertLegacyToSection(this.getConfig().getString("SaberDescription.line4")));
+        lore.add(convertLegacyToSection(this.getConfig().getString("dPrismarineSaber.line5")));
+        lore.add(convertLegacyToSection(this.getConfig().getString("dPrismarineSaber.line6")));
+        lore.add(convertLegacyToSection(this.getConfig().getString("dPrismarineSaber.line7")));
         resultm.setLore(lore);
         resultm.addItemFlags(new ItemFlag[]{ItemFlag.HIDE_ATTRIBUTES});
         result.setItemMeta(resultm);
@@ -3520,22 +3459,22 @@ implements Listener {
         if (this.getConfig().getString("UseCustomValues") == "true") {
             dmg = this.getConfig().getDouble("aPrismarineCleaver.damageAdded");
         }
-        resultm.setDisplayName(ChatColor.translateAlternateColorCodes((char)'&', (String)this.getConfig().getString("dPrismarineCleaver.name")));
+        resultm.setDisplayName(convertLegacyToSection(this.getConfig().getString("dPrismarineCleaver.name")));
         AttributeModifier modifier1 = new AttributeModifier(UUID.randomUUID(), "Damage", dmg, AttributeModifier.Operation.ADD_NUMBER, EquipmentSlot.HAND);
-        resultm.addAttributeModifier(Attribute.GENERIC_ATTACK_DAMAGE, modifier1);
+        resultm.addAttributeModifier(Attribute.ATTACK_DAMAGE, modifier1);
         ArrayList<String> lore = new ArrayList<String>();
-        lore.add(ChatColor.translateAlternateColorCodes((char)'&', (String)this.getConfig().getString("CleaverDescription.line1")));
-        lore.add(ChatColor.translateAlternateColorCodes((char)'&', (String)this.getConfig().getString("CleaverDescription.line2")));
-        lore.add(ChatColor.translateAlternateColorCodes((char)'&', (String)this.getConfig().getString("CleaverDescription.line3")));
-        lore.add(ChatColor.translateAlternateColorCodes((char)'&', (String)this.getConfig().getString("CleaverDescription.line4")));
-        lore.add(ChatColor.translateAlternateColorCodes((char)'&', (String)this.getConfig().getString("CleaverDescription.line5")));
-        lore.add(ChatColor.translateAlternateColorCodes((char)'&', (String)this.getConfig().getString("CleaverDescription.line6")));
-        lore.add(ChatColor.translateAlternateColorCodes((char)'&', (String)this.getConfig().getString("CleaverDescription.line7")));
-        lore.add(ChatColor.translateAlternateColorCodes((char)'&', (String)this.getConfig().getString("CleaverDescription.line8")));
-        lore.add(ChatColor.translateAlternateColorCodes((char)'&', (String)this.getConfig().getString("CleaverDescription.line9")));
-        lore.add(ChatColor.translateAlternateColorCodes((char)'&', (String)this.getConfig().getString("dPrismarineCleaver.line10")));
-        lore.add(ChatColor.translateAlternateColorCodes((char)'&', (String)this.getConfig().getString("dPrismarineCleaver.line11")));
-        lore.add(ChatColor.translateAlternateColorCodes((char)'&', (String)this.getConfig().getString("dPrismarineCleaver.line12")));
+        lore.add(convertLegacyToSection(this.getConfig().getString("CleaverDescription.line1")));
+        lore.add(convertLegacyToSection(this.getConfig().getString("CleaverDescription.line2")));
+        lore.add(convertLegacyToSection(this.getConfig().getString("CleaverDescription.line3")));
+        lore.add(convertLegacyToSection(this.getConfig().getString("CleaverDescription.line4")));
+        lore.add(convertLegacyToSection(this.getConfig().getString("CleaverDescription.line5")));
+        lore.add(convertLegacyToSection(this.getConfig().getString("CleaverDescription.line6")));
+        lore.add(convertLegacyToSection(this.getConfig().getString("CleaverDescription.line7")));
+        lore.add(convertLegacyToSection(this.getConfig().getString("CleaverDescription.line8")));
+        lore.add(convertLegacyToSection(this.getConfig().getString("CleaverDescription.line9")));
+        lore.add(convertLegacyToSection(this.getConfig().getString("dPrismarineCleaver.line10")));
+        lore.add(convertLegacyToSection(this.getConfig().getString("dPrismarineCleaver.line11")));
+        lore.add(convertLegacyToSection(this.getConfig().getString("dPrismarineCleaver.line12")));
         resultm.setLore(lore);
         resultm.addItemFlags(new ItemFlag[]{ItemFlag.HIDE_ATTRIBUTES});
         result.setItemMeta(resultm);
@@ -3584,16 +3523,16 @@ implements Listener {
             dmg = this.getConfig().getDouble("aPrismarinePickaxe.damage") - 1.0;
             spd = this.getConfig().getDouble("aPrismarinePickaxe.speed") - 4.0;
         }
-        resultm.setDisplayName(ChatColor.translateAlternateColorCodes((char)'&', (String)this.getConfig().getString("dPrismarinePickaxe.name")));
+        resultm.setDisplayName(convertLegacyToSection(this.getConfig().getString("dPrismarinePickaxe.name")));
         AttributeModifier modifier1 = new AttributeModifier(UUID.randomUUID(), "Damage", dmg, AttributeModifier.Operation.ADD_NUMBER, EquipmentSlot.HAND);
-        resultm.addAttributeModifier(Attribute.GENERIC_ATTACK_DAMAGE, modifier1);
+        resultm.addAttributeModifier(Attribute.ATTACK_DAMAGE, modifier1);
         AttributeModifier modifier2 = new AttributeModifier(UUID.randomUUID(), "Atackspeed", spd, AttributeModifier.Operation.ADD_NUMBER, EquipmentSlot.HAND);
-        resultm.addAttributeModifier(Attribute.GENERIC_ATTACK_SPEED, modifier2);
+        resultm.addAttributeModifier(Attribute.ATTACK_SPEED, modifier2);
         ArrayList<String> lore = new ArrayList<String>();
-        lore.add(ChatColor.translateAlternateColorCodes((char)'&', (String)this.getConfig().getString("dPrismarinePickaxe.line1")));
-        lore.add(ChatColor.translateAlternateColorCodes((char)'&', (String)this.getConfig().getString("dPrismarinePickaxe.line2")));
-        lore.add(ChatColor.translateAlternateColorCodes((char)'&', (String)this.getConfig().getString("dPrismarinePickaxe.line3")));
-        lore.add(ChatColor.translateAlternateColorCodes((char)'&', (String)this.getConfig().getString("dPrismarinePickaxe.line4")));
+        lore.add(convertLegacyToSection(this.getConfig().getString("dPrismarinePickaxe.line1")));
+        lore.add(convertLegacyToSection(this.getConfig().getString("dPrismarinePickaxe.line2")));
+        lore.add(convertLegacyToSection(this.getConfig().getString("dPrismarinePickaxe.line3")));
+        lore.add(convertLegacyToSection(this.getConfig().getString("dPrismarinePickaxe.line4")));
         resultm.setLore(lore);
         resultm.addItemFlags(new ItemFlag[]{ItemFlag.HIDE_ATTRIBUTES});
         result.setItemMeta(resultm);
@@ -3637,16 +3576,16 @@ implements Listener {
             dmg = this.getConfig().getDouble("aPrismarineAxe.damage") - 1.0;
             spd = this.getConfig().getDouble("aPrismarineAxe.speed") - 4.0;
         }
-        resultm.setDisplayName(ChatColor.translateAlternateColorCodes((char)'&', (String)this.getConfig().getString("dPrismarineAxe.name")));
+        resultm.setDisplayName(convertLegacyToSection(this.getConfig().getString("dPrismarineAxe.name")));
         AttributeModifier modifier1 = new AttributeModifier(UUID.randomUUID(), "Damage", dmg, AttributeModifier.Operation.ADD_NUMBER, EquipmentSlot.HAND);
-        resultm.addAttributeModifier(Attribute.GENERIC_ATTACK_DAMAGE, modifier1);
+        resultm.addAttributeModifier(Attribute.ATTACK_DAMAGE, modifier1);
         AttributeModifier modifier2 = new AttributeModifier(UUID.randomUUID(), "Atackspeed", spd, AttributeModifier.Operation.ADD_NUMBER, EquipmentSlot.HAND);
-        resultm.addAttributeModifier(Attribute.GENERIC_ATTACK_SPEED, modifier2);
+        resultm.addAttributeModifier(Attribute.ATTACK_SPEED, modifier2);
         ArrayList<String> lore = new ArrayList<String>();
-        lore.add(ChatColor.translateAlternateColorCodes((char)'&', (String)this.getConfig().getString("dPrismarineAxe.line1")));
-        lore.add(ChatColor.translateAlternateColorCodes((char)'&', (String)this.getConfig().getString("dPrismarineAxe.line2")));
-        lore.add(ChatColor.translateAlternateColorCodes((char)'&', (String)this.getConfig().getString("dPrismarineAxe.line3")));
-        lore.add(ChatColor.translateAlternateColorCodes((char)'&', (String)this.getConfig().getString("dPrismarineAxe.line4")));
+        lore.add(convertLegacyToSection(this.getConfig().getString("dPrismarineAxe.line1")));
+        lore.add(convertLegacyToSection(this.getConfig().getString("dPrismarineAxe.line2")));
+        lore.add(convertLegacyToSection(this.getConfig().getString("dPrismarineAxe.line3")));
+        lore.add(convertLegacyToSection(this.getConfig().getString("dPrismarineAxe.line4")));
         resultm.setLore(lore);
         resultm.addItemFlags(new ItemFlag[]{ItemFlag.HIDE_ATTRIBUTES});
         result.setItemMeta(resultm);
@@ -3690,16 +3629,16 @@ implements Listener {
             dmg = this.getConfig().getDouble("aPrismarineShovel.damage") - 1.0;
             spd = this.getConfig().getDouble("aPrismarineShovel.speed") - 4.0;
         }
-        resultm.setDisplayName(ChatColor.translateAlternateColorCodes((char)'&', (String)this.getConfig().getString("dPrismarineShovel.name")));
+        resultm.setDisplayName(convertLegacyToSection(this.getConfig().getString("dPrismarineShovel.name")));
         AttributeModifier modifier1 = new AttributeModifier(UUID.randomUUID(), "Damage", dmg, AttributeModifier.Operation.ADD_NUMBER, EquipmentSlot.HAND);
-        resultm.addAttributeModifier(Attribute.GENERIC_ATTACK_DAMAGE, modifier1);
+        resultm.addAttributeModifier(Attribute.ATTACK_DAMAGE, modifier1);
         AttributeModifier modifier2 = new AttributeModifier(UUID.randomUUID(), "Atackspeed", spd, AttributeModifier.Operation.ADD_NUMBER, EquipmentSlot.HAND);
-        resultm.addAttributeModifier(Attribute.GENERIC_ATTACK_SPEED, modifier2);
+        resultm.addAttributeModifier(Attribute.ATTACK_SPEED, modifier2);
         ArrayList<String> lore = new ArrayList<String>();
-        lore.add(ChatColor.translateAlternateColorCodes((char)'&', (String)this.getConfig().getString("dPrismarineShovel.line1")));
-        lore.add(ChatColor.translateAlternateColorCodes((char)'&', (String)this.getConfig().getString("dPrismarineShovel.line2")));
-        lore.add(ChatColor.translateAlternateColorCodes((char)'&', (String)this.getConfig().getString("dPrismarineShovel.line3")));
-        lore.add(ChatColor.translateAlternateColorCodes((char)'&', (String)this.getConfig().getString("dPrismarineShovel.line4")));
+        lore.add(convertLegacyToSection(this.getConfig().getString("dPrismarineShovel.line1")));
+        lore.add(convertLegacyToSection(this.getConfig().getString("dPrismarineShovel.line2")));
+        lore.add(convertLegacyToSection(this.getConfig().getString("dPrismarineShovel.line3")));
+        lore.add(convertLegacyToSection(this.getConfig().getString("dPrismarineShovel.line4")));
         resultm.setLore(lore);
         resultm.addItemFlags(new ItemFlag[]{ItemFlag.HIDE_ATTRIBUTES});
         result.setItemMeta(resultm);
@@ -3743,16 +3682,16 @@ implements Listener {
             dmg = this.getConfig().getDouble("aPrismarineHoe.damage") - 1.0;
             spd = this.getConfig().getDouble("aPrismarineHoe.speed") - 4.0;
         }
-        resultm.setDisplayName(ChatColor.translateAlternateColorCodes((char)'&', (String)this.getConfig().getString("dPrismarineHoe.name")));
+        resultm.setDisplayName(convertLegacyToSection(this.getConfig().getString("dPrismarineHoe.name")));
         AttributeModifier modifier1 = new AttributeModifier(UUID.randomUUID(), "Damage", dmg, AttributeModifier.Operation.ADD_NUMBER, EquipmentSlot.HAND);
-        resultm.addAttributeModifier(Attribute.GENERIC_ATTACK_DAMAGE, modifier1);
+        resultm.addAttributeModifier(Attribute.ATTACK_DAMAGE, modifier1);
         AttributeModifier modifier2 = new AttributeModifier(UUID.randomUUID(), "Attack speed", spd, AttributeModifier.Operation.ADD_NUMBER, EquipmentSlot.HAND);
-        resultm.addAttributeModifier(Attribute.GENERIC_ATTACK_DAMAGE, modifier2);
+        resultm.addAttributeModifier(Attribute.ATTACK_DAMAGE, modifier2);
         ArrayList<String> lore = new ArrayList<String>();
-        lore.add(ChatColor.translateAlternateColorCodes((char)'&', (String)this.getConfig().getString("dPrismarineHoe.line1")));
-        lore.add(ChatColor.translateAlternateColorCodes((char)'&', (String)this.getConfig().getString("dPrismarineHoe.line2")));
-        lore.add(ChatColor.translateAlternateColorCodes((char)'&', (String)this.getConfig().getString("dPrismarineHoe.line3")));
-        lore.add(ChatColor.translateAlternateColorCodes((char)'&', (String)this.getConfig().getString("dPrismarineHoe.line4")));
+        lore.add(convertLegacyToSection(this.getConfig().getString("dPrismarineHoe.line1")));
+        lore.add(convertLegacyToSection(this.getConfig().getString("dPrismarineHoe.line2")));
+        lore.add(convertLegacyToSection(this.getConfig().getString("dPrismarineHoe.line3")));
+        lore.add(convertLegacyToSection(this.getConfig().getString("dPrismarineHoe.line4")));
         resultm.setLore(lore);
         resultm.addItemFlags(new ItemFlag[]{ItemFlag.HIDE_ATTRIBUTES});
         result.setItemMeta(resultm);
@@ -3802,13 +3741,13 @@ implements Listener {
         }
         resultm.setDisplayName(ChatColor.GREEN + "Prismarine Helmet");
         AttributeModifier modifier1 = new AttributeModifier(UUID.randomUUID(), "Armor", arm, AttributeModifier.Operation.ADD_NUMBER, EquipmentSlot.HEAD);
-        resultm.addAttributeModifier(Attribute.GENERIC_ARMOR, modifier1);
+        resultm.addAttributeModifier(Attribute.ARMOR, modifier1);
         AttributeModifier modifier2 = new AttributeModifier(UUID.randomUUID(), "Armor", armt, AttributeModifier.Operation.ADD_NUMBER, EquipmentSlot.HEAD);
-        resultm.addAttributeModifier(Attribute.GENERIC_ARMOR_TOUGHNESS, modifier2);
+        resultm.addAttributeModifier(Attribute.ARMOR_TOUGHNESS, modifier2);
         AttributeModifier modifier3 = new AttributeModifier(UUID.randomUUID(), "Armor", kbr, AttributeModifier.Operation.ADD_NUMBER, EquipmentSlot.HEAD);
-        resultm.addAttributeModifier(Attribute.GENERIC_KNOCKBACK_RESISTANCE, modifier3);
+        resultm.addAttributeModifier(Attribute.KNOCKBACK_RESISTANCE, modifier3);
         AttributeModifier modifier4 = new AttributeModifier(UUID.randomUUID(), "Armor", hp, AttributeModifier.Operation.ADD_NUMBER, EquipmentSlot.HEAD);
-        resultm.addAttributeModifier(Attribute.GENERIC_MAX_HEALTH, modifier4);
+        resultm.addAttributeModifier(Attribute.MAX_HEALTH, modifier4);
         result.setItemMeta(resultm);
         if (this.getConfig().getString("Prismarine") == "true") {
             event.setResult(result);
@@ -3856,13 +3795,13 @@ implements Listener {
         }
         resultm.setDisplayName(ChatColor.GREEN + "Prismarine Chestplate");
         AttributeModifier modifier1 = new AttributeModifier(UUID.randomUUID(), "Armor", arm, AttributeModifier.Operation.ADD_NUMBER, EquipmentSlot.CHEST);
-        resultm.addAttributeModifier(Attribute.GENERIC_ARMOR, modifier1);
+        resultm.addAttributeModifier(Attribute.ARMOR, modifier1);
         AttributeModifier modifier2 = new AttributeModifier(UUID.randomUUID(), "Armor", armt, AttributeModifier.Operation.ADD_NUMBER, EquipmentSlot.CHEST);
-        resultm.addAttributeModifier(Attribute.GENERIC_ARMOR_TOUGHNESS, modifier2);
+        resultm.addAttributeModifier(Attribute.ARMOR_TOUGHNESS, modifier2);
         AttributeModifier modifier3 = new AttributeModifier(UUID.randomUUID(), "Armor", kbr, AttributeModifier.Operation.ADD_NUMBER, EquipmentSlot.CHEST);
-        resultm.addAttributeModifier(Attribute.GENERIC_KNOCKBACK_RESISTANCE, modifier3);
+        resultm.addAttributeModifier(Attribute.KNOCKBACK_RESISTANCE, modifier3);
         AttributeModifier modifier4 = new AttributeModifier(UUID.randomUUID(), "Armor", hp, AttributeModifier.Operation.ADD_NUMBER, EquipmentSlot.CHEST);
-        resultm.addAttributeModifier(Attribute.GENERIC_MAX_HEALTH, modifier4);
+        resultm.addAttributeModifier(Attribute.MAX_HEALTH, modifier4);
         result.setItemMeta(resultm);
         if (this.getConfig().getString("Prismarine") == "true") {
             event.setResult(result);
@@ -3910,13 +3849,13 @@ implements Listener {
         }
         resultm.setDisplayName(ChatColor.GREEN + "Prismarine Leggings");
         AttributeModifier modifier1 = new AttributeModifier(UUID.randomUUID(), "Armor", arm, AttributeModifier.Operation.ADD_NUMBER, EquipmentSlot.LEGS);
-        resultm.addAttributeModifier(Attribute.GENERIC_ARMOR, modifier1);
+        resultm.addAttributeModifier(Attribute.ARMOR, modifier1);
         AttributeModifier modifier2 = new AttributeModifier(UUID.randomUUID(), "Armor", armt, AttributeModifier.Operation.ADD_NUMBER, EquipmentSlot.LEGS);
-        resultm.addAttributeModifier(Attribute.GENERIC_ARMOR_TOUGHNESS, modifier2);
+        resultm.addAttributeModifier(Attribute.ARMOR_TOUGHNESS, modifier2);
         AttributeModifier modifier3 = new AttributeModifier(UUID.randomUUID(), "Armor", kbr, AttributeModifier.Operation.ADD_NUMBER, EquipmentSlot.LEGS);
-        resultm.addAttributeModifier(Attribute.GENERIC_KNOCKBACK_RESISTANCE, modifier3);
+        resultm.addAttributeModifier(Attribute.KNOCKBACK_RESISTANCE, modifier3);
         AttributeModifier modifier4 = new AttributeModifier(UUID.randomUUID(), "Armor", hp, AttributeModifier.Operation.ADD_NUMBER, EquipmentSlot.LEGS);
-        resultm.addAttributeModifier(Attribute.GENERIC_MAX_HEALTH, modifier4);
+        resultm.addAttributeModifier(Attribute.MAX_HEALTH, modifier4);
         result.setItemMeta(resultm);
         if (this.getConfig().getString("Prismarine") == "true") {
             event.setResult(result);
@@ -3964,13 +3903,13 @@ implements Listener {
         }
         resultm.setDisplayName(ChatColor.GREEN + "Prismarine Boots");
         AttributeModifier modifier1 = new AttributeModifier(UUID.randomUUID(), "Armor", arm, AttributeModifier.Operation.ADD_NUMBER, EquipmentSlot.FEET);
-        resultm.addAttributeModifier(Attribute.GENERIC_ARMOR, modifier1);
+        resultm.addAttributeModifier(Attribute.ARMOR, modifier1);
         AttributeModifier modifier2 = new AttributeModifier(UUID.randomUUID(), "Armor", armt, AttributeModifier.Operation.ADD_NUMBER, EquipmentSlot.FEET);
-        resultm.addAttributeModifier(Attribute.GENERIC_ARMOR_TOUGHNESS, modifier2);
+        resultm.addAttributeModifier(Attribute.ARMOR_TOUGHNESS, modifier2);
         AttributeModifier modifier3 = new AttributeModifier(UUID.randomUUID(), "Armor", kbr, AttributeModifier.Operation.ADD_NUMBER, EquipmentSlot.FEET);
-        resultm.addAttributeModifier(Attribute.GENERIC_KNOCKBACK_RESISTANCE, modifier3);
+        resultm.addAttributeModifier(Attribute.KNOCKBACK_RESISTANCE, modifier3);
         AttributeModifier modifier4 = new AttributeModifier(UUID.randomUUID(), "Armor", hp, AttributeModifier.Operation.ADD_NUMBER, EquipmentSlot.FEET);
-        resultm.addAttributeModifier(Attribute.GENERIC_MAX_HEALTH, modifier4);
+        resultm.addAttributeModifier(Attribute.MAX_HEALTH, modifier4);
         result.setItemMeta(resultm);
         if (this.getConfig().getString("Prismarine") == "true") {
             event.setResult(result);
@@ -3987,13 +3926,13 @@ implements Listener {
         ItemMeta meta = item.getItemMeta();
         meta.setCustomModelData(Integer.valueOf(9999901));
         ArrayList<String> lore = new ArrayList<String>();
-        lore.add(ChatColor.translateAlternateColorCodes((char)'&', (String)this.getConfig().getString("dPrismarineAlloy.line1")));
-        lore.add(ChatColor.translateAlternateColorCodes((char)'&', (String)this.getConfig().getString("dPrismarineAlloy.line2")));
-        lore.add(ChatColor.translateAlternateColorCodes((char)'&', (String)this.getConfig().getString("dPrismarineAlloy.line3")));
-        lore.add(ChatColor.translateAlternateColorCodes((char)'&', (String)this.getConfig().getString("dPrismarineAlloy.line4")));
-        lore.add(ChatColor.translateAlternateColorCodes((char)'&', (String)this.getConfig().getString("dPrismarineAlloy.line5")));
+        lore.add(convertLegacyToSection(this.getConfig().getString("dPrismarineAlloy.line1")));
+        lore.add(convertLegacyToSection(this.getConfig().getString("dPrismarineAlloy.line2")));
+        lore.add(convertLegacyToSection(this.getConfig().getString("dPrismarineAlloy.line3")));
+        lore.add(convertLegacyToSection(this.getConfig().getString("dPrismarineAlloy.line4")));
+        lore.add(convertLegacyToSection(this.getConfig().getString("dPrismarineAlloy.line5")));
         meta.setLore(lore);
-        meta.setDisplayName(ChatColor.translateAlternateColorCodes((char)'&', (String)this.getConfig().getString("dPrismarineAlloy.name")));
+        meta.setDisplayName(convertLegacyToSection(this.getConfig().getString("dPrismarineAlloy.name")));
         meta.addEnchant(Enchantment.DURABILITY, 5, true);
         meta.addItemFlags(new ItemFlag[]{ItemFlag.HIDE_ENCHANTS});
         meta.addItemFlags(new ItemFlag[]{ItemFlag.HIDE_ATTRIBUTES});
@@ -4101,15 +4040,15 @@ implements Listener {
         ItemStack item = new ItemStack(Material.BOW);
         ItemMeta meta = item.getItemMeta();
         ArrayList<String> lore = new ArrayList<String>();
-        lore.add(ChatColor.translateAlternateColorCodes((char)'&', (String)this.getConfig().getString("dLongBow.line1")));
-        lore.add(ChatColor.translateAlternateColorCodes((char)'&', (String)this.getConfig().getString("dLongBow.line2")));
-        lore.add(ChatColor.translateAlternateColorCodes((char)'&', (String)this.getConfig().getString("dLongBow.line3")));
-        lore.add(ChatColor.translateAlternateColorCodes((char)'&', (String)this.getConfig().getString("dLongBow.line4")));
+        lore.add(convertLegacyToSection(this.getConfig().getString("dLongBow.line1")));
+        lore.add(convertLegacyToSection(this.getConfig().getString("dLongBow.line2")));
+        lore.add(convertLegacyToSection(this.getConfig().getString("dLongBow.line3")));
+        lore.add(convertLegacyToSection(this.getConfig().getString("dLongBow.line4")));
         meta.setLore(lore);
-        meta.setDisplayName(ChatColor.translateAlternateColorCodes((char)'&', (String)this.getConfig().getString("dLongBow.name")));
+        meta.setDisplayName(convertLegacyToSection(this.getConfig().getString("dLongBow.name")));
         meta.setCustomModelData(Integer.valueOf(3330001));
         AttributeModifier modifier3 = new AttributeModifier(UUID.randomUUID(), "Speed", -0.01, AttributeModifier.Operation.ADD_NUMBER, EquipmentSlot.HAND);
-        meta.addAttributeModifier(Attribute.GENERIC_MOVEMENT_SPEED, modifier3);
+        meta.addAttributeModifier(Attribute.MOVEMENT_SPEED, modifier3);
         item.setItemMeta(meta);
         NamespacedKey key = new NamespacedKey((Plugin)this, "longbow");
         this.keys.add(key);
@@ -4125,14 +4064,14 @@ implements Listener {
         ItemStack item = new ItemStack(Material.BOW);
         ItemMeta meta = item.getItemMeta();
         ArrayList<String> lore = new ArrayList<String>();
-        lore.add(ChatColor.translateAlternateColorCodes((char)'&', (String)this.getConfig().getString("dRecurveBow.line1")));
-        lore.add(ChatColor.translateAlternateColorCodes((char)'&', (String)this.getConfig().getString("dRecurveBow.line2")));
-        lore.add(ChatColor.translateAlternateColorCodes((char)'&', (String)this.getConfig().getString("dRecurveBow.line3")));
-        lore.add(ChatColor.translateAlternateColorCodes((char)'&', (String)this.getConfig().getString("dRecurveBow.line4")));
+        lore.add(convertLegacyToSection(this.getConfig().getString("dRecurveBow.line1")));
+        lore.add(convertLegacyToSection(this.getConfig().getString("dRecurveBow.line2")));
+        lore.add(convertLegacyToSection(this.getConfig().getString("dRecurveBow.line3")));
+        lore.add(convertLegacyToSection(this.getConfig().getString("dRecurveBow.line4")));
         meta.setLore(lore);
         AttributeModifier modifier3 = new AttributeModifier(UUID.randomUUID(), "Speed", -0.02, AttributeModifier.Operation.ADD_NUMBER, EquipmentSlot.HAND);
-        meta.addAttributeModifier(Attribute.GENERIC_MOVEMENT_SPEED, modifier3);
-        meta.setDisplayName(ChatColor.translateAlternateColorCodes((char)'&', (String)this.getConfig().getString("dRecurveBow.name")));
+        meta.addAttributeModifier(Attribute.MOVEMENT_SPEED, modifier3);
+        meta.setDisplayName(convertLegacyToSection(this.getConfig().getString("dRecurveBow.name")));
         meta.setCustomModelData(Integer.valueOf(3330002));
         item.setItemMeta(meta);
         NamespacedKey key = new NamespacedKey((Plugin)this, "recurvebow");
@@ -4150,15 +4089,15 @@ implements Listener {
         ItemStack item = new ItemStack(Material.BOW);
         ItemMeta meta = item.getItemMeta();
         ArrayList<String> lore = new ArrayList<String>();
-        lore.add(ChatColor.translateAlternateColorCodes((char)'&', (String)this.getConfig().getString("dCompoundBow.line1")));
-        lore.add(ChatColor.translateAlternateColorCodes((char)'&', (String)this.getConfig().getString("dCompoundBow.line2")));
-        lore.add(ChatColor.translateAlternateColorCodes((char)'&', (String)this.getConfig().getString("dCompoundBow.line3")));
-        lore.add(ChatColor.translateAlternateColorCodes((char)'&', (String)this.getConfig().getString("dCompoundBow.line4")));
+        lore.add(convertLegacyToSection(this.getConfig().getString("dCompoundBow.line1")));
+        lore.add(convertLegacyToSection(this.getConfig().getString("dCompoundBow.line2")));
+        lore.add(convertLegacyToSection(this.getConfig().getString("dCompoundBow.line3")));
+        lore.add(convertLegacyToSection(this.getConfig().getString("dCompoundBow.line4")));
         meta.setLore(lore);
-        meta.setDisplayName(ChatColor.translateAlternateColorCodes((char)'&', (String)this.getConfig().getString("dCompoundBow.name")));
+        meta.setDisplayName(convertLegacyToSection(this.getConfig().getString("dCompoundBow.name")));
         meta.setCustomModelData(Integer.valueOf(3330003));
         AttributeModifier modifier3 = new AttributeModifier(UUID.randomUUID(), "Speed", -0.03, AttributeModifier.Operation.ADD_NUMBER, EquipmentSlot.HAND);
-        meta.addAttributeModifier(Attribute.GENERIC_MOVEMENT_SPEED, modifier3);
+        meta.addAttributeModifier(Attribute.MOVEMENT_SPEED, modifier3);
         item.setItemMeta(meta);
         NamespacedKey key = new NamespacedKey((Plugin)this, "compoundbow");
         this.keys.add(key);
@@ -4313,22 +4252,22 @@ implements Listener {
         ItemMeta meta = item.getItemMeta();
         ArrayList<String> lore = new ArrayList<String>();
         lore.add("");
-        lore.add(ChatColor.translateAlternateColorCodes((char)'&', (String)"&6Cutting Edge"));
-        lore.add(ChatColor.translateAlternateColorCodes((char)'&', (String)"&7- +60% damage to players without a chestplate"));
-        lore.add(ChatColor.translateAlternateColorCodes((char)'&', (String)"&6Two Handed"));
-        lore.add(ChatColor.translateAlternateColorCodes((char)'&', (String)"&7- +50% damage if there is no item in offhand"));
-        lore.add(ChatColor.translateAlternateColorCodes((char)'&', (String)"&6Critical Hit"));
-        lore.add(ChatColor.translateAlternateColorCodes((char)'&', (String)"&7- 20% chance to deal 50% more damage when two handed"));
+        lore.add(convertLegacyToSection("&6Cutting Edge"));
+        lore.add(convertLegacyToSection("&7- +60% damage to players without a chestplate"));
+        lore.add(convertLegacyToSection("&6Two Handed"));
+        lore.add(convertLegacyToSection("&7- +50% damage if there is no item in offhand"));
+        lore.add(convertLegacyToSection("&6Critical Hit"));
+        lore.add(convertLegacyToSection("&7- 20% chance to deal 50% more damage when two handed"));
         lore.add("");
-        lore.add(ChatColor.translateAlternateColorCodes((char)'&', (String)"&7When in Main Hand:"));
-        lore.add(ChatColor.translateAlternateColorCodes((char)'&', (String)"&9 4 Attack Damage"));
-        lore.add(ChatColor.translateAlternateColorCodes((char)'&', (String)"&9 1.8 Attack Speed"));
+        lore.add(convertLegacyToSection("&7When in Main Hand:"));
+        lore.add(convertLegacyToSection("&9 4 Attack Damage"));
+        lore.add(convertLegacyToSection("&9 1.8 Attack Speed"));
         meta.setLore(lore);
         meta.addItemFlags(new ItemFlag[]{ItemFlag.HIDE_ATTRIBUTES});
         AttributeModifier modifier = new AttributeModifier(UUID.randomUUID(), "Attack Speed", -2.2, AttributeModifier.Operation.ADD_NUMBER, EquipmentSlot.HAND);
-        meta.addAttributeModifier(Attribute.GENERIC_ATTACK_SPEED, modifier);
+        meta.addAttributeModifier(Attribute.ATTACK_SPEED, modifier);
         AttributeModifier modifier2 = new AttributeModifier(UUID.randomUUID(), "Attack Damage", 3.0, AttributeModifier.Operation.ADD_NUMBER, EquipmentSlot.HAND);
-        meta.addAttributeModifier(Attribute.GENERIC_ATTACK_DAMAGE, modifier2);
+        meta.addAttributeModifier(Attribute.ATTACK_DAMAGE, modifier2);
         meta.setDisplayName("Bone Katana");
         meta.setCustomModelData(Integer.valueOf(4000002));
         item.setItemMeta(meta);
@@ -4345,16 +4284,16 @@ implements Listener {
         ItemStack item = new ItemStack(Material.NETHERITE_HOE);
         ItemMeta meta = item.getItemMeta();
         ArrayList<String> lore = new ArrayList<String>();
-        lore.add(ChatColor.translateAlternateColorCodes((char)'&', (String)this.getConfig().getString("dReallyGoodSword.line1")));
-        lore.add(ChatColor.translateAlternateColorCodes((char)'&', (String)this.getConfig().getString("dReallyGoodSword.line2")));
-        lore.add(ChatColor.translateAlternateColorCodes((char)'&', (String)this.getConfig().getString("dReallyGoodSword.line3")));
-        lore.add(ChatColor.translateAlternateColorCodes((char)'&', (String)this.getConfig().getString("dReallyGoodSword.line4")));
-        lore.add(ChatColor.translateAlternateColorCodes((char)'&', (String)this.getConfig().getString("dReallyGoodSword.line5")));
-        lore.add(ChatColor.translateAlternateColorCodes((char)'&', (String)this.getConfig().getString("dReallyGoodSword.line6")));
+        lore.add(convertLegacyToSection(this.getConfig().getString("dReallyGoodSword.line1")));
+        lore.add(convertLegacyToSection(this.getConfig().getString("dReallyGoodSword.line2")));
+        lore.add(convertLegacyToSection(this.getConfig().getString("dReallyGoodSword.line3")));
+        lore.add(convertLegacyToSection(this.getConfig().getString("dReallyGoodSword.line4")));
+        lore.add(convertLegacyToSection(this.getConfig().getString("dReallyGoodSword.line5")));
+        lore.add(convertLegacyToSection(this.getConfig().getString("dReallyGoodSword.line6")));
         meta.setLore(lore);
         meta.addItemFlags(new ItemFlag[]{ItemFlag.HIDE_ATTRIBUTES});
         meta.setLore(lore);
-        meta.setDisplayName(ChatColor.translateAlternateColorCodes((char)'&', (String)this.getConfig().getString("dReallyGoodSword.name")));
+        meta.setDisplayName(convertLegacyToSection(this.getConfig().getString("dReallyGoodSword.name")));
         meta.setCustomModelData(Integer.valueOf(1234567));
         item.setItemMeta(meta);
         NamespacedKey key = new NamespacedKey((Plugin)this, "reallygoodsword");
@@ -4372,13 +4311,13 @@ implements Listener {
         ItemStack item = new ItemStack(Material.CROSSBOW);
         ItemMeta meta = item.getItemMeta();
         ArrayList<String> lore = new ArrayList<String>();
-        lore.add(ChatColor.translateAlternateColorCodes((char)'&', (String)this.getConfig().getString("dRepeatingCrossbow.line1")));
-        lore.add(ChatColor.translateAlternateColorCodes((char)'&', (String)this.getConfig().getString("dRepeatingCrossbow.line2")));
-        lore.add(ChatColor.translateAlternateColorCodes((char)'&', (String)this.getConfig().getString("dRepeatingCrossbow.line3")));
-        lore.add(ChatColor.translateAlternateColorCodes((char)'&', (String)this.getConfig().getString("dRepeatingCrossbow.line4")));
-        lore.add(ChatColor.translateAlternateColorCodes((char)'&', (String)this.getConfig().getString("dRepeatingCrossbow.line5")));
+        lore.add(convertLegacyToSection(this.getConfig().getString("dRepeatingCrossbow.line1")));
+        lore.add(convertLegacyToSection(this.getConfig().getString("dRepeatingCrossbow.line2")));
+        lore.add(convertLegacyToSection(this.getConfig().getString("dRepeatingCrossbow.line3")));
+        lore.add(convertLegacyToSection(this.getConfig().getString("dRepeatingCrossbow.line4")));
+        lore.add(convertLegacyToSection(this.getConfig().getString("dRepeatingCrossbow.line5")));
         meta.setLore(lore);
-        meta.setDisplayName(ChatColor.translateAlternateColorCodes((char)'&', (String)this.getConfig().getString("dRepeatingCrossbow.name")));
+        meta.setDisplayName(convertLegacyToSection(this.getConfig().getString("dRepeatingCrossbow.name")));
         meta.setCustomModelData(Integer.valueOf(5552001));
         item.setItemMeta(meta);
         NamespacedKey key = new NamespacedKey((Plugin)this, "repeater_crossbow");
@@ -4397,13 +4336,13 @@ implements Listener {
         ItemStack item = new ItemStack(Material.CROSSBOW);
         ItemMeta meta = item.getItemMeta();
         ArrayList<String> lore = new ArrayList<String>();
-        lore.add(ChatColor.translateAlternateColorCodes((char)'&', (String)this.getConfig().getString("dBurstCrossbow.line1")));
-        lore.add(ChatColor.translateAlternateColorCodes((char)'&', (String)this.getConfig().getString("dBurstCrossbow.line2")));
-        lore.add(ChatColor.translateAlternateColorCodes((char)'&', (String)this.getConfig().getString("dBurstCrossbow.line3")));
-        lore.add(ChatColor.translateAlternateColorCodes((char)'&', (String)this.getConfig().getString("dBurstCrossbow.line4")));
-        lore.add(ChatColor.translateAlternateColorCodes((char)'&', (String)this.getConfig().getString("dBurstCrossbow.line5")));
+        lore.add(convertLegacyToSection(this.getConfig().getString("dBurstCrossbow.line1")));
+        lore.add(convertLegacyToSection(this.getConfig().getString("dBurstCrossbow.line2")));
+        lore.add(convertLegacyToSection(this.getConfig().getString("dBurstCrossbow.line3")));
+        lore.add(convertLegacyToSection(this.getConfig().getString("dBurstCrossbow.line4")));
+        lore.add(convertLegacyToSection(this.getConfig().getString("dBurstCrossbow.line5")));
         meta.setLore(lore);
-        meta.setDisplayName(ChatColor.translateAlternateColorCodes((char)'&', (String)this.getConfig().getString("dBurstCrossbow.name")));
+        meta.setDisplayName(convertLegacyToSection(this.getConfig().getString("dBurstCrossbow.name")));
         meta.setCustomModelData(Integer.valueOf(5552002));
         item.setItemMeta(meta);
         NamespacedKey key = new NamespacedKey((Plugin)this, "burst_crossbow");
@@ -4422,14 +4361,14 @@ implements Listener {
         ItemStack item = new ItemStack(Material.BOW);
         ItemMeta meta = item.getItemMeta();
         ArrayList<String> lore = new ArrayList<String>();
-        lore.add(ChatColor.translateAlternateColorCodes((char)'&', (String)this.getConfig().getString("dRedstoneBow.line1")));
-        lore.add(ChatColor.translateAlternateColorCodes((char)'&', (String)this.getConfig().getString("dRedstoneBow.line2")));
-        lore.add(ChatColor.translateAlternateColorCodes((char)'&', (String)this.getConfig().getString("dRedstoneBow.line3")));
-        lore.add(ChatColor.translateAlternateColorCodes((char)'&', (String)this.getConfig().getString("dRedstoneBow.line4")));
-        lore.add(ChatColor.translateAlternateColorCodes((char)'&', (String)this.getConfig().getString("dRedstoneBow.line5")));
-        lore.add(ChatColor.translateAlternateColorCodes((char)'&', (String)this.getConfig().getString("dRedstoneBow.line6")));
+        lore.add(convertLegacyToSection(this.getConfig().getString("dRedstoneBow.line1")));
+        lore.add(convertLegacyToSection(this.getConfig().getString("dRedstoneBow.line2")));
+        lore.add(convertLegacyToSection(this.getConfig().getString("dRedstoneBow.line3")));
+        lore.add(convertLegacyToSection(this.getConfig().getString("dRedstoneBow.line4")));
+        lore.add(convertLegacyToSection(this.getConfig().getString("dRedstoneBow.line5")));
+        lore.add(convertLegacyToSection(this.getConfig().getString("dRedstoneBow.line6")));
         meta.setLore(lore);
-        meta.setDisplayName(ChatColor.translateAlternateColorCodes((char)'&', (String)this.getConfig().getString("dRedstoneBow.name")));
+        meta.setDisplayName(convertLegacyToSection(this.getConfig().getString("dRedstoneBow.name")));
         meta.setCustomModelData(Integer.valueOf(3330005));
         item.setItemMeta(meta);
         NamespacedKey key = new NamespacedKey((Plugin)this, "redstone_bow");
@@ -4942,7 +4881,7 @@ implements Listener {
                 world.spawnParticle(Particle.CLOUD, player.getLocation(), 100);
                 ItemMeta meta2 = player.getInventory().getItemInMainHand().getItemMeta();
                 meta2.setCustomModelData(Integer.valueOf(2222224));
-                meta2.setDisplayName(ChatColor.translateAlternateColorCodes((char)'&', (String)this.getConfig().getString("dInfusedVessel.name")));
+                meta2.setDisplayName(convertLegacyToSection(this.getConfig().getString("dInfusedVessel.name")));
                 dmg = 9.0;
                 spd = -2.4;
                 if (this.getConfig().getString("UseCustomValues") == "true") {
@@ -4950,21 +4889,21 @@ implements Listener {
                     spd = this.getConfig().getDouble("aInfusedVessel.speed") - 4.0;
                 }
                 AttributeModifier modifier1a = new AttributeModifier(UUID.randomUUID(), "Damage", dmg, AttributeModifier.Operation.ADD_NUMBER, EquipmentSlot.HAND);
-                meta2.addAttributeModifier(Attribute.GENERIC_ATTACK_DAMAGE, modifier1a);
+                meta2.addAttributeModifier(Attribute.ATTACK_DAMAGE, modifier1a);
                 AttributeModifier modifier2a = new AttributeModifier(UUID.randomUUID(), "Atackspeed", spd, AttributeModifier.Operation.ADD_NUMBER, EquipmentSlot.HAND);
-                meta2.addAttributeModifier(Attribute.GENERIC_ATTACK_SPEED, modifier2a);
+                meta2.addAttributeModifier(Attribute.ATTACK_SPEED, modifier2a);
                 ArrayList<String> lore2 = new ArrayList<String>();
-                lore2.add(ChatColor.translateAlternateColorCodes((char)'&', (String)this.getConfig().getString("dInfusedVessel.line1")));
-                lore2.add(ChatColor.translateAlternateColorCodes((char)'&', (String)this.getConfig().getString("dInfusedVessel.line2")));
-                lore2.add(ChatColor.translateAlternateColorCodes((char)'&', (String)this.getConfig().getString("dInfusedVessel.line3")));
-                lore2.add(ChatColor.translateAlternateColorCodes((char)'&', (String)this.getConfig().getString("dInfusedVessel.line4")));
-                lore2.add(ChatColor.translateAlternateColorCodes((char)'&', (String)this.getConfig().getString("dInfusedVessel.line5")));
-                lore2.add(ChatColor.translateAlternateColorCodes((char)'&', (String)this.getConfig().getString("dInfusedVessel.line6")));
-                lore2.add(ChatColor.translateAlternateColorCodes((char)'&', (String)this.getConfig().getString("dInfusedVessel.line7")));
-                lore2.add(ChatColor.translateAlternateColorCodes((char)'&', (String)this.getConfig().getString("dInfusedVessel.line8")));
-                lore2.add(ChatColor.translateAlternateColorCodes((char)'&', (String)this.getConfig().getString("dInfusedVessel.line9")));
-                lore2.add(ChatColor.translateAlternateColorCodes((char)'&', (String)this.getConfig().getString("dInfusedVessel.line10")));
-                lore2.add(ChatColor.translateAlternateColorCodes((char)'&', (String)this.getConfig().getString("dInfusedVessel.line11")));
+                lore2.add(convertLegacyToSection(this.getConfig().getString("dInfusedVessel.line1")));
+                lore2.add(convertLegacyToSection(this.getConfig().getString("dInfusedVessel.line2")));
+                lore2.add(convertLegacyToSection(this.getConfig().getString("dInfusedVessel.line3")));
+                lore2.add(convertLegacyToSection(this.getConfig().getString("dInfusedVessel.line4")));
+                lore2.add(convertLegacyToSection(this.getConfig().getString("dInfusedVessel.line5")));
+                lore2.add(convertLegacyToSection(this.getConfig().getString("dInfusedVessel.line6")));
+                lore2.add(convertLegacyToSection(this.getConfig().getString("dInfusedVessel.line7")));
+                lore2.add(convertLegacyToSection(this.getConfig().getString("dInfusedVessel.line8")));
+                lore2.add(convertLegacyToSection(this.getConfig().getString("dInfusedVessel.line9")));
+                lore2.add(convertLegacyToSection(this.getConfig().getString("dInfusedVessel.line10")));
+                lore2.add(convertLegacyToSection(this.getConfig().getString("dInfusedVessel.line11")));
                 meta2.setLore(lore2);
                 meta2.addItemFlags(new ItemFlag[]{ItemFlag.HIDE_ATTRIBUTES});
                 player.getInventory().getItemInMainHand().setItemMeta(meta2);
@@ -4984,7 +4923,7 @@ implements Listener {
                 world.spawnParticle(Particle.CLOUD, player.getLocation(), 100);
                 ItemMeta meta3 = player.getInventory().getItemInMainHand().getItemMeta();
                 meta3.setCustomModelData(Integer.valueOf(2222225));
-                meta3.setDisplayName(ChatColor.translateAlternateColorCodes((char)'&', (String)this.getConfig().getString("dCursedVessel.name")));
+                meta3.setDisplayName(convertLegacyToSection(this.getConfig().getString("dCursedVessel.name")));
                 dmg = 9.0;
                 spd = -2.4;
                 if (this.getConfig().getString("UseCustomValues") == "true") {
@@ -4992,21 +4931,21 @@ implements Listener {
                     spd = this.getConfig().getDouble("aCursedVessel.speed") - 4.0;
                 }
                 AttributeModifier modifier1e = new AttributeModifier(UUID.randomUUID(), "Damage", dmg, AttributeModifier.Operation.ADD_NUMBER, EquipmentSlot.HAND);
-                meta3.addAttributeModifier(Attribute.GENERIC_ATTACK_DAMAGE, modifier1e);
+                meta3.addAttributeModifier(Attribute.ATTACK_DAMAGE, modifier1e);
                 AttributeModifier modifier2e = new AttributeModifier(UUID.randomUUID(), "Atackspeed", spd, AttributeModifier.Operation.ADD_NUMBER, EquipmentSlot.HAND);
-                meta3.addAttributeModifier(Attribute.GENERIC_ATTACK_SPEED, modifier2e);
+                meta3.addAttributeModifier(Attribute.ATTACK_SPEED, modifier2e);
                 ArrayList<String> lore3 = new ArrayList<String>();
-                lore3.add(ChatColor.translateAlternateColorCodes((char)'&', (String)this.getConfig().getString("dCursedVessel.line1")));
-                lore3.add(ChatColor.translateAlternateColorCodes((char)'&', (String)this.getConfig().getString("dCursedVessel.line2")));
-                lore3.add(ChatColor.translateAlternateColorCodes((char)'&', (String)this.getConfig().getString("dCursedVessel.line3")));
-                lore3.add(ChatColor.translateAlternateColorCodes((char)'&', (String)this.getConfig().getString("dCursedVessel.line4")));
-                lore3.add(ChatColor.translateAlternateColorCodes((char)'&', (String)this.getConfig().getString("dCursedVessel.line5")));
-                lore3.add(ChatColor.translateAlternateColorCodes((char)'&', (String)this.getConfig().getString("dCursedVessel.line6")));
-                lore3.add(ChatColor.translateAlternateColorCodes((char)'&', (String)this.getConfig().getString("dCursedVessel.line7")));
-                lore3.add(ChatColor.translateAlternateColorCodes((char)'&', (String)this.getConfig().getString("dCursedVessel.line8")));
-                lore3.add(ChatColor.translateAlternateColorCodes((char)'&', (String)this.getConfig().getString("dCursedVessel.line9")));
-                lore3.add(ChatColor.translateAlternateColorCodes((char)'&', (String)this.getConfig().getString("dCursedVessel.line10")));
-                lore3.add(ChatColor.translateAlternateColorCodes((char)'&', (String)this.getConfig().getString("dCursedVessel.line11")));
+                lore3.add(convertLegacyToSection(this.getConfig().getString("dCursedVessel.line1")));
+                lore3.add(convertLegacyToSection(this.getConfig().getString("dCursedVessel.line2")));
+                lore3.add(convertLegacyToSection(this.getConfig().getString("dCursedVessel.line3")));
+                lore3.add(convertLegacyToSection(this.getConfig().getString("dCursedVessel.line4")));
+                lore3.add(convertLegacyToSection(this.getConfig().getString("dCursedVessel.line5")));
+                lore3.add(convertLegacyToSection(this.getConfig().getString("dCursedVessel.line6")));
+                lore3.add(convertLegacyToSection(this.getConfig().getString("dCursedVessel.line7")));
+                lore3.add(convertLegacyToSection(this.getConfig().getString("dCursedVessel.line8")));
+                lore3.add(convertLegacyToSection(this.getConfig().getString("dCursedVessel.line9")));
+                lore3.add(convertLegacyToSection(this.getConfig().getString("dCursedVessel.line10")));
+                lore3.add(convertLegacyToSection(this.getConfig().getString("dCursedVessel.line11")));
                 meta3.setLore(lore3);
                 meta3.addItemFlags(new ItemFlag[]{ItemFlag.HIDE_ATTRIBUTES});
                 player.getInventory().getItemInMainHand().setItemMeta(meta3);
@@ -5265,7 +5204,7 @@ implements Listener {
         }
         ItemStack item = new ItemStack(Material.NETHERITE_SWORD);
         ItemMeta meta = item.getItemMeta();
-        meta.setDisplayName(ChatColor.translateAlternateColorCodes((char)'&', (String)this.getConfig().getString("dAwakenedVesselPurple.name")));
+        meta.setDisplayName(convertLegacyToSection(this.getConfig().getString("dAwakenedVesselPurple.name")));
         meta.setCustomModelData(Integer.valueOf(2222228));
         double dmg = 11.0;
         double spd = -2.6;
@@ -5274,26 +5213,26 @@ implements Listener {
             spd = this.getConfig().getDouble("aAwakenedVesselPurple.speed") - 4.0;
         }
         AttributeModifier modifier1 = new AttributeModifier(UUID.randomUUID(), "Damage", dmg, AttributeModifier.Operation.ADD_NUMBER, EquipmentSlot.HAND);
-        meta.addAttributeModifier(Attribute.GENERIC_ATTACK_DAMAGE, modifier1);
+        meta.addAttributeModifier(Attribute.ATTACK_DAMAGE, modifier1);
         AttributeModifier modifier2 = new AttributeModifier(UUID.randomUUID(), "Atackspeed", spd, AttributeModifier.Operation.ADD_NUMBER, EquipmentSlot.HAND);
-        meta.addAttributeModifier(Attribute.GENERIC_ATTACK_SPEED, modifier2);
+        meta.addAttributeModifier(Attribute.ATTACK_SPEED, modifier2);
         ArrayList<String> lore = new ArrayList<String>();
-        lore.add(ChatColor.translateAlternateColorCodes((char)'&', (String)this.getConfig().getString("dAwakenedVesselPurple.line1")));
-        lore.add(ChatColor.translateAlternateColorCodes((char)'&', (String)this.getConfig().getString("dAwakenedVesselPurple.line2")));
-        lore.add(ChatColor.translateAlternateColorCodes((char)'&', (String)this.getConfig().getString("dAwakenedVesselPurple.line3")));
-        lore.add(ChatColor.translateAlternateColorCodes((char)'&', (String)this.getConfig().getString("dAwakenedVesselPurple.line4")));
-        lore.add(ChatColor.translateAlternateColorCodes((char)'&', (String)this.getConfig().getString("dAwakenedVesselPurple.line5")));
-        lore.add(ChatColor.translateAlternateColorCodes((char)'&', (String)this.getConfig().getString("dAwakenedVesselPurple.line6")));
-        lore.add(ChatColor.translateAlternateColorCodes((char)'&', (String)this.getConfig().getString("dAwakenedVesselPurple.line7")));
-        lore.add(ChatColor.translateAlternateColorCodes((char)'&', (String)this.getConfig().getString("dAwakenedVesselPurple.line8")));
-        lore.add(ChatColor.translateAlternateColorCodes((char)'&', (String)this.getConfig().getString("dAwakenedVesselPurple.line9")));
-        lore.add(ChatColor.translateAlternateColorCodes((char)'&', (String)this.getConfig().getString("dAwakenedVesselPurple.line10")));
-        lore.add(ChatColor.translateAlternateColorCodes((char)'&', (String)this.getConfig().getString("dAwakenedVesselPurple.line11")));
-        lore.add(ChatColor.translateAlternateColorCodes((char)'&', (String)this.getConfig().getString("dAwakenedVesselPurple.line12")));
-        lore.add(ChatColor.translateAlternateColorCodes((char)'&', (String)this.getConfig().getString("dAwakenedVesselPurple.line13")));
-        lore.add(ChatColor.translateAlternateColorCodes((char)'&', (String)this.getConfig().getString("dAwakenedVesselPurple.line14")));
-        lore.add(ChatColor.translateAlternateColorCodes((char)'&', (String)this.getConfig().getString("dAwakenedVesselPurple.line15")));
-        lore.add(ChatColor.translateAlternateColorCodes((char)'&', (String)this.getConfig().getString("dAwakenedVesselPurple.line16")));
+        lore.add(convertLegacyToSection(this.getConfig().getString("dAwakenedVesselPurple.line1")));
+        lore.add(convertLegacyToSection(this.getConfig().getString("dAwakenedVesselPurple.line2")));
+        lore.add(convertLegacyToSection(this.getConfig().getString("dAwakenedVesselPurple.line3")));
+        lore.add(convertLegacyToSection(this.getConfig().getString("dAwakenedVesselPurple.line4")));
+        lore.add(convertLegacyToSection(this.getConfig().getString("dAwakenedVesselPurple.line5")));
+        lore.add(convertLegacyToSection(this.getConfig().getString("dAwakenedVesselPurple.line6")));
+        lore.add(convertLegacyToSection(this.getConfig().getString("dAwakenedVesselPurple.line7")));
+        lore.add(convertLegacyToSection(this.getConfig().getString("dAwakenedVesselPurple.line8")));
+        lore.add(convertLegacyToSection(this.getConfig().getString("dAwakenedVesselPurple.line9")));
+        lore.add(convertLegacyToSection(this.getConfig().getString("dAwakenedVesselPurple.line10")));
+        lore.add(convertLegacyToSection(this.getConfig().getString("dAwakenedVesselPurple.line11")));
+        lore.add(convertLegacyToSection(this.getConfig().getString("dAwakenedVesselPurple.line12")));
+        lore.add(convertLegacyToSection(this.getConfig().getString("dAwakenedVesselPurple.line13")));
+        lore.add(convertLegacyToSection(this.getConfig().getString("dAwakenedVesselPurple.line14")));
+        lore.add(convertLegacyToSection(this.getConfig().getString("dAwakenedVesselPurple.line15")));
+        lore.add(convertLegacyToSection(this.getConfig().getString("dAwakenedVesselPurple.line16")));
         meta.setLore(lore);
         meta.addItemFlags(new ItemFlag[]{ItemFlag.HIDE_ATTRIBUTES});
         item.setItemMeta(meta);
@@ -5328,7 +5267,7 @@ implements Listener {
         }
         ItemStack item = new ItemStack(Material.NETHERITE_SWORD);
         ItemMeta meta = item.getItemMeta();
-        meta.setDisplayName(ChatColor.translateAlternateColorCodes((char)'&', (String)this.getConfig().getString("dAwakenedVesselWhite.name")));
+        meta.setDisplayName(convertLegacyToSection(this.getConfig().getString("dAwakenedVesselWhite.name")));
         meta.setCustomModelData(Integer.valueOf(2222226));
         double dmg = 11.0;
         double spd = -2.6;
@@ -5337,26 +5276,26 @@ implements Listener {
             spd = this.getConfig().getDouble("aAwakenedVesselWhite.speed") - 4.0;
         }
         AttributeModifier modifier1 = new AttributeModifier(UUID.randomUUID(), "Damage", dmg, AttributeModifier.Operation.ADD_NUMBER, EquipmentSlot.HAND);
-        meta.addAttributeModifier(Attribute.GENERIC_ATTACK_DAMAGE, modifier1);
+        meta.addAttributeModifier(Attribute.ATTACK_DAMAGE, modifier1);
         AttributeModifier modifier2 = new AttributeModifier(UUID.randomUUID(), "Atackspeed", spd, AttributeModifier.Operation.ADD_NUMBER, EquipmentSlot.HAND);
-        meta.addAttributeModifier(Attribute.GENERIC_ATTACK_SPEED, modifier2);
+        meta.addAttributeModifier(Attribute.ATTACK_SPEED, modifier2);
         ArrayList<String> lore = new ArrayList<String>();
-        lore.add(ChatColor.translateAlternateColorCodes((char)'&', (String)this.getConfig().getString("dAwakenedVesselWhite.line1")));
-        lore.add(ChatColor.translateAlternateColorCodes((char)'&', (String)this.getConfig().getString("dAwakenedVesselWhite.line2")));
-        lore.add(ChatColor.translateAlternateColorCodes((char)'&', (String)this.getConfig().getString("dAwakenedVesselWhite.line3")));
-        lore.add(ChatColor.translateAlternateColorCodes((char)'&', (String)this.getConfig().getString("dAwakenedVesselWhite.line4")));
-        lore.add(ChatColor.translateAlternateColorCodes((char)'&', (String)this.getConfig().getString("dAwakenedVesselWhite.line5")));
-        lore.add(ChatColor.translateAlternateColorCodes((char)'&', (String)this.getConfig().getString("dAwakenedVesselWhite.line6")));
-        lore.add(ChatColor.translateAlternateColorCodes((char)'&', (String)this.getConfig().getString("dAwakenedVesselWhite.line7")));
-        lore.add(ChatColor.translateAlternateColorCodes((char)'&', (String)this.getConfig().getString("dAwakenedVesselWhite.line8")));
-        lore.add(ChatColor.translateAlternateColorCodes((char)'&', (String)this.getConfig().getString("dAwakenedVesselWhite.line9")));
-        lore.add(ChatColor.translateAlternateColorCodes((char)'&', (String)this.getConfig().getString("dAwakenedVesselWhite.line10")));
-        lore.add(ChatColor.translateAlternateColorCodes((char)'&', (String)this.getConfig().getString("dAwakenedVesselWhite.line11")));
-        lore.add(ChatColor.translateAlternateColorCodes((char)'&', (String)this.getConfig().getString("dAwakenedVesselWhite.line12")));
-        lore.add(ChatColor.translateAlternateColorCodes((char)'&', (String)this.getConfig().getString("dAwakenedVesselWhite.line13")));
-        lore.add(ChatColor.translateAlternateColorCodes((char)'&', (String)this.getConfig().getString("dAwakenedVesselWhite.line14")));
-        lore.add(ChatColor.translateAlternateColorCodes((char)'&', (String)this.getConfig().getString("dAwakenedVesselWhite.line15")));
-        lore.add(ChatColor.translateAlternateColorCodes((char)'&', (String)this.getConfig().getString("dAwakenedVesselWhite.line16")));
+        lore.add(convertLegacyToSection(this.getConfig().getString("dAwakenedVesselWhite.line1")));
+        lore.add(convertLegacyToSection(this.getConfig().getString("dAwakenedVesselWhite.line2")));
+        lore.add(convertLegacyToSection(this.getConfig().getString("dAwakenedVesselWhite.line3")));
+        lore.add(convertLegacyToSection(this.getConfig().getString("dAwakenedVesselWhite.line4")));
+        lore.add(convertLegacyToSection(this.getConfig().getString("dAwakenedVesselWhite.line5")));
+        lore.add(convertLegacyToSection(this.getConfig().getString("dAwakenedVesselWhite.line6")));
+        lore.add(convertLegacyToSection(this.getConfig().getString("dAwakenedVesselWhite.line7")));
+        lore.add(convertLegacyToSection(this.getConfig().getString("dAwakenedVesselWhite.line8")));
+        lore.add(convertLegacyToSection(this.getConfig().getString("dAwakenedVesselWhite.line9")));
+        lore.add(convertLegacyToSection(this.getConfig().getString("dAwakenedVesselWhite.line10")));
+        lore.add(convertLegacyToSection(this.getConfig().getString("dAwakenedVesselWhite.line11")));
+        lore.add(convertLegacyToSection(this.getConfig().getString("dAwakenedVesselWhite.line12")));
+        lore.add(convertLegacyToSection(this.getConfig().getString("dAwakenedVesselWhite.line13")));
+        lore.add(convertLegacyToSection(this.getConfig().getString("dAwakenedVesselWhite.line14")));
+        lore.add(convertLegacyToSection(this.getConfig().getString("dAwakenedVesselWhite.line15")));
+        lore.add(convertLegacyToSection(this.getConfig().getString("dAwakenedVesselWhite.line16")));
         meta.setLore(lore);
         meta.addItemFlags(new ItemFlag[]{ItemFlag.HIDE_ATTRIBUTES});
         item.setItemMeta(meta);
@@ -5444,10 +5383,10 @@ implements Listener {
         ItemStack item = new ItemStack(Material.NETHER_STAR);
         ItemMeta meta = item.getItemMeta();
         ArrayList<String> lore = new ArrayList<String>();
-        lore.add(ChatColor.translateAlternateColorCodes((char)'&', (String)this.getConfig().getString("dStarCharm.line1")));
-        lore.add(ChatColor.translateAlternateColorCodes((char)'&', (String)this.getConfig().getString("dStarCharm.line2")));
+        lore.add(convertLegacyToSection(this.getConfig().getString("dStarCharm.line1")));
+        lore.add(convertLegacyToSection(this.getConfig().getString("dStarCharm.line2")));
         meta.setLore(lore);
-        meta.setDisplayName(ChatColor.translateAlternateColorCodes((char)'&', (String)this.getConfig().getString("dStarCharm.name")));
+        meta.setDisplayName(convertLegacyToSection(this.getConfig().getString("dStarCharm.name")));
         meta.setCustomModelData(Integer.valueOf(4920001));
         item.setItemMeta(meta);
         NamespacedKey key = new NamespacedKey((Plugin)this, "star_charm");
@@ -5777,13 +5716,13 @@ implements Listener {
         ItemStack item = new ItemStack(Material.WOODEN_SWORD);
         ItemMeta meta = item.getItemMeta();
         ArrayList<String> lore = new ArrayList<String>();
-        lore.add(ChatColor.translateAlternateColorCodes((char)'&', (String)this.getConfig().getString("SaberDescription.line1")));
-        lore.add(ChatColor.translateAlternateColorCodes((char)'&', (String)this.getConfig().getString("SaberDescription.line2")));
-        lore.add(ChatColor.translateAlternateColorCodes((char)'&', (String)this.getConfig().getString("SaberDescription.line3")));
-        lore.add(ChatColor.translateAlternateColorCodes((char)'&', (String)this.getConfig().getString("SaberDescription.line4")));
-        lore.add(ChatColor.translateAlternateColorCodes((char)'&', (String)this.getConfig().getString("dWoodenSaber.line5")));
-        lore.add(ChatColor.translateAlternateColorCodes((char)'&', (String)this.getConfig().getString("dWoodenSaber.line6")));
-        lore.add(ChatColor.translateAlternateColorCodes((char)'&', (String)this.getConfig().getString("dWoodenSaber.line7")));
+        lore.add(convertLegacyToSection(this.getConfig().getString("SaberDescription.line1")));
+        lore.add(convertLegacyToSection(this.getConfig().getString("SaberDescription.line2")));
+        lore.add(convertLegacyToSection(this.getConfig().getString("SaberDescription.line3")));
+        lore.add(convertLegacyToSection(this.getConfig().getString("SaberDescription.line4")));
+        lore.add(convertLegacyToSection(this.getConfig().getString("dWoodenSaber.line5")));
+        lore.add(convertLegacyToSection(this.getConfig().getString("dWoodenSaber.line6")));
+        lore.add(convertLegacyToSection(this.getConfig().getString("dWoodenSaber.line7")));
         meta.setLore(lore);
         meta.addItemFlags(new ItemFlag[]{ItemFlag.HIDE_ATTRIBUTES});
         double dmg = 3.0;
@@ -5793,10 +5732,10 @@ implements Listener {
             spd = this.getConfig().getDouble("aWoodenSaber.speed") - 4.0;
         }
         AttributeModifier modifier = new AttributeModifier(UUID.randomUUID(), "Attack Speed", spd, AttributeModifier.Operation.ADD_NUMBER, EquipmentSlot.HAND);
-        meta.addAttributeModifier(Attribute.GENERIC_ATTACK_SPEED, modifier);
+        meta.addAttributeModifier(Attribute.ATTACK_SPEED, modifier);
         AttributeModifier modifier2 = new AttributeModifier(UUID.randomUUID(), "Attack Damage", dmg, AttributeModifier.Operation.ADD_NUMBER, EquipmentSlot.HAND);
-        meta.addAttributeModifier(Attribute.GENERIC_ATTACK_DAMAGE, modifier2);
-        meta.setDisplayName(ChatColor.translateAlternateColorCodes((char)'&', (String)this.getConfig().getString("dWoodenSaber.name")));
+        meta.addAttributeModifier(Attribute.ATTACK_DAMAGE, modifier2);
+        meta.setDisplayName(convertLegacyToSection(this.getConfig().getString("dWoodenSaber.name")));
         meta.setCustomModelData(Integer.valueOf(1000010));
         item.setItemMeta(meta);
         NamespacedKey key = new NamespacedKey((Plugin)this, "wooden_saber");
@@ -5811,13 +5750,13 @@ implements Listener {
         ItemStack item = new ItemStack(Material.GOLDEN_SWORD);
         ItemMeta meta = item.getItemMeta();
         ArrayList<String> lore = new ArrayList<String>();
-        lore.add(ChatColor.translateAlternateColorCodes((char)'&', (String)this.getConfig().getString("SaberDescription.line1")));
-        lore.add(ChatColor.translateAlternateColorCodes((char)'&', (String)this.getConfig().getString("SaberDescription.line2")));
-        lore.add(ChatColor.translateAlternateColorCodes((char)'&', (String)this.getConfig().getString("SaberDescription.line3")));
-        lore.add(ChatColor.translateAlternateColorCodes((char)'&', (String)this.getConfig().getString("SaberDescription.line4")));
-        lore.add(ChatColor.translateAlternateColorCodes((char)'&', (String)this.getConfig().getString("dGoldenSaber.line5")));
-        lore.add(ChatColor.translateAlternateColorCodes((char)'&', (String)this.getConfig().getString("dGoldenSaber.line6")));
-        lore.add(ChatColor.translateAlternateColorCodes((char)'&', (String)this.getConfig().getString("dGoldenSaber.line7")));
+        lore.add(convertLegacyToSection(this.getConfig().getString("SaberDescription.line1")));
+        lore.add(convertLegacyToSection(this.getConfig().getString("SaberDescription.line2")));
+        lore.add(convertLegacyToSection(this.getConfig().getString("SaberDescription.line3")));
+        lore.add(convertLegacyToSection(this.getConfig().getString("SaberDescription.line4")));
+        lore.add(convertLegacyToSection(this.getConfig().getString("dGoldenSaber.line5")));
+        lore.add(convertLegacyToSection(this.getConfig().getString("dGoldenSaber.line6")));
+        lore.add(convertLegacyToSection(this.getConfig().getString("dGoldenSaber.line7")));
         meta.setLore(lore);
         meta.addItemFlags(new ItemFlag[]{ItemFlag.HIDE_ATTRIBUTES});
         double dmg = 3.0;
@@ -5827,10 +5766,10 @@ implements Listener {
             spd = this.getConfig().getDouble("aGoldenSaber.speed") - 4.0;
         }
         AttributeModifier modifier = new AttributeModifier(UUID.randomUUID(), "Attack Speed", spd, AttributeModifier.Operation.ADD_NUMBER, EquipmentSlot.HAND);
-        meta.addAttributeModifier(Attribute.GENERIC_ATTACK_SPEED, modifier);
+        meta.addAttributeModifier(Attribute.ATTACK_SPEED, modifier);
         AttributeModifier modifier2 = new AttributeModifier(UUID.randomUUID(), "Attack Damage", dmg, AttributeModifier.Operation.ADD_NUMBER, EquipmentSlot.HAND);
-        meta.addAttributeModifier(Attribute.GENERIC_ATTACK_DAMAGE, modifier2);
-        meta.setDisplayName(ChatColor.translateAlternateColorCodes((char)'&', (String)this.getConfig().getString("dGoldenSaber.name")));
+        meta.addAttributeModifier(Attribute.ATTACK_DAMAGE, modifier2);
+        meta.setDisplayName(convertLegacyToSection(this.getConfig().getString("dGoldenSaber.name")));
         meta.setCustomModelData(Integer.valueOf(1000010));
         item.setItemMeta(meta);
         NamespacedKey key = new NamespacedKey((Plugin)this, "golden_saber");
@@ -5846,13 +5785,13 @@ implements Listener {
         ItemStack item = new ItemStack(Material.STONE_SWORD);
         ItemMeta meta = item.getItemMeta();
         ArrayList<String> lore = new ArrayList<String>();
-        lore.add(ChatColor.translateAlternateColorCodes((char)'&', (String)this.getConfig().getString("SaberDescription.line1")));
-        lore.add(ChatColor.translateAlternateColorCodes((char)'&', (String)this.getConfig().getString("SaberDescription.line2")));
-        lore.add(ChatColor.translateAlternateColorCodes((char)'&', (String)this.getConfig().getString("SaberDescription.line3")));
-        lore.add(ChatColor.translateAlternateColorCodes((char)'&', (String)this.getConfig().getString("SaberDescription.line4")));
-        lore.add(ChatColor.translateAlternateColorCodes((char)'&', (String)this.getConfig().getString("dStoneSaber.line5")));
-        lore.add(ChatColor.translateAlternateColorCodes((char)'&', (String)this.getConfig().getString("dStoneSaber.line6")));
-        lore.add(ChatColor.translateAlternateColorCodes((char)'&', (String)this.getConfig().getString("dStoneSaber.line7")));
+        lore.add(convertLegacyToSection(this.getConfig().getString("SaberDescription.line1")));
+        lore.add(convertLegacyToSection(this.getConfig().getString("SaberDescription.line2")));
+        lore.add(convertLegacyToSection(this.getConfig().getString("SaberDescription.line3")));
+        lore.add(convertLegacyToSection(this.getConfig().getString("SaberDescription.line4")));
+        lore.add(convertLegacyToSection(this.getConfig().getString("dStoneSaber.line5")));
+        lore.add(convertLegacyToSection(this.getConfig().getString("dStoneSaber.line6")));
+        lore.add(convertLegacyToSection(this.getConfig().getString("dStoneSaber.line7")));
         meta.setLore(lore);
         meta.addItemFlags(new ItemFlag[]{ItemFlag.HIDE_ATTRIBUTES});
         double dmg = 4.0;
@@ -5862,10 +5801,10 @@ implements Listener {
             spd = this.getConfig().getDouble("aStoneSaber.speed") - 4.0;
         }
         AttributeModifier modifier = new AttributeModifier(UUID.randomUUID(), "Attack Speed", spd, AttributeModifier.Operation.ADD_NUMBER, EquipmentSlot.HAND);
-        meta.addAttributeModifier(Attribute.GENERIC_ATTACK_SPEED, modifier);
+        meta.addAttributeModifier(Attribute.ATTACK_SPEED, modifier);
         AttributeModifier modifier2 = new AttributeModifier(UUID.randomUUID(), "Attack Damage", dmg, AttributeModifier.Operation.ADD_NUMBER, EquipmentSlot.HAND);
-        meta.addAttributeModifier(Attribute.GENERIC_ATTACK_DAMAGE, modifier2);
-        meta.setDisplayName(ChatColor.translateAlternateColorCodes((char)'&', (String)this.getConfig().getString("dStoneSaber.name")));
+        meta.addAttributeModifier(Attribute.ATTACK_DAMAGE, modifier2);
+        meta.setDisplayName(convertLegacyToSection(this.getConfig().getString("dStoneSaber.name")));
         meta.setCustomModelData(Integer.valueOf(1000010));
         item.setItemMeta(meta);
         NamespacedKey key = new NamespacedKey((Plugin)this, "stone_saber");
@@ -5881,13 +5820,13 @@ implements Listener {
         ItemStack item = new ItemStack(Material.IRON_SWORD);
         ItemMeta meta = item.getItemMeta();
         ArrayList<String> lore = new ArrayList<String>();
-        lore.add(ChatColor.translateAlternateColorCodes((char)'&', (String)this.getConfig().getString("SaberDescription.line1")));
-        lore.add(ChatColor.translateAlternateColorCodes((char)'&', (String)this.getConfig().getString("SaberDescription.line2")));
-        lore.add(ChatColor.translateAlternateColorCodes((char)'&', (String)this.getConfig().getString("SaberDescription.line3")));
-        lore.add(ChatColor.translateAlternateColorCodes((char)'&', (String)this.getConfig().getString("SaberDescription.line4")));
-        lore.add(ChatColor.translateAlternateColorCodes((char)'&', (String)this.getConfig().getString("dIronSaber.line5")));
-        lore.add(ChatColor.translateAlternateColorCodes((char)'&', (String)this.getConfig().getString("dIronSaber.line6")));
-        lore.add(ChatColor.translateAlternateColorCodes((char)'&', (String)this.getConfig().getString("dIronSaber.line7")));
+        lore.add(convertLegacyToSection(this.getConfig().getString("SaberDescription.line1")));
+        lore.add(convertLegacyToSection(this.getConfig().getString("SaberDescription.line2")));
+        lore.add(convertLegacyToSection(this.getConfig().getString("SaberDescription.line3")));
+        lore.add(convertLegacyToSection(this.getConfig().getString("SaberDescription.line4")));
+        lore.add(convertLegacyToSection(this.getConfig().getString("dIronSaber.line5")));
+        lore.add(convertLegacyToSection(this.getConfig().getString("dIronSaber.line6")));
+        lore.add(convertLegacyToSection(this.getConfig().getString("dIronSaber.line7")));
         meta.setLore(lore);
         meta.addItemFlags(new ItemFlag[]{ItemFlag.HIDE_ATTRIBUTES});
         double dmg = 5.0;
@@ -5897,10 +5836,10 @@ implements Listener {
             spd = this.getConfig().getDouble("aIronSaber.speed") - 4.0;
         }
         AttributeModifier modifier = new AttributeModifier(UUID.randomUUID(), "Attack Speed", spd, AttributeModifier.Operation.ADD_NUMBER, EquipmentSlot.HAND);
-        meta.addAttributeModifier(Attribute.GENERIC_ATTACK_SPEED, modifier);
+        meta.addAttributeModifier(Attribute.ATTACK_SPEED, modifier);
         AttributeModifier modifier2 = new AttributeModifier(UUID.randomUUID(), "Attack Damage", dmg, AttributeModifier.Operation.ADD_NUMBER, EquipmentSlot.HAND);
-        meta.addAttributeModifier(Attribute.GENERIC_ATTACK_DAMAGE, modifier2);
-        meta.setDisplayName(ChatColor.translateAlternateColorCodes((char)'&', (String)this.getConfig().getString("dIronSaber.name")));
+        meta.addAttributeModifier(Attribute.ATTACK_DAMAGE, modifier2);
+        meta.setDisplayName(convertLegacyToSection(this.getConfig().getString("dIronSaber.name")));
         meta.setCustomModelData(Integer.valueOf(1000010));
         item.setItemMeta(meta);
         NamespacedKey key = new NamespacedKey((Plugin)this, "iron_saber");
@@ -5916,13 +5855,13 @@ implements Listener {
         ItemStack item = new ItemStack(Material.GOLDEN_SWORD);
         ItemMeta meta = item.getItemMeta();
         ArrayList<String> lore = new ArrayList<String>();
-        lore.add(ChatColor.translateAlternateColorCodes((char)'&', (String)this.getConfig().getString("SaberDescription.line1")));
-        lore.add(ChatColor.translateAlternateColorCodes((char)'&', (String)this.getConfig().getString("SaberDescription.line2")));
-        lore.add(ChatColor.translateAlternateColorCodes((char)'&', (String)this.getConfig().getString("SaberDescription.line3")));
-        lore.add(ChatColor.translateAlternateColorCodes((char)'&', (String)this.getConfig().getString("SaberDescription.line4")));
-        lore.add(ChatColor.translateAlternateColorCodes((char)'&', (String)this.getConfig().getString("dEmeraldSaber.line5")));
-        lore.add(ChatColor.translateAlternateColorCodes((char)'&', (String)this.getConfig().getString("dEmeraldSaber.line6")));
-        lore.add(ChatColor.translateAlternateColorCodes((char)'&', (String)this.getConfig().getString("dEmeraldSaber.line7")));
+        lore.add(convertLegacyToSection(this.getConfig().getString("SaberDescription.line1")));
+        lore.add(convertLegacyToSection(this.getConfig().getString("SaberDescription.line2")));
+        lore.add(convertLegacyToSection(this.getConfig().getString("SaberDescription.line3")));
+        lore.add(convertLegacyToSection(this.getConfig().getString("SaberDescription.line4")));
+        lore.add(convertLegacyToSection(this.getConfig().getString("dEmeraldSaber.line5")));
+        lore.add(convertLegacyToSection(this.getConfig().getString("dEmeraldSaber.line6")));
+        lore.add(convertLegacyToSection(this.getConfig().getString("dEmeraldSaber.line7")));
         meta.setLore(lore);
         meta.addItemFlags(new ItemFlag[]{ItemFlag.HIDE_ATTRIBUTES});
         double dmg = 5.0;
@@ -5932,10 +5871,10 @@ implements Listener {
             spd = this.getConfig().getDouble("aEmeraldSaber.speed") - 4.0;
         }
         AttributeModifier modifier = new AttributeModifier(UUID.randomUUID(), "Attack Speed", spd, AttributeModifier.Operation.ADD_NUMBER, EquipmentSlot.HAND);
-        meta.addAttributeModifier(Attribute.GENERIC_ATTACK_SPEED, modifier);
+        meta.addAttributeModifier(Attribute.ATTACK_SPEED, modifier);
         AttributeModifier modifier2 = new AttributeModifier(UUID.randomUUID(), "Attack Damage", dmg, AttributeModifier.Operation.ADD_NUMBER, EquipmentSlot.HAND);
-        meta.addAttributeModifier(Attribute.GENERIC_ATTACK_DAMAGE, modifier2);
-        meta.setDisplayName(ChatColor.translateAlternateColorCodes((char)'&', (String)this.getConfig().getString("dEmeraldSaber.name")));
+        meta.addAttributeModifier(Attribute.ATTACK_DAMAGE, modifier2);
+        meta.setDisplayName(convertLegacyToSection(this.getConfig().getString("dEmeraldSaber.name")));
         meta.setCustomModelData(Integer.valueOf(1000030));
         if (this.getConfig().getString("EnchantsOnEmeraldGear") == "true") {
             int num = this.getConfig().getInt("EmeraldGearEnchantLevels.Unbreaking");
@@ -5957,13 +5896,13 @@ implements Listener {
         ItemStack item = new ItemStack(Material.DIAMOND_SWORD);
         ItemMeta meta = item.getItemMeta();
         ArrayList<String> lore = new ArrayList<String>();
-        lore.add(ChatColor.translateAlternateColorCodes((char)'&', (String)this.getConfig().getString("SaberDescription.line1")));
-        lore.add(ChatColor.translateAlternateColorCodes((char)'&', (String)this.getConfig().getString("SaberDescription.line2")));
-        lore.add(ChatColor.translateAlternateColorCodes((char)'&', (String)this.getConfig().getString("SaberDescription.line3")));
-        lore.add(ChatColor.translateAlternateColorCodes((char)'&', (String)this.getConfig().getString("SaberDescription.line4")));
-        lore.add(ChatColor.translateAlternateColorCodes((char)'&', (String)this.getConfig().getString("dDiamondSaber.line5")));
-        lore.add(ChatColor.translateAlternateColorCodes((char)'&', (String)this.getConfig().getString("dDiamondSaber.line6")));
-        lore.add(ChatColor.translateAlternateColorCodes((char)'&', (String)this.getConfig().getString("dDiamondSaber.line7")));
+        lore.add(convertLegacyToSection(this.getConfig().getString("SaberDescription.line1")));
+        lore.add(convertLegacyToSection(this.getConfig().getString("SaberDescription.line2")));
+        lore.add(convertLegacyToSection(this.getConfig().getString("SaberDescription.line3")));
+        lore.add(convertLegacyToSection(this.getConfig().getString("SaberDescription.line4")));
+        lore.add(convertLegacyToSection(this.getConfig().getString("dDiamondSaber.line5")));
+        lore.add(convertLegacyToSection(this.getConfig().getString("dDiamondSaber.line6")));
+        lore.add(convertLegacyToSection(this.getConfig().getString("dDiamondSaber.line7")));
         meta.setLore(lore);
         meta.addItemFlags(new ItemFlag[]{ItemFlag.HIDE_ATTRIBUTES});
         double dmg = 6.0;
@@ -5973,10 +5912,10 @@ implements Listener {
             spd = this.getConfig().getDouble("aDiamondSaber.speed") - 4.0;
         }
         AttributeModifier modifier = new AttributeModifier(UUID.randomUUID(), "Attack Speed", spd, AttributeModifier.Operation.ADD_NUMBER, EquipmentSlot.HAND);
-        meta.addAttributeModifier(Attribute.GENERIC_ATTACK_SPEED, modifier);
+        meta.addAttributeModifier(Attribute.ATTACK_SPEED, modifier);
         AttributeModifier modifier2 = new AttributeModifier(UUID.randomUUID(), "Attack Damage", dmg, AttributeModifier.Operation.ADD_NUMBER, EquipmentSlot.HAND);
-        meta.addAttributeModifier(Attribute.GENERIC_ATTACK_DAMAGE, modifier2);
-        meta.setDisplayName(ChatColor.translateAlternateColorCodes((char)'&', (String)this.getConfig().getString("dDiamondSaber.name")));
+        meta.addAttributeModifier(Attribute.ATTACK_DAMAGE, modifier2);
+        meta.setDisplayName(convertLegacyToSection(this.getConfig().getString("dDiamondSaber.name")));
         meta.setCustomModelData(Integer.valueOf(1000010));
         item.setItemMeta(meta);
         NamespacedKey key = new NamespacedKey((Plugin)this, "diamond_saber");
@@ -5992,13 +5931,13 @@ implements Listener {
         ItemStack item = new ItemStack(Material.NETHERITE_SWORD);
         ItemMeta meta = item.getItemMeta();
         ArrayList<String> lore = new ArrayList<String>();
-        lore.add(ChatColor.translateAlternateColorCodes((char)'&', (String)this.getConfig().getString("SaberDescription.line1")));
-        lore.add(ChatColor.translateAlternateColorCodes((char)'&', (String)this.getConfig().getString("SaberDescription.line2")));
-        lore.add(ChatColor.translateAlternateColorCodes((char)'&', (String)this.getConfig().getString("SaberDescription.line3")));
-        lore.add(ChatColor.translateAlternateColorCodes((char)'&', (String)this.getConfig().getString("SaberDescription.line4")));
-        lore.add(ChatColor.translateAlternateColorCodes((char)'&', (String)this.getConfig().getString("dNetheriteSaber.line5")));
-        lore.add(ChatColor.translateAlternateColorCodes((char)'&', (String)this.getConfig().getString("dNetheriteSaber.line6")));
-        lore.add(ChatColor.translateAlternateColorCodes((char)'&', (String)this.getConfig().getString("dNetheriteSaber.line7")));
+        lore.add(convertLegacyToSection(this.getConfig().getString("SaberDescription.line1")));
+        lore.add(convertLegacyToSection(this.getConfig().getString("SaberDescription.line2")));
+        lore.add(convertLegacyToSection(this.getConfig().getString("SaberDescription.line3")));
+        lore.add(convertLegacyToSection(this.getConfig().getString("SaberDescription.line4")));
+        lore.add(convertLegacyToSection(this.getConfig().getString("dNetheriteSaber.line5")));
+        lore.add(convertLegacyToSection(this.getConfig().getString("dNetheriteSaber.line6")));
+        lore.add(convertLegacyToSection(this.getConfig().getString("dNetheriteSaber.line7")));
         meta.setLore(lore);
         meta.addItemFlags(new ItemFlag[]{ItemFlag.HIDE_ATTRIBUTES});
         double dmg = 7.0;
@@ -6008,10 +5947,10 @@ implements Listener {
             spd = this.getConfig().getDouble("aNetheriteSaber.speed") - 4.0;
         }
         AttributeModifier modifier = new AttributeModifier(UUID.randomUUID(), "Attack Speed", spd, AttributeModifier.Operation.ADD_NUMBER, EquipmentSlot.HAND);
-        meta.addAttributeModifier(Attribute.GENERIC_ATTACK_SPEED, modifier);
+        meta.addAttributeModifier(Attribute.ATTACK_SPEED, modifier);
         AttributeModifier modifier2 = new AttributeModifier(UUID.randomUUID(), "Attack Damage", dmg, AttributeModifier.Operation.ADD_NUMBER, EquipmentSlot.HAND);
-        meta.addAttributeModifier(Attribute.GENERIC_ATTACK_DAMAGE, modifier2);
-        meta.setDisplayName(ChatColor.translateAlternateColorCodes((char)'&', (String)this.getConfig().getString("dNetheriteSaber.name")));
+        meta.addAttributeModifier(Attribute.ATTACK_DAMAGE, modifier2);
+        meta.setDisplayName(convertLegacyToSection(this.getConfig().getString("dNetheriteSaber.name")));
         meta.setCustomModelData(Integer.valueOf(1000010));
         item.setItemMeta(meta);
         NamespacedKey key = new NamespacedKey((Plugin)this, "netherite_saber");
@@ -6027,11 +5966,11 @@ implements Listener {
         ItemStack item = new ItemStack(Material.IRON_CHESTPLATE);
         ItemMeta meta = item.getItemMeta();
         ArrayList<String> lore = new ArrayList<String>();
-        lore.add(ChatColor.translateAlternateColorCodes((char)'&', (String)this.getConfig().getString("dRedstoneCore.line1")));
-        lore.add(ChatColor.translateAlternateColorCodes((char)'&', (String)this.getConfig().getString("dRedstoneCore.line2")));
-        lore.add(ChatColor.translateAlternateColorCodes((char)'&', (String)this.getConfig().getString("dRedstoneCore.line3")));
-        lore.add(ChatColor.translateAlternateColorCodes((char)'&', (String)this.getConfig().getString("dRedstoneCore.line4")));
-        lore.add(ChatColor.translateAlternateColorCodes((char)'&', (String)this.getConfig().getString("dRedstoneCore.line5")));
+        lore.add(convertLegacyToSection(this.getConfig().getString("dRedstoneCore.line1")));
+        lore.add(convertLegacyToSection(this.getConfig().getString("dRedstoneCore.line2")));
+        lore.add(convertLegacyToSection(this.getConfig().getString("dRedstoneCore.line3")));
+        lore.add(convertLegacyToSection(this.getConfig().getString("dRedstoneCore.line4")));
+        lore.add(convertLegacyToSection(this.getConfig().getString("dRedstoneCore.line5")));
         meta.setLore(lore);
         meta.setUnbreakable(true);
         meta.addItemFlags(new ItemFlag[]{ItemFlag.HIDE_UNBREAKABLE});
@@ -6040,8 +5979,8 @@ implements Listener {
             arm = this.getConfig().getDouble("aRedstoneCore.Armor");
         }
         AttributeModifier modifier = new AttributeModifier(UUID.randomUUID(), "Armor", arm, AttributeModifier.Operation.ADD_NUMBER, EquipmentSlot.CHEST);
-        meta.addAttributeModifier(Attribute.GENERIC_ARMOR, modifier);
-        meta.setDisplayName(ChatColor.translateAlternateColorCodes((char)'&', (String)this.getConfig().getString("dRedstoneCore.name")));
+        meta.addAttributeModifier(Attribute.ARMOR, modifier);
+        meta.setDisplayName(convertLegacyToSection(this.getConfig().getString("dRedstoneCore.name")));
         meta.setCustomModelData(Integer.valueOf(1231234));
         item.setItemMeta(meta);
         NamespacedKey key = new NamespacedKey((Plugin)this, "redstone_core");
@@ -6060,13 +5999,13 @@ implements Listener {
         ItemStack item = new ItemStack(Material.BOW);
         ItemMeta meta = item.getItemMeta();
         ArrayList<String> lore = new ArrayList<String>();
-        lore.add(ChatColor.translateAlternateColorCodes((char)'&', (String)this.getConfig().getString("dLongswordBow.line1")));
-        lore.add(ChatColor.translateAlternateColorCodes((char)'&', (String)this.getConfig().getString("dLongswordBow.line2")));
-        lore.add(ChatColor.translateAlternateColorCodes((char)'&', (String)this.getConfig().getString("dLongswordBow.line3")));
-        lore.add(ChatColor.translateAlternateColorCodes((char)'&', (String)this.getConfig().getString("dLongswordBow.line4")));
-        lore.add(ChatColor.translateAlternateColorCodes((char)'&', (String)this.getConfig().getString("dLongswordBow.line5")));
-        lore.add(ChatColor.translateAlternateColorCodes((char)'&', (String)this.getConfig().getString("dLongswordBow.line6")));
-        lore.add(ChatColor.translateAlternateColorCodes((char)'&', (String)this.getConfig().getString("dLongswordBow.line7")));
+        lore.add(convertLegacyToSection(this.getConfig().getString("dLongswordBow.line1")));
+        lore.add(convertLegacyToSection(this.getConfig().getString("dLongswordBow.line2")));
+        lore.add(convertLegacyToSection(this.getConfig().getString("dLongswordBow.line3")));
+        lore.add(convertLegacyToSection(this.getConfig().getString("dLongswordBow.line4")));
+        lore.add(convertLegacyToSection(this.getConfig().getString("dLongswordBow.line5")));
+        lore.add(convertLegacyToSection(this.getConfig().getString("dLongswordBow.line6")));
+        lore.add(convertLegacyToSection(this.getConfig().getString("dLongswordBow.line7")));
         meta.setLore(lore);
         meta.addItemFlags(new ItemFlag[]{ItemFlag.HIDE_ATTRIBUTES});
         double dmg = 7.0;
@@ -6076,10 +6015,10 @@ implements Listener {
             spd = this.getConfig().getDouble("aLongswordBow.speed") - 4.0;
         }
         AttributeModifier modifier = new AttributeModifier(UUID.randomUUID(), "Damage", dmg, AttributeModifier.Operation.ADD_NUMBER, EquipmentSlot.HAND);
-        meta.addAttributeModifier(Attribute.GENERIC_ATTACK_DAMAGE, modifier);
+        meta.addAttributeModifier(Attribute.ATTACK_DAMAGE, modifier);
         AttributeModifier modifier2 = new AttributeModifier(UUID.randomUUID(), "Attack Speed", spd, AttributeModifier.Operation.ADD_NUMBER, EquipmentSlot.HAND);
-        meta.addAttributeModifier(Attribute.GENERIC_ATTACK_SPEED, modifier2);
-        meta.setDisplayName(ChatColor.translateAlternateColorCodes((char)'&', (String)this.getConfig().getString("dLongswordBow.name")));
+        meta.addAttributeModifier(Attribute.ATTACK_SPEED, modifier2);
+        meta.setDisplayName(convertLegacyToSection(this.getConfig().getString("dLongswordBow.name")));
         meta.setCustomModelData(Integer.valueOf(3330004));
         item.setItemMeta(meta);
         NamespacedKey key = new NamespacedKey((Plugin)this, "longsword_bow");
@@ -6096,8 +6035,8 @@ implements Listener {
         ItemMeta meta = item.getItemMeta();
         ArrayList<String> lore = new ArrayList<String>();
         lore.add("");
-        lore.add(ChatColor.translateAlternateColorCodes((char)'&', (String)"&6I made this for fun"));
-        lore.add(ChatColor.translateAlternateColorCodes((char)'&', (String)"&7- Shoots tridents (converts arrows to tridents)"));
+        lore.add(convertLegacyToSection("&6I made this for fun"));
+        lore.add(convertLegacyToSection("&7- Shoots tridents (converts arrows to tridents)"));
         lore.add("");
         meta.setLore(lore);
         meta.setDisplayName("Trident Bow");
@@ -6206,20 +6145,20 @@ implements Listener {
             hp = this.getConfig().getDouble("aWitherHelmet.BonusHealth");
         }
         AttributeModifier modifier = new AttributeModifier(UUID.randomUUID(), "Health", hp, AttributeModifier.Operation.ADD_NUMBER, EquipmentSlot.HEAD);
-        meta.addAttributeModifier(Attribute.GENERIC_MAX_HEALTH, modifier);
+        meta.addAttributeModifier(Attribute.MAX_HEALTH, modifier);
         AttributeModifier modifier2 = new AttributeModifier(UUID.randomUUID(), "KnockbackResistance", kbr, AttributeModifier.Operation.ADD_NUMBER, EquipmentSlot.HEAD);
-        meta.addAttributeModifier(Attribute.GENERIC_KNOCKBACK_RESISTANCE, modifier2);
-        meta.setDisplayName(ChatColor.translateAlternateColorCodes((char)'&', (String)this.getConfig().getString("dWitheringHelmet.name")));
+        meta.addAttributeModifier(Attribute.KNOCKBACK_RESISTANCE, modifier2);
+        meta.setDisplayName(convertLegacyToSection(this.getConfig().getString("dWitheringHelmet.name")));
         meta.setCustomModelData(Integer.valueOf(5553331));
         ArrayList<String> lore = new ArrayList<String>();
-        lore.add(ChatColor.translateAlternateColorCodes((char)'&', (String)this.getConfig().getString("dWitheringArmorSet.line1")));
-        lore.add(ChatColor.translateAlternateColorCodes((char)'&', (String)this.getConfig().getString("dWitheringArmorSet.line2")));
-        lore.add(ChatColor.translateAlternateColorCodes((char)'&', (String)this.getConfig().getString("dWitheringArmorSet.line3")));
-        lore.add(ChatColor.translateAlternateColorCodes((char)'&', (String)this.getConfig().getString("dWitheringArmorSet.line4")));
-        lore.add(ChatColor.translateAlternateColorCodes((char)'&', (String)this.getConfig().getString("dWitheringArmorSet.line5")));
-        lore.add(ChatColor.translateAlternateColorCodes((char)'&', (String)this.getConfig().getString("dWitheringArmorSet.line6")));
-        lore.add(ChatColor.translateAlternateColorCodes((char)'&', (String)this.getConfig().getString("dWitheringArmorSet.line7")));
-        lore.add(ChatColor.translateAlternateColorCodes((char)'&', (String)this.getConfig().getString("dWitheringArmorSet.line8")));
+        lore.add(convertLegacyToSection(this.getConfig().getString("dWitheringArmorSet.line1")));
+        lore.add(convertLegacyToSection(this.getConfig().getString("dWitheringArmorSet.line2")));
+        lore.add(convertLegacyToSection(this.getConfig().getString("dWitheringArmorSet.line3")));
+        lore.add(convertLegacyToSection(this.getConfig().getString("dWitheringArmorSet.line4")));
+        lore.add(convertLegacyToSection(this.getConfig().getString("dWitheringArmorSet.line5")));
+        lore.add(convertLegacyToSection(this.getConfig().getString("dWitheringArmorSet.line6")));
+        lore.add(convertLegacyToSection(this.getConfig().getString("dWitheringArmorSet.line7")));
+        lore.add(convertLegacyToSection(this.getConfig().getString("dWitheringArmorSet.line8")));
         meta.setLore(lore);
         item.setItemMeta(meta);
         NamespacedKey key = new NamespacedKey((Plugin)this, "wither_bone_helmet");
@@ -6247,20 +6186,20 @@ implements Listener {
             hp = this.getConfig().getDouble("aWitherChestplate.BonusHealth");
         }
         AttributeModifier modifier = new AttributeModifier(UUID.randomUUID(), "Health", hp, AttributeModifier.Operation.ADD_NUMBER, EquipmentSlot.CHEST);
-        meta.addAttributeModifier(Attribute.GENERIC_MAX_HEALTH, modifier);
+        meta.addAttributeModifier(Attribute.MAX_HEALTH, modifier);
         AttributeModifier modifier2 = new AttributeModifier(UUID.randomUUID(), "KnockbackResistance", kbr, AttributeModifier.Operation.ADD_NUMBER, EquipmentSlot.CHEST);
-        meta.addAttributeModifier(Attribute.GENERIC_KNOCKBACK_RESISTANCE, modifier2);
-        meta.setDisplayName(ChatColor.translateAlternateColorCodes((char)'&', (String)this.getConfig().getString("dWitheringChestplate.name")));
+        meta.addAttributeModifier(Attribute.KNOCKBACK_RESISTANCE, modifier2);
+        meta.setDisplayName(convertLegacyToSection(this.getConfig().getString("dWitheringChestplate.name")));
         meta.setCustomModelData(Integer.valueOf(5553332));
         ArrayList<String> lore = new ArrayList<String>();
-        lore.add(ChatColor.translateAlternateColorCodes((char)'&', (String)this.getConfig().getString("dWitheringArmorSet.line1")));
-        lore.add(ChatColor.translateAlternateColorCodes((char)'&', (String)this.getConfig().getString("dWitheringArmorSet.line2")));
-        lore.add(ChatColor.translateAlternateColorCodes((char)'&', (String)this.getConfig().getString("dWitheringArmorSet.line3")));
-        lore.add(ChatColor.translateAlternateColorCodes((char)'&', (String)this.getConfig().getString("dWitheringArmorSet.line4")));
-        lore.add(ChatColor.translateAlternateColorCodes((char)'&', (String)this.getConfig().getString("dWitheringArmorSet.line5")));
-        lore.add(ChatColor.translateAlternateColorCodes((char)'&', (String)this.getConfig().getString("dWitheringArmorSet.line6")));
-        lore.add(ChatColor.translateAlternateColorCodes((char)'&', (String)this.getConfig().getString("dWitheringArmorSet.line7")));
-        lore.add(ChatColor.translateAlternateColorCodes((char)'&', (String)this.getConfig().getString("dWitheringArmorSet.line8")));
+        lore.add(convertLegacyToSection(this.getConfig().getString("dWitheringArmorSet.line1")));
+        lore.add(convertLegacyToSection(this.getConfig().getString("dWitheringArmorSet.line2")));
+        lore.add(convertLegacyToSection(this.getConfig().getString("dWitheringArmorSet.line3")));
+        lore.add(convertLegacyToSection(this.getConfig().getString("dWitheringArmorSet.line4")));
+        lore.add(convertLegacyToSection(this.getConfig().getString("dWitheringArmorSet.line5")));
+        lore.add(convertLegacyToSection(this.getConfig().getString("dWitheringArmorSet.line6")));
+        lore.add(convertLegacyToSection(this.getConfig().getString("dWitheringArmorSet.line7")));
+        lore.add(convertLegacyToSection(this.getConfig().getString("dWitheringArmorSet.line8")));
         meta.setLore(lore);
         item.setItemMeta(meta);
         NamespacedKey key = new NamespacedKey((Plugin)this, "wither_bone_chestplate");
@@ -6288,20 +6227,20 @@ implements Listener {
             hp = this.getConfig().getDouble("aWitherLeggings.BonusHealth");
         }
         AttributeModifier modifier = new AttributeModifier(UUID.randomUUID(), "Health", hp, AttributeModifier.Operation.ADD_NUMBER, EquipmentSlot.LEGS);
-        meta.addAttributeModifier(Attribute.GENERIC_MAX_HEALTH, modifier);
+        meta.addAttributeModifier(Attribute.MAX_HEALTH, modifier);
         AttributeModifier modifier2 = new AttributeModifier(UUID.randomUUID(), "KnockbackResistance", kbr, AttributeModifier.Operation.ADD_NUMBER, EquipmentSlot.LEGS);
-        meta.addAttributeModifier(Attribute.GENERIC_KNOCKBACK_RESISTANCE, modifier2);
-        meta.setDisplayName(ChatColor.translateAlternateColorCodes((char)'&', (String)this.getConfig().getString("dWitheringLeggings.name")));
+        meta.addAttributeModifier(Attribute.KNOCKBACK_RESISTANCE, modifier2);
+        meta.setDisplayName(convertLegacyToSection(this.getConfig().getString("dWitheringLeggings.name")));
         meta.setCustomModelData(Integer.valueOf(5553333));
         ArrayList<String> lore = new ArrayList<String>();
-        lore.add(ChatColor.translateAlternateColorCodes((char)'&', (String)this.getConfig().getString("dWitheringArmorSet.line1")));
-        lore.add(ChatColor.translateAlternateColorCodes((char)'&', (String)this.getConfig().getString("dWitheringArmorSet.line2")));
-        lore.add(ChatColor.translateAlternateColorCodes((char)'&', (String)this.getConfig().getString("dWitheringArmorSet.line3")));
-        lore.add(ChatColor.translateAlternateColorCodes((char)'&', (String)this.getConfig().getString("dWitheringArmorSet.line4")));
-        lore.add(ChatColor.translateAlternateColorCodes((char)'&', (String)this.getConfig().getString("dWitheringArmorSet.line5")));
-        lore.add(ChatColor.translateAlternateColorCodes((char)'&', (String)this.getConfig().getString("dWitheringArmorSet.line6")));
-        lore.add(ChatColor.translateAlternateColorCodes((char)'&', (String)this.getConfig().getString("dWitheringArmorSet.line7")));
-        lore.add(ChatColor.translateAlternateColorCodes((char)'&', (String)this.getConfig().getString("dWitheringArmorSet.line8")));
+        lore.add(convertLegacyToSection(this.getConfig().getString("dWitheringArmorSet.line1")));
+        lore.add(convertLegacyToSection(this.getConfig().getString("dWitheringArmorSet.line2")));
+        lore.add(convertLegacyToSection(this.getConfig().getString("dWitheringArmorSet.line3")));
+        lore.add(convertLegacyToSection(this.getConfig().getString("dWitheringArmorSet.line4")));
+        lore.add(convertLegacyToSection(this.getConfig().getString("dWitheringArmorSet.line5")));
+        lore.add(convertLegacyToSection(this.getConfig().getString("dWitheringArmorSet.line6")));
+        lore.add(convertLegacyToSection(this.getConfig().getString("dWitheringArmorSet.line7")));
+        lore.add(convertLegacyToSection(this.getConfig().getString("dWitheringArmorSet.line8")));
         meta.setLore(lore);
         item.setItemMeta(meta);
         NamespacedKey key = new NamespacedKey((Plugin)this, "wither_bone_leggings");
@@ -6329,20 +6268,20 @@ implements Listener {
             hp = this.getConfig().getDouble("aWitherBoots.BonusHealth");
         }
         AttributeModifier modifier = new AttributeModifier(UUID.randomUUID(), "Health", hp, AttributeModifier.Operation.ADD_NUMBER, EquipmentSlot.FEET);
-        meta.addAttributeModifier(Attribute.GENERIC_MAX_HEALTH, modifier);
+        meta.addAttributeModifier(Attribute.MAX_HEALTH, modifier);
         AttributeModifier modifier2 = new AttributeModifier(UUID.randomUUID(), "KnockbackResistance", kbr, AttributeModifier.Operation.ADD_NUMBER, EquipmentSlot.FEET);
-        meta.addAttributeModifier(Attribute.GENERIC_KNOCKBACK_RESISTANCE, modifier2);
-        meta.setDisplayName(ChatColor.translateAlternateColorCodes((char)'&', (String)this.getConfig().getString("dWitheringBoots.name")));
+        meta.addAttributeModifier(Attribute.KNOCKBACK_RESISTANCE, modifier2);
+        meta.setDisplayName(convertLegacyToSection(this.getConfig().getString("dWitheringBoots.name")));
         meta.setCustomModelData(Integer.valueOf(5553334));
         ArrayList<String> lore = new ArrayList<String>();
-        lore.add(ChatColor.translateAlternateColorCodes((char)'&', (String)this.getConfig().getString("dWitheringArmorSet.line1")));
-        lore.add(ChatColor.translateAlternateColorCodes((char)'&', (String)this.getConfig().getString("dWitheringArmorSet.line2")));
-        lore.add(ChatColor.translateAlternateColorCodes((char)'&', (String)this.getConfig().getString("dWitheringArmorSet.line3")));
-        lore.add(ChatColor.translateAlternateColorCodes((char)'&', (String)this.getConfig().getString("dWitheringArmorSet.line4")));
-        lore.add(ChatColor.translateAlternateColorCodes((char)'&', (String)this.getConfig().getString("dWitheringArmorSet.line5")));
-        lore.add(ChatColor.translateAlternateColorCodes((char)'&', (String)this.getConfig().getString("dWitheringArmorSet.line6")));
-        lore.add(ChatColor.translateAlternateColorCodes((char)'&', (String)this.getConfig().getString("dWitheringArmorSet.line7")));
-        lore.add(ChatColor.translateAlternateColorCodes((char)'&', (String)this.getConfig().getString("dWitheringArmorSet.line8")));
+        lore.add(convertLegacyToSection(this.getConfig().getString("dWitheringArmorSet.line1")));
+        lore.add(convertLegacyToSection(this.getConfig().getString("dWitheringArmorSet.line2")));
+        lore.add(convertLegacyToSection(this.getConfig().getString("dWitheringArmorSet.line3")));
+        lore.add(convertLegacyToSection(this.getConfig().getString("dWitheringArmorSet.line4")));
+        lore.add(convertLegacyToSection(this.getConfig().getString("dWitheringArmorSet.line5")));
+        lore.add(convertLegacyToSection(this.getConfig().getString("dWitheringArmorSet.line6")));
+        lore.add(convertLegacyToSection(this.getConfig().getString("dWitheringArmorSet.line7")));
+        lore.add(convertLegacyToSection(this.getConfig().getString("dWitheringArmorSet.line8")));
         meta.setLore(lore);
         item.setItemMeta(meta);
         NamespacedKey key = new NamespacedKey((Plugin)this, "wither_bone_boots");
@@ -6393,7 +6332,7 @@ implements Listener {
         if (player.getInventory().getHelmet().getItemMeta().getCustomModelData() == 5553331 && player.getInventory().getChestplate().getItemMeta().getCustomModelData() == 5553332 && player.getInventory().getLeggings().getItemMeta().getCustomModelData() == 5553333 && player.getInventory().getBoots().getItemMeta().getCustomModelData() == 5553334 && player.getAttackCooldown() == 1.0f) {
             double damage = event.getFinalDamage();
             double health = 0.5 * damage + player.getHealth();
-            if (player.getAttribute(Attribute.GENERIC_MAX_HEALTH).getValue() >= health) {
+            if (player.getAttribute(Attribute.MAX_HEALTH).getValue() >= health) {
                 player.setHealth(health);
             }
         }
@@ -6436,7 +6375,7 @@ implements Listener {
                     return;
                 }
                 world.playSound(player.getLocation(), Sound.ENTITY_WITHER_SKELETON_HURT, 4.0f, 1.0f);
-                if (player.getHealth() < 0.5 * player.getAttribute(Attribute.GENERIC_MAX_HEALTH).getValue()) {
+                if (player.getHealth() < 0.5 * player.getAttribute(Attribute.MAX_HEALTH).getValue()) {
                     player.addPotionEffect(new PotionEffect(PotionEffectType.WITHER, 40, 2));
                 }
             }
@@ -6447,13 +6386,13 @@ implements Listener {
         ItemStack item = new ItemStack(Material.ELYTRA);
         ItemMeta meta = item.getItemMeta();
         AttributeModifier modifier = new AttributeModifier(UUID.randomUUID(), "Armor", 3.0, AttributeModifier.Operation.ADD_NUMBER, EquipmentSlot.CHEST);
-        meta.addAttributeModifier(Attribute.GENERIC_ARMOR, modifier);
+        meta.addAttributeModifier(Attribute.ARMOR, modifier);
         meta.setDisplayName(ChatColor.YELLOW + "Jump Elytra");
         meta.setCustomModelData(Integer.valueOf(1212121));
         ArrayList<String> lore = new ArrayList<String>();
         lore.add("");
-        lore.add(ChatColor.translateAlternateColorCodes((char)'&', (String)"&6Double Jump"));
-        lore.add(ChatColor.translateAlternateColorCodes((char)'&', (String)"&7- Press jump in midair to jump"));
+        lore.add(convertLegacyToSection("&6Double Jump"));
+        lore.add(convertLegacyToSection("&7- Press jump in midair to jump"));
         lore.add("");
         meta.setLore(lore);
         item.setItemMeta(meta);
@@ -6498,18 +6437,18 @@ implements Listener {
         ItemStack item = new ItemStack(Material.WOODEN_SWORD);
         ItemMeta meta = item.getItemMeta();
         ArrayList<String> lore = new ArrayList<String>();
-        lore.add(ChatColor.translateAlternateColorCodes((char)'&', (String)this.getConfig().getString("CleaverDescription.line1")));
-        lore.add(ChatColor.translateAlternateColorCodes((char)'&', (String)this.getConfig().getString("CleaverDescription.line2")));
-        lore.add(ChatColor.translateAlternateColorCodes((char)'&', (String)this.getConfig().getString("CleaverDescription.line3")));
-        lore.add(ChatColor.translateAlternateColorCodes((char)'&', (String)this.getConfig().getString("CleaverDescription.line4")));
-        lore.add(ChatColor.translateAlternateColorCodes((char)'&', (String)this.getConfig().getString("CleaverDescription.line5")));
-        lore.add(ChatColor.translateAlternateColorCodes((char)'&', (String)this.getConfig().getString("CleaverDescription.line6")));
-        lore.add(ChatColor.translateAlternateColorCodes((char)'&', (String)this.getConfig().getString("CleaverDescription.line7")));
-        lore.add(ChatColor.translateAlternateColorCodes((char)'&', (String)this.getConfig().getString("CleaverDescription.line8")));
-        lore.add(ChatColor.translateAlternateColorCodes((char)'&', (String)this.getConfig().getString("CleaverDescription.line9")));
-        lore.add(ChatColor.translateAlternateColorCodes((char)'&', (String)this.getConfig().getString("dWoodenCleaver.line10")));
-        lore.add(ChatColor.translateAlternateColorCodes((char)'&', (String)this.getConfig().getString("dWoodenCleaver.line11")));
-        lore.add(ChatColor.translateAlternateColorCodes((char)'&', (String)this.getConfig().getString("dWoodenCleaver.line12")));
+        lore.add(convertLegacyToSection(this.getConfig().getString("CleaverDescription.line1")));
+        lore.add(convertLegacyToSection(this.getConfig().getString("CleaverDescription.line2")));
+        lore.add(convertLegacyToSection(this.getConfig().getString("CleaverDescription.line3")));
+        lore.add(convertLegacyToSection(this.getConfig().getString("CleaverDescription.line4")));
+        lore.add(convertLegacyToSection(this.getConfig().getString("CleaverDescription.line5")));
+        lore.add(convertLegacyToSection(this.getConfig().getString("CleaverDescription.line6")));
+        lore.add(convertLegacyToSection(this.getConfig().getString("CleaverDescription.line7")));
+        lore.add(convertLegacyToSection(this.getConfig().getString("CleaverDescription.line8")));
+        lore.add(convertLegacyToSection(this.getConfig().getString("CleaverDescription.line9")));
+        lore.add(convertLegacyToSection(this.getConfig().getString("dWoodenCleaver.line10")));
+        lore.add(convertLegacyToSection(this.getConfig().getString("dWoodenCleaver.line11")));
+        lore.add(convertLegacyToSection(this.getConfig().getString("dWoodenCleaver.line12")));
         meta.setLore(lore);
         meta.addItemFlags(new ItemFlag[]{ItemFlag.HIDE_ATTRIBUTES});
         double dmg = 8.0;
@@ -6519,10 +6458,10 @@ implements Listener {
             spd = this.getConfig().getDouble("aWoodenCleaver.speed") - 4.0;
         }
         AttributeModifier modifier = new AttributeModifier(UUID.randomUUID(), "Attack Speed", spd, AttributeModifier.Operation.ADD_NUMBER, EquipmentSlot.HAND);
-        meta.addAttributeModifier(Attribute.GENERIC_ATTACK_SPEED, modifier);
+        meta.addAttributeModifier(Attribute.ATTACK_SPEED, modifier);
         AttributeModifier modifier2 = new AttributeModifier(UUID.randomUUID(), "Attack Damage", dmg, AttributeModifier.Operation.ADD_NUMBER, EquipmentSlot.HAND);
-        meta.addAttributeModifier(Attribute.GENERIC_ATTACK_DAMAGE, modifier2);
-        meta.setDisplayName(ChatColor.translateAlternateColorCodes((char)'&', (String)this.getConfig().getString("dWoodenCleaver.name")));
+        meta.addAttributeModifier(Attribute.ATTACK_DAMAGE, modifier2);
+        meta.setDisplayName(convertLegacyToSection(this.getConfig().getString("dWoodenCleaver.name")));
         meta.setCustomModelData(Integer.valueOf(1000021));
         item.setItemMeta(meta);
         NamespacedKey key = new NamespacedKey((Plugin)this, "wooden_cleaver");
@@ -6537,18 +6476,18 @@ implements Listener {
         ItemStack item = new ItemStack(Material.GOLDEN_SWORD);
         ItemMeta meta = item.getItemMeta();
         ArrayList<String> lore = new ArrayList<String>();
-        lore.add(ChatColor.translateAlternateColorCodes((char)'&', (String)this.getConfig().getString("CleaverDescription.line1")));
-        lore.add(ChatColor.translateAlternateColorCodes((char)'&', (String)this.getConfig().getString("CleaverDescription.line2")));
-        lore.add(ChatColor.translateAlternateColorCodes((char)'&', (String)this.getConfig().getString("CleaverDescription.line3")));
-        lore.add(ChatColor.translateAlternateColorCodes((char)'&', (String)this.getConfig().getString("CleaverDescription.line4")));
-        lore.add(ChatColor.translateAlternateColorCodes((char)'&', (String)this.getConfig().getString("CleaverDescription.line5")));
-        lore.add(ChatColor.translateAlternateColorCodes((char)'&', (String)this.getConfig().getString("CleaverDescription.line6")));
-        lore.add(ChatColor.translateAlternateColorCodes((char)'&', (String)this.getConfig().getString("CleaverDescription.line7")));
-        lore.add(ChatColor.translateAlternateColorCodes((char)'&', (String)this.getConfig().getString("CleaverDescription.line8")));
-        lore.add(ChatColor.translateAlternateColorCodes((char)'&', (String)this.getConfig().getString("CleaverDescription.line9")));
-        lore.add(ChatColor.translateAlternateColorCodes((char)'&', (String)this.getConfig().getString("dGoldenCleaver.line10")));
-        lore.add(ChatColor.translateAlternateColorCodes((char)'&', (String)this.getConfig().getString("dGoldenCleaver.line11")));
-        lore.add(ChatColor.translateAlternateColorCodes((char)'&', (String)this.getConfig().getString("dGoldenCleaver.line12")));
+        lore.add(convertLegacyToSection(this.getConfig().getString("CleaverDescription.line1")));
+        lore.add(convertLegacyToSection(this.getConfig().getString("CleaverDescription.line2")));
+        lore.add(convertLegacyToSection(this.getConfig().getString("CleaverDescription.line3")));
+        lore.add(convertLegacyToSection(this.getConfig().getString("CleaverDescription.line4")));
+        lore.add(convertLegacyToSection(this.getConfig().getString("CleaverDescription.line5")));
+        lore.add(convertLegacyToSection(this.getConfig().getString("CleaverDescription.line6")));
+        lore.add(convertLegacyToSection(this.getConfig().getString("CleaverDescription.line7")));
+        lore.add(convertLegacyToSection(this.getConfig().getString("CleaverDescription.line8")));
+        lore.add(convertLegacyToSection(this.getConfig().getString("CleaverDescription.line9")));
+        lore.add(convertLegacyToSection(this.getConfig().getString("dGoldenCleaver.line10")));
+        lore.add(convertLegacyToSection(this.getConfig().getString("dGoldenCleaver.line11")));
+        lore.add(convertLegacyToSection(this.getConfig().getString("dGoldenCleaver.line12")));
         meta.setLore(lore);
         meta.addItemFlags(new ItemFlag[]{ItemFlag.HIDE_ATTRIBUTES});
         double dmg = 8.0;
@@ -6558,10 +6497,10 @@ implements Listener {
             spd = this.getConfig().getDouble("aGoldenCleaver.speed") - 4.0;
         }
         AttributeModifier modifier = new AttributeModifier(UUID.randomUUID(), "Attack Speed", spd, AttributeModifier.Operation.ADD_NUMBER, EquipmentSlot.HAND);
-        meta.addAttributeModifier(Attribute.GENERIC_ATTACK_SPEED, modifier);
+        meta.addAttributeModifier(Attribute.ATTACK_SPEED, modifier);
         AttributeModifier modifier2 = new AttributeModifier(UUID.randomUUID(), "Attack Damage", dmg, AttributeModifier.Operation.ADD_NUMBER, EquipmentSlot.HAND);
-        meta.addAttributeModifier(Attribute.GENERIC_ATTACK_DAMAGE, modifier2);
-        meta.setDisplayName(ChatColor.translateAlternateColorCodes((char)'&', (String)this.getConfig().getString("dGoldenCleaver.name")));
+        meta.addAttributeModifier(Attribute.ATTACK_DAMAGE, modifier2);
+        meta.setDisplayName(convertLegacyToSection(this.getConfig().getString("dGoldenCleaver.name")));
         meta.setCustomModelData(Integer.valueOf(1000021));
         item.setItemMeta(meta);
         NamespacedKey key = new NamespacedKey((Plugin)this, "golden_cleaver");
@@ -6577,18 +6516,18 @@ implements Listener {
         ItemStack item = new ItemStack(Material.STONE_SWORD);
         ItemMeta meta = item.getItemMeta();
         ArrayList<String> lore = new ArrayList<String>();
-        lore.add(ChatColor.translateAlternateColorCodes((char)'&', (String)this.getConfig().getString("CleaverDescription.line1")));
-        lore.add(ChatColor.translateAlternateColorCodes((char)'&', (String)this.getConfig().getString("CleaverDescription.line2")));
-        lore.add(ChatColor.translateAlternateColorCodes((char)'&', (String)this.getConfig().getString("CleaverDescription.line3")));
-        lore.add(ChatColor.translateAlternateColorCodes((char)'&', (String)this.getConfig().getString("CleaverDescription.line4")));
-        lore.add(ChatColor.translateAlternateColorCodes((char)'&', (String)this.getConfig().getString("CleaverDescription.line5")));
-        lore.add(ChatColor.translateAlternateColorCodes((char)'&', (String)this.getConfig().getString("CleaverDescription.line6")));
-        lore.add(ChatColor.translateAlternateColorCodes((char)'&', (String)this.getConfig().getString("CleaverDescription.line7")));
-        lore.add(ChatColor.translateAlternateColorCodes((char)'&', (String)this.getConfig().getString("CleaverDescription.line8")));
-        lore.add(ChatColor.translateAlternateColorCodes((char)'&', (String)this.getConfig().getString("CleaverDescription.line9")));
-        lore.add(ChatColor.translateAlternateColorCodes((char)'&', (String)this.getConfig().getString("dStoneCleaver.line10")));
-        lore.add(ChatColor.translateAlternateColorCodes((char)'&', (String)this.getConfig().getString("dStoneCleaver.line11")));
-        lore.add(ChatColor.translateAlternateColorCodes((char)'&', (String)this.getConfig().getString("dStoneCleaver.line12")));
+        lore.add(convertLegacyToSection(this.getConfig().getString("CleaverDescription.line1")));
+        lore.add(convertLegacyToSection(this.getConfig().getString("CleaverDescription.line2")));
+        lore.add(convertLegacyToSection(this.getConfig().getString("CleaverDescription.line3")));
+        lore.add(convertLegacyToSection(this.getConfig().getString("CleaverDescription.line4")));
+        lore.add(convertLegacyToSection(this.getConfig().getString("CleaverDescription.line5")));
+        lore.add(convertLegacyToSection(this.getConfig().getString("CleaverDescription.line6")));
+        lore.add(convertLegacyToSection(this.getConfig().getString("CleaverDescription.line7")));
+        lore.add(convertLegacyToSection(this.getConfig().getString("CleaverDescription.line8")));
+        lore.add(convertLegacyToSection(this.getConfig().getString("CleaverDescription.line9")));
+        lore.add(convertLegacyToSection(this.getConfig().getString("dStoneCleaver.line10")));
+        lore.add(convertLegacyToSection(this.getConfig().getString("dStoneCleaver.line11")));
+        lore.add(convertLegacyToSection(this.getConfig().getString("dStoneCleaver.line12")));
         meta.setLore(lore);
         meta.addItemFlags(new ItemFlag[]{ItemFlag.HIDE_ATTRIBUTES});
         double dmg = 9.0;
@@ -6598,10 +6537,10 @@ implements Listener {
             spd = this.getConfig().getDouble("aStoneCleaver.speed") - 4.0;
         }
         AttributeModifier modifier = new AttributeModifier(UUID.randomUUID(), "Attack Speed", spd, AttributeModifier.Operation.ADD_NUMBER, EquipmentSlot.HAND);
-        meta.addAttributeModifier(Attribute.GENERIC_ATTACK_SPEED, modifier);
+        meta.addAttributeModifier(Attribute.ATTACK_SPEED, modifier);
         AttributeModifier modifier2 = new AttributeModifier(UUID.randomUUID(), "Attack Damage", dmg, AttributeModifier.Operation.ADD_NUMBER, EquipmentSlot.HAND);
-        meta.addAttributeModifier(Attribute.GENERIC_ATTACK_DAMAGE, modifier2);
-        meta.setDisplayName(ChatColor.translateAlternateColorCodes((char)'&', (String)this.getConfig().getString("dStoneCleaver.name")));
+        meta.addAttributeModifier(Attribute.ATTACK_DAMAGE, modifier2);
+        meta.setDisplayName(convertLegacyToSection(this.getConfig().getString("dStoneCleaver.name")));
         meta.setCustomModelData(Integer.valueOf(1000021));
         item.setItemMeta(meta);
         NamespacedKey key = new NamespacedKey((Plugin)this, "stone_cleaver");
@@ -6617,18 +6556,18 @@ implements Listener {
         ItemStack item = new ItemStack(Material.IRON_SWORD);
         ItemMeta meta = item.getItemMeta();
         ArrayList<String> lore = new ArrayList<String>();
-        lore.add(ChatColor.translateAlternateColorCodes((char)'&', (String)this.getConfig().getString("CleaverDescription.line1")));
-        lore.add(ChatColor.translateAlternateColorCodes((char)'&', (String)this.getConfig().getString("CleaverDescription.line2")));
-        lore.add(ChatColor.translateAlternateColorCodes((char)'&', (String)this.getConfig().getString("CleaverDescription.line3")));
-        lore.add(ChatColor.translateAlternateColorCodes((char)'&', (String)this.getConfig().getString("CleaverDescription.line4")));
-        lore.add(ChatColor.translateAlternateColorCodes((char)'&', (String)this.getConfig().getString("CleaverDescription.line5")));
-        lore.add(ChatColor.translateAlternateColorCodes((char)'&', (String)this.getConfig().getString("CleaverDescription.line6")));
-        lore.add(ChatColor.translateAlternateColorCodes((char)'&', (String)this.getConfig().getString("CleaverDescription.line7")));
-        lore.add(ChatColor.translateAlternateColorCodes((char)'&', (String)this.getConfig().getString("CleaverDescription.line8")));
-        lore.add(ChatColor.translateAlternateColorCodes((char)'&', (String)this.getConfig().getString("CleaverDescription.line9")));
-        lore.add(ChatColor.translateAlternateColorCodes((char)'&', (String)this.getConfig().getString("dIronCleaver.line10")));
-        lore.add(ChatColor.translateAlternateColorCodes((char)'&', (String)this.getConfig().getString("dIronCleaver.line11")));
-        lore.add(ChatColor.translateAlternateColorCodes((char)'&', (String)this.getConfig().getString("dIronCleaver.line12")));
+        lore.add(convertLegacyToSection(this.getConfig().getString("CleaverDescription.line1")));
+        lore.add(convertLegacyToSection(this.getConfig().getString("CleaverDescription.line2")));
+        lore.add(convertLegacyToSection(this.getConfig().getString("CleaverDescription.line3")));
+        lore.add(convertLegacyToSection(this.getConfig().getString("CleaverDescription.line4")));
+        lore.add(convertLegacyToSection(this.getConfig().getString("CleaverDescription.line5")));
+        lore.add(convertLegacyToSection(this.getConfig().getString("CleaverDescription.line6")));
+        lore.add(convertLegacyToSection(this.getConfig().getString("CleaverDescription.line7")));
+        lore.add(convertLegacyToSection(this.getConfig().getString("CleaverDescription.line8")));
+        lore.add(convertLegacyToSection(this.getConfig().getString("CleaverDescription.line9")));
+        lore.add(convertLegacyToSection(this.getConfig().getString("dIronCleaver.line10")));
+        lore.add(convertLegacyToSection(this.getConfig().getString("dIronCleaver.line11")));
+        lore.add(convertLegacyToSection(this.getConfig().getString("dIronCleaver.line12")));
         meta.setLore(lore);
         meta.addItemFlags(new ItemFlag[]{ItemFlag.HIDE_ATTRIBUTES});
         double dmg = 10.0;
@@ -6638,10 +6577,10 @@ implements Listener {
             spd = this.getConfig().getDouble("aIronCleaver.speed") - 4.0;
         }
         AttributeModifier modifier = new AttributeModifier(UUID.randomUUID(), "Attack Speed", spd, AttributeModifier.Operation.ADD_NUMBER, EquipmentSlot.HAND);
-        meta.addAttributeModifier(Attribute.GENERIC_ATTACK_SPEED, modifier);
+        meta.addAttributeModifier(Attribute.ATTACK_SPEED, modifier);
         AttributeModifier modifier2 = new AttributeModifier(UUID.randomUUID(), "Attack Damage", dmg, AttributeModifier.Operation.ADD_NUMBER, EquipmentSlot.HAND);
-        meta.addAttributeModifier(Attribute.GENERIC_ATTACK_DAMAGE, modifier2);
-        meta.setDisplayName(ChatColor.translateAlternateColorCodes((char)'&', (String)this.getConfig().getString("dIronCleaver.name")));
+        meta.addAttributeModifier(Attribute.ATTACK_DAMAGE, modifier2);
+        meta.setDisplayName(convertLegacyToSection(this.getConfig().getString("dIronCleaver.name")));
         meta.setCustomModelData(Integer.valueOf(1000021));
         item.setItemMeta(meta);
         NamespacedKey key = new NamespacedKey((Plugin)this, "iron_cleaver");
@@ -6657,18 +6596,18 @@ implements Listener {
         ItemStack item = new ItemStack(Material.GOLDEN_SWORD);
         ItemMeta meta = item.getItemMeta();
         ArrayList<String> lore = new ArrayList<String>();
-        lore.add(ChatColor.translateAlternateColorCodes((char)'&', (String)this.getConfig().getString("CleaverDescription.line1")));
-        lore.add(ChatColor.translateAlternateColorCodes((char)'&', (String)this.getConfig().getString("CleaverDescription.line2")));
-        lore.add(ChatColor.translateAlternateColorCodes((char)'&', (String)this.getConfig().getString("CleaverDescription.line3")));
-        lore.add(ChatColor.translateAlternateColorCodes((char)'&', (String)this.getConfig().getString("CleaverDescription.line4")));
-        lore.add(ChatColor.translateAlternateColorCodes((char)'&', (String)this.getConfig().getString("CleaverDescription.line5")));
-        lore.add(ChatColor.translateAlternateColorCodes((char)'&', (String)this.getConfig().getString("CleaverDescription.line6")));
-        lore.add(ChatColor.translateAlternateColorCodes((char)'&', (String)this.getConfig().getString("CleaverDescription.line7")));
-        lore.add(ChatColor.translateAlternateColorCodes((char)'&', (String)this.getConfig().getString("CleaverDescription.line8")));
-        lore.add(ChatColor.translateAlternateColorCodes((char)'&', (String)this.getConfig().getString("CleaverDescription.line9")));
-        lore.add(ChatColor.translateAlternateColorCodes((char)'&', (String)this.getConfig().getString("dEmeraldCleaver.line10")));
-        lore.add(ChatColor.translateAlternateColorCodes((char)'&', (String)this.getConfig().getString("dEmeraldCleaver.line11")));
-        lore.add(ChatColor.translateAlternateColorCodes((char)'&', (String)this.getConfig().getString("dEmeraldCleaver.line12")));
+        lore.add(convertLegacyToSection(this.getConfig().getString("CleaverDescription.line1")));
+        lore.add(convertLegacyToSection(this.getConfig().getString("CleaverDescription.line2")));
+        lore.add(convertLegacyToSection(this.getConfig().getString("CleaverDescription.line3")));
+        lore.add(convertLegacyToSection(this.getConfig().getString("CleaverDescription.line4")));
+        lore.add(convertLegacyToSection(this.getConfig().getString("CleaverDescription.line5")));
+        lore.add(convertLegacyToSection(this.getConfig().getString("CleaverDescription.line6")));
+        lore.add(convertLegacyToSection(this.getConfig().getString("CleaverDescription.line7")));
+        lore.add(convertLegacyToSection(this.getConfig().getString("CleaverDescription.line8")));
+        lore.add(convertLegacyToSection(this.getConfig().getString("CleaverDescription.line9")));
+        lore.add(convertLegacyToSection(this.getConfig().getString("dEmeraldCleaver.line10")));
+        lore.add(convertLegacyToSection(this.getConfig().getString("dEmeraldCleaver.line11")));
+        lore.add(convertLegacyToSection(this.getConfig().getString("dEmeraldCleaver.line12")));
         meta.setLore(lore);
         meta.addItemFlags(new ItemFlag[]{ItemFlag.HIDE_ATTRIBUTES});
         double dmg = 10.0;
@@ -6678,10 +6617,10 @@ implements Listener {
             spd = this.getConfig().getDouble("aEmeraldCleaver.speed") - 4.0;
         }
         AttributeModifier modifier = new AttributeModifier(UUID.randomUUID(), "Attack Speed", spd, AttributeModifier.Operation.ADD_NUMBER, EquipmentSlot.HAND);
-        meta.addAttributeModifier(Attribute.GENERIC_ATTACK_SPEED, modifier);
+        meta.addAttributeModifier(Attribute.ATTACK_SPEED, modifier);
         AttributeModifier modifier2 = new AttributeModifier(UUID.randomUUID(), "Attack Damage", dmg, AttributeModifier.Operation.ADD_NUMBER, EquipmentSlot.HAND);
-        meta.addAttributeModifier(Attribute.GENERIC_ATTACK_DAMAGE, modifier2);
-        meta.setDisplayName(ChatColor.translateAlternateColorCodes((char)'&', (String)this.getConfig().getString("dEmeraldCleaver.name")));
+        meta.addAttributeModifier(Attribute.ATTACK_DAMAGE, modifier2);
+        meta.setDisplayName(convertLegacyToSection(this.getConfig().getString("dEmeraldCleaver.name")));
         meta.setCustomModelData(Integer.valueOf(1000031));
         if (this.getConfig().getString("EnchantsOnEmeraldGear") == "true") {
             int num = this.getConfig().getInt("EmeraldGearEnchantLevels.Unbreaking");
@@ -6703,18 +6642,18 @@ implements Listener {
         ItemStack item = new ItemStack(Material.DIAMOND_SWORD);
         ItemMeta meta = item.getItemMeta();
         ArrayList<String> lore = new ArrayList<String>();
-        lore.add(ChatColor.translateAlternateColorCodes((char)'&', (String)this.getConfig().getString("CleaverDescription.line1")));
-        lore.add(ChatColor.translateAlternateColorCodes((char)'&', (String)this.getConfig().getString("CleaverDescription.line2")));
-        lore.add(ChatColor.translateAlternateColorCodes((char)'&', (String)this.getConfig().getString("CleaverDescription.line3")));
-        lore.add(ChatColor.translateAlternateColorCodes((char)'&', (String)this.getConfig().getString("CleaverDescription.line4")));
-        lore.add(ChatColor.translateAlternateColorCodes((char)'&', (String)this.getConfig().getString("CleaverDescription.line5")));
-        lore.add(ChatColor.translateAlternateColorCodes((char)'&', (String)this.getConfig().getString("CleaverDescription.line6")));
-        lore.add(ChatColor.translateAlternateColorCodes((char)'&', (String)this.getConfig().getString("CleaverDescription.line7")));
-        lore.add(ChatColor.translateAlternateColorCodes((char)'&', (String)this.getConfig().getString("CleaverDescription.line8")));
-        lore.add(ChatColor.translateAlternateColorCodes((char)'&', (String)this.getConfig().getString("CleaverDescription.line9")));
-        lore.add(ChatColor.translateAlternateColorCodes((char)'&', (String)this.getConfig().getString("dDiamondCleaver.line10")));
-        lore.add(ChatColor.translateAlternateColorCodes((char)'&', (String)this.getConfig().getString("dDiamondCleaver.line11")));
-        lore.add(ChatColor.translateAlternateColorCodes((char)'&', (String)this.getConfig().getString("dDiamondCleaver.line12")));
+        lore.add(convertLegacyToSection(this.getConfig().getString("CleaverDescription.line1")));
+        lore.add(convertLegacyToSection(this.getConfig().getString("CleaverDescription.line2")));
+        lore.add(convertLegacyToSection(this.getConfig().getString("CleaverDescription.line3")));
+        lore.add(convertLegacyToSection(this.getConfig().getString("CleaverDescription.line4")));
+        lore.add(convertLegacyToSection(this.getConfig().getString("CleaverDescription.line5")));
+        lore.add(convertLegacyToSection(this.getConfig().getString("CleaverDescription.line6")));
+        lore.add(convertLegacyToSection(this.getConfig().getString("CleaverDescription.line7")));
+        lore.add(convertLegacyToSection(this.getConfig().getString("CleaverDescription.line8")));
+        lore.add(convertLegacyToSection(this.getConfig().getString("CleaverDescription.line9")));
+        lore.add(convertLegacyToSection(this.getConfig().getString("dDiamondCleaver.line10")));
+        lore.add(convertLegacyToSection(this.getConfig().getString("dDiamondCleaver.line11")));
+        lore.add(convertLegacyToSection(this.getConfig().getString("dDiamondCleaver.line12")));
         meta.setLore(lore);
         meta.addItemFlags(new ItemFlag[]{ItemFlag.HIDE_ATTRIBUTES});
         double dmg = 11.0;
@@ -6724,10 +6663,10 @@ implements Listener {
             spd = this.getConfig().getDouble("aDiamondCleaver.speed") - 4.0;
         }
         AttributeModifier modifier = new AttributeModifier(UUID.randomUUID(), "Attack Speed", spd, AttributeModifier.Operation.ADD_NUMBER, EquipmentSlot.HAND);
-        meta.addAttributeModifier(Attribute.GENERIC_ATTACK_SPEED, modifier);
+        meta.addAttributeModifier(Attribute.ATTACK_SPEED, modifier);
         AttributeModifier modifier2 = new AttributeModifier(UUID.randomUUID(), "Attack Damage", dmg, AttributeModifier.Operation.ADD_NUMBER, EquipmentSlot.HAND);
-        meta.addAttributeModifier(Attribute.GENERIC_ATTACK_DAMAGE, modifier2);
-        meta.setDisplayName(ChatColor.translateAlternateColorCodes((char)'&', (String)this.getConfig().getString("dDiamondCleaver.name")));
+        meta.addAttributeModifier(Attribute.ATTACK_DAMAGE, modifier2);
+        meta.setDisplayName(convertLegacyToSection(this.getConfig().getString("dDiamondCleaver.name")));
         meta.setCustomModelData(Integer.valueOf(1000021));
         item.setItemMeta(meta);
         NamespacedKey key = new NamespacedKey((Plugin)this, "diamond_cleaver");
@@ -6743,18 +6682,18 @@ implements Listener {
         ItemStack item = new ItemStack(Material.NETHERITE_SWORD);
         ItemMeta meta = item.getItemMeta();
         ArrayList<String> lore = new ArrayList<String>();
-        lore.add(ChatColor.translateAlternateColorCodes((char)'&', (String)this.getConfig().getString("CleaverDescription.line1")));
-        lore.add(ChatColor.translateAlternateColorCodes((char)'&', (String)this.getConfig().getString("CleaverDescription.line2")));
-        lore.add(ChatColor.translateAlternateColorCodes((char)'&', (String)this.getConfig().getString("CleaverDescription.line3")));
-        lore.add(ChatColor.translateAlternateColorCodes((char)'&', (String)this.getConfig().getString("CleaverDescription.line4")));
-        lore.add(ChatColor.translateAlternateColorCodes((char)'&', (String)this.getConfig().getString("CleaverDescription.line5")));
-        lore.add(ChatColor.translateAlternateColorCodes((char)'&', (String)this.getConfig().getString("CleaverDescription.line6")));
-        lore.add(ChatColor.translateAlternateColorCodes((char)'&', (String)this.getConfig().getString("CleaverDescription.line7")));
-        lore.add(ChatColor.translateAlternateColorCodes((char)'&', (String)this.getConfig().getString("CleaverDescription.line8")));
-        lore.add(ChatColor.translateAlternateColorCodes((char)'&', (String)this.getConfig().getString("CleaverDescription.line9")));
-        lore.add(ChatColor.translateAlternateColorCodes((char)'&', (String)this.getConfig().getString("dNetheriteCleaver.line10")));
-        lore.add(ChatColor.translateAlternateColorCodes((char)'&', (String)this.getConfig().getString("dNetheriteCleaver.line11")));
-        lore.add(ChatColor.translateAlternateColorCodes((char)'&', (String)this.getConfig().getString("dNetheriteCleaver.line12")));
+        lore.add(convertLegacyToSection(this.getConfig().getString("CleaverDescription.line1")));
+        lore.add(convertLegacyToSection(this.getConfig().getString("CleaverDescription.line2")));
+        lore.add(convertLegacyToSection(this.getConfig().getString("CleaverDescription.line3")));
+        lore.add(convertLegacyToSection(this.getConfig().getString("CleaverDescription.line4")));
+        lore.add(convertLegacyToSection(this.getConfig().getString("CleaverDescription.line5")));
+        lore.add(convertLegacyToSection(this.getConfig().getString("CleaverDescription.line6")));
+        lore.add(convertLegacyToSection(this.getConfig().getString("CleaverDescription.line7")));
+        lore.add(convertLegacyToSection(this.getConfig().getString("CleaverDescription.line8")));
+        lore.add(convertLegacyToSection(this.getConfig().getString("CleaverDescription.line9")));
+        lore.add(convertLegacyToSection(this.getConfig().getString("dNetheriteCleaver.line10")));
+        lore.add(convertLegacyToSection(this.getConfig().getString("dNetheriteCleaver.line11")));
+        lore.add(convertLegacyToSection(this.getConfig().getString("dNetheriteCleaver.line12")));
         meta.setLore(lore);
         meta.addItemFlags(new ItemFlag[]{ItemFlag.HIDE_ATTRIBUTES});
         double dmg = 12.0;
@@ -6764,10 +6703,10 @@ implements Listener {
             spd = this.getConfig().getDouble("aNetheriteCleaver.speed") - 4.0;
         }
         AttributeModifier modifier = new AttributeModifier(UUID.randomUUID(), "Attack Speed", spd, AttributeModifier.Operation.ADD_NUMBER, EquipmentSlot.HAND);
-        meta.addAttributeModifier(Attribute.GENERIC_ATTACK_SPEED, modifier);
+        meta.addAttributeModifier(Attribute.ATTACK_SPEED, modifier);
         AttributeModifier modifier2 = new AttributeModifier(UUID.randomUUID(), "Attack Damage", dmg, AttributeModifier.Operation.ADD_NUMBER, EquipmentSlot.HAND);
-        meta.addAttributeModifier(Attribute.GENERIC_ATTACK_DAMAGE, modifier2);
-        meta.setDisplayName(ChatColor.translateAlternateColorCodes((char)'&', (String)this.getConfig().getString("dNetheriteCleaver.name")));
+        meta.addAttributeModifier(Attribute.ATTACK_DAMAGE, modifier2);
+        meta.setDisplayName(convertLegacyToSection(this.getConfig().getString("dNetheriteCleaver.name")));
         meta.setCustomModelData(Integer.valueOf(1000021));
         item.setItemMeta(meta);
         NamespacedKey key = new NamespacedKey((Plugin)this, "netherite_cleaver");
@@ -6795,17 +6734,17 @@ implements Listener {
             if (p.getInventory().getItemInMainHand().getItemMeta().getCustomModelData() == 1000021 || p.getInventory().getItemInMainHand().getItemMeta().getCustomModelData() == 1200021 || p.getInventory().getItemInMainHand().getItemMeta().getCustomModelData() == 1000031) {
                 AttributeModifier modifier;
                 ItemMeta m;
-                if ((double)p.getAttackCooldown() >= 0.6 && p.getAttackCooldown() < 1.0f && p.getAttribute(Attribute.GENERIC_ATTACK_SPEED).getValue() < 1.9) {
+                if ((double)p.getAttackCooldown() >= 0.6 && p.getAttackCooldown() < 1.0f && p.getAttribute(Attribute.ATTACK_SPEED).getValue() < 1.9) {
                     m = p.getInventory().getItemInMainHand().getItemMeta();
                     modifier = new AttributeModifier(UUID.randomUUID(), "Attack Speed", 0.25, AttributeModifier.Operation.ADD_NUMBER, EquipmentSlot.HAND);
-                    m.addAttributeModifier(Attribute.GENERIC_ATTACK_SPEED, modifier);
+                    m.addAttributeModifier(Attribute.ATTACK_SPEED, modifier);
                     p.getInventory().getItemInMainHand().setItemMeta(m);
                 }
                 if (p.getAttackCooldown() == 1.0f) {
                     m = p.getInventory().getItemInMainHand().getItemMeta();
-                    m.removeAttributeModifier(Attribute.GENERIC_ATTACK_SPEED);
+                    m.removeAttributeModifier(Attribute.ATTACK_SPEED);
                     modifier = new AttributeModifier(UUID.randomUUID(), "Attack Speed", -3.6, AttributeModifier.Operation.ADD_NUMBER, EquipmentSlot.HAND);
-                    m.addAttributeModifier(Attribute.GENERIC_ATTACK_SPEED, modifier);
+                    m.addAttributeModifier(Attribute.ATTACK_SPEED, modifier);
                     p.getInventory().getItemInMainHand().setItemMeta(m);
                 }
             }
@@ -6934,29 +6873,29 @@ implements Listener {
         ItemStack item = new ItemStack(Material.DIAMOND_SWORD);
         ItemMeta meta = item.getItemMeta();
         ArrayList<String> lore = new ArrayList<String>();
-        lore.add(ChatColor.translateAlternateColorCodes((char)'&', (String)""));
-        lore.add(ChatColor.translateAlternateColorCodes((char)'&', (String)"&6Charged Strike"));
-        lore.add(ChatColor.translateAlternateColorCodes((char)'&', (String)"&7- Hit 5 times to charge,"));
-        lore.add(ChatColor.translateAlternateColorCodes((char)'&', (String)"&7  charge attacks require 2 hands"));
-        lore.add(ChatColor.translateAlternateColorCodes((char)'&', (String)"&6  - Slash"));
-        lore.add(ChatColor.translateAlternateColorCodes((char)'&', (String)"&7  In main hand, right click to"));
-        lore.add(ChatColor.translateAlternateColorCodes((char)'&', (String)"&7  launch target directly upwards"));
-        lore.add(ChatColor.translateAlternateColorCodes((char)'&', (String)"&9   4 Attack Damage"));
-        lore.add(ChatColor.translateAlternateColorCodes((char)'&', (String)"&6  - Thrust"));
-        lore.add(ChatColor.translateAlternateColorCodes((char)'&', (String)"&7  In off hand, right click to"));
-        lore.add(ChatColor.translateAlternateColorCodes((char)'&', (String)"&7  launch target further"));
-        lore.add(ChatColor.translateAlternateColorCodes((char)'&', (String)"&9   8 Attack Damage"));
-        lore.add(ChatColor.translateAlternateColorCodes((char)'&', (String)""));
-        lore.add(ChatColor.translateAlternateColorCodes((char)'&', (String)"&7When in Main Hand:"));
-        lore.add(ChatColor.translateAlternateColorCodes((char)'&', (String)"&9 6 Attack Damage"));
-        lore.add(ChatColor.translateAlternateColorCodes((char)'&', (String)"&9 1.7 Attack Speed"));
+        lore.add(convertLegacyToSection(""));
+        lore.add(convertLegacyToSection("&6Charged Strike"));
+        lore.add(convertLegacyToSection("&7- Hit 5 times to charge,"));
+        lore.add(convertLegacyToSection("&7  charge attacks require 2 hands"));
+        lore.add(convertLegacyToSection("&6  - Slash"));
+        lore.add(convertLegacyToSection("&7  In main hand, right click to"));
+        lore.add(convertLegacyToSection("&7  launch target directly upwards"));
+        lore.add(convertLegacyToSection("&9   4 Attack Damage"));
+        lore.add(convertLegacyToSection("&6  - Thrust"));
+        lore.add(convertLegacyToSection("&7  In off hand, right click to"));
+        lore.add(convertLegacyToSection("&7  launch target further"));
+        lore.add(convertLegacyToSection("&9   8 Attack Damage"));
+        lore.add(convertLegacyToSection(""));
+        lore.add(convertLegacyToSection("&7When in Main Hand:"));
+        lore.add(convertLegacyToSection("&9 6 Attack Damage"));
+        lore.add(convertLegacyToSection("&9 1.7 Attack Speed"));
         meta.setLore(lore);
         meta.addItemFlags(new ItemFlag[]{ItemFlag.HIDE_ATTRIBUTES});
         AttributeModifier modifier = new AttributeModifier(UUID.randomUUID(), "Attack Speed", -2.3, AttributeModifier.Operation.ADD_NUMBER, EquipmentSlot.HAND);
-        meta.addAttributeModifier(Attribute.GENERIC_ATTACK_SPEED, modifier);
+        meta.addAttributeModifier(Attribute.ATTACK_SPEED, modifier);
         AttributeModifier modifier2 = new AttributeModifier(UUID.randomUUID(), "Attack Damage", 5.0, AttributeModifier.Operation.ADD_NUMBER, EquipmentSlot.HAND);
-        meta.addAttributeModifier(Attribute.GENERIC_ATTACK_DAMAGE, modifier2);
-        meta.setDisplayName(ChatColor.translateAlternateColorCodes((char)'&', (String)"Diamond Katana v2"));
+        meta.addAttributeModifier(Attribute.ATTACK_DAMAGE, modifier2);
+        meta.setDisplayName(convertLegacyToSection("Diamond Katana v2"));
         meta.setCustomModelData(Integer.valueOf(2000002));
         item.setItemMeta(meta);
         NamespacedKey key = new NamespacedKey((Plugin)this, "diamond_katana_test");
@@ -6972,22 +6911,22 @@ implements Listener {
         ItemStack item = new ItemStack(Material.DIAMOND_SWORD);
         ItemMeta meta = item.getItemMeta();
         ArrayList<String> lore = new ArrayList<String>();
-        lore.add(ChatColor.translateAlternateColorCodes((char)'&', (String)""));
-        lore.add(ChatColor.translateAlternateColorCodes((char)'&', (String)"&6Hook"));
-        lore.add(ChatColor.translateAlternateColorCodes((char)'&', (String)"&7- Right click opponent to pull"));
-        lore.add(ChatColor.translateAlternateColorCodes((char)'&', (String)"&7  them toward you (CD: 3s)"));
-        lore.add(ChatColor.translateAlternateColorCodes((char)'&', (String)"&9   5 Attack Damage"));
-        lore.add(ChatColor.translateAlternateColorCodes((char)'&', (String)""));
-        lore.add(ChatColor.translateAlternateColorCodes((char)'&', (String)"&7When in Main Hand:"));
-        lore.add(ChatColor.translateAlternateColorCodes((char)'&', (String)"&9 9 Attack Damage"));
-        lore.add(ChatColor.translateAlternateColorCodes((char)'&', (String)"&9 1 Attack Speed"));
+        lore.add(convertLegacyToSection(""));
+        lore.add(convertLegacyToSection("&6Hook"));
+        lore.add(convertLegacyToSection("&7- Right click opponent to pull"));
+        lore.add(convertLegacyToSection("&7  them toward you (CD: 3s)"));
+        lore.add(convertLegacyToSection("&9   5 Attack Damage"));
+        lore.add(convertLegacyToSection(""));
+        lore.add(convertLegacyToSection("&7When in Main Hand:"));
+        lore.add(convertLegacyToSection("&9 9 Attack Damage"));
+        lore.add(convertLegacyToSection("&9 1 Attack Speed"));
         meta.setLore(lore);
         meta.addItemFlags(new ItemFlag[]{ItemFlag.HIDE_ATTRIBUTES});
         AttributeModifier modifier = new AttributeModifier(UUID.randomUUID(), "Attack Speed", -3.0, AttributeModifier.Operation.ADD_NUMBER, EquipmentSlot.HAND);
-        meta.addAttributeModifier(Attribute.GENERIC_ATTACK_SPEED, modifier);
+        meta.addAttributeModifier(Attribute.ATTACK_SPEED, modifier);
         AttributeModifier modifier2 = new AttributeModifier(UUID.randomUUID(), "Attack Damage", 8.0, AttributeModifier.Operation.ADD_NUMBER, EquipmentSlot.HAND);
-        meta.addAttributeModifier(Attribute.GENERIC_ATTACK_DAMAGE, modifier2);
-        meta.setDisplayName(ChatColor.translateAlternateColorCodes((char)'&', (String)"Diamond Scythe v2"));
+        meta.addAttributeModifier(Attribute.ATTACK_DAMAGE, modifier2);
+        meta.setDisplayName(convertLegacyToSection("Diamond Scythe v2"));
         meta.setCustomModelData(Integer.valueOf(2000003));
         item.setItemMeta(meta);
         NamespacedKey key = new NamespacedKey((Plugin)this, "diamond_scythe_test");
@@ -7032,22 +6971,22 @@ implements Listener {
         ItemStack item = new ItemStack(Material.IRON_SWORD);
         ItemMeta meta = item.getItemMeta();
         ArrayList<String> lore = new ArrayList<String>();
-        lore.add(ChatColor.translateAlternateColorCodes((char)'&', (String)""));
-        lore.add(ChatColor.translateAlternateColorCodes((char)'&', (String)"&6Fish"));
-        lore.add(ChatColor.translateAlternateColorCodes((char)'&', (String)"&7- In main hand, right click"));
-        lore.add(ChatColor.translateAlternateColorCodes((char)'&', (String)"&7  entity"));
-        lore.add(ChatColor.translateAlternateColorCodes((char)'&', (String)"&9   29 Explosion Damage"));
-        lore.add(ChatColor.translateAlternateColorCodes((char)'&', (String)""));
-        lore.add(ChatColor.translateAlternateColorCodes((char)'&', (String)"&7When in Main Hand:"));
-        lore.add(ChatColor.translateAlternateColorCodes((char)'&', (String)"&9 6 Attack Damage"));
-        lore.add(ChatColor.translateAlternateColorCodes((char)'&', (String)"&9 1.7 Attack Speed"));
+        lore.add(convertLegacyToSection(""));
+        lore.add(convertLegacyToSection("&6Fish"));
+        lore.add(convertLegacyToSection("&7- In main hand, right click"));
+        lore.add(convertLegacyToSection("&7  entity"));
+        lore.add(convertLegacyToSection("&9   29 Explosion Damage"));
+        lore.add(convertLegacyToSection(""));
+        lore.add(convertLegacyToSection("&7When in Main Hand:"));
+        lore.add(convertLegacyToSection("&9 6 Attack Damage"));
+        lore.add(convertLegacyToSection("&9 1.7 Attack Speed"));
         meta.setLore(lore);
         meta.addItemFlags(new ItemFlag[]{ItemFlag.HIDE_ATTRIBUTES});
         AttributeModifier modifier = new AttributeModifier(UUID.randomUUID(), "Attack Speed", -2.3, AttributeModifier.Operation.ADD_NUMBER, EquipmentSlot.HAND);
-        meta.addAttributeModifier(Attribute.GENERIC_ATTACK_SPEED, modifier);
+        meta.addAttributeModifier(Attribute.ATTACK_SPEED, modifier);
         AttributeModifier modifier2 = new AttributeModifier(UUID.randomUUID(), "Attack Damage", 5.0, AttributeModifier.Operation.ADD_NUMBER, EquipmentSlot.HAND);
-        meta.addAttributeModifier(Attribute.GENERIC_ATTACK_DAMAGE, modifier2);
-        meta.setDisplayName(ChatColor.translateAlternateColorCodes((char)'&', (String)"Fish"));
+        meta.addAttributeModifier(Attribute.ATTACK_DAMAGE, modifier2);
+        meta.setDisplayName(convertLegacyToSection("Fish"));
         meta.setCustomModelData(Integer.valueOf(38));
         item.setItemMeta(meta);
         NamespacedKey key = new NamespacedKey((Plugin)this, "fish_test");
@@ -7063,21 +7002,21 @@ implements Listener {
         ItemStack item = new ItemStack(Material.IRON_SWORD);
         ItemMeta meta = item.getItemMeta();
         ArrayList<String> lore = new ArrayList<String>();
-        lore.add(ChatColor.translateAlternateColorCodes((char)'&', (String)""));
-        lore.add(ChatColor.translateAlternateColorCodes((char)'&', (String)"&6Vacuum"));
-        lore.add(ChatColor.translateAlternateColorCodes((char)'&', (String)"&7- Hold right click to pull in entities"));
-        lore.add(ChatColor.translateAlternateColorCodes((char)'&', (String)"&7  within a 4 block radius of you"));
-        lore.add(ChatColor.translateAlternateColorCodes((char)'&', (String)""));
-        lore.add(ChatColor.translateAlternateColorCodes((char)'&', (String)"&7When in Main Hand:"));
-        lore.add(ChatColor.translateAlternateColorCodes((char)'&', (String)"&9 6 Attack Damage"));
-        lore.add(ChatColor.translateAlternateColorCodes((char)'&', (String)"&9 1.7 Attack Speed"));
+        lore.add(convertLegacyToSection(""));
+        lore.add(convertLegacyToSection("&6Vacuum"));
+        lore.add(convertLegacyToSection("&7- Hold right click to pull in entities"));
+        lore.add(convertLegacyToSection("&7  within a 4 block radius of you"));
+        lore.add(convertLegacyToSection(""));
+        lore.add(convertLegacyToSection("&7When in Main Hand:"));
+        lore.add(convertLegacyToSection("&9 6 Attack Damage"));
+        lore.add(convertLegacyToSection("&9 1.7 Attack Speed"));
         meta.setLore(lore);
         meta.addItemFlags(new ItemFlag[]{ItemFlag.HIDE_ATTRIBUTES});
         AttributeModifier modifier = new AttributeModifier(UUID.randomUUID(), "Attack Speed", -2.3, AttributeModifier.Operation.ADD_NUMBER, EquipmentSlot.HAND);
-        meta.addAttributeModifier(Attribute.GENERIC_ATTACK_SPEED, modifier);
+        meta.addAttributeModifier(Attribute.ATTACK_SPEED, modifier);
         AttributeModifier modifier2 = new AttributeModifier(UUID.randomUUID(), "Attack Damage", 5.0, AttributeModifier.Operation.ADD_NUMBER, EquipmentSlot.HAND);
-        meta.addAttributeModifier(Attribute.GENERIC_ATTACK_DAMAGE, modifier2);
-        meta.setDisplayName(ChatColor.translateAlternateColorCodes((char)'&', (String)"Wind Blade"));
+        meta.addAttributeModifier(Attribute.ATTACK_DAMAGE, modifier2);
+        meta.setDisplayName(convertLegacyToSection("Wind Blade"));
         meta.setCustomModelData(Integer.valueOf(21));
         item.setItemMeta(meta);
         NamespacedKey key = new NamespacedKey((Plugin)this, "wind_sword");
@@ -7126,20 +7065,20 @@ implements Listener {
         ItemStack item = new ItemStack(Material.WOODEN_SWORD);
         ItemMeta meta = item.getItemMeta();
         ArrayList<String> lore = new ArrayList<String>();
-        lore.add(ChatColor.translateAlternateColorCodes((char)'&', (String)this.getConfig().getString("dFrostCharm.line1")));
-        lore.add(ChatColor.translateAlternateColorCodes((char)'&', (String)this.getConfig().getString("dFrostCharm.line2")));
-        lore.add(ChatColor.translateAlternateColorCodes((char)'&', (String)this.getConfig().getString("dFrostCharm.line3")));
-        lore.add(ChatColor.translateAlternateColorCodes((char)'&', (String)this.getConfig().getString("dFrostCharm.line4")));
+        lore.add(convertLegacyToSection(this.getConfig().getString("dFrostCharm.line1")));
+        lore.add(convertLegacyToSection(this.getConfig().getString("dFrostCharm.line2")));
+        lore.add(convertLegacyToSection(this.getConfig().getString("dFrostCharm.line3")));
+        lore.add(convertLegacyToSection(this.getConfig().getString("dFrostCharm.line4")));
         meta.setLore(lore);
         meta.setCustomModelData(Integer.valueOf(45));
-        meta.setDisplayName(ChatColor.translateAlternateColorCodes((char)'&', (String)this.getConfig().getString("dFrostCharm.name")));
+        meta.setDisplayName(convertLegacyToSection(this.getConfig().getString("dFrostCharm.name")));
         meta.addEnchant(Enchantment.DURABILITY, 5, true);
         meta.addItemFlags(new ItemFlag[]{ItemFlag.HIDE_ENCHANTS});
         meta.addItemFlags(new ItemFlag[]{ItemFlag.HIDE_ATTRIBUTES});
         AttributeModifier modifier = new AttributeModifier(UUID.randomUUID(), "Attack Speed", 0.0, AttributeModifier.Operation.ADD_NUMBER, EquipmentSlot.HAND);
-        meta.addAttributeModifier(Attribute.GENERIC_ATTACK_SPEED, modifier);
+        meta.addAttributeModifier(Attribute.ATTACK_SPEED, modifier);
         AttributeModifier modifier2 = new AttributeModifier(UUID.randomUUID(), "Attack Damage", 0.0, AttributeModifier.Operation.ADD_NUMBER, EquipmentSlot.HAND);
-        meta.addAttributeModifier(Attribute.GENERIC_ATTACK_DAMAGE, modifier2);
+        meta.addAttributeModifier(Attribute.ATTACK_DAMAGE, modifier2);
         meta.addItemFlags(new ItemFlag[]{ItemFlag.HIDE_UNBREAKABLE});
         meta.setUnbreakable(true);
         item.setItemMeta(meta);
@@ -7178,17 +7117,17 @@ implements Listener {
         ItemStack item = new ItemStack(Material.NETHERITE_SWORD);
         ItemMeta meta = item.getItemMeta();
         ArrayList<String> lore = new ArrayList<String>();
-        lore.add(ChatColor.translateAlternateColorCodes((char)'&', (String)this.getConfig().getString("dVolcanicBlade.line1")));
-        lore.add(ChatColor.translateAlternateColorCodes((char)'&', (String)this.getConfig().getString("dVolcanicBlade.line2")));
-        lore.add(ChatColor.translateAlternateColorCodes((char)'&', (String)this.getConfig().getString("dVolcanicBlade.line3")));
-        lore.add(ChatColor.translateAlternateColorCodes((char)'&', (String)this.getConfig().getString("dVolcanicBlade.line4")));
-        lore.add(ChatColor.translateAlternateColorCodes((char)'&', (String)this.getConfig().getString("dVolcanicBlade.line5")));
-        lore.add(ChatColor.translateAlternateColorCodes((char)'&', (String)this.getConfig().getString("dVolcanicBlade.line6")));
-        lore.add(ChatColor.translateAlternateColorCodes((char)'&', (String)this.getConfig().getString("dVolcanicBlade.line7")));
-        lore.add(ChatColor.translateAlternateColorCodes((char)'&', (String)this.getConfig().getString("dVolcanicBlade.line8")));
-        lore.add(ChatColor.translateAlternateColorCodes((char)'&', (String)this.getConfig().getString("dVolcanicBlade.line9")));
-        lore.add(ChatColor.translateAlternateColorCodes((char)'&', (String)this.getConfig().getString("dVolcanicBlade.line10")));
-        lore.add(ChatColor.translateAlternateColorCodes((char)'&', (String)this.getConfig().getString("dVolcanicBlade.line11")));
+        lore.add(convertLegacyToSection(this.getConfig().getString("dVolcanicBlade.line1")));
+        lore.add(convertLegacyToSection(this.getConfig().getString("dVolcanicBlade.line2")));
+        lore.add(convertLegacyToSection(this.getConfig().getString("dVolcanicBlade.line3")));
+        lore.add(convertLegacyToSection(this.getConfig().getString("dVolcanicBlade.line4")));
+        lore.add(convertLegacyToSection(this.getConfig().getString("dVolcanicBlade.line5")));
+        lore.add(convertLegacyToSection(this.getConfig().getString("dVolcanicBlade.line6")));
+        lore.add(convertLegacyToSection(this.getConfig().getString("dVolcanicBlade.line7")));
+        lore.add(convertLegacyToSection(this.getConfig().getString("dVolcanicBlade.line8")));
+        lore.add(convertLegacyToSection(this.getConfig().getString("dVolcanicBlade.line9")));
+        lore.add(convertLegacyToSection(this.getConfig().getString("dVolcanicBlade.line10")));
+        lore.add(convertLegacyToSection(this.getConfig().getString("dVolcanicBlade.line11")));
         meta.setLore(lore);
         meta.addItemFlags(new ItemFlag[]{ItemFlag.HIDE_ATTRIBUTES});
         double dmg = 7.0;
@@ -7198,10 +7137,10 @@ implements Listener {
             spd = this.getConfig().getDouble("aVolcanicBlade.speed") - 4.0;
         }
         AttributeModifier modifier = new AttributeModifier(UUID.randomUUID(), "Attack Speed", spd, AttributeModifier.Operation.ADD_NUMBER, EquipmentSlot.HAND);
-        meta.addAttributeModifier(Attribute.GENERIC_ATTACK_SPEED, modifier);
+        meta.addAttributeModifier(Attribute.ATTACK_SPEED, modifier);
         AttributeModifier modifier2 = new AttributeModifier(UUID.randomUUID(), "Attack Damage", dmg, AttributeModifier.Operation.ADD_NUMBER, EquipmentSlot.HAND);
-        meta.addAttributeModifier(Attribute.GENERIC_ATTACK_DAMAGE, modifier2);
-        meta.setDisplayName(ChatColor.translateAlternateColorCodes((char)'&', (String)this.getConfig().getString("dVolcanicBlade.name")));
+        meta.addAttributeModifier(Attribute.ATTACK_DAMAGE, modifier2);
+        meta.setDisplayName(convertLegacyToSection(this.getConfig().getString("dVolcanicBlade.name")));
         meta.setCustomModelData(Integer.valueOf(5000));
         item.setItemMeta(meta);
         NamespacedKey key = new NamespacedKey((Plugin)this, "fire_sword");
@@ -7217,17 +7156,17 @@ implements Listener {
         ItemStack item = new ItemStack(Material.NETHERITE_SWORD);
         ItemMeta meta = item.getItemMeta();
         ArrayList<String> lore = new ArrayList<String>();
-        lore.add(ChatColor.translateAlternateColorCodes((char)'&', (String)this.getConfig().getString("dVolcanicSpear.line1")));
-        lore.add(ChatColor.translateAlternateColorCodes((char)'&', (String)this.getConfig().getString("dVolcanicSpear.line2")));
-        lore.add(ChatColor.translateAlternateColorCodes((char)'&', (String)this.getConfig().getString("dVolcanicSpear.line3")));
-        lore.add(ChatColor.translateAlternateColorCodes((char)'&', (String)this.getConfig().getString("dVolcanicSpear.line4")));
-        lore.add(ChatColor.translateAlternateColorCodes((char)'&', (String)this.getConfig().getString("dVolcanicSpear.line5")));
-        lore.add(ChatColor.translateAlternateColorCodes((char)'&', (String)this.getConfig().getString("dVolcanicSpear.line6")));
-        lore.add(ChatColor.translateAlternateColorCodes((char)'&', (String)this.getConfig().getString("dVolcanicSpear.line7")));
-        lore.add(ChatColor.translateAlternateColorCodes((char)'&', (String)this.getConfig().getString("dVolcanicSpear.line8")));
-        lore.add(ChatColor.translateAlternateColorCodes((char)'&', (String)this.getConfig().getString("dVolcanicSpear.line9")));
-        lore.add(ChatColor.translateAlternateColorCodes((char)'&', (String)this.getConfig().getString("dVolcanicSpear.line10")));
-        lore.add(ChatColor.translateAlternateColorCodes((char)'&', (String)this.getConfig().getString("dVolcanicSpear.line11")));
+        lore.add(convertLegacyToSection(this.getConfig().getString("dVolcanicSpear.line1")));
+        lore.add(convertLegacyToSection(this.getConfig().getString("dVolcanicSpear.line2")));
+        lore.add(convertLegacyToSection(this.getConfig().getString("dVolcanicSpear.line3")));
+        lore.add(convertLegacyToSection(this.getConfig().getString("dVolcanicSpear.line4")));
+        lore.add(convertLegacyToSection(this.getConfig().getString("dVolcanicSpear.line5")));
+        lore.add(convertLegacyToSection(this.getConfig().getString("dVolcanicSpear.line6")));
+        lore.add(convertLegacyToSection(this.getConfig().getString("dVolcanicSpear.line7")));
+        lore.add(convertLegacyToSection(this.getConfig().getString("dVolcanicSpear.line8")));
+        lore.add(convertLegacyToSection(this.getConfig().getString("dVolcanicSpear.line9")));
+        lore.add(convertLegacyToSection(this.getConfig().getString("dVolcanicSpear.line10")));
+        lore.add(convertLegacyToSection(this.getConfig().getString("dVolcanicSpear.line11")));
         meta.setLore(lore);
         meta.addItemFlags(new ItemFlag[]{ItemFlag.HIDE_ATTRIBUTES});
         double dmg = 4.0;
@@ -7237,10 +7176,10 @@ implements Listener {
             spd = this.getConfig().getDouble("aVolcanicSpear.speed") - 4.0;
         }
         AttributeModifier modifier = new AttributeModifier(UUID.randomUUID(), "Attack Speed", spd, AttributeModifier.Operation.ADD_NUMBER, EquipmentSlot.HAND);
-        meta.addAttributeModifier(Attribute.GENERIC_ATTACK_SPEED, modifier);
+        meta.addAttributeModifier(Attribute.ATTACK_SPEED, modifier);
         AttributeModifier modifier2 = new AttributeModifier(UUID.randomUUID(), "Attack Damage", dmg, AttributeModifier.Operation.ADD_NUMBER, EquipmentSlot.HAND);
-        meta.addAttributeModifier(Attribute.GENERIC_ATTACK_DAMAGE, modifier2);
-        meta.setDisplayName(ChatColor.translateAlternateColorCodes((char)'&', (String)this.getConfig().getString("dVolcanicSpear.name")));
+        meta.addAttributeModifier(Attribute.ATTACK_DAMAGE, modifier2);
+        meta.setDisplayName(convertLegacyToSection(this.getConfig().getString("dVolcanicSpear.name")));
         meta.setCustomModelData(Integer.valueOf(5001));
         item.setItemMeta(meta);
         NamespacedKey key = new NamespacedKey((Plugin)this, "fire_spear");
@@ -7257,17 +7196,17 @@ implements Listener {
         ItemStack item = new ItemStack(Material.NETHERITE_SWORD);
         ItemMeta meta = item.getItemMeta();
         ArrayList<String> lore = new ArrayList<String>();
-        lore.add(ChatColor.translateAlternateColorCodes((char)'&', (String)this.getConfig().getString("dVolcanicAxe.line1")));
-        lore.add(ChatColor.translateAlternateColorCodes((char)'&', (String)this.getConfig().getString("dVolcanicAxe.line2")));
-        lore.add(ChatColor.translateAlternateColorCodes((char)'&', (String)this.getConfig().getString("dVolcanicAxe.line3")));
-        lore.add(ChatColor.translateAlternateColorCodes((char)'&', (String)this.getConfig().getString("dVolcanicAxe.line4")));
-        lore.add(ChatColor.translateAlternateColorCodes((char)'&', (String)this.getConfig().getString("dVolcanicAxe.line5")));
-        lore.add(ChatColor.translateAlternateColorCodes((char)'&', (String)this.getConfig().getString("dVolcanicAxe.line6")));
-        lore.add(ChatColor.translateAlternateColorCodes((char)'&', (String)this.getConfig().getString("dVolcanicAxe.line7")));
-        lore.add(ChatColor.translateAlternateColorCodes((char)'&', (String)this.getConfig().getString("dVolcanicAxe.line8")));
-        lore.add(ChatColor.translateAlternateColorCodes((char)'&', (String)this.getConfig().getString("dVolcanicAxe.line9")));
-        lore.add(ChatColor.translateAlternateColorCodes((char)'&', (String)this.getConfig().getString("dVolcanicAxe.line10")));
-        lore.add(ChatColor.translateAlternateColorCodes((char)'&', (String)this.getConfig().getString("dVolcanicAxe.line11")));
+        lore.add(convertLegacyToSection(this.getConfig().getString("dVolcanicAxe.line1")));
+        lore.add(convertLegacyToSection(this.getConfig().getString("dVolcanicAxe.line2")));
+        lore.add(convertLegacyToSection(this.getConfig().getString("dVolcanicAxe.line3")));
+        lore.add(convertLegacyToSection(this.getConfig().getString("dVolcanicAxe.line4")));
+        lore.add(convertLegacyToSection(this.getConfig().getString("dVolcanicAxe.line5")));
+        lore.add(convertLegacyToSection(this.getConfig().getString("dVolcanicAxe.line6")));
+        lore.add(convertLegacyToSection(this.getConfig().getString("dVolcanicAxe.line7")));
+        lore.add(convertLegacyToSection(this.getConfig().getString("dVolcanicAxe.line8")));
+        lore.add(convertLegacyToSection(this.getConfig().getString("dVolcanicAxe.line9")));
+        lore.add(convertLegacyToSection(this.getConfig().getString("dVolcanicAxe.line10")));
+        lore.add(convertLegacyToSection(this.getConfig().getString("dVolcanicAxe.line11")));
         meta.setLore(lore);
         meta.addItemFlags(new ItemFlag[]{ItemFlag.HIDE_ATTRIBUTES});
         double dmg = 9.0;
@@ -7277,10 +7216,10 @@ implements Listener {
             spd = this.getConfig().getDouble("aVolcanicAxe.speed") - 4.0;
         }
         AttributeModifier modifier = new AttributeModifier(UUID.randomUUID(), "Attack Speed", spd, AttributeModifier.Operation.ADD_NUMBER, EquipmentSlot.HAND);
-        meta.addAttributeModifier(Attribute.GENERIC_ATTACK_SPEED, modifier);
+        meta.addAttributeModifier(Attribute.ATTACK_SPEED, modifier);
         AttributeModifier modifier2 = new AttributeModifier(UUID.randomUUID(), "Attack Damage", dmg, AttributeModifier.Operation.ADD_NUMBER, EquipmentSlot.HAND);
-        meta.addAttributeModifier(Attribute.GENERIC_ATTACK_DAMAGE, modifier2);
-        meta.setDisplayName(ChatColor.translateAlternateColorCodes((char)'&', (String)this.getConfig().getString("dVolcanicAxe.name")));
+        meta.addAttributeModifier(Attribute.ATTACK_DAMAGE, modifier2);
+        meta.setDisplayName(convertLegacyToSection(this.getConfig().getString("dVolcanicAxe.name")));
         meta.setCustomModelData(Integer.valueOf(5002));
         item.setItemMeta(meta);
         NamespacedKey key = new NamespacedKey((Plugin)this, "fire_axe");
@@ -7297,17 +7236,17 @@ implements Listener {
         ItemStack item = new ItemStack(Material.NETHERITE_SWORD);
         ItemMeta meta = item.getItemMeta();
         ArrayList<String> lore = new ArrayList<String>();
-        lore.add(ChatColor.translateAlternateColorCodes((char)'&', (String)this.getConfig().getString("dVolcanicCleaver.line1")));
-        lore.add(ChatColor.translateAlternateColorCodes((char)'&', (String)this.getConfig().getString("dVolcanicCleaver.line2")));
-        lore.add(ChatColor.translateAlternateColorCodes((char)'&', (String)this.getConfig().getString("dVolcanicCleaver.line3")));
-        lore.add(ChatColor.translateAlternateColorCodes((char)'&', (String)this.getConfig().getString("dVolcanicCleaver.line4")));
-        lore.add(ChatColor.translateAlternateColorCodes((char)'&', (String)this.getConfig().getString("dVolcanicCleaver.line5")));
-        lore.add(ChatColor.translateAlternateColorCodes((char)'&', (String)this.getConfig().getString("dVolcanicCleaver.line6")));
-        lore.add(ChatColor.translateAlternateColorCodes((char)'&', (String)this.getConfig().getString("dVolcanicCleaver.line7")));
-        lore.add(ChatColor.translateAlternateColorCodes((char)'&', (String)this.getConfig().getString("dVolcanicCleaver.line8")));
-        lore.add(ChatColor.translateAlternateColorCodes((char)'&', (String)this.getConfig().getString("dVolcanicCleaver.line9")));
-        lore.add(ChatColor.translateAlternateColorCodes((char)'&', (String)this.getConfig().getString("dVolcanicCleaver.line10")));
-        lore.add(ChatColor.translateAlternateColorCodes((char)'&', (String)this.getConfig().getString("dVolcanicCleaver.line11")));
+        lore.add(convertLegacyToSection(this.getConfig().getString("dVolcanicCleaver.line1")));
+        lore.add(convertLegacyToSection(this.getConfig().getString("dVolcanicCleaver.line2")));
+        lore.add(convertLegacyToSection(this.getConfig().getString("dVolcanicCleaver.line3")));
+        lore.add(convertLegacyToSection(this.getConfig().getString("dVolcanicCleaver.line4")));
+        lore.add(convertLegacyToSection(this.getConfig().getString("dVolcanicCleaver.line5")));
+        lore.add(convertLegacyToSection(this.getConfig().getString("dVolcanicCleaver.line6")));
+        lore.add(convertLegacyToSection(this.getConfig().getString("dVolcanicCleaver.line7")));
+        lore.add(convertLegacyToSection(this.getConfig().getString("dVolcanicCleaver.line8")));
+        lore.add(convertLegacyToSection(this.getConfig().getString("dVolcanicCleaver.line9")));
+        lore.add(convertLegacyToSection(this.getConfig().getString("dVolcanicCleaver.line10")));
+        lore.add(convertLegacyToSection(this.getConfig().getString("dVolcanicCleaver.line11")));
         meta.setLore(lore);
         meta.addItemFlags(new ItemFlag[]{ItemFlag.HIDE_ATTRIBUTES});
         double dmg = 12.0;
@@ -7317,10 +7256,10 @@ implements Listener {
             spd = this.getConfig().getDouble("aVolcanicCleaver.speed") - 4.0;
         }
         AttributeModifier modifier = new AttributeModifier(UUID.randomUUID(), "Attack Speed", spd, AttributeModifier.Operation.ADD_NUMBER, EquipmentSlot.HAND);
-        meta.addAttributeModifier(Attribute.GENERIC_ATTACK_SPEED, modifier);
+        meta.addAttributeModifier(Attribute.ATTACK_SPEED, modifier);
         AttributeModifier modifier2 = new AttributeModifier(UUID.randomUUID(), "Attack Damage", dmg, AttributeModifier.Operation.ADD_NUMBER, EquipmentSlot.HAND);
-        meta.addAttributeModifier(Attribute.GENERIC_ATTACK_DAMAGE, modifier2);
-        meta.setDisplayName(ChatColor.translateAlternateColorCodes((char)'&', (String)this.getConfig().getString("dVolcanicCleaver.name")));
+        meta.addAttributeModifier(Attribute.ATTACK_DAMAGE, modifier2);
+        meta.setDisplayName(convertLegacyToSection(this.getConfig().getString("dVolcanicCleaver.name")));
         meta.setCustomModelData(Integer.valueOf(5003));
         item.setItemMeta(meta);
         NamespacedKey key = new NamespacedKey((Plugin)this, "fire_cleaver");
@@ -7478,7 +7417,7 @@ implements Listener {
                     }
                     p.setNoDamageTicks(10);
                     p.getWorld().playSound(p.getLocation(), Sound.BLOCK_ANVIL_LAND, 10.0f, 2.0f);
-                    p.addPotionEffect(new PotionEffect(PotionEffectType.FAST_DIGGING, 40, 0));
+                    p.addPotionEffect(new PotionEffect(PotionEffectType.HASTE, 40, 0));
                     p.addPotionEffect(new PotionEffect(PotionEffectType.SPEED, 40, 0));
                     p.addPotionEffect(new PotionEffect(PotionEffectType.REGENERATION, 40, 0));
                     ItemStack item = p.getInventory().getItemInOffHand();
@@ -7501,7 +7440,7 @@ implements Listener {
                         p.removeMetadata("test", (Plugin)this);
                     }
                     p.getWorld().playSound(p.getLocation(), Sound.ITEM_SHIELD_BREAK, 10.0f, 2.0f);
-                    p.addPotionEffect(new PotionEffect(PotionEffectType.SLOW_DIGGING, 20, 0));
+                    p.addPotionEffect(new PotionEffect(PotionEffectType.MINING_FATIGUE, 20, 0));
                     p.addPotionEffect(new PotionEffect(PotionEffectType.WEAKNESS, 20, 0));
                     ItemStack item = p.getInventory().getItemInOffHand();
                     if (p.hasCooldown(Material.SHIELD)) {
@@ -7649,15 +7588,20 @@ implements Listener {
         ItemStack item = new ItemStack(Material.CROSSBOW);
         ItemMeta meta = item.getItemMeta();
         ArrayList<String> lore = new ArrayList<String>();
-        lore.add(ChatColor.translateAlternateColorCodes((char)'&', (String)""));
-        lore.add(ChatColor.translateAlternateColorCodes((char)'&', (String)"&6Explosion"));
-        lore.add(ChatColor.translateAlternateColorCodes((char)'&', (String)"&7- Right click to create an explosion in the"));
-        lore.add(ChatColor.translateAlternateColorCodes((char)'&', (String)"&7  direction you are facing"));
-        lore.add(ChatColor.translateAlternateColorCodes((char)'&', (String)"&7- The created explosion is able to"));
-        lore.add(ChatColor.translateAlternateColorCodes((char)'&', (String)"&7  launch nearby entities, including arrows"));
-        lore.add(ChatColor.translateAlternateColorCodes((char)'&', (String)""));
-        meta.setLore(lore);
-        meta.setDisplayName(ChatColor.translateAlternateColorCodes((char)'&', (String)"Explosive Staff"));
+        lore.add(convertLegacyToSection(""));
+        lore.add(convertLegacyToSection("&6Explosion"));
+        lore.add(convertLegacyToSection("&7- Right click to create an explosion in the"));
+        lore.add(convertLegacyToSection("&7  direction you are facing"));
+        lore.add(convertLegacyToSection("&7- The created explosion is able to"));
+        lore.add(convertLegacyToSection("&7  launch nearby entities, including arrows"));
+        lore.add(convertLegacyToSection(""));
+
+        ArrayList<Component> component = new ArrayList<Component>();
+        for (String s : lore) {
+            component.add(convertLegacyToComponent(s));
+        }
+        meta.lore(component);
+        meta.displayName(Component.text("Explosive Staff"));
         meta.setCustomModelData(Integer.valueOf(22));
         item.setItemMeta(meta);
         NamespacedKey key = new NamespacedKey((Plugin)this, "explosive_staff");
@@ -7712,6 +7656,15 @@ implements Listener {
         recipe.setIngredient('B', Material.GOLD_INGOT);
         recipe.setIngredient('A', Material.DIAMOND);
         return recipe;
+    }
+
+    private String convertLegacyToSection(String s) {
+        return ChatColor.translateAlternateColorCodes('&', s);
+    }
+
+    private Component convertLegacyToComponent(String s) {
+        LegacyComponentSerializer serializer = LegacyComponentSerializer.legacySection();
+        return serializer.deserialize(s);
     }
 }
 
