@@ -552,14 +552,14 @@ dRedstoneCore:
   line4: "&7  weapons will no longer require"
   line5: "&7  holding redstone in the offhand"
 dWitheringArmorSet:
-  line1: ""
-  line2: "&6Full Set Bonus"
-  line3: "&7- Fully charged melee attacks"
-  line4: "&7  heal 50% of the damage dealt"
-  line5: "&7- When damage is taken, "
-  line6: "&7  get Wither III for 2 seconds"
-  line7: "&7  if your health is less than half"
-  line8: ""
+  - ""
+  - "&6Full Set Bonus"
+  - "&7- Fully charged melee attacks"
+  - "&7  heal 50% of the damage dealt"
+  - "&7- When damage is taken, "
+  - "&7  get Wither III for 2 seconds"
+  - "&7  if your health is less than half"
+  - ""
 dWitheringHelmet:
   name: "&eWithering Helmet"
 dWitheringChestplate:
@@ -844,13 +844,13 @@ dChorusBlade:
 #BASIC WEAPONS: ===============================================================================================
 #SCYTHES
 ScytheDescription:
-  line1: ""
-  line2: "&6Two Handed"
-  line3: "&7- +30% damage if there is no item in offhand"
-  line4: "&6Cutting Edge"
-  line5: "&7- +50% damage to players"
-  line6: "&7  without a chestplate"
-  line7: ""
+  - ""
+  - "&6Two Handed"
+  - "&7- +30% damage if there is no item in offhand"
+  - "&6Cutting Edge"
+  - "&7- +50% damage to players"
+  - "&7  without a chestplate"
+  - ""
 dWoodenScythe:
   name: "Wooden Scythe"
   line8: "&7When in Main Hand:"
@@ -868,9 +868,10 @@ dGoldenScythe:
   line10: "&9 1.2 Attack Speed"
 dEmeraldScythe:
   name: "&2Emerald Scythe"
-  line8: "&7When in Main Hand:"
-  line9: "&9 8 Attack Damage"
-  line10: "&9 1.2 Attack Speed"
+  main-hand:
+    - "&7When in Main Hand:"
+    - "&9 8 Attack Damage"
+    - "&9 1.2 Attack Speed"
 dIronScythe:
   name: "Iron Scythe"
   line8: "&7When in Main Hand:"

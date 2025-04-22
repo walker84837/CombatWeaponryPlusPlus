@@ -9,6 +9,8 @@ import org.winlogon.combatweaponryplus.Cooldown;
 import org.winlogon.combatweaponryplus.Items;
 
 import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.format.NamedTextColor;
+import net.kyori.adventure.text.format.TextDecoration;
 import net.kyori.adventure.text.serializer.legacy.LegacyComponentSerializer;
 import net.md_5.bungee.api.ChatColor;
 import org.bukkit.Bukkit;
@@ -66,256 +68,245 @@ import org.bukkit.scheduler.BukkitRunnable;
 import org.bukkit.util.RayTraceResult;
 import org.bukkit.util.Vector;
 
-public class CombatWeaponryPlus
-extends JavaPlugin
-implements Listener {
+public class CombatWeaponryPlus extends JavaPlugin implements Listener {
     public List<NamespacedKey> keys = new ArrayList<NamespacedKey>();
+    Random ran = new Random();
 
-    public static Integer getRandomInt(Integer max) {
-        Random ran = new Random();
+    public int getRandomInt(int max) {
         return ran.nextInt(max);
     }
 
     public void onEnable() {
-        String breh;
-        String frc;
-        String bc;
-        String ec;
-        String fc;
-        String q1q;
-        String qq;
-        String s3;
-        String s2;
-        String s;
+        var config = this.getConfig();
         Cooldown.setupCooldown();
         this.getServer().getPluginManager().registerEvents((Listener)this, (Plugin)this);
         this.saveDefaultConfig();
-        String ee = this.getConfig().getString("Emerald");
-        if (ee == "true") {
-            Bukkit.addRecipe((Recipe)this.getRecipe());
-            Bukkit.addRecipe((Recipe)this.getChestplateRecipe());
-            Bukkit.addRecipe((Recipe)this.getLeggingsRecipe());
-            Bukkit.addRecipe((Recipe)this.getBootsRecipe());
+        var ee = config.getBoolean("Emerald");
+        if (ee) {
+            Bukkit.addRecipe(this.getRecipe());
+            Bukkit.addRecipe(this.getChestplateRecipe());
+            Bukkit.addRecipe(this.getLeggingsRecipe());
+            Bukkit.addRecipe(this.getBootsRecipe());
         }
-        if (this.getConfig().getString("EmeraldGear") == "true") {
-            Bukkit.addRecipe((Recipe)this.getPickaxeRecipe());
-            Bukkit.addRecipe((Recipe)this.getSwordRecipe());
-            Bukkit.addRecipe((Recipe)this.getAxeRecipe());
-            Bukkit.addRecipe((Recipe)this.getShovelRecipe());
-            Bukkit.addRecipe((Recipe)this.getHoeRecipe());
+        if (config.getBoolean("EmeraldGear")) {
+            Bukkit.addRecipe(this.getPickaxeRecipe());
+            Bukkit.addRecipe(this.getSwordRecipe());
+            Bukkit.addRecipe(this.getAxeRecipe());
+            Bukkit.addRecipe(this.getShovelRecipe());
+            Bukkit.addRecipe(this.getHoeRecipe());
         }
-        if ((s = this.getConfig().getString("ChorusBlade")) == "true") {
-            Bukkit.addRecipe((Recipe)this.getSworddRecipe());
+        if ((s = config.getString("ChorusBlade")) == "true") {
+            Bukkit.addRecipe(this.getSworddRecipe());
         }
-        if ((s2 = this.getConfig().getString("SwordBow")) == "true") {
-            Bukkit.addRecipe((Recipe)this.getSwordbowRecipe());
+        if ((s2 = config.getString("SwordBow"))) {
+            Bukkit.addRecipe(this.getSwordbowRecipe());
         }
-        if ((s3 = this.getConfig().getString("HeavySwordBow")) == "true") {
-            Bukkit.addRecipe((Recipe)this.getHSwordbowRecipe());
+        if ((s3 = config.getString("HeavySwordBow"))) {
+            Bukkit.addRecipe(this.getHSwordbowRecipe());
         }
-        if ((qq = this.getConfig().getString("Chainmail")) == "true") {
-            Bukkit.addRecipe((Recipe)this.getChnHelmetRecipe());
-            Bukkit.addRecipe((Recipe)this.getChnChestRecipe());
-            Bukkit.addRecipe((Recipe)this.getChnLegRecipe());
-            Bukkit.addRecipe((Recipe)this.getChnBootsRecipe());
+        if ((qq = config.getString("Chainmail"))) {
+            Bukkit.addRecipe(this.getChnHelmetRecipe());
+            Bukkit.addRecipe(this.getChnChestRecipe());
+            Bukkit.addRecipe(this.getChnLegRecipe());
+            Bukkit.addRecipe(this.getChnBootsRecipe());
         }
-        if ((q1q = this.getConfig().getString("PlatedChainmail")) == "true") {
-            Bukkit.addRecipe((Recipe)this.getPChnHelmetRecipe());
-            Bukkit.addRecipe((Recipe)this.getPChnChestRecipe());
-            Bukkit.addRecipe((Recipe)this.getPChnLegRecipe());
-            Bukkit.addRecipe((Recipe)this.getPChnBootsRecipe());
+        if ((q1q = config.getString("PlatedChainmail"))) {
+            Bukkit.addRecipe(this.getPChnHelmetRecipe());
+            Bukkit.addRecipe(this.getPChnChestRecipe());
+            Bukkit.addRecipe(this.getPChnLegRecipe());
+            Bukkit.addRecipe(this.getPChnBootsRecipe());
         }
-        if ((fc = this.getConfig().getString("FeatherCharm")) == "true") {
-            Bukkit.addRecipe((Recipe)this.getFCharmRecipe());
+        if ((fc = config.getString("FeatherCharm"))) {
+            Bukkit.addRecipe(this.getFCharmRecipe());
         }
-        if ((ec = this.getConfig().getString("EmeraldCharm")) == "true") {
-            Bukkit.addRecipe((Recipe)this.getECharmRecipe());
+        if ((ec = config.getString("EmeraldCharm"))) {
+            Bukkit.addRecipe(this.getECharmRecipe());
         }
-        if ((bc = this.getConfig().getString("BlazeCharm")) == "true") {
-            Bukkit.addRecipe((Recipe)this.getBCharmRecipe());
+        if ((bc = config.getString("BlazeCharm"))) {
+            Bukkit.addRecipe(this.getBCharmRecipe());
         }
-        if (this.getConfig().getString("GoldCharm") == "true") {
-            Bukkit.addRecipe((Recipe)this.getGCharmRecipe());
+        if (config.getBoolean("GoldCharm")) {
+            Bukkit.addRecipe(this.getGCharmRecipe());
         }
-        if (this.getConfig().getString("StarCharm") == "true") {
-            Bukkit.addRecipe((Recipe)this.getERecipe());
+        if (config.getBoolean("StarCharm")) {
+            Bukkit.addRecipe(this.getERecipe());
         }
-        if ((frc = this.getConfig().getString("FrostCharm")) == "true") {
-            Bukkit.addRecipe((Recipe)this.getFrCharmRecipe());
+        if ((frc = config.getString("FrostCharm"))) {
+            Bukkit.addRecipe(this.getFrCharmRecipe());
         }
-        if (this.getConfig().getString("Scythes") == "true") {
-            Bukkit.addRecipe((Recipe)this.getWScytheRecipe());
-            Bukkit.addRecipe((Recipe)this.getSScytheRecipe());
-            Bukkit.addRecipe((Recipe)this.getGScytheRecipe());
-            Bukkit.addRecipe((Recipe)this.getIScytheRecipe());
-            Bukkit.addRecipe((Recipe)this.getDScytheRecipe());
-            Bukkit.addRecipe((Recipe)this.getNScytheRecipe());
+        if (config.getBoolean("Scythes")) {
+            Bukkit.addRecipe(this.getWScytheRecipe());
+            Bukkit.addRecipe(this.getSScytheRecipe());
+            Bukkit.addRecipe(this.getGScytheRecipe());
+            Bukkit.addRecipe(this.getIScytheRecipe());
+            Bukkit.addRecipe(this.getDScytheRecipe());
+            Bukkit.addRecipe(this.getNScytheRecipe());
         }
-        if (this.getConfig().getString("EmeraldGear") == "true" && this.getConfig().getString("Scythes") == "true") {
-            Bukkit.addRecipe((Recipe)this.getEScytheRecipe());
+        if (config.getBoolean("EmeraldGear") && config.getString("Scythes")) {
+            Bukkit.addRecipe(this.getEScytheRecipe());
         }
-        if ((breh = this.getConfig().getString("ObsidianPickaxe")) == "true") {
-            Bukkit.addRecipe((Recipe)this.getobpickRecipe());
+        if ((breh = config.getString("ObsidianPickaxe"))) {
+            Bukkit.addRecipe(this.getobpickRecipe());
         }
-        if (this.getConfig().getString("Rapiers") == "true") {
-            Bukkit.addRecipe((Recipe)this.getRapierRecipe());
-            Bukkit.addRecipe((Recipe)this.getsRapierRecipe());
-            Bukkit.addRecipe((Recipe)this.getgRapierRecipe());
-            Bukkit.addRecipe((Recipe)this.getIRapierRecipe());
-            Bukkit.addRecipe((Recipe)this.getDRapierRecipe());
-            Bukkit.addRecipe((Recipe)this.getNRapierRecipe());
+        if (config.getBoolean("Rapiers")) {
+            Bukkit.addRecipe(this.getRapierRecipe());
+            Bukkit.addRecipe(this.getsRapierRecipe());
+            Bukkit.addRecipe(this.getgRapierRecipe());
+            Bukkit.addRecipe(this.getIRapierRecipe());
+            Bukkit.addRecipe(this.getDRapierRecipe());
+            Bukkit.addRecipe(this.getNRapierRecipe());
         }
-        if (this.getConfig().getString("EmeraldGear") == "true" && this.getConfig().getString("Rapiers") == "true") {
-            Bukkit.addRecipe((Recipe)this.geteeRapierRecipe());
+        if (config.getBoolean("EmeraldGear") && config.getString("Rapiers")) {
+            Bukkit.addRecipe(this.geteeRapierRecipe());
         }
-        if (this.getConfig().getString("Longswords") == "true") {
-            Bukkit.addRecipe((Recipe)this.getwlongRecipe());
-            Bukkit.addRecipe((Recipe)this.getslongRecipe());
-            Bukkit.addRecipe((Recipe)this.getglongRecipe());
-            Bukkit.addRecipe((Recipe)this.getIlongRecipe());
-            Bukkit.addRecipe((Recipe)this.getDlongRecipe());
-            Bukkit.addRecipe((Recipe)this.getNlongRecipe());
+        if (config.getBoolean("Longswords")) {
+            Bukkit.addRecipe(this.getwlongRecipe());
+            Bukkit.addRecipe(this.getslongRecipe());
+            Bukkit.addRecipe(this.getglongRecipe());
+            Bukkit.addRecipe(this.getIlongRecipe());
+            Bukkit.addRecipe(this.getDlongRecipe());
+            Bukkit.addRecipe(this.getNlongRecipe());
         }
-        if (this.getConfig().getString("EmeraldGear") == "true" && this.getConfig().getString("Longswords") == "true") {
-            Bukkit.addRecipe((Recipe)this.getelongRecipe());
+        if (config.getBoolean("EmeraldGear") && config.getString("Longswords")) {
+            Bukkit.addRecipe(this.getelongRecipe());
         }
-        if (this.getConfig().getString("Knives") == "true") {
-            Bukkit.addRecipe((Recipe)this.getwknifeRecipe());
-            Bukkit.addRecipe((Recipe)this.getsknifeRecipe());
-            Bukkit.addRecipe((Recipe)this.getgknifeRecipe());
-            Bukkit.addRecipe((Recipe)this.getIknifeRecipe());
-            Bukkit.addRecipe((Recipe)this.getDknifeRecipe());
-            Bukkit.addRecipe((Recipe)this.getNknifeRecipe());
+        if (config.getBoolean("Knives")) {
+            Bukkit.addRecipe(this.getwknifeRecipe());
+            Bukkit.addRecipe(this.getsknifeRecipe());
+            Bukkit.addRecipe(this.getgknifeRecipe());
+            Bukkit.addRecipe(this.getIknifeRecipe());
+            Bukkit.addRecipe(this.getDknifeRecipe());
+            Bukkit.addRecipe(this.getNknifeRecipe());
         }
-        if (this.getConfig().getString("Knives") == "true" && this.getConfig().getString("EmeraldGear") == "true") {
-            Bukkit.addRecipe((Recipe)this.geteknifeRecipe());
+        if (config.getBoolean("Knives") && config.getString("EmeraldGear")) {
+            Bukkit.addRecipe(this.geteknifeRecipe());
         }
-        if (this.getConfig().getString("Spears") == "true") {
-            Bukkit.addRecipe((Recipe)this.getwspearRecipe());
-            Bukkit.addRecipe((Recipe)this.getsspearRecipe());
-            Bukkit.addRecipe((Recipe)this.getgspearRecipe());
-            Bukkit.addRecipe((Recipe)this.getispearRecipe());
-            Bukkit.addRecipe((Recipe)this.getdspearRecipe());
-            Bukkit.addRecipe((Recipe)this.getnspearRecipe());
+        if (config.getBoolean("Spears")) {
+            Bukkit.addRecipe(this.getwspearRecipe());
+            Bukkit.addRecipe(this.getsspearRecipe());
+            Bukkit.addRecipe(this.getgspearRecipe());
+            Bukkit.addRecipe(this.getispearRecipe());
+            Bukkit.addRecipe(this.getdspearRecipe());
+            Bukkit.addRecipe(this.getnspearRecipe());
         }
-        if (this.getConfig().getString("EmeraldGear") == "true" && this.getConfig().getString("Spears") == "true") {
-            Bukkit.addRecipe((Recipe)this.getespearRecipe());
+        if (config.getBoolean("EmeraldGear") && config.getString("Spears")) {
+            Bukkit.addRecipe(this.getespearRecipe());
         }
-        if (this.getConfig().getString("Katanas") == "true") {
-            Bukkit.addRecipe((Recipe)this.getwkatRecipe());
-            Bukkit.addRecipe((Recipe)this.getgkatRecipe());
-            Bukkit.addRecipe((Recipe)this.getskatRecipe());
-            Bukkit.addRecipe((Recipe)this.getikatRecipe());
-            Bukkit.addRecipe((Recipe)this.getdkatRecipe());
-            Bukkit.addRecipe((Recipe)this.getnkatRecipe());
+        if (config.getBoolean("Katanas")) {
+            Bukkit.addRecipe(this.getwkatRecipe());
+            Bukkit.addRecipe(this.getgkatRecipe());
+            Bukkit.addRecipe(this.getskatRecipe());
+            Bukkit.addRecipe(this.getikatRecipe());
+            Bukkit.addRecipe(this.getdkatRecipe());
+            Bukkit.addRecipe(this.getnkatRecipe());
         }
-        if (this.getConfig().getString("EmeraldGear") == "true" && this.getConfig().getString("Katanas") == "true") {
-            Bukkit.addRecipe((Recipe)this.getekatRecipe());
+        if (config.getBoolean("EmeraldGear") && config.getString("Katanas")) {
+            Bukkit.addRecipe(this.getekatRecipe());
         }
-        if (this.getConfig().getString("Prismarine") == "true") {
-            Bukkit.addRecipe((Recipe)this.getinsttRecipe());
-            Bukkit.addRecipe((Recipe)this.getprisswordsrecipe());
-            Bukkit.addRecipe((Recipe)this.getprispickrecipe());
-            Bukkit.addRecipe((Recipe)this.getprisaxerecipe());
-            Bukkit.addRecipe((Recipe)this.getprisshovelrecipe());
-            Bukkit.addRecipe((Recipe)this.getprishoerecipe());
-            Bukkit.addRecipe((Recipe)this.getprishelmetrecipe());
-            Bukkit.addRecipe((Recipe)this.getprischestrecipe());
-            Bukkit.addRecipe((Recipe)this.getprislegrecipe());
-            Bukkit.addRecipe((Recipe)this.getprisbootsrecipe());
+        if (config.getBoolean("Prismarine")) {
+            Bukkit.addRecipe(this.getinsttRecipe());
+            Bukkit.addRecipe(this.getprisswordsrecipe());
+            Bukkit.addRecipe(this.getprispickrecipe());
+            Bukkit.addRecipe(this.getprisaxerecipe());
+            Bukkit.addRecipe(this.getprisshovelrecipe());
+            Bukkit.addRecipe(this.getprishoerecipe());
+            Bukkit.addRecipe(this.getprishelmetrecipe());
+            Bukkit.addRecipe(this.getprischestrecipe());
+            Bukkit.addRecipe(this.getprislegrecipe());
+            Bukkit.addRecipe(this.getprisbootsrecipe());
         }
-        if (this.getConfig().getString("Longbow") == "true") {
-            Bukkit.addRecipe((Recipe)this.getLongBowRecipe());
+        if (config.getBoolean("Longbow")) {
+            Bukkit.addRecipe(this.getLongBowRecipe());
         }
-        if (this.getConfig().getString("Recurvebow") == "true") {
-            Bukkit.addRecipe((Recipe)this.getRecurveBowRecipe());
+        if (config.getBoolean("Recurvebow")) {
+            Bukkit.addRecipe(this.getRecurveBowRecipe());
         }
-        if (this.getConfig().getString("Compoundbow") == "true") {
-            Bukkit.addRecipe((Recipe)this.getCompoundBowRecipe());
+        if (config.getBoolean("Compoundbow")) {
+            Bukkit.addRecipe(this.getCompoundBowRecipe());
         }
-        if (this.getConfig().getString("Eelytra") == "true") {
-            Bukkit.addRecipe((Recipe)this.getEelytraRecipe());
+        if (config.getBoolean("Eelytra")) {
+            Bukkit.addRecipe(this.getEelytraRecipe());
         }
-        if (this.getConfig().getString("ReallyGoodSword") == "true") {
-            Bukkit.addRecipe((Recipe)this.getOPSWORDRecipe());
+        if (config.getBoolean("ReallyGoodSword")) {
+            Bukkit.addRecipe(this.getOPSWORDRecipe());
         }
-        if (this.getConfig().getString("DiamondShield") == "true") {
-            Bukkit.addRecipe((Recipe)this.getDiaShieldRecipe());
+        if (config.getBoolean("DiamondShield")) {
+            Bukkit.addRecipe(this.getDiaShieldRecipe());
         }
-        if (this.getConfig().getString("NetheriteShield") == "true") {
-            Bukkit.addRecipe((Recipe)this.getNethShieldRecipe());
+        if (config.getBoolean("NetheriteShield")) {
+            Bukkit.addRecipe(this.getNethShieldRecipe());
         }
-        Bukkit.addRecipe((Recipe)this.getawakswordsrecipe());
-        if (this.getConfig().getString("Sabers") == "true") {
-            Bukkit.addRecipe((Recipe)this.getWSaberRecipe());
-            Bukkit.addRecipe((Recipe)this.getGSaberRecipe());
-            Bukkit.addRecipe((Recipe)this.getSSaberRecipe());
-            Bukkit.addRecipe((Recipe)this.getISaberRecipe());
-            Bukkit.addRecipe((Recipe)this.getDSaberRecipe());
-            Bukkit.addRecipe((Recipe)this.getNSaberRecipe());
+        Bukkit.addRecipe(this.getawakswordsrecipe());
+        if (config.getBoolean("Sabers")) {
+            Bukkit.addRecipe(this.getWSaberRecipe());
+            Bukkit.addRecipe(this.getGSaberRecipe());
+            Bukkit.addRecipe(this.getSSaberRecipe());
+            Bukkit.addRecipe(this.getISaberRecipe());
+            Bukkit.addRecipe(this.getDSaberRecipe());
+            Bukkit.addRecipe(this.getNSaberRecipe());
         }
-        if (this.getConfig().getString("EmeraldGear") == "true" && this.getConfig().getString("Sabers") == "true") {
-            Bukkit.addRecipe((Recipe)this.getESaberRecipe());
+        if (config.getBoolean("EmeraldGear") && config.getBoolean("Sabers")) {
+            Bukkit.addRecipe(this.getESaberRecipe());
         }
-        if (this.getConfig().getString("RepeatingCrossbow") == "true") {
-            Bukkit.addRecipe((Recipe)this.getrepcrossRecipe());
+        if (config.getBoolean("RepeatingCrossbow")) {
+            Bukkit.addRecipe(this.getrepcrossRecipe());
         }
-        if (this.getConfig().getString("BurstCrossbow") == "true") {
-            Bukkit.addRecipe((Recipe)this.getburscrossRecipe());
+        if (config.getBoolean("BurstCrossbow")) {
+            Bukkit.addRecipe(this.getburscrossRecipe());
         }
-        if (this.getConfig().getString("RedstoneCore") == "true") {
-            Bukkit.addRecipe((Recipe)this.getRedPlateRecipe());
+        if (config.getBoolean("RedstoneCore")) {
+            Bukkit.addRecipe(this.getRedPlateRecipe());
         }
-        if (this.getConfig().getString("LongswordBow") == "true") {
-            Bukkit.addRecipe((Recipe)this.getLsBowRecipe());
+        if (config.getBoolean("LongswordBow")) {
+            Bukkit.addRecipe(this.getLsBowRecipe());
         }
-        if (this.getConfig().getString("RedstoneBow") == "true") {
-            Bukkit.addRecipe((Recipe)this.getRedstoneBowRecipe());
+        if (config.getBoolean("RedstoneBow")) {
+            Bukkit.addRecipe(this.getRedstoneBowRecipe());
         }
-        if (this.getConfig().getString("TridentBow") == "true") {
-            Bukkit.addRecipe((Recipe)this.getTridentBowRecipe());
+        if (config.getBoolean("TridentBow")) {
+            Bukkit.addRecipe(this.getTridentBowRecipe());
         }
-        if (this.getConfig().getString("WitherArmor") == "true") {
-            Bukkit.addRecipe((Recipe)this.getWitherHelmetRecipe());
-            Bukkit.addRecipe((Recipe)this.getWitherChestRecipe());
-            Bukkit.addRecipe((Recipe)this.getWitherLegRecipe());
-            Bukkit.addRecipe((Recipe)this.getWitherBootsRecipe());
+        if (config.getBoolean("WitherArmor")) {
+            Bukkit.addRecipe(this.getWitherHelmetRecipe());
+            Bukkit.addRecipe(this.getWitherChestRecipe());
+            Bukkit.addRecipe(this.getWitherLegRecipe());
+            Bukkit.addRecipe(this.getWitherBootsRecipe());
         }
-        if (this.getConfig().getString("JumpElytra") == "true") {
-            Bukkit.addRecipe((Recipe)this.jumpElytraRecipe());
+        if (config.getBoolean("JumpElytra")) {
+            Bukkit.addRecipe(this.jumpElytraRecipe());
         }
-        if (this.getConfig().getString("TestKatana") == "true") {
-            Bukkit.addRecipe((Recipe)this.getTestKatanaRecipe());
+        if (config.getBoolean("TestKatana")) {
+            Bukkit.addRecipe(this.getTestKatanaRecipe());
         }
-        if (this.getConfig().getString("TestScythe") == "true") {
-            Bukkit.addRecipe((Recipe)this.getTestScytheRecipe());
+        if (config.getBoolean("TestScythe")) {
+            Bukkit.addRecipe(this.getTestScytheRecipe());
         }
-        if (this.getConfig().getString("Cleavers") == "true") {
-            Bukkit.addRecipe((Recipe)this.getCleaverRecipe());
-            Bukkit.addRecipe((Recipe)this.getGoldCleaverRecipe());
-            Bukkit.addRecipe((Recipe)this.getStoneCleaverRecipe());
-            Bukkit.addRecipe((Recipe)this.getICleaverRecipe());
-            Bukkit.addRecipe((Recipe)this.getECleaverRecipe());
-            Bukkit.addRecipe((Recipe)this.getDCleaverRecipe());
-            Bukkit.addRecipe((Recipe)this.getNCleaverRecipe());
+        if (config.getBoolean("Cleavers")) {
+            Bukkit.addRecipe(this.getCleaverRecipe());
+            Bukkit.addRecipe(this.getGoldCleaverRecipe());
+            Bukkit.addRecipe(this.getStoneCleaverRecipe());
+            Bukkit.addRecipe(this.getICleaverRecipe());
+            Bukkit.addRecipe(this.getECleaverRecipe());
+            Bukkit.addRecipe(this.getDCleaverRecipe());
+            Bukkit.addRecipe(this.getNCleaverRecipe());
         }
-        if (this.getConfig().getString("FishSword") == "true") {
-            Bukkit.addRecipe((Recipe)this.getTestFishRecipe());
+        if (config.getBoolean("FishSword")) {
+            Bukkit.addRecipe(this.getTestFishRecipe());
         }
-        if (this.getConfig().getString("WindBlade") == "true") {
-            Bukkit.addRecipe((Recipe)this.getWindBladeRecipe());
+        if (config.getBoolean("WindBlade")) {
+            Bukkit.addRecipe(this.getWindBladeRecipe());
         }
-        if (this.getConfig().getString("VolcanicBlade") == "true") {
-            Bukkit.addRecipe((Recipe)this.getFlameBladeRecipe());
+        if (config.getBoolean("VolcanicBlade")) {
+            Bukkit.addRecipe(this.getFlameBladeRecipe());
         }
-        if (this.getConfig().getString("VolcanicSpear") == "true") {
-            Bukkit.addRecipe((Recipe)this.getFlameSpearRecipe());
+        if (config.getBoolean("VolcanicSpear")) {
+            Bukkit.addRecipe(this.getFlameSpearRecipe());
         }
-        if (this.getConfig().getString("VolcanicAxe") == "true") {
-            Bukkit.addRecipe((Recipe)this.getFlameAxeRecipe());
+        if (config.getBoolean("VolcanicAxe")) {
+            Bukkit.addRecipe(this.getFlameAxeRecipe());
         }
-        if (this.getConfig().getString("VolcanicCleaver") == "true") {
-            Bukkit.addRecipe((Recipe)this.getFlameCleaverRecipe());
+        if (config.getBoolean("VolcanicCleaver")) {
+            Bukkit.addRecipe(this.getFlameCleaverRecipe());
         }
     }
 
@@ -325,15 +316,14 @@ implements Listener {
     @EventHandler
     public void onJoin(PlayerJoinEvent event) {
         Player player = event.getPlayer();
-        String s = this.getConfig().getString("ResourcePack");
-        if (s == "true") {
+        if (this.getConfig().getBoolean("ResourcePack")) {
             player.setResourcePack(this.getConfig().getString("PackLink"));
-        }
+        };
         player.discoverRecipes(this.keys);
     }
 
     public ShapedRecipe getRecipe() {
-        NamespacedKey key = new NamespacedKey((Plugin)this, "emerald_helmet");
+        NamespacedKey key = new NamespacedKey(this, "emerald_helmet");
         this.keys.add(key);
         ShapedRecipe recipe = new ShapedRecipe(key, Items.emeraldHelmet(this.getConfig()));
         recipe.shape(new String[]{"EEE", "E E", "   "});
@@ -346,7 +336,7 @@ implements Listener {
         ItemMeta meta = item.getItemMeta();
         double hp = 1.0;
         double def = 6.0;
-        if (this.getConfig().getString("UseCustomValues") == "true") {
+        if (this.getConfig().getBoolean("UseCustomValues")) {
             hp = this.getConfig().getDouble("aEmeraldChestplate.BonusHealth");
             def = this.getConfig().getDouble("aEmeraldChestplate.Armor");
         }
@@ -354,14 +344,14 @@ implements Listener {
         meta.addAttributeModifier(Attribute.MAX_HEALTH, modifier);
         AttributeModifier modifier2 = new AttributeModifier(UUID.randomUUID(), "Defense", def, AttributeModifier.Operation.ADD_NUMBER, EquipmentSlot.CHEST);
         meta.addAttributeModifier(Attribute.ARMOR, modifier2);
-        meta.setDisplayName(ChatColor.DARK_GREEN + "Emerald Chestplate");
-        if (this.getConfig().getString("EnchantmentsOnEmeraldArmor") == "true") {
+        meta.displayName(Component.text("Emerald Chestplate", NamedTextColor.DARK_GREEN));
+        if (this.getConfig().getBoolean("EnchantmentsOnEmeraldArmor")) {
             int num = this.getConfig().getInt("EmeraldArmorEnchantLevels.Unbreaking");
             int num2 = this.getConfig().getInt("EmeraldArmorEnchantLevels.Mending");
-            meta.addEnchant(Enchantment.DURABILITY, num, true);
+            meta.addEnchant(Enchantment.UNBREAKING, num, true);
             meta.addEnchant(Enchantment.MENDING, num2, true);
         }
-        meta.setCustomModelData(Integer.valueOf(1000001));
+        meta.setCustomModelData(1000001);
         item.setItemMeta(meta);
         NamespacedKey key = new NamespacedKey((Plugin)this, "emerald_chestplate");
         this.keys.add(key);
@@ -376,7 +366,7 @@ implements Listener {
         ItemMeta meta = item.getItemMeta();
         double hp = 1.0;
         double def = 5.0;
-        if (this.getConfig().getString("UseCustomValues") == "true") {
+        if (this.getConfig().getBoolean("UseCustomValues")) {
             hp = this.getConfig().getDouble("aEmeraldLeggings.BonusHealth");
             def = this.getConfig().getDouble("aEmeraldLeggings.Armor");
         }
@@ -384,14 +374,14 @@ implements Listener {
         meta.addAttributeModifier(Attribute.MAX_HEALTH, modifier);
         AttributeModifier modifier2 = new AttributeModifier(UUID.randomUUID(), "Defense", def, AttributeModifier.Operation.ADD_NUMBER, EquipmentSlot.LEGS);
         meta.addAttributeModifier(Attribute.ARMOR, modifier2);
-        meta.setDisplayName(ChatColor.DARK_GREEN + "Emerald Leggings");
-        if (this.getConfig().getString("EnchantmentsOnEmeraldArmor") == "true") {
+        meta.displayName(Component.text("Emerald Leggings", NamedTextColor.DARK_GREEN));
+        if (this.getConfig().getBoolean("EnchantmentsOnEmeraldArmor")) {
             int num = this.getConfig().getInt("EmeraldArmorEnchantLevels.Unbreaking");
             int num2 = this.getConfig().getInt("EmeraldArmorEnchantLevels.Mending");
-            meta.addEnchant(Enchantment.DURABILITY, num, true);
+            meta.addEnchant(Enchantment.UNBREAKING, num, true);
             meta.addEnchant(Enchantment.MENDING, num2, true);
         }
-        meta.setCustomModelData(Integer.valueOf(1000001));
+        meta.setCustomModelData(1000001);
         item.setItemMeta(meta);
         NamespacedKey key = new NamespacedKey((Plugin)this, "emerald_leggings");
         this.keys.add(key);
@@ -406,7 +396,7 @@ implements Listener {
         ItemMeta meta = item.getItemMeta();
         double hp = 1.0;
         double def = 2.0;
-        if (this.getConfig().getString("UseCustomValues") == "true") {
+        if (this.getConfig().getBoolean("UseCustomValues")) {
             hp = this.getConfig().getDouble("aEmeraldBoots.BonusHealth");
             def = this.getConfig().getDouble("aEmeraldBoots.Armor");
         }
@@ -414,14 +404,14 @@ implements Listener {
         meta.addAttributeModifier(Attribute.MAX_HEALTH, modifier);
         AttributeModifier modifier2 = new AttributeModifier(UUID.randomUUID(), "Defense", def, AttributeModifier.Operation.ADD_NUMBER, EquipmentSlot.FEET);
         meta.addAttributeModifier(Attribute.ARMOR, modifier2);
-        meta.setDisplayName(ChatColor.DARK_GREEN + "Emerald Boots");
-        if (this.getConfig().getString("EnchantmentsOnEmeraldArmor") == "true") {
+        meta.displayName(convertLegacyToComponent(ChatColor.DARK_GREEN + "Emerald Boots"));
+        if (this.getConfig().getBoolean("EnchantmentsOnEmeraldArmor")) {
             int num = this.getConfig().getInt("EmeraldArmorEnchantLevels.Unbreaking");
             int num2 = this.getConfig().getInt("EmeraldArmorEnchantLevels.Mending");
-            meta.addEnchant(Enchantment.DURABILITY, num, true);
+            meta.addEnchant(Enchantment.UNBREAKING, num, true);
             meta.addEnchant(Enchantment.MENDING, num2, true);
         }
-        meta.setCustomModelData(Integer.valueOf(1000001));
+        meta.setCustomModelData(1000001);
         item.setItemMeta(meta);
         NamespacedKey key = new NamespacedKey((Plugin)this, "emerald_boots");
         this.keys.add(key);
@@ -434,14 +424,14 @@ implements Listener {
     public ShapedRecipe getPickaxeRecipe() {
         ItemStack item = new ItemStack(Material.GOLDEN_PICKAXE);
         ItemMeta meta = item.getItemMeta();
-        meta.setDisplayName(ChatColor.DARK_GREEN + "Emerald Pickaxe");
-        if (this.getConfig().getString("EnchantsOnEmeraldGear") == "true") {
+        meta.displayName(Component.text("Emerald Pickaxe", NamedTextColor.DARK_GREEN));
+        if (this.getConfig().getBoolean("EnchantsOnEmeraldGear")) {
             int num = this.getConfig().getInt("EmeraldGearEnchantLevels.Unbreaking");
             int num2 = this.getConfig().getInt("EmeraldGearEnchantLevels.Mending");
-            meta.addEnchant(Enchantment.DURABILITY, num, true);
+            meta.addEnchant(Enchantment.UNBREAKING, num, true);
             meta.addEnchant(Enchantment.MENDING, num2, true);
         }
-        meta.setCustomModelData(Integer.valueOf(1000001));
+        meta.setCustomModelData(1000001);
         item.setItemMeta(meta);
         NamespacedKey key = new NamespacedKey((Plugin)this, "emerald_pickaxe");
         this.keys.add(key);
@@ -457,7 +447,7 @@ implements Listener {
         ItemMeta meta = item.getItemMeta();
         double dmg = 5.0;
         double spd = -2.2;
-        if (this.getConfig().getString("UseCustomValues") == "true") {
+        if (this.getConfig().getBoolean("UseCustomValues")) {
             dmg = this.getConfig().getDouble("aEmeraldSword.damage") - 1.0;
             spd = this.getConfig().getDouble("aEmeraldSword.speed") - 4.0;
         }
@@ -472,12 +462,12 @@ implements Listener {
         lore.add(convertLegacyToSection("&9 1.8 Attack Speed"));
         meta.setLore(lore);
         meta.addItemFlags(new ItemFlag[]{ItemFlag.HIDE_ATTRIBUTES});
-        meta.setDisplayName(ChatColor.DARK_GREEN + "Emerald Sword");
-        meta.setCustomModelData(Integer.valueOf(1000017));
-        if (this.getConfig().getString("EnchantsOnEmeraldGear") == "true") {
+        meta.displayName(convertLegacyToComponent(ChatColor.DARK_GREEN + "Emerald Sword"));
+        meta.setCustomModelData(1000017);
+        if (this.getConfig().getBoolean("EnchantsOnEmeraldGear")) {
             int num = this.getConfig().getInt("EmeraldGearEnchantLevels.Unbreaking");
             int num2 = this.getConfig().getInt("EmeraldGearEnchantLevels.Mending");
-            meta.addEnchant(Enchantment.DURABILITY, num, true);
+            meta.addEnchant(Enchantment.UNBREAKING, num, true);
             meta.addEnchant(Enchantment.MENDING, num2, true);
         }
         item.setItemMeta(meta);
@@ -493,14 +483,14 @@ implements Listener {
     public ShapedRecipe getAxeRecipe() {
         ItemStack item = new ItemStack(Material.GOLDEN_AXE);
         ItemMeta meta = item.getItemMeta();
-        meta.setDisplayName(ChatColor.DARK_GREEN + "Emerald Axe");
-        if (this.getConfig().getString("EnchantsOnEmeraldGear") == "true") {
+        meta.displayName(Component.text("Emerald Axe", NamedTextColor.DARK_GREEN));
+        if (this.getConfig().getBoolean("EnchantsOnEmeraldGear")) {
             int num = this.getConfig().getInt("EmeraldGearEnchantLevels.Unbreaking");
             int num2 = this.getConfig().getInt("EmeraldGearEnchantLevels.Mending");
-            meta.addEnchant(Enchantment.DURABILITY, num, true);
+            meta.addEnchant(Enchantment.UNBREAKING, num, true);
             meta.addEnchant(Enchantment.MENDING, num2, true);
         }
-        meta.setCustomModelData(Integer.valueOf(1000001));
+        meta.setCustomModelData(1000001);
         item.setItemMeta(meta);
         NamespacedKey key = new NamespacedKey((Plugin)this, "emerald_axe");
         this.keys.add(key);
@@ -514,14 +504,14 @@ implements Listener {
     public ShapedRecipe getShovelRecipe() {
         ItemStack item = new ItemStack(Material.GOLDEN_SHOVEL);
         ItemMeta meta = item.getItemMeta();
-        meta.setDisplayName(ChatColor.DARK_GREEN + "Emerald Shovel");
-        if (this.getConfig().getString("EnchantsOnEmeraldGear") == "true") {
+        meta.displayName(Component.text("Emerald Shovel", NamedTextColor.DARK_GREEN));
+        if (this.getConfig().getBoolean("EnchantsOnEmeraldGear")) {
             int num = this.getConfig().getInt("EmeraldGearEnchantLevels.Unbreaking");
             int num2 = this.getConfig().getInt("EmeraldGearEnchantLevels.Mending");
-            meta.addEnchant(Enchantment.DURABILITY, num, true);
+            meta.addEnchant(Enchantment.UNBREAKING, num, true);
             meta.addEnchant(Enchantment.MENDING, num2, true);
         }
-        meta.setCustomModelData(Integer.valueOf(1000001));
+        meta.setCustomModelData(1000001);
         item.setItemMeta(meta);
         NamespacedKey key = new NamespacedKey((Plugin)this, "emerald_shovel");
         this.keys.add(key);
@@ -535,14 +525,14 @@ implements Listener {
     public ShapedRecipe getHoeRecipe() {
         ItemStack item = new ItemStack(Material.GOLDEN_HOE);
         ItemMeta meta = item.getItemMeta();
-        meta.setDisplayName(ChatColor.DARK_GREEN + "Emerald Hoe");
-        if (this.getConfig().getString("EnchantsOnEmeraldGear") == "true") {
+        meta.displayName(Component.text("Emerald Hoe", NamedTextColor.DARK_GREEN));
+        if (this.getConfig().getBoolean("EnchantsOnEmeraldGear")) {
             int num = this.getConfig().getInt("EmeraldGearEnchantLevels.Unbreaking");
             int num2 = this.getConfig().getInt("EmeraldGearEnchantLevels.Mending");
-            meta.addEnchant(Enchantment.DURABILITY, num, true);
+            meta.addEnchant(Enchantment.UNBREAKING, num, true);
             meta.addEnchant(Enchantment.MENDING, num2, true);
         }
-        meta.setCustomModelData(Integer.valueOf(1000001));
+        meta.setCustomModelData(1000001);
         item.setItemMeta(meta);
         NamespacedKey key = new NamespacedKey((Plugin)this, "emerald_hoe");
         this.keys.add(key);
@@ -557,10 +547,10 @@ implements Listener {
         ItemStack item = new ItemStack(Material.IRON_SWORD);
         ItemMeta meta = item.getItemMeta();
         meta.setDisplayName(convertLegacyToSection(this.getConfig().getString("dChorusBlade.name")));
-        if (this.getConfig().getString("EnchantsChorusBlade") == "true") {
+        if (this.getConfig().getBoolean("EnchantsChorusBlade")) {
             int num = this.getConfig().getInt("ChorusEnchantLevels.Unbreaking");
             int num2 = this.getConfig().getInt("ChorusEnchantLevels.Knockback");
-            meta.addEnchant(Enchantment.DURABILITY, num, true);
+            meta.addEnchant(Enchantment.UNBREAKING, num, true);
             meta.addEnchant(Enchantment.KNOCKBACK, num2, true);
         }
         ArrayList<String> lore = new ArrayList<String>();
@@ -578,7 +568,7 @@ implements Listener {
         meta.setLore(lore);
         double dmg = 3.0;
         double spd = 6.0;
-        if (this.getConfig().getString("UseCustomValues") == "true") {
+        if (this.getConfig().getBoolean("UseCustomValues")) {
             dmg = this.getConfig().getDouble("aChorusBlade.damage") - 1.0;
             spd = this.getConfig().getDouble("aChorusBlade.speed") - 4.0;
         }
@@ -587,7 +577,7 @@ implements Listener {
         AttributeModifier modifier2 = new AttributeModifier(UUID.randomUUID(), "Attack Damage", dmg, AttributeModifier.Operation.ADD_NUMBER, EquipmentSlot.HAND);
         meta.addAttributeModifier(Attribute.ATTACK_DAMAGE, modifier2);
         meta.addItemFlags(new ItemFlag[]{ItemFlag.HIDE_ATTRIBUTES});
-        meta.setCustomModelData(Integer.valueOf(1000007));
+        meta.setCustomModelData(1000007);
         item.setItemMeta(meta);
         NamespacedKey key = new NamespacedKey((Plugin)this, "chorusblade");
         this.keys.add(key);
@@ -616,12 +606,12 @@ implements Listener {
         ItemStack item = new ItemStack(Material.BOW);
         ItemMeta meta = item.getItemMeta();
         meta.setDisplayName(convertLegacyToSection(this.getConfig().getString("dSwordBow.name")));
-        if (this.getConfig().getString("EnchantsSwordBow") == "true") {
+        if (this.getConfig().getBoolean("EnchantsSwordBow")) {
             int num = this.getConfig().getInt("SbowEnchantLevels.Smite");
             int num2 = this.getConfig().getInt("SbowEnchantLevels.Unbreaking");
             int num4 = this.getConfig().getInt("SbowEnchantLevels.Mending");
-            meta.addEnchant(Enchantment.DAMAGE_UNDEAD, num, true);
-            meta.addEnchant(Enchantment.DURABILITY, num2, true);
+            meta.addEnchant(Enchantment.SMITE, num, true);
+            meta.addEnchant(Enchantment.UNBREAKING, num2, true);
             meta.addEnchant(Enchantment.MENDING, num4, true);
         }
         ArrayList<String> lore = new ArrayList<String>();
@@ -631,7 +621,7 @@ implements Listener {
         meta.setLore(lore);
         double dmg = 8.0;
         double spd = -3.0;
-        if (this.getConfig().getString("UseCustomValues") == "true") {
+        if (this.getConfig().getBoolean("UseCustomValues")) {
             dmg = this.getConfig().getDouble("aSwordBow.damage") - 1.0;
             spd = this.getConfig().getDouble("aSwordBow.speed") - 4.0;
         }
@@ -639,7 +629,7 @@ implements Listener {
         meta.addAttributeModifier(Attribute.ATTACK_SPEED, modifier);
         AttributeModifier modifier2 = new AttributeModifier(UUID.randomUUID(), "Attack Damage", dmg, AttributeModifier.Operation.ADD_NUMBER, EquipmentSlot.HAND);
         meta.addAttributeModifier(Attribute.ATTACK_DAMAGE, modifier2);
-        meta.setCustomModelData(Integer.valueOf(1000001));
+        meta.setCustomModelData(1000001);
         item.setItemMeta(meta);
         NamespacedKey key = new NamespacedKey((Plugin)this, "sword_bow");
         this.keys.add(key);
@@ -656,14 +646,14 @@ implements Listener {
         ItemStack item = new ItemStack(Material.BOW);
         ItemMeta meta = item.getItemMeta();
         meta.setDisplayName(convertLegacyToSection(this.getConfig().getString("dHeavySwordBow.name")));
-        if (this.getConfig().getString("EnchantsHeavySwordBow") == "true") {
+        if (this.getConfig().getBoolean("EnchantsHeavySwordBow")) {
             int num = this.getConfig().getInt("HSbowEnchantLevels.Power");
             int num2 = this.getConfig().getInt("HSbowEnchantLevels.Unbreaking");
             int num3 = this.getConfig().getInt("HSbowEnchantLevels.Smite");
             int num4 = this.getConfig().getInt("HSbowEnchantLevels.Mending");
-            meta.addEnchant(Enchantment.ARROW_DAMAGE, num, true);
-            meta.addEnchant(Enchantment.DURABILITY, num2, true);
-            meta.addEnchant(Enchantment.DAMAGE_UNDEAD, num3, true);
+            meta.addEnchant(Enchantment.POWER, num, true);
+            meta.addEnchant(Enchantment.UNBREAKING, num2, true);
+            meta.addEnchant(Enchantment.SMITE, num3, true);
             meta.addEnchant(Enchantment.MENDING, num4, true);
         }
         ArrayList<String> lore = new ArrayList<String>();
@@ -677,7 +667,7 @@ implements Listener {
         double omspd = -0.05;
         double kbr = 0.5;
         double okbr = 0.5;
-        if (this.getConfig().getString("UseCustomValues") == "true") {
+        if (this.getConfig().getBoolean("UseCustomValues")) {
             dmg = this.getConfig().getDouble("aHeavySwordBow.damage") - 1.0;
             spd = this.getConfig().getDouble("aHeavySwordBow.speed") - 4.0;
             mspd = this.getConfig().getDouble("aHeavySwordBow.moveSpeed");
@@ -697,7 +687,7 @@ implements Listener {
         meta.addAttributeModifier(Attribute.KNOCKBACK_RESISTANCE, modifier5);
         AttributeModifier modifier6 = new AttributeModifier(UUID.randomUUID(), "KnockbackRes", okbr, AttributeModifier.Operation.ADD_NUMBER, EquipmentSlot.OFF_HAND);
         meta.addAttributeModifier(Attribute.KNOCKBACK_RESISTANCE, modifier6);
-        meta.setCustomModelData(Integer.valueOf(1000002));
+        meta.setCustomModelData(1000002);
         item.setItemMeta(meta);
         NamespacedKey key = new NamespacedKey((Plugin)this, "heavy_sword_bow");
         this.keys.add(key);
@@ -754,15 +744,15 @@ implements Listener {
         ItemStack item = new ItemStack(Material.IRON_HELMET);
         ItemMeta meta = item.getItemMeta();
         double def = 4.0;
-        if (this.getConfig().getString("UseCustomValues") == "true") {
+        if (this.getConfig().getBoolean("UseCustomValues")) {
             def = this.getConfig().getDouble("aPlateChainHelmet.Armor");
         }
         AttributeModifier modifier = new AttributeModifier(UUID.randomUUID(), "Defense", def, AttributeModifier.Operation.ADD_NUMBER, EquipmentSlot.HEAD);
         meta.addAttributeModifier(Attribute.ARMOR, modifier);
-        meta.setDisplayName(ChatColor.BOLD + "Plated Chainmail Helmet");
-        if (this.getConfig().getString("EnchantsPlatedChainmail") == "true") {
+        meta.displayName(Component.text("Plated Chainmail Helmet", TextDecoration.BOLD));
+        if (this.getConfig().getBoolean("EnchantsPlatedChainmail")) {
             int num = this.getConfig().getInt("PChainEnchantLevels.Unbreaking");
-            meta.addEnchant(Enchantment.DURABILITY, num, true);
+            meta.addEnchant(Enchantment.UNBREAKING, num, true);
         }
         item.setItemMeta(meta);
         NamespacedKey key = new NamespacedKey((Plugin)this, "plated_chainmail_helmet");
@@ -778,15 +768,15 @@ implements Listener {
         ItemStack item = new ItemStack(Material.IRON_CHESTPLATE);
         ItemMeta meta = item.getItemMeta();
         double def = 6.0;
-        if (this.getConfig().getString("UseCustomValues") == "true") {
+        if (this.getConfig().getBoolean("UseCustomValues")) {
             def = this.getConfig().getDouble("aPlateChainChestplate.Armor");
         }
         AttributeModifier modifier = new AttributeModifier(UUID.randomUUID(), "Defense", def, AttributeModifier.Operation.ADD_NUMBER, EquipmentSlot.CHEST);
         meta.addAttributeModifier(Attribute.ARMOR, modifier);
         meta.setDisplayName(ChatColor.BOLD + "Plated Chainmail Chestplate");
-        if (this.getConfig().getString("EnchantsPlatedChainmail") == "true") {
+        if (this.getConfig().getBoolean("EnchantsPlatedChainmail")) {
             int num = this.getConfig().getInt("PChainEnchantLevels.Unbreaking");
-            meta.addEnchant(Enchantment.DURABILITY, num, true);
+            meta.addEnchant(Enchantment.UNBREAKING, num, true);
         }
         item.setItemMeta(meta);
         NamespacedKey key = new NamespacedKey((Plugin)this, "plated_chainmail_chestplate");
@@ -802,15 +792,15 @@ implements Listener {
         ItemStack item = new ItemStack(Material.IRON_LEGGINGS);
         ItemMeta meta = item.getItemMeta();
         double def = 6.0;
-        if (this.getConfig().getString("UseCustomValues") == "true") {
+        if (this.getConfig().getBoolean("UseCustomValues")) {
             def = this.getConfig().getDouble("aPlateChainLeggings.Armor");
         }
         AttributeModifier modifier = new AttributeModifier(UUID.randomUUID(), "Defense", def, AttributeModifier.Operation.ADD_NUMBER, EquipmentSlot.LEGS);
         meta.addAttributeModifier(Attribute.ARMOR, modifier);
         meta.setDisplayName(ChatColor.BOLD + "Plated Chainmail Leggings");
-        if (this.getConfig().getString("EnchantsPlatedChainmail") == "true") {
+        if (this.getConfig().getBoolean("EnchantsPlatedChainmail")) {
             int num = this.getConfig().getInt("PChainEnchantLevels.Unbreaking");
-            meta.addEnchant(Enchantment.DURABILITY, num, true);
+            meta.addEnchant(Enchantment.UNBREAKING, num, true);
         }
         item.setItemMeta(meta);
         NamespacedKey key = new NamespacedKey((Plugin)this, "plated_chainmail_leggings");
@@ -826,15 +816,15 @@ implements Listener {
         ItemStack item = new ItemStack(Material.IRON_BOOTS);
         ItemMeta meta = item.getItemMeta();
         double def = 4.0;
-        if (this.getConfig().getString("UseCustomValues") == "true") {
+        if (this.getConfig().getBoolean("UseCustomValues")) {
             def = this.getConfig().getDouble("aPlateChainBoots.Armor");
         }
         AttributeModifier modifier = new AttributeModifier(UUID.randomUUID(), "Defense", def, AttributeModifier.Operation.ADD_NUMBER, EquipmentSlot.FEET);
         meta.addAttributeModifier(Attribute.ARMOR, modifier);
         meta.setDisplayName(ChatColor.BOLD + "Plated Chainmail Boots");
-        if (this.getConfig().getString("EnchantsPlatedChainmail") == "true") {
+        if (this.getConfig().getBoolean("EnchantsPlatedChainmail")) {
             int num = this.getConfig().getInt("PChainEnchantLevels.Unbreaking");
-            meta.addEnchant(Enchantment.DURABILITY, num, true);
+            meta.addEnchant(Enchantment.UNBREAKING, num, true);
         }
         item.setItemMeta(meta);
         NamespacedKey key = new NamespacedKey((Plugin)this, "plated_chainmail_boots");
@@ -864,7 +854,7 @@ implements Listener {
         meta.addItemFlags(new ItemFlag[]{ItemFlag.HIDE_ATTRIBUTES});
         double dmg = 6.0;
         double spd = -3.0;
-        if (this.getConfig().getString("UseCustomValues") == "true") {
+        if (this.getConfig().getBoolean("UseCustomValues")) {
             dmg = this.getConfig().getDouble("aWoodenScythe.damage") - 1.0;
             spd = this.getConfig().getDouble("aWoodenScythe.speed") - 4.0;
         }
@@ -873,7 +863,7 @@ implements Listener {
         AttributeModifier modifier2 = new AttributeModifier(UUID.randomUUID(), "Attack Damage", dmg, AttributeModifier.Operation.ADD_NUMBER, EquipmentSlot.HAND);
         meta.addAttributeModifier(Attribute.ATTACK_DAMAGE, modifier2);
         meta.setDisplayName(convertLegacyToSection(this.getConfig().getString("dWoodenScythe.name")));
-        meta.setCustomModelData(Integer.valueOf(1000003));
+        meta.setCustomModelData(1000003);
         item.setItemMeta(meta);
         NamespacedKey key = new NamespacedKey((Plugin)this, "wooden_scythe");
         this.keys.add(key);
@@ -901,7 +891,7 @@ implements Listener {
         meta.addItemFlags(new ItemFlag[]{ItemFlag.HIDE_ATTRIBUTES});
         double dmg = 6.5;
         double spd = -3.0;
-        if (this.getConfig().getString("UseCustomValues") == "true") {
+        if (this.getConfig().getBoolean("UseCustomValues")) {
             dmg = this.getConfig().getDouble("aStoneScythe.damage") - 1.0;
             spd = this.getConfig().getDouble("aStoneScythe.speed") - 4.0;
         }
@@ -910,7 +900,7 @@ implements Listener {
         AttributeModifier modifier2 = new AttributeModifier(UUID.randomUUID(), "Attack Damage", dmg, AttributeModifier.Operation.ADD_NUMBER, EquipmentSlot.HAND);
         meta.addAttributeModifier(Attribute.ATTACK_DAMAGE, modifier2);
         meta.setDisplayName(convertLegacyToSection(this.getConfig().getString("dStoneScythe.name")));
-        meta.setCustomModelData(Integer.valueOf(1000003));
+        meta.setCustomModelData(1000003);
         item.setItemMeta(meta);
         NamespacedKey key = new NamespacedKey((Plugin)this, "stone_scythe");
         this.keys.add(key);
@@ -939,7 +929,7 @@ implements Listener {
         meta.addItemFlags(new ItemFlag[]{ItemFlag.HIDE_ATTRIBUTES});
         double dmg = 6.0;
         double spd = -2.8;
-        if (this.getConfig().getString("UseCustomValues") == "true") {
+        if (this.getConfig().getBoolean("UseCustomValues")) {
             dmg = this.getConfig().getDouble("aGoldenScythe.damage") - 1.0;
             spd = this.getConfig().getDouble("aGoldenScythe.speed") - 4.0;
         }
@@ -948,7 +938,7 @@ implements Listener {
         AttributeModifier modifier2 = new AttributeModifier(UUID.randomUUID(), "Attack Damage", dmg, AttributeModifier.Operation.ADD_NUMBER, EquipmentSlot.HAND);
         meta.addAttributeModifier(Attribute.ATTACK_DAMAGE, modifier2);
         meta.setDisplayName(convertLegacyToSection(this.getConfig().getString("dGoldenScythe.name")));
-        meta.setCustomModelData(Integer.valueOf(1000003));
+        meta.setCustomModelData(1000003);
         item.setItemMeta(meta);
         NamespacedKey key = new NamespacedKey((Plugin)this, "golden_scythe");
         this.keys.add(key);
@@ -962,29 +952,31 @@ implements Listener {
     public ShapedRecipe getEScytheRecipe() {
         ItemStack item = new ItemStack(Material.GOLDEN_SWORD);
         ItemMeta meta = item.getItemMeta();
-        ArrayList<String> lore = new ArrayList<String>();
-        lore.add(convertLegacyToSection(this.getConfig().getString("ScytheDescription.line1")));
-        lore.add(convertLegacyToSection(this.getConfig().getString("ScytheDescription.line2")));
-        lore.add(convertLegacyToSection(this.getConfig().getString("ScytheDescription.line3")));
-        lore.add(convertLegacyToSection(this.getConfig().getString("ScytheDescription.line4")));
-        lore.add(convertLegacyToSection(this.getConfig().getString("ScytheDescription.line5")));
-        lore.add(convertLegacyToSection(this.getConfig().getString("ScytheDescription.line6")));
-        lore.add(convertLegacyToSection(this.getConfig().getString("ScytheDescription.line7")));
-        lore.add(convertLegacyToSection(this.getConfig().getString("dEmeraldScythe.line8")));
-        lore.add(convertLegacyToSection(this.getConfig().getString("dEmeraldScythe.line9")));
-        lore.add(convertLegacyToSection(this.getConfig().getString("dEmeraldScythe.line10")));
-        meta.setLore(lore);
+        List<String> scytheLore = this.getConfig().getStringList("ScytheDescription");
+        List<String> emeraldScytheLore = this.getConfig().getStringList("dEmeraldScythe.main-hand");
+        for (int i = 0; i < scytheLore.size(); ++i) {
+            scytheLore.set(i, convertLegacyToSection(scytheLore.get(i)));
+        }
+        for (int i = 0; i < emeraldScytheLore.size(); ++i) {
+            emeraldScytheLore.set(i, convertLegacyToSection(emeraldScytheLore.get(i)));
+        }
+        List<String> merged = scytheLore + emeraldScytheLore;
+        List<Component> finalList = new ArrayList<Component>();
+        for (int i = 0; i < merged.size(); ++i) {
+            finalList.set(i, convertLegacyToComponent(merged.get(i)));
+        }
+        meta.lore(finalList);
         meta.addItemFlags(new ItemFlag[]{ItemFlag.HIDE_ATTRIBUTES});
-        if (this.getConfig().getString("EnchantsOnEmeraldGear") == "true") {
+        if (this.getConfig().getBoolean("EnchantsOnEmeraldGear")) {
             int num = this.getConfig().getInt("EmeraldGearEnchantLevels.Unbreaking");
             int num2 = this.getConfig().getInt("EmeraldGearEnchantLevels.Mending");
             // TODO: change this using https://jd.papermc.io/paper/1.21.5/org/bukkit/entity/Damageable.html
-            meta.addEnchant(Enchantment.DURABILITY, num, true);
+            meta.addEnchant(Enchantment.UNBREAKING, num, true);
             meta.addEnchant(Enchantment.MENDING, num2, true);
         }
         double dmg = 7.0;
         double spd = -2.8;
-        if (this.getConfig().getString("UseCustomValues") == "true") {
+        if (this.getConfig().getBoolean("UseCustomValues")) {
             dmg = this.getConfig().getDouble("aEmeraldScythe.damage") - 1.0;
             spd = this.getConfig().getDouble("aEmeraldScythe.speed") - 4.0;
         }
@@ -994,7 +986,7 @@ implements Listener {
         AttributeModifier modifier2 = new AttributeModifier(UUID.randomUUID(), "Attack Damage", dmg, AttributeModifier.Operation.ADD_NUMBER, EquipmentSlot.HAND);
         meta.addAttributeModifier(Attribute.ATTACK_DAMAGE, modifier2);
         meta.setDisplayName(convertLegacyToSection(this.getConfig().getString("dEmeraldScythe.name")));
-        meta.setCustomModelData(Integer.valueOf(1000013));
+        meta.setCustomModelData(1000013);
         item.setItemMeta(meta);
         NamespacedKey key = new NamespacedKey((Plugin)this, "emerald_scythe");
         this.keys.add(key);
@@ -1023,7 +1015,7 @@ implements Listener {
         meta.addItemFlags(new ItemFlag[]{ItemFlag.HIDE_ATTRIBUTES});
         double dmg = 7.0;
         double spd = -3.0;
-        if (this.getConfig().getString("UseCustomValues") == "true") {
+        if (this.getConfig().getBoolean("UseCustomValues")) {
             dmg = this.getConfig().getDouble("aIronScythe.damage") - 1.0;
             spd = this.getConfig().getDouble("aIronScythe.speed") - 4.0;
         }
@@ -1032,7 +1024,7 @@ implements Listener {
         AttributeModifier modifier2 = new AttributeModifier(UUID.randomUUID(), "Attack Damage", dmg, AttributeModifier.Operation.ADD_NUMBER, EquipmentSlot.HAND);
         meta.addAttributeModifier(Attribute.ATTACK_DAMAGE, modifier2);
         meta.setDisplayName(convertLegacyToSection(this.getConfig().getString("dIronScythe.name")));
-        meta.setCustomModelData(Integer.valueOf(1000003));
+        meta.setCustomModelData(1000003);
         item.setItemMeta(meta);
         NamespacedKey key = new NamespacedKey((Plugin)this, "iron_scythe");
         this.keys.add(key);
@@ -1061,7 +1053,7 @@ implements Listener {
         meta.addItemFlags(new ItemFlag[]{ItemFlag.HIDE_ATTRIBUTES});
         double dmg = 8.0;
         double spd = -3.0;
-        if (this.getConfig().getString("UseCustomValues") == "true") {
+        if (this.getConfig().getBoolean("UseCustomValues")) {
             dmg = this.getConfig().getDouble("aDiamondScythe.damage") - 1.0;
             spd = this.getConfig().getDouble("aDiamondScythe.speed") - 4.0;
         }
@@ -1070,7 +1062,7 @@ implements Listener {
         AttributeModifier modifier2 = new AttributeModifier(UUID.randomUUID(), "Attack Damage", dmg, AttributeModifier.Operation.ADD_NUMBER, EquipmentSlot.HAND);
         meta.addAttributeModifier(Attribute.ATTACK_DAMAGE, modifier2);
         meta.setDisplayName(convertLegacyToSection(this.getConfig().getString("dDiamondScythe.name")));
-        meta.setCustomModelData(Integer.valueOf(1000003));
+        meta.setCustomModelData(1000003);
         item.setItemMeta(meta);
         NamespacedKey key = new NamespacedKey((Plugin)this, "diamond_scythe");
         this.keys.add(key);
@@ -1099,7 +1091,7 @@ implements Listener {
         meta.addItemFlags(new ItemFlag[]{ItemFlag.HIDE_ATTRIBUTES});
         double dmg = 9.0;
         double spd = -3.0;
-        if (this.getConfig().getString("UseCustomValues") == "true") {
+        if (this.getConfig().getBoolean("UseCustomValues")) {
             dmg = this.getConfig().getDouble("aNetheriteScythe.damage") - 1.0;
             spd = this.getConfig().getDouble("aNetheriteScythe.speed") - 4.0;
         }
@@ -1108,7 +1100,7 @@ implements Listener {
         AttributeModifier modifier2 = new AttributeModifier(UUID.randomUUID(), "Attack Damage", dmg, AttributeModifier.Operation.ADD_NUMBER, EquipmentSlot.HAND);
         meta.addAttributeModifier(Attribute.ATTACK_DAMAGE, modifier2);
         meta.setDisplayName(convertLegacyToSection(this.getConfig().getString("dNetheriteScythe.name")));
-        meta.setCustomModelData(Integer.valueOf(1000003));
+        meta.setCustomModelData(1000003);
         item.setItemMeta(meta);
         NamespacedKey key = new NamespacedKey((Plugin)this, "netherite_scythe");
         this.keys.add(key);
@@ -1116,7 +1108,7 @@ implements Listener {
         recipe.shape(new String[]{"NNN", "  S", "  S"});
         recipe.setIngredient('S', Material.STICK);
         String n = this.getConfig().getString("NetheriteIngots");
-        if (n == "true") {
+        if (n) {
             recipe.setIngredient('N', Material.NETHERITE_INGOT);
         } else {
             recipe.setIngredient('N', Material.NETHERITE_SCRAP);
@@ -1132,12 +1124,12 @@ implements Listener {
         lore.add(convertLegacyToSection(this.getConfig().getString("dObsidianPickaxe.line2")));
         lore.add(convertLegacyToSection(this.getConfig().getString("dObsidianPickaxe.line3")));
         meta.setLore(lore);
-        if (this.getConfig().getString("EnchantsObsidianPick") == "true") {
+        if (this.getConfig().getBoolean("EnchantsObsidianPick")) {
             int num = this.getConfig().getInt("OPickEnchantLevels.Unbreaking");
-            meta.addEnchant(Enchantment.DURABILITY, num, true);
+            meta.addEnchant(Enchantment.UNBREAKING, num, true);
         }
         meta.setDisplayName(convertLegacyToSection(this.getConfig().getString("dObsidianPickaxe.name")));
-        meta.setCustomModelData(Integer.valueOf(1000001));
+        meta.setCustomModelData(1000001);
         item.setItemMeta(meta);
         NamespacedKey key = new NamespacedKey((Plugin)this, "obsidian_pickaxe");
         this.keys.add(key);
@@ -1153,7 +1145,7 @@ implements Listener {
     public void oncClick(PlayerInteractEvent event) {
         Player player;
         if (event.getPlayer().getInventory().getItemInMainHand().getType().equals((Object)Material.NETHERITE_PICKAXE) && event.getPlayer().getInventory().getItemInMainHand().getItemMeta().hasCustomModelData() && event.getPlayer().getInventory().getItemInMainHand().getItemMeta().hasLore() && (player = event.getPlayer()).getInventory().getItemInMainHand().getItemMeta().getCustomModelData() == 1000001 && event.getAction() == Action.LEFT_CLICK_BLOCK) {
-            player.addPotionEffect(new PotionEffect(PotionEffectType.FAST_DIGGING, 40, 2));
+            player.addPotionEffect(new PotionEffect(PotionEffectType.HASTE, 40, 2));
         }
     }
 
@@ -1171,7 +1163,7 @@ implements Listener {
                 lore.add(convertLegacyToSection("&6im sorry"));
                 lore.add("");
                 meta.setLore(lore);
-                meta.setCustomModelData(Integer.valueOf(6969420));
+                meta.setCustomModelData(6969420);
                 player.getInventory().getItemInMainHand().setItemMeta(meta);
             }
         }
@@ -1220,49 +1212,49 @@ implements Listener {
             Player player2 = (Player)event.getEntity();
             if (player2.getInventory().getItemInMainHand().getType() == Material.NETHERITE_SWORD && player2.getInventory().getItemInMainHand().getItemMeta().hasCustomModelData() && player2.getInventory().getItemInMainHand().getItemMeta().getCustomModelData() == 1222223) {
                 meta = player2.getInventory().getItemInMainHand().getItemMeta();
-                meta.setCustomModelData(Integer.valueOf(2222223));
+                meta.setCustomModelData(2222223);
                 player2.getInventory().getItemInMainHand().setItemMeta(meta);
                 event.setCancelled(true);
                 world1.playSound(player2.getLocation(), Sound.ITEM_SHIELD_BLOCK, 10.0f, 1.0f);
             }
             if (player2.getInventory().getItemInMainHand().getType() == Material.NETHERITE_SWORD && player2.getInventory().getItemInMainHand().getItemMeta().hasCustomModelData() && player2.getInventory().getItemInMainHand().getItemMeta().getCustomModelData() == 1222224) {
                 meta = player2.getInventory().getItemInMainHand().getItemMeta();
-                meta.setCustomModelData(Integer.valueOf(2222224));
+                meta.setCustomModelData(2222224);
                 player2.getInventory().getItemInMainHand().setItemMeta(meta);
                 event.setCancelled(true);
                 world1.playSound(player2.getLocation(), Sound.ITEM_SHIELD_BLOCK, 10.0f, 1.0f);
             }
             if (player2.getInventory().getItemInMainHand().getType() == Material.NETHERITE_SWORD && player2.getInventory().getItemInMainHand().getItemMeta().hasCustomModelData() && player2.getInventory().getItemInMainHand().getItemMeta().getCustomModelData() == 1222225) {
                 meta = player2.getInventory().getItemInMainHand().getItemMeta();
-                meta.setCustomModelData(Integer.valueOf(2222225));
+                meta.setCustomModelData(2222225);
                 player2.getInventory().getItemInMainHand().setItemMeta(meta);
                 event.setCancelled(true);
                 world1.playSound(player2.getLocation(), Sound.ITEM_SHIELD_BLOCK, 10.0f, 1.0f);
             }
             if (player2.getInventory().getItemInMainHand().getType() == Material.NETHERITE_SWORD && player2.getInventory().getItemInMainHand().getItemMeta().hasCustomModelData() && player2.getInventory().getItemInMainHand().getItemMeta().getCustomModelData() == 1222226) {
                 meta = player2.getInventory().getItemInMainHand().getItemMeta();
-                meta.setCustomModelData(Integer.valueOf(2222226));
+                meta.setCustomModelData(2222226);
                 player2.getInventory().getItemInMainHand().setItemMeta(meta);
                 event.setCancelled(true);
                 world1.playSound(player2.getLocation(), Sound.ITEM_SHIELD_BLOCK, 10.0f, 1.0f);
             }
             if (player2.getInventory().getItemInMainHand().getType() == Material.NETHERITE_SWORD && player2.getInventory().getItemInMainHand().getItemMeta().hasCustomModelData() && player2.getInventory().getItemInMainHand().getItemMeta().getCustomModelData() == 1222227) {
                 meta = player2.getInventory().getItemInMainHand().getItemMeta();
-                meta.setCustomModelData(Integer.valueOf(2222227));
+                meta.setCustomModelData(2222227);
                 player2.getInventory().getItemInMainHand().setItemMeta(meta);
                 event.setCancelled(true);
                 world1.playSound(player2.getLocation(), Sound.ITEM_SHIELD_BLOCK, 10.0f, 1.0f);
             }
             if (player2.getInventory().getItemInMainHand().getType() == Material.NETHERITE_SWORD && player2.getInventory().getItemInMainHand().getItemMeta().hasCustomModelData() && player2.getInventory().getItemInMainHand().getItemMeta().getCustomModelData() == 1222228) {
                 meta = player2.getInventory().getItemInMainHand().getItemMeta();
-                meta.setCustomModelData(Integer.valueOf(2222228));
+                meta.setCustomModelData(2222228);
                 player2.getInventory().getItemInMainHand().setItemMeta(meta);
                 event.setCancelled(true);
                 world1.playSound(player2.getLocation(), Sound.ITEM_SHIELD_BLOCK, 10.0f, 1.0f);
             }
             if (player2.getInventory().getItemInMainHand().getType() == Material.NETHERITE_SWORD && player2.getInventory().getItemInMainHand().getItemMeta().hasCustomModelData() && player2.getInventory().getItemInMainHand().getItemMeta().getCustomModelData() == 1222229) {
                 meta = player2.getInventory().getItemInMainHand().getItemMeta();
-                meta.setCustomModelData(Integer.valueOf(2222229));
+                meta.setCustomModelData(2222229);
                 player2.getInventory().getItemInMainHand().setItemMeta(meta);
                 event.setCancelled(true);
                 world1.playSound(player2.getLocation(), Sound.ITEM_SHIELD_BLOCK, 10.0f, 1.0f);
@@ -1311,7 +1303,7 @@ implements Listener {
                     double dmg1 = event.getDamage();
                     double bonus = dmg1 * 1.3;
                     event.setDamage(bonus);
-                    int random = CombatWeaponryPlus.getRandomInt(5);
+                    int random = getRandomInt(5);
                     if (random == 1) {
                         double crit = bonus * 1.1;
                         event.setDamage(crit);
@@ -1467,7 +1459,7 @@ implements Listener {
         meta.addItemFlags(new ItemFlag[]{ItemFlag.HIDE_ATTRIBUTES});
         double dmg = 2.0;
         double spd = -2.1;
-        if (this.getConfig().getString("UseCustomValues") == "true") {
+        if (this.getConfig().getBoolean("UseCustomValues")) {
             dmg = this.getConfig().getDouble("aWoodenRapier.damage") - 1.0;
             spd = this.getConfig().getDouble("aWoodenRapier.speed") - 4.0;
         }
@@ -1476,7 +1468,7 @@ implements Listener {
         AttributeModifier modifier2 = new AttributeModifier(UUID.randomUUID(), "Attack Damage", dmg, AttributeModifier.Operation.ADD_NUMBER, EquipmentSlot.HAND);
         meta.addAttributeModifier(Attribute.ATTACK_DAMAGE, modifier2);
         meta.setDisplayName(convertLegacyToSection(this.getConfig().getString("dWoodenRapier.name")));
-        meta.setCustomModelData(Integer.valueOf(1000005));
+        meta.setCustomModelData(1000005);
         item.setItemMeta(meta);
         NamespacedKey key = new NamespacedKey((Plugin)this, "wooden_rapier");
         this.keys.add(key);
@@ -1504,7 +1496,7 @@ implements Listener {
         meta.addItemFlags(new ItemFlag[]{ItemFlag.HIDE_ATTRIBUTES});
         double dmg = 2.5;
         double spd = -2.1;
-        if (this.getConfig().getString("UseCustomValues") == "true") {
+        if (this.getConfig().getBoolean("UseCustomValues")) {
             dmg = this.getConfig().getDouble("aStoneRapier.damage") - 1.0;
             spd = this.getConfig().getDouble("aStoneRapier.speed") - 4.0;
         }
@@ -1513,7 +1505,7 @@ implements Listener {
         AttributeModifier modifier2 = new AttributeModifier(UUID.randomUUID(), "Attack Damage", dmg, AttributeModifier.Operation.ADD_NUMBER, EquipmentSlot.HAND);
         meta.addAttributeModifier(Attribute.ATTACK_DAMAGE, modifier2);
         meta.setDisplayName(convertLegacyToSection(this.getConfig().getString("dStoneRapier.name")));
-        meta.setCustomModelData(Integer.valueOf(1000005));
+        meta.setCustomModelData(1000005);
         item.setItemMeta(meta);
         NamespacedKey key = new NamespacedKey((Plugin)this, "stone_rapier");
         this.keys.add(key);
@@ -1542,7 +1534,7 @@ implements Listener {
         meta.addItemFlags(new ItemFlag[]{ItemFlag.HIDE_ATTRIBUTES});
         double dmg = 2.0;
         double spd = -1.6;
-        if (this.getConfig().getString("UseCustomValues") == "true") {
+        if (this.getConfig().getBoolean("UseCustomValues")) {
             dmg = this.getConfig().getDouble("aGoldenRapier.damage") - 1.0;
             spd = this.getConfig().getDouble("aGoldenRapier.speed") - 4.0;
         }
@@ -1551,7 +1543,7 @@ implements Listener {
         AttributeModifier modifier2 = new AttributeModifier(UUID.randomUUID(), "Attack Damage", dmg, AttributeModifier.Operation.ADD_NUMBER, EquipmentSlot.HAND);
         meta.addAttributeModifier(Attribute.ATTACK_DAMAGE, modifier2);
         meta.setDisplayName(convertLegacyToSection(this.getConfig().getString("dGoldenRapier.name")));
-        meta.setCustomModelData(Integer.valueOf(1000005));
+        meta.setCustomModelData(1000005);
         item.setItemMeta(meta);
         NamespacedKey key = new NamespacedKey((Plugin)this, "golden_rapier");
         this.keys.add(key);
@@ -1580,7 +1572,7 @@ implements Listener {
         meta.addItemFlags(new ItemFlag[]{ItemFlag.HIDE_ATTRIBUTES});
         double dmg = 3.0;
         double spd = -2.1;
-        if (this.getConfig().getString("UseCustomValues") == "true") {
+        if (this.getConfig().getBoolean("UseCustomValues")) {
             dmg = this.getConfig().getDouble("aIronRapier.damage") - 1.0;
             spd = this.getConfig().getDouble("aIronRapier.speed") - 4.0;
         }
@@ -1589,7 +1581,7 @@ implements Listener {
         AttributeModifier modifier2 = new AttributeModifier(UUID.randomUUID(), "Attack Damage", dmg, AttributeModifier.Operation.ADD_NUMBER, EquipmentSlot.HAND);
         meta.addAttributeModifier(Attribute.ATTACK_DAMAGE, modifier2);
         meta.setDisplayName(convertLegacyToSection(this.getConfig().getString("dIronRapier.name")));
-        meta.setCustomModelData(Integer.valueOf(1000005));
+        meta.setCustomModelData(1000005);
         item.setItemMeta(meta);
         NamespacedKey key = new NamespacedKey((Plugin)this, "iron_rapier");
         this.keys.add(key);
@@ -1618,7 +1610,7 @@ implements Listener {
         meta.addItemFlags(new ItemFlag[]{ItemFlag.HIDE_ATTRIBUTES});
         double dmg = 3.0;
         double spd = -1.6;
-        if (this.getConfig().getString("UseCustomValues") == "true") {
+        if (this.getConfig().getBoolean("UseCustomValues")) {
             dmg = this.getConfig().getDouble("aEmeraldRapier.damage") - 1.0;
             spd = this.getConfig().getDouble("aEmeraldRapier.speed") - 4.0;
         }
@@ -1627,11 +1619,11 @@ implements Listener {
         AttributeModifier modifier2 = new AttributeModifier(UUID.randomUUID(), "Attack Damage", dmg, AttributeModifier.Operation.ADD_NUMBER, EquipmentSlot.HAND);
         meta.addAttributeModifier(Attribute.ATTACK_DAMAGE, modifier2);
         meta.setDisplayName(convertLegacyToSection(this.getConfig().getString("dEmeraldRapier.name")));
-        meta.setCustomModelData(Integer.valueOf(1000015));
-        if (this.getConfig().getString("EnchantsOnEmeraldGear") == "true") {
+        meta.setCustomModelData(1000015);
+        if (this.getConfig().getBoolean("EnchantsOnEmeraldGear")) {
             int num = this.getConfig().getInt("EmeraldGearEnchantLevels.Unbreaking");
             int num2 = this.getConfig().getInt("EmeraldGearEnchantLevels.Mending");
-            meta.addEnchant(Enchantment.DURABILITY, num, true);
+            meta.addEnchant(Enchantment.UNBREAKING, num, true);
             meta.addEnchant(Enchantment.MENDING, num2, true);
         }
         item.setItemMeta(meta);
@@ -1662,7 +1654,7 @@ implements Listener {
         meta.addItemFlags(new ItemFlag[]{ItemFlag.HIDE_ATTRIBUTES});
         double dmg = 4.0;
         double spd = -2.1;
-        if (this.getConfig().getString("UseCustomValues") == "true") {
+        if (this.getConfig().getBoolean("UseCustomValues")) {
             dmg = this.getConfig().getDouble("aDiamondRapier.damage") - 1.0;
             spd = this.getConfig().getDouble("aDiamondRapier.speed") - 4.0;
         }
@@ -1671,7 +1663,7 @@ implements Listener {
         AttributeModifier modifier2 = new AttributeModifier(UUID.randomUUID(), "Attack Damage", dmg, AttributeModifier.Operation.ADD_NUMBER, EquipmentSlot.HAND);
         meta.addAttributeModifier(Attribute.ATTACK_DAMAGE, modifier2);
         meta.setDisplayName(convertLegacyToSection(this.getConfig().getString("dDiamondRapier.name")));
-        meta.setCustomModelData(Integer.valueOf(1000005));
+        meta.setCustomModelData(1000005);
         item.setItemMeta(meta);
         NamespacedKey key = new NamespacedKey((Plugin)this, "diamond_rapier");
         this.keys.add(key);
@@ -1700,7 +1692,7 @@ implements Listener {
         meta.addItemFlags(new ItemFlag[]{ItemFlag.HIDE_ATTRIBUTES});
         double dmg = 5.0;
         double spd = -2.1;
-        if (this.getConfig().getString("UseCustomValues") == "true") {
+        if (this.getConfig().getBoolean("UseCustomValues")) {
             dmg = this.getConfig().getDouble("aNetheriteRapier.damage") - 1.0;
             spd = this.getConfig().getDouble("aNetheriteRapier.speed") - 4.0;
         }
@@ -1709,19 +1701,17 @@ implements Listener {
         AttributeModifier modifier2 = new AttributeModifier(UUID.randomUUID(), "Attack Damage", dmg, AttributeModifier.Operation.ADD_NUMBER, EquipmentSlot.HAND);
         meta.addAttributeModifier(Attribute.ATTACK_DAMAGE, modifier2);
         meta.setDisplayName(convertLegacyToSection(this.getConfig().getString("dNetheriteRapier.name")));
-        meta.setCustomModelData(Integer.valueOf(1000005));
+        meta.setCustomModelData(1000005);
         item.setItemMeta(meta);
         NamespacedKey key = new NamespacedKey((Plugin)this, "netherite_rapier");
         this.keys.add(key);
         ShapedRecipe recipe = new ShapedRecipe(key, item);
         recipe.shape(new String[]{"  C", "CC ", "SC "});
         recipe.setIngredient('S', Material.STICK);
-        String n = this.getConfig().getString("NetheriteIngots");
-        if (n == "true") {
-            recipe.setIngredient('C', Material.NETHERITE_INGOT);
-        } else {
-            recipe.setIngredient('C', Material.NETHERITE_SCRAP);
-        }
+        boolean n = this.getConfig().getBoolean("NetheriteIngots");
+        Material finalMaterial = n ? Material.NETHERITE_INGOT : Material.NETHERITE_SCRAP;
+        recipe.setIngredient('C', finalMaterial);
+
         return recipe;
     }
 
@@ -1741,7 +1731,7 @@ implements Listener {
         meta.addItemFlags(new ItemFlag[]{ItemFlag.HIDE_ATTRIBUTES});
         double dmg = 4.0;
         double spd = -2.8;
-        if (this.getConfig().getString("UseCustomValues") == "true") {
+        if (this.getConfig().getBoolean("UseCustomValues")) {
             dmg = this.getConfig().getDouble("aWoodenLongsword.damage") - 1.0;
             spd = this.getConfig().getDouble("aWoodenLongsword.speed") - 4.0;
         }
@@ -1750,7 +1740,7 @@ implements Listener {
         AttributeModifier modifier2 = new AttributeModifier(UUID.randomUUID(), "Attack Damage", dmg, AttributeModifier.Operation.ADD_NUMBER, EquipmentSlot.HAND);
         meta.addAttributeModifier(Attribute.ATTACK_DAMAGE, modifier2);
         meta.setDisplayName(convertLegacyToSection(this.getConfig().getString("dWoodenLongsword.name")));
-        meta.setCustomModelData(Integer.valueOf(1000001));
+        meta.setCustomModelData(1000001);
         item.setItemMeta(meta);
         NamespacedKey key = new NamespacedKey((Plugin)this, "wooden_longsword");
         this.keys.add(key);
@@ -1776,7 +1766,7 @@ implements Listener {
         meta.addItemFlags(new ItemFlag[]{ItemFlag.HIDE_ATTRIBUTES});
         double dmg = 5.0;
         double spd = -2.8;
-        if (this.getConfig().getString("UseCustomValues") == "true") {
+        if (this.getConfig().getBoolean("UseCustomValues")) {
             dmg = this.getConfig().getDouble("aStoneLongsword.damage") - 1.0;
             spd = this.getConfig().getDouble("aStoneLongsword.speed") - 4.0;
         }
@@ -1785,7 +1775,7 @@ implements Listener {
         AttributeModifier modifier2 = new AttributeModifier(UUID.randomUUID(), "Attack Damage", dmg, AttributeModifier.Operation.ADD_NUMBER, EquipmentSlot.HAND);
         meta.addAttributeModifier(Attribute.ATTACK_DAMAGE, modifier2);
         meta.setDisplayName(convertLegacyToSection(this.getConfig().getString("dStoneLongsword.name")));
-        meta.setCustomModelData(Integer.valueOf(1000001));
+        meta.setCustomModelData(1000001);
         item.setItemMeta(meta);
         NamespacedKey key = new NamespacedKey((Plugin)this, "stone_longsword");
         this.keys.add(key);
@@ -1812,7 +1802,7 @@ implements Listener {
         meta.addItemFlags(new ItemFlag[]{ItemFlag.HIDE_ATTRIBUTES});
         double dmg = 4.0;
         double spd = -2.6;
-        if (this.getConfig().getString("UseCustomValues") == "true") {
+        if (this.getConfig().getBoolean("UseCustomValues")) {
             dmg = this.getConfig().getDouble("aGoldenLongsword.damage") - 1.0;
             spd = this.getConfig().getDouble("aGoldenLongsword.speed") - 4.0;
         }
@@ -1821,7 +1811,7 @@ implements Listener {
         AttributeModifier modifier2 = new AttributeModifier(UUID.randomUUID(), "Attack Damage", dmg, AttributeModifier.Operation.ADD_NUMBER, EquipmentSlot.HAND);
         meta.addAttributeModifier(Attribute.ATTACK_DAMAGE, modifier2);
         meta.setDisplayName(convertLegacyToSection(this.getConfig().getString("dGoldenLongsword.name")));
-        meta.setCustomModelData(Integer.valueOf(1000001));
+        meta.setCustomModelData(1000001);
         item.setItemMeta(meta);
         NamespacedKey key = new NamespacedKey((Plugin)this, "golden_longsword");
         this.keys.add(key);
@@ -1848,7 +1838,7 @@ implements Listener {
         meta.addItemFlags(new ItemFlag[]{ItemFlag.HIDE_ATTRIBUTES});
         double dmg = 6.0;
         double spd = -2.8;
-        if (this.getConfig().getString("UseCustomValues") == "true") {
+        if (this.getConfig().getBoolean("UseCustomValues")) {
             dmg = this.getConfig().getDouble("aIronLongsword.damage") - 1.0;
             spd = this.getConfig().getDouble("aIronLongsword.speed") - 4.0;
         }
@@ -1857,7 +1847,7 @@ implements Listener {
         AttributeModifier modifier2 = new AttributeModifier(UUID.randomUUID(), "Attack Damage", dmg, AttributeModifier.Operation.ADD_NUMBER, EquipmentSlot.HAND);
         meta.addAttributeModifier(Attribute.ATTACK_DAMAGE, modifier2);
         meta.setDisplayName(convertLegacyToSection(this.getConfig().getString("dIronLongsword.name")));
-        meta.setCustomModelData(Integer.valueOf(1000001));
+        meta.setCustomModelData(1000001);
         item.setItemMeta(meta);
         NamespacedKey key = new NamespacedKey((Plugin)this, "iron_longsword");
         this.keys.add(key);
@@ -1884,7 +1874,7 @@ implements Listener {
         meta.addItemFlags(new ItemFlag[]{ItemFlag.HIDE_ATTRIBUTES});
         double dmg = 6.0;
         double spd = -2.6;
-        if (this.getConfig().getString("UseCustomValues") == "true") {
+        if (this.getConfig().getBoolean("UseCustomValues")) {
             dmg = this.getConfig().getDouble("aEmeraldLongsword.damage") - 1.0;
             spd = this.getConfig().getDouble("aEmeraldLongsword.speed") - 4.0;
         }
@@ -1893,11 +1883,11 @@ implements Listener {
         AttributeModifier modifier2 = new AttributeModifier(UUID.randomUUID(), "Attack Damage", dmg, AttributeModifier.Operation.ADD_NUMBER, EquipmentSlot.HAND);
         meta.addAttributeModifier(Attribute.ATTACK_DAMAGE, modifier2);
         meta.setDisplayName(convertLegacyToSection(this.getConfig().getString("dEmeraldLongsword.name")));
-        meta.setCustomModelData(Integer.valueOf(1000011));
-        if (this.getConfig().getString("EnchantsOnEmeraldGear") == "true") {
+        meta.setCustomModelData(1000011);
+        if (this.getConfig().getBoolean("EnchantsOnEmeraldGear")) {
             int num = this.getConfig().getInt("EmeraldGearEnchantLevels.Unbreaking");
             int num2 = this.getConfig().getInt("EmeraldGearEnchantLevels.Mending");
-            meta.addEnchant(Enchantment.DURABILITY, num, true);
+            meta.addEnchant(Enchantment.UNBREAKING, num, true);
             meta.addEnchant(Enchantment.MENDING, num2, true);
         }
         item.setItemMeta(meta);
@@ -1926,7 +1916,7 @@ implements Listener {
         meta.addItemFlags(new ItemFlag[]{ItemFlag.HIDE_ATTRIBUTES});
         double dmg = 7.0;
         double spd = -2.8;
-        if (this.getConfig().getString("UseCustomValues") == "true") {
+        if (this.getConfig().getBoolean("UseCustomValues")) {
             dmg = this.getConfig().getDouble("aDiamondLongsword.damage") - 1.0;
             spd = this.getConfig().getDouble("aDiamondLongsword.speed") - 4.0;
         }
@@ -1935,7 +1925,7 @@ implements Listener {
         AttributeModifier modifier2 = new AttributeModifier(UUID.randomUUID(), "Attack Damage", dmg, AttributeModifier.Operation.ADD_NUMBER, EquipmentSlot.HAND);
         meta.addAttributeModifier(Attribute.ATTACK_DAMAGE, modifier2);
         meta.setDisplayName(convertLegacyToSection(this.getConfig().getString("dDiamondLongsword.name")));
-        meta.setCustomModelData(Integer.valueOf(1000001));
+        meta.setCustomModelData(1000001);
         item.setItemMeta(meta);
         NamespacedKey key = new NamespacedKey((Plugin)this, "diamond_longsword");
         this.keys.add(key);
@@ -1962,7 +1952,7 @@ implements Listener {
         meta.addItemFlags(new ItemFlag[]{ItemFlag.HIDE_ATTRIBUTES});
         double dmg = 8.0;
         double spd = -2.8;
-        if (this.getConfig().getString("UseCustomValues") == "true") {
+        if (this.getConfig().getBoolean("UseCustomValues")) {
             dmg = this.getConfig().getDouble("aNetheriteLongsword.damage") - 1.0;
             spd = this.getConfig().getDouble("aNetheriteLongsword.speed") - 4.0;
         }
@@ -1971,14 +1961,14 @@ implements Listener {
         AttributeModifier modifier2 = new AttributeModifier(UUID.randomUUID(), "Attack Damage", dmg, AttributeModifier.Operation.ADD_NUMBER, EquipmentSlot.HAND);
         meta.addAttributeModifier(Attribute.ATTACK_DAMAGE, modifier2);
         meta.setDisplayName(convertLegacyToSection(this.getConfig().getString("dNetheriteLongsword.name")));
-        meta.setCustomModelData(Integer.valueOf(1000001));
+        meta.setCustomModelData(1000001);
         item.setItemMeta(meta);
         NamespacedKey key = new NamespacedKey((Plugin)this, "netherite_longsword");
         this.keys.add(key);
         ShapedRecipe recipe = new ShapedRecipe(key, item);
         recipe.shape(new String[]{" C ", " C ", "CSC"});
-        String n = this.getConfig().getString("NetheriteIngots");
-        if (n == "true") {
+        var n = this.getConfig().getBoolean("NetheriteIngots");
+        if (n) {
             recipe.setIngredient('C', Material.NETHERITE_INGOT);
         } else {
             recipe.setIngredient('C', Material.NETHERITE_SCRAP);
@@ -2004,7 +1994,7 @@ implements Listener {
         meta.addItemFlags(new ItemFlag[]{ItemFlag.HIDE_ATTRIBUTES});
         double dmg = 1.0;
         double spd = -1.0;
-        if (this.getConfig().getString("UseCustomValues") == "true") {
+        if (this.getConfig().getBoolean("UseCustomValues")) {
             dmg = this.getConfig().getDouble("aWoodenKnife.damage") - 1.0;
             spd = this.getConfig().getDouble("aWoodenKnife.speed") - 4.0;
         }
@@ -2013,7 +2003,7 @@ implements Listener {
         AttributeModifier modifier2 = new AttributeModifier(UUID.randomUUID(), "Attack Damage", dmg, AttributeModifier.Operation.ADD_NUMBER, EquipmentSlot.HAND);
         meta.addAttributeModifier(Attribute.ATTACK_DAMAGE, modifier2);
         meta.setDisplayName(convertLegacyToSection(this.getConfig().getString("dWoodenKnife.name")));
-        meta.setCustomModelData(Integer.valueOf(1000006));
+        meta.setCustomModelData(1000006);
         item.setItemMeta(meta);
         NamespacedKey key = new NamespacedKey((Plugin)this, "wooden_knife");
         this.keys.add(key);
@@ -2040,7 +2030,7 @@ implements Listener {
         meta.addItemFlags(new ItemFlag[]{ItemFlag.HIDE_ATTRIBUTES});
         double dmg = 1.5;
         double spd = -1.0;
-        if (this.getConfig().getString("UseCustomValues") == "true") {
+        if (this.getConfig().getBoolean("UseCustomValues")) {
             dmg = this.getConfig().getDouble("aStoneKnife.damage") - 1.0;
             spd = this.getConfig().getDouble("aStoneKnife.speed") - 4.0;
         }
@@ -2049,7 +2039,7 @@ implements Listener {
         AttributeModifier modifier2 = new AttributeModifier(UUID.randomUUID(), "Attack Damage", dmg, AttributeModifier.Operation.ADD_NUMBER, EquipmentSlot.HAND);
         meta.addAttributeModifier(Attribute.ATTACK_DAMAGE, modifier2);
         meta.setDisplayName(convertLegacyToSection(this.getConfig().getString("dStoneKnife.name")));
-        meta.setCustomModelData(Integer.valueOf(1000006));
+        meta.setCustomModelData(1000006);
         item.setItemMeta(meta);
         NamespacedKey key = new NamespacedKey((Plugin)this, "stone_knife");
         this.keys.add(key);
@@ -2077,7 +2067,7 @@ implements Listener {
         meta.addItemFlags(new ItemFlag[]{ItemFlag.HIDE_ATTRIBUTES});
         double dmg = 1.0;
         double spd = 0.0;
-        if (this.getConfig().getString("UseCustomValues") == "true") {
+        if (this.getConfig().getBoolean("UseCustomValues")) {
             dmg = this.getConfig().getDouble("aGoldenKnife.damage") - 1.0;
             spd = this.getConfig().getDouble("aGoldenKnife.speed") - 4.0;
         }
@@ -2086,7 +2076,7 @@ implements Listener {
         AttributeModifier modifier2 = new AttributeModifier(UUID.randomUUID(), "Attack Damage", dmg, AttributeModifier.Operation.ADD_NUMBER, EquipmentSlot.HAND);
         meta.addAttributeModifier(Attribute.ATTACK_DAMAGE, modifier2);
         meta.setDisplayName(convertLegacyToSection(this.getConfig().getString("dGoldenKnife.name")));
-        meta.setCustomModelData(Integer.valueOf(1000006));
+        meta.setCustomModelData(1000006);
         item.setItemMeta(meta);
         NamespacedKey key = new NamespacedKey((Plugin)this, "golden_knife");
         this.keys.add(key);
@@ -2114,7 +2104,7 @@ implements Listener {
         meta.addItemFlags(new ItemFlag[]{ItemFlag.HIDE_ATTRIBUTES});
         double dmg = 2.0;
         double spd = -1.0;
-        if (this.getConfig().getString("UseCustomValues") == "true") {
+        if (this.getConfig().getBoolean("UseCustomValues")) {
             dmg = this.getConfig().getDouble("aIronKnife.damage") - 1.0;
             spd = this.getConfig().getDouble("aIronKnife.speed") - 4.0;
         }
@@ -2123,7 +2113,7 @@ implements Listener {
         AttributeModifier modifier2 = new AttributeModifier(UUID.randomUUID(), "Attack Damage", dmg, AttributeModifier.Operation.ADD_NUMBER, EquipmentSlot.HAND);
         meta.addAttributeModifier(Attribute.ATTACK_DAMAGE, modifier2);
         meta.setDisplayName(convertLegacyToSection(this.getConfig().getString("dIronKnife.name")));
-        meta.setCustomModelData(Integer.valueOf(1000006));
+        meta.setCustomModelData(1000006);
         item.setItemMeta(meta);
         NamespacedKey key = new NamespacedKey((Plugin)this, "iron_knife");
         this.keys.add(key);
@@ -2151,7 +2141,7 @@ implements Listener {
         meta.addItemFlags(new ItemFlag[]{ItemFlag.HIDE_ATTRIBUTES});
         double dmg = 2.0;
         double spd = 0.0;
-        if (this.getConfig().getString("UseCustomValues") == "true") {
+        if (this.getConfig().getBoolean("UseCustomValues")) {
             dmg = this.getConfig().getDouble("aEmeraldKnife.damage") - 1.0;
             spd = this.getConfig().getDouble("aEmeraldKnife.speed") - 4.0;
         }
@@ -2160,13 +2150,13 @@ implements Listener {
         AttributeModifier modifier2 = new AttributeModifier(UUID.randomUUID(), "Attack Damage", dmg, AttributeModifier.Operation.ADD_NUMBER, EquipmentSlot.HAND);
         meta.addAttributeModifier(Attribute.ATTACK_DAMAGE, modifier2);
         meta.setDisplayName(convertLegacyToSection(this.getConfig().getString("dEmeraldKnife.name")));
-        if (this.getConfig().getString("EnchantsOnEmeraldGear") == "true") {
+        if (this.getConfig().getBoolean("EnchantsOnEmeraldGear")) {
             int num = this.getConfig().getInt("EmeraldGearEnchantLevels.Unbreaking");
             int num2 = this.getConfig().getInt("EmeraldGearEnchantLevels.Mending");
-            meta.addEnchant(Enchantment.DURABILITY, num, true);
+            meta.addEnchant(Enchantment.UNBREAKING, num, true);
             meta.addEnchant(Enchantment.MENDING, num2, true);
         }
-        meta.setCustomModelData(Integer.valueOf(1000016));
+        meta.setCustomModelData(1000016);
         item.setItemMeta(meta);
         NamespacedKey key = new NamespacedKey((Plugin)this, "emerald_knife");
         this.keys.add(key);
@@ -2194,7 +2184,7 @@ implements Listener {
         meta.addItemFlags(new ItemFlag[]{ItemFlag.HIDE_ATTRIBUTES});
         double dmg = 3.0;
         double spd = -1.0;
-        if (this.getConfig().getString("UseCustomValues") == "true") {
+        if (this.getConfig().getBoolean("UseCustomValues")) {
             dmg = this.getConfig().getDouble("aDiamondKnife.damage") - 1.0;
             spd = this.getConfig().getDouble("aDiamondKnife.speed") - 4.0;
         }
@@ -2203,7 +2193,7 @@ implements Listener {
         AttributeModifier modifier2 = new AttributeModifier(UUID.randomUUID(), "Attack Damage", dmg, AttributeModifier.Operation.ADD_NUMBER, EquipmentSlot.HAND);
         meta.addAttributeModifier(Attribute.ATTACK_DAMAGE, modifier2);
         meta.setDisplayName(convertLegacyToSection(this.getConfig().getString("dDiamondKnife.name")));
-        meta.setCustomModelData(Integer.valueOf(1000006));
+        meta.setCustomModelData(1000006);
         item.setItemMeta(meta);
         NamespacedKey key = new NamespacedKey((Plugin)this, "diamond_knife");
         this.keys.add(key);
@@ -2231,7 +2221,7 @@ implements Listener {
         meta.addItemFlags(new ItemFlag[]{ItemFlag.HIDE_ATTRIBUTES});
         double dmg = 4.0;
         double spd = -1.0;
-        if (this.getConfig().getString("UseCustomValues") == "true") {
+        if (this.getConfig().getBoolean("UseCustomValues")) {
             dmg = this.getConfig().getDouble("aNetheriteKnife.damage") - 1.0;
             spd = this.getConfig().getDouble("aNetheriteKnife.speed") - 4.0;
         }
@@ -2240,18 +2230,15 @@ implements Listener {
         AttributeModifier modifier2 = new AttributeModifier(UUID.randomUUID(), "Attack Damage", dmg, AttributeModifier.Operation.ADD_NUMBER, EquipmentSlot.HAND);
         meta.addAttributeModifier(Attribute.ATTACK_DAMAGE, modifier2);
         meta.setDisplayName(convertLegacyToSection(this.getConfig().getString("dNetheriteKnife.name")));
-        meta.setCustomModelData(Integer.valueOf(1000006));
+        meta.setCustomModelData(1000006);
         item.setItemMeta(meta);
         NamespacedKey key = new NamespacedKey((Plugin)this, "netherite_knife");
         this.keys.add(key);
         ShapedRecipe recipe = new ShapedRecipe(key, item);
         recipe.shape(new String[]{"   ", " C ", " S "});
-        String n = this.getConfig().getString("NetheriteIngots");
-        if (n == "true") {
-            recipe.setIngredient('C', Material.NETHERITE_INGOT);
-        } else {
-            recipe.setIngredient('C', Material.NETHERITE_SCRAP);
-        }
+        boolean n = this.getConfig().getBoolean("NetheriteIngots");
+        Material finalMaterial = n ? Material.NETHERITE_INGOT : Material.NETHERITE_SCRAP;
+        recipe.setIngredient('C', finalMaterial);
         recipe.setIngredient('S', Material.STICK);
         return recipe;
     }
@@ -2276,7 +2263,7 @@ implements Listener {
         meta.addItemFlags(new ItemFlag[]{ItemFlag.HIDE_ATTRIBUTES});
         double dmg = 1.0;
         double spd = -1.5;
-        if (this.getConfig().getString("UseCustomValues") == "true") {
+        if (this.getConfig().getBoolean("UseCustomValues")) {
             dmg = this.getConfig().getDouble("aWoodenSpear.damage") - 1.0;
             spd = this.getConfig().getDouble("aWoodenSpear.speed") - 4.0;
         }
@@ -2285,7 +2272,7 @@ implements Listener {
         AttributeModifier modifier2 = new AttributeModifier(UUID.randomUUID(), "Attack Damage", dmg, AttributeModifier.Operation.ADD_NUMBER, EquipmentSlot.HAND);
         meta.addAttributeModifier(Attribute.ATTACK_DAMAGE, modifier2);
         meta.setDisplayName(convertLegacyToSection(this.getConfig().getString("dWoodenSpear.name")));
-        meta.setCustomModelData(Integer.valueOf(1000004));
+        meta.setCustomModelData(1000004);
         item.setItemMeta(meta);
         NamespacedKey key = new NamespacedKey((Plugin)this, "wooden_spear");
         this.keys.add(key);
@@ -2315,7 +2302,7 @@ implements Listener {
         meta.addItemFlags(new ItemFlag[]{ItemFlag.HIDE_ATTRIBUTES});
         double dmg = 1.5;
         double spd = -1.5;
-        if (this.getConfig().getString("UseCustomValues") == "true") {
+        if (this.getConfig().getBoolean("UseCustomValues")) {
             dmg = this.getConfig().getDouble("aStoneSpear.damage") - 1.0;
             spd = this.getConfig().getDouble("aStoneSpear.speed") - 4.0;
         }
@@ -2324,7 +2311,7 @@ implements Listener {
         AttributeModifier modifier2 = new AttributeModifier(UUID.randomUUID(), "Attack Damage", dmg, AttributeModifier.Operation.ADD_NUMBER, EquipmentSlot.HAND);
         meta.addAttributeModifier(Attribute.ATTACK_DAMAGE, modifier2);
         meta.setDisplayName(convertLegacyToSection(this.getConfig().getString("dStoneSpear.name")));
-        meta.setCustomModelData(Integer.valueOf(1000004));
+        meta.setCustomModelData(1000004);
         item.setItemMeta(meta);
         NamespacedKey key = new NamespacedKey((Plugin)this, "stone_spear");
         this.keys.add(key);
@@ -2355,7 +2342,7 @@ implements Listener {
         meta.addItemFlags(new ItemFlag[]{ItemFlag.HIDE_ATTRIBUTES});
         double dmg = 1.0;
         double spd = -1.2;
-        if (this.getConfig().getString("UseCustomValues") == "true") {
+        if (this.getConfig().getBoolean("UseCustomValues")) {
             dmg = this.getConfig().getDouble("aGoldenSpear.damage") - 1.0;
             spd = this.getConfig().getDouble("aGoldenSpear.speed") - 4.0;
         }
@@ -2364,7 +2351,7 @@ implements Listener {
         AttributeModifier modifier2 = new AttributeModifier(UUID.randomUUID(), "Attack Damage", dmg, AttributeModifier.Operation.ADD_NUMBER, EquipmentSlot.HAND);
         meta.addAttributeModifier(Attribute.ATTACK_DAMAGE, modifier2);
         meta.setDisplayName(convertLegacyToSection(this.getConfig().getString("dGoldenSpear.name")));
-        meta.setCustomModelData(Integer.valueOf(1000004));
+        meta.setCustomModelData(1000004);
         item.setItemMeta(meta);
         NamespacedKey key = new NamespacedKey((Plugin)this, "golden_spear");
         this.keys.add(key);
@@ -2395,7 +2382,7 @@ implements Listener {
         meta.addItemFlags(new ItemFlag[]{ItemFlag.HIDE_ATTRIBUTES});
         double dmg = 2.0;
         double spd = -1.5;
-        if (this.getConfig().getString("UseCustomValues") == "true") {
+        if (this.getConfig().getBoolean("UseCustomValues")) {
             dmg = this.getConfig().getDouble("aIronSpear.damage") - 1.0;
             spd = this.getConfig().getDouble("aIronSpear.speed") - 4.0;
         }
@@ -2404,7 +2391,7 @@ implements Listener {
         AttributeModifier modifier2 = new AttributeModifier(UUID.randomUUID(), "Attack Damage", dmg, AttributeModifier.Operation.ADD_NUMBER, EquipmentSlot.HAND);
         meta.addAttributeModifier(Attribute.ATTACK_DAMAGE, modifier2);
         meta.setDisplayName(convertLegacyToSection(this.getConfig().getString("dIronSpear.name")));
-        meta.setCustomModelData(Integer.valueOf(1000004));
+        meta.setCustomModelData(1000004);
         item.setItemMeta(meta);
         NamespacedKey key = new NamespacedKey((Plugin)this, "iron_spear");
         this.keys.add(key);
@@ -2435,7 +2422,7 @@ implements Listener {
         meta.addItemFlags(new ItemFlag[]{ItemFlag.HIDE_ATTRIBUTES});
         double dmg = 2.0;
         double spd = -1.2;
-        if (this.getConfig().getString("UseCustomValues") == "true") {
+        if (this.getConfig().getBoolean("UseCustomValues")) {
             dmg = this.getConfig().getDouble("aEmeraldSpear.damage") - 1.0;
             spd = this.getConfig().getDouble("aEmeraldSpear.speed") - 4.0;
         }
@@ -2444,11 +2431,11 @@ implements Listener {
         AttributeModifier modifier2 = new AttributeModifier(UUID.randomUUID(), "Attack Damage", dmg, AttributeModifier.Operation.ADD_NUMBER, EquipmentSlot.HAND);
         meta.addAttributeModifier(Attribute.ATTACK_DAMAGE, modifier2);
         meta.setDisplayName(convertLegacyToSection(this.getConfig().getString("dEmeraldSpear.name")));
-        meta.setCustomModelData(Integer.valueOf(1000014));
-        if (this.getConfig().getString("EnchantsOnEmeraldGear") == "true") {
+        meta.setCustomModelData(1000014);
+        if (this.getConfig().getBoolean("EnchantsOnEmeraldGear")) {
             int num = this.getConfig().getInt("EmeraldGearEnchantLevels.Unbreaking");
             int num2 = this.getConfig().getInt("EmeraldGearEnchantLevels.Mending");
-            meta.addEnchant(Enchantment.DURABILITY, num, true);
+            meta.addEnchant(Enchantment.UNBREAKING, num, true);
             meta.addEnchant(Enchantment.MENDING, num2, true);
         }
         item.setItemMeta(meta);
@@ -2481,7 +2468,7 @@ implements Listener {
         meta.addItemFlags(new ItemFlag[]{ItemFlag.HIDE_ATTRIBUTES});
         double dmg = 3.0;
         double spd = -1.5;
-        if (this.getConfig().getString("UseCustomValues") == "true") {
+        if (this.getConfig().getBoolean("UseCustomValues")) {
             dmg = this.getConfig().getDouble("aDiamondSpear.damage") - 1.0;
             spd = this.getConfig().getDouble("aDiamondSpear.speed") - 4.0;
         }
@@ -2490,7 +2477,7 @@ implements Listener {
         AttributeModifier modifier2 = new AttributeModifier(UUID.randomUUID(), "Attack Damage", dmg, AttributeModifier.Operation.ADD_NUMBER, EquipmentSlot.HAND);
         meta.addAttributeModifier(Attribute.ATTACK_DAMAGE, modifier2);
         meta.setDisplayName(convertLegacyToSection(this.getConfig().getString("dDiamondSpear.name")));
-        meta.setCustomModelData(Integer.valueOf(1000004));
+        meta.setCustomModelData(1000004);
         item.setItemMeta(meta);
         NamespacedKey key = new NamespacedKey((Plugin)this, "diamond_spear");
         this.keys.add(key);
@@ -2521,7 +2508,7 @@ implements Listener {
         meta.addItemFlags(new ItemFlag[]{ItemFlag.HIDE_ATTRIBUTES});
         double dmg = 4.0;
         double spd = -1.5;
-        if (this.getConfig().getString("UseCustomValues") == "true") {
+        if (this.getConfig().getBoolean("UseCustomValues")) {
             dmg = this.getConfig().getDouble("aNetheriteSpear.damage") - 1.0;
             spd = this.getConfig().getDouble("aNetheriteSpear.speed") - 4.0;
         }
@@ -2530,18 +2517,15 @@ implements Listener {
         AttributeModifier modifier2 = new AttributeModifier(UUID.randomUUID(), "Attack Damage", dmg, AttributeModifier.Operation.ADD_NUMBER, EquipmentSlot.HAND);
         meta.addAttributeModifier(Attribute.ATTACK_DAMAGE, modifier2);
         meta.setDisplayName(convertLegacyToSection(this.getConfig().getString("dNetheriteSpear.name")));
-        meta.setCustomModelData(Integer.valueOf(1000004));
+        meta.setCustomModelData(1000004);
         item.setItemMeta(meta);
         NamespacedKey key = new NamespacedKey((Plugin)this, "netherite_spear");
         this.keys.add(key);
         ShapedRecipe recipe = new ShapedRecipe(key, item);
         recipe.shape(new String[]{" MM", " SM", "S  "});
-        String n = this.getConfig().getString("NetheriteIngots");
-        if (n == "true") {
-            recipe.setIngredient('M', Material.NETHERITE_INGOT);
-        } else {
-            recipe.setIngredient('M', Material.NETHERITE_SCRAP);
-        }
+        boolean n = this.getConfig().getBoolean("NetheriteIngots");
+        Material finalMaterial = n ? Material.NETHERITE_INGOT : Material.NETHERITE_SCRAP;
+        recipe.setIngredient('M', finalMaterial);
         recipe.setIngredient('S', Material.STICK);
         return recipe;
     }
@@ -2569,7 +2553,7 @@ implements Listener {
         double dmg = 2.5;
         double spd = -2.3;
         double mspd = 0.02;
-        if (this.getConfig().getString("UseCustomValues") == "true") {
+        if (this.getConfig().getBoolean("UseCustomValues")) {
             dmg = this.getConfig().getDouble("aWoodenKatana.damage") - 1.0;
             spd = this.getConfig().getDouble("aWoodenKatana.speed") - 4.0;
             mspd = this.getConfig().getDouble("aWoodenKatana.moveSpeed");
@@ -2581,7 +2565,7 @@ implements Listener {
         AttributeModifier modifier3 = new AttributeModifier(UUID.randomUUID(), "Move SPeed", mspd, AttributeModifier.Operation.ADD_NUMBER, EquipmentSlot.HAND);
         meta.addAttributeModifier(Attribute.MOVEMENT_SPEED, modifier3);
         meta.setDisplayName(convertLegacyToSection(this.getConfig().getString("dWoodenKatana.name")));
-        meta.setCustomModelData(Integer.valueOf(1000002));
+        meta.setCustomModelData(1000002);
         item.setItemMeta(meta);
         NamespacedKey key = new NamespacedKey((Plugin)this, "wooden_katana");
         this.keys.add(key);
@@ -2614,7 +2598,7 @@ implements Listener {
         double dmg = 2.5;
         double spd = -2.0;
         double mspd = 0.02;
-        if (this.getConfig().getString("UseCustomValues") == "true") {
+        if (this.getConfig().getBoolean("UseCustomValues")) {
             dmg = this.getConfig().getDouble("aGoldenKatana.damage") - 1.0;
             spd = this.getConfig().getDouble("aGoldenKatana.speed") - 4.0;
             mspd = this.getConfig().getDouble("aGoldenKatana.moveSpeed");
@@ -2626,7 +2610,7 @@ implements Listener {
         AttributeModifier modifier3 = new AttributeModifier(UUID.randomUUID(), "Move SPeed", mspd, AttributeModifier.Operation.ADD_NUMBER, EquipmentSlot.HAND);
         meta.addAttributeModifier(Attribute.MOVEMENT_SPEED, modifier3);
         meta.setDisplayName(convertLegacyToSection(this.getConfig().getString("dGoldenKatana.name")));
-        meta.setCustomModelData(Integer.valueOf(1000002));
+        meta.setCustomModelData(1000002);
         item.setItemMeta(meta);
         NamespacedKey key = new NamespacedKey((Plugin)this, "golden_katana");
         this.keys.add(key);
@@ -2660,7 +2644,7 @@ implements Listener {
         double dmg = 3.0;
         double spd = -2.3;
         double mspd = 0.02;
-        if (this.getConfig().getString("UseCustomValues") == "true") {
+        if (this.getConfig().getBoolean("UseCustomValues")) {
             dmg = this.getConfig().getDouble("aStoneKatana.damage") - 1.0;
             spd = this.getConfig().getDouble("aStoneKatana.speed") - 4.0;
             mspd = this.getConfig().getDouble("aStoneKatana.moveSpeed");
@@ -2672,7 +2656,7 @@ implements Listener {
         AttributeModifier modifier3 = new AttributeModifier(UUID.randomUUID(), "Move SPeed", mspd, AttributeModifier.Operation.ADD_NUMBER, EquipmentSlot.HAND);
         meta.addAttributeModifier(Attribute.MOVEMENT_SPEED, modifier3);
         meta.setDisplayName(convertLegacyToSection(this.getConfig().getString("dStoneKatana.name")));
-        meta.setCustomModelData(Integer.valueOf(1000002));
+        meta.setCustomModelData(1000002);
         item.setItemMeta(meta);
         NamespacedKey key = new NamespacedKey((Plugin)this, "stone_katana");
         this.keys.add(key);
@@ -2706,7 +2690,7 @@ implements Listener {
         double dmg = 4.0;
         double spd = -2.3;
         double mspd = 0.02;
-        if (this.getConfig().getString("UseCustomValues") == "true") {
+        if (this.getConfig().getBoolean("UseCustomValues")) {
             dmg = this.getConfig().getDouble("aIronKatana.damage") - 1.0;
             spd = this.getConfig().getDouble("aIronKatana.speed") - 4.0;
             mspd = this.getConfig().getDouble("aIronKatana.moveSpeed");
@@ -2718,7 +2702,7 @@ implements Listener {
         AttributeModifier modifier3 = new AttributeModifier(UUID.randomUUID(), "Move SPeed", mspd, AttributeModifier.Operation.ADD_NUMBER, EquipmentSlot.HAND);
         meta.addAttributeModifier(Attribute.MOVEMENT_SPEED, modifier3);
         meta.setDisplayName(convertLegacyToSection(this.getConfig().getString("dIronKatana.name")));
-        meta.setCustomModelData(Integer.valueOf(1000002));
+        meta.setCustomModelData(1000002);
         item.setItemMeta(meta);
         NamespacedKey key = new NamespacedKey((Plugin)this, "iron_katana");
         this.keys.add(key);
@@ -2752,7 +2736,7 @@ implements Listener {
         double dmg = 4.0;
         double spd = -2.0;
         double mspd = 0.02;
-        if (this.getConfig().getString("UseCustomValues") == "true") {
+        if (this.getConfig().getBoolean("UseCustomValues")) {
             dmg = this.getConfig().getDouble("aEmeraldKatana.damage") - 1.0;
             spd = this.getConfig().getDouble("aEmeraldKatana.speed") - 4.0;
             mspd = this.getConfig().getDouble("aEmeraldKatana.moveSpeed");
@@ -2764,11 +2748,11 @@ implements Listener {
         AttributeModifier modifier3 = new AttributeModifier(UUID.randomUUID(), "Move SPeed", mspd, AttributeModifier.Operation.ADD_NUMBER, EquipmentSlot.HAND);
         meta.addAttributeModifier(Attribute.MOVEMENT_SPEED, modifier3);
         meta.setDisplayName(convertLegacyToSection(this.getConfig().getString("dEmeraldKatana.name")));
-        meta.setCustomModelData(Integer.valueOf(1000012));
-        if (this.getConfig().getString("EnchantsOnEmeraldGear") == "true") {
+        meta.setCustomModelData(1000012);
+        if (this.getConfig().getBoolean("EnchantsOnEmeraldGear")) {
             int num = this.getConfig().getInt("EmeraldGearEnchantLevels.Unbreaking");
             int num2 = this.getConfig().getInt("EmeraldGearEnchantLevels.Mending");
-            meta.addEnchant(Enchantment.DURABILITY, num, true);
+            meta.addEnchant(Enchantment.UNBREAKING, num, true);
             meta.addEnchant(Enchantment.MENDING, num2, true);
         }
         item.setItemMeta(meta);
@@ -2804,7 +2788,7 @@ implements Listener {
         double dmg = 5.0;
         double spd = -2.3;
         double mspd = 0.02;
-        if (this.getConfig().getString("UseCustomValues") == "true") {
+        if (this.getConfig().getBoolean("UseCustomValues")) {
             dmg = this.getConfig().getDouble("aDiamondKatana.damage") - 1.0;
             spd = this.getConfig().getDouble("aDiamondKatana.speed") - 4.0;
             mspd = this.getConfig().getDouble("aDiamondKatana.moveSpeed");
@@ -2816,7 +2800,7 @@ implements Listener {
         AttributeModifier modifier3 = new AttributeModifier(UUID.randomUUID(), "Move SPeed", mspd, AttributeModifier.Operation.ADD_NUMBER, EquipmentSlot.HAND);
         meta.addAttributeModifier(Attribute.MOVEMENT_SPEED, modifier3);
         meta.setDisplayName(convertLegacyToSection(this.getConfig().getString("dDiamondKatana.name")));
-        meta.setCustomModelData(Integer.valueOf(1000002));
+        meta.setCustomModelData(1000002);
         item.setItemMeta(meta);
         NamespacedKey key = new NamespacedKey((Plugin)this, "diamond_katana");
         this.keys.add(key);
@@ -2850,7 +2834,7 @@ implements Listener {
         double dmg = 6.0;
         double spd = -2.3;
         double mspd = 0.02;
-        if (this.getConfig().getString("UseCustomValues") == "true") {
+        if (this.getConfig().getBoolean("UseCustomValues")) {
             dmg = this.getConfig().getDouble("aNetheriteKatana.damage") - 1.0;
             spd = this.getConfig().getDouble("aNetheriteKatana.speed") - 4.0;
             mspd = this.getConfig().getDouble("aNetheriteKatana.moveSpeed");
@@ -2862,14 +2846,14 @@ implements Listener {
         AttributeModifier modifier3 = new AttributeModifier(UUID.randomUUID(), "Move SPeed", mspd, AttributeModifier.Operation.ADD_NUMBER, EquipmentSlot.HAND);
         meta.addAttributeModifier(Attribute.MOVEMENT_SPEED, modifier3);
         meta.setDisplayName(convertLegacyToSection(this.getConfig().getString("dNetheriteKatana.name")));
-        meta.setCustomModelData(Integer.valueOf(1000002));
+        meta.setCustomModelData(1000002);
         item.setItemMeta(meta);
         NamespacedKey key = new NamespacedKey((Plugin)this, "netherite_katana");
         this.keys.add(key);
         ShapedRecipe recipe = new ShapedRecipe(key, item);
         recipe.shape(new String[]{"  M", " M ", "S  "});
         String n = this.getConfig().getString("NetheriteIngots");
-        if (n == "true") {
+        if (n) {
             recipe.setIngredient('M', Material.NETHERITE_INGOT);
         } else {
             recipe.setIngredient('M', Material.NETHERITE_SCRAP);
@@ -2886,7 +2870,7 @@ implements Listener {
         lore.add(convertLegacyToSection(this.getConfig().getString("dFeatherCharm.line2")));
         meta.setLore(lore);
         meta.setDisplayName(convertLegacyToSection(this.getConfig().getString("dFeatherCharm.name")));
-        meta.addEnchant(Enchantment.DURABILITY, 5, true);
+        meta.addEnchant(Enchantment.UNBREAKING, 5, true);
         meta.addItemFlags(new ItemFlag[]{ItemFlag.HIDE_ENCHANTS});
         meta.addItemFlags(new ItemFlag[]{ItemFlag.HIDE_ATTRIBUTES});
         item.setItemMeta(meta);
@@ -2915,7 +2899,7 @@ implements Listener {
         ItemMeta meta = item.getItemMeta();
         double hp = 4.0;
         double def = -2.0;
-        if (this.getConfig().getString("UseCustomValues") == "true") {
+        if (this.getConfig().getBoolean("UseCustomValues")) {
             hp = this.getConfig().getDouble("aEmeraldCharm.BonusHealth");
             def = this.getConfig().getDouble("aEmeraldCharm.BonusArmor");
         }
@@ -2929,7 +2913,7 @@ implements Listener {
         lore.add(convertLegacyToSection(this.getConfig().getString("dEmeraldCharm.line3")));
         meta.setLore(lore);
         meta.setDisplayName(convertLegacyToSection(this.getConfig().getString("dEmeraldCharm.name")));
-        meta.addEnchant(Enchantment.DURABILITY, 5, true);
+        meta.addEnchant(Enchantment.UNBREAKING, 5, true);
         meta.addItemFlags(new ItemFlag[]{ItemFlag.HIDE_ENCHANTS});
         item.setItemMeta(meta);
         NamespacedKey key = new NamespacedKey((Plugin)this, "emerald_charm");
@@ -2947,7 +2931,7 @@ implements Listener {
         ItemMeta meta = item.getItemMeta();
         double dmg = 4.0;
         double hp = -2.0;
-        if (this.getConfig().getString("UseCustomValues") == "true") {
+        if (this.getConfig().getBoolean("UseCustomValues")) {
             dmg = this.getConfig().getDouble("aBlazeCharm.BonusDamage");
             hp = this.getConfig().getDouble("aBlazeCharm.BonusHealth");
         }
@@ -2961,7 +2945,7 @@ implements Listener {
         lore.add(convertLegacyToSection(this.getConfig().getString("dBlazeCharm.line3")));
         meta.setLore(lore);
         meta.setDisplayName(convertLegacyToSection(this.getConfig().getString("dBlazeCharm.name")));
-        meta.addEnchant(Enchantment.DURABILITY, 5, true);
+        meta.addEnchant(Enchantment.UNBREAKING, 5, true);
         meta.addItemFlags(new ItemFlag[]{ItemFlag.HIDE_ENCHANTS});
         item.setItemMeta(meta);
         NamespacedKey key = new NamespacedKey((Plugin)this, "blaze_charm");
@@ -2979,7 +2963,7 @@ implements Listener {
         ItemMeta meta = item.getItemMeta();
         double atkspd = 0.3;
         double mvspd = -0.15;
-        if (this.getConfig().getString("UseCustomValues") == "true") {
+        if (this.getConfig().getBoolean("UseCustomValues")) {
             atkspd = this.getConfig().getDouble("aGoldCharm.BonusAttackSpeedPercent") / 100.0;
             mvspd = this.getConfig().getDouble("aGoldCharm.BonusMoveSpeedPercent") / 100.0;
         }
@@ -2993,7 +2977,7 @@ implements Listener {
         lore.add(convertLegacyToSection(this.getConfig().getString("dGoldCharm.line3")));
         meta.setLore(lore);
         meta.setDisplayName(convertLegacyToSection(this.getConfig().getString("dGoldCharm.name")));
-        meta.addEnchant(Enchantment.DURABILITY, 5, true);
+        meta.addEnchant(Enchantment.UNBREAKING, 5, true);
         meta.addItemFlags(new ItemFlag[]{ItemFlag.HIDE_ENCHANTS});
         item.setItemMeta(meta);
         NamespacedKey key = new NamespacedKey((Plugin)this, "gold_charm");
@@ -3029,10 +3013,10 @@ implements Listener {
         }
         ItemStack result = tool.clone();
         ItemMeta resultm = result.getItemMeta();
-        resultm.setCustomModelData(Integer.valueOf(1210001));
+        resultm.setCustomModelData(1210001);
         double dmg = 8.0;
         double spd = -2.4;
-        if (this.getConfig().getString("UseCustomValues") == "true") {
+        if (this.getConfig().getBoolean("UseCustomValues")) {
             dmg = this.getConfig().getDouble("aPrismarineSword.damage") - 1.0;
             spd = this.getConfig().getDouble("aPrismarineSword.speed") - 4.0;
         }
@@ -3049,7 +3033,7 @@ implements Listener {
         resultm.setLore(lore);
         resultm.addItemFlags(new ItemFlag[]{ItemFlag.HIDE_ATTRIBUTES});
         result.setItemMeta(resultm);
-        if (this.getConfig().getString("Prismarine") == "true") {
+        if (this.getConfig().getBoolean("Prismarine")) {
             event.setResult(result);
         }
     }
@@ -3080,9 +3064,9 @@ implements Listener {
         }
         ItemStack result = tool.clone();
         ItemMeta resultm = result.getItemMeta();
-        resultm.setCustomModelData(Integer.valueOf(1200001));
+        resultm.setCustomModelData(1200001);
         double dmg = 1.0;
-        if (this.getConfig().getString("UseCustomValues") == "true") {
+        if (this.getConfig().getBoolean("UseCustomValues")) {
             dmg = this.getConfig().getDouble("aPrismarineLongsword.damageAdded");
         }
         resultm.setDisplayName(convertLegacyToSection(this.getConfig().getString("dPrismarineLongsword.name")));
@@ -3100,7 +3084,7 @@ implements Listener {
         resultm.setLore(lore);
         resultm.addItemFlags(new ItemFlag[]{ItemFlag.HIDE_ATTRIBUTES});
         result.setItemMeta(resultm);
-        if (this.getConfig().getString("Prismarine") == "true") {
+        if (this.getConfig().getBoolean("Prismarine")) {
             event.setResult(result);
         }
     }
@@ -3131,9 +3115,9 @@ implements Listener {
         }
         ItemStack result = tool.clone();
         ItemMeta resultm = result.getItemMeta();
-        resultm.setCustomModelData(Integer.valueOf(1200003));
+        resultm.setCustomModelData(1200003);
         double dmg = 1.0;
-        if (this.getConfig().getString("UseCustomValues") == "true") {
+        if (this.getConfig().getBoolean("UseCustomValues")) {
             dmg = this.getConfig().getDouble("aPrismarineScythe.damageAdded");
         }
         resultm.setDisplayName(convertLegacyToSection(this.getConfig().getString("dPrismarineScythe.name")));
@@ -3153,7 +3137,7 @@ implements Listener {
         resultm.setLore(lore);
         resultm.addItemFlags(new ItemFlag[]{ItemFlag.HIDE_ATTRIBUTES});
         result.setItemMeta(resultm);
-        if (this.getConfig().getString("Prismarine") == "true") {
+        if (this.getConfig().getBoolean("Prismarine")) {
             event.setResult(result);
         }
     }
@@ -3184,9 +3168,9 @@ implements Listener {
         }
         ItemStack result = tool.clone();
         ItemMeta resultm = result.getItemMeta();
-        resultm.setCustomModelData(Integer.valueOf(1200005));
+        resultm.setCustomModelData(1200005);
         double dmg = 1.0;
-        if (this.getConfig().getString("UseCustomValues") == "true") {
+        if (this.getConfig().getBoolean("UseCustomValues")) {
             dmg = this.getConfig().getDouble("aPrismarineRapier.damageAdded");
         }
         resultm.setDisplayName(convertLegacyToSection(this.getConfig().getString("dPrismarineRapier.name")));
@@ -3206,7 +3190,7 @@ implements Listener {
         resultm.setLore(lore);
         resultm.addItemFlags(new ItemFlag[]{ItemFlag.HIDE_ATTRIBUTES});
         result.setItemMeta(resultm);
-        if (this.getConfig().getString("Prismarine") == "true") {
+        if (this.getConfig().getBoolean("Prismarine")) {
             event.setResult(result);
         }
     }
@@ -3240,9 +3224,9 @@ implements Listener {
         }
         ItemStack result = tool.clone();
         ItemMeta resultm = result.getItemMeta();
-        resultm.setCustomModelData(Integer.valueOf(1200004));
+        resultm.setCustomModelData(1200004);
         double dmg = 1.0;
-        if (this.getConfig().getString("UseCustomValues") == "true") {
+        if (this.getConfig().getBoolean("UseCustomValues")) {
             dmg = this.getConfig().getDouble("aPrismarineSpear.damageAdded");
         }
         resultm.setDisplayName(convertLegacyToSection(this.getConfig().getString("dPrismarineSpear.name")));
@@ -3264,7 +3248,7 @@ implements Listener {
         resultm.setLore(lore);
         resultm.addItemFlags(new ItemFlag[]{ItemFlag.HIDE_ATTRIBUTES});
         result.setItemMeta(resultm);
-        if (this.getConfig().getString("Prismarine") == "true") {
+        if (this.getConfig().getBoolean("Prismarine")) {
             event.setResult(result);
         }
     }
@@ -3295,9 +3279,9 @@ implements Listener {
         }
         ItemStack result = tool.clone();
         ItemMeta resultm = result.getItemMeta();
-        resultm.setCustomModelData(Integer.valueOf(1200002));
+        resultm.setCustomModelData(1200002);
         double dmg = 1.0;
-        if (this.getConfig().getString("UseCustomValues") == "true") {
+        if (this.getConfig().getBoolean("UseCustomValues")) {
             dmg = this.getConfig().getDouble("aPrismarineKatana.damageAdded");
         }
         resultm.setDisplayName(convertLegacyToSection(this.getConfig().getString("dPrismarineKatana.name")));
@@ -3321,7 +3305,7 @@ implements Listener {
         resultm.setLore(lore);
         resultm.addItemFlags(new ItemFlag[]{ItemFlag.HIDE_ATTRIBUTES});
         result.setItemMeta(resultm);
-        if (this.getConfig().getString("Prismarine") == "true") {
+        if (this.getConfig().getBoolean("Prismarine")) {
             event.setResult(result);
         }
     }
@@ -3352,9 +3336,9 @@ implements Listener {
         }
         ItemStack result = tool.clone();
         ItemMeta resultm = result.getItemMeta();
-        resultm.setCustomModelData(Integer.valueOf(1200006));
+        resultm.setCustomModelData(1200006);
         double dmg = 1.0;
-        if (this.getConfig().getString("UseCustomValues") == "true") {
+        if (this.getConfig().getBoolean("UseCustomValues")) {
             dmg = this.getConfig().getDouble("aPrismarineKnife.damageAdded");
         }
         resultm.setDisplayName(convertLegacyToSection(this.getConfig().getString("dPrismarineKnife.name")));
@@ -3373,7 +3357,7 @@ implements Listener {
         resultm.setLore(lore);
         resultm.addItemFlags(new ItemFlag[]{ItemFlag.HIDE_ATTRIBUTES});
         result.setItemMeta(resultm);
-        if (this.getConfig().getString("Prismarine") == "true") {
+        if (this.getConfig().getBoolean("Prismarine")) {
             event.setResult(result);
         }
     }
@@ -3404,9 +3388,9 @@ implements Listener {
         }
         ItemStack result = tool.clone();
         ItemMeta resultm = result.getItemMeta();
-        resultm.setCustomModelData(Integer.valueOf(1200010));
+        resultm.setCustomModelData(1200010);
         double dmg = 1.0;
-        if (this.getConfig().getString("UseCustomValues") == "true") {
+        if (this.getConfig().getBoolean("UseCustomValues")) {
             dmg = this.getConfig().getDouble("aPrismarineSaber.damageAdded");
         }
         resultm.setDisplayName(convertLegacyToSection(this.getConfig().getString("dPrismarineSaber.name")));
@@ -3423,7 +3407,7 @@ implements Listener {
         resultm.setLore(lore);
         resultm.addItemFlags(new ItemFlag[]{ItemFlag.HIDE_ATTRIBUTES});
         result.setItemMeta(resultm);
-        if (this.getConfig().getString("Prismarine") == "true") {
+        if (this.getConfig().getBoolean("Prismarine")) {
             event.setResult(result);
         }
     }
@@ -3454,9 +3438,9 @@ implements Listener {
         }
         ItemStack result = tool.clone();
         ItemMeta resultm = result.getItemMeta();
-        resultm.setCustomModelData(Integer.valueOf(1200021));
+        resultm.setCustomModelData(1200021);
         double dmg = 1.0;
-        if (this.getConfig().getString("UseCustomValues") == "true") {
+        if (this.getConfig().getBoolean("UseCustomValues")) {
             dmg = this.getConfig().getDouble("aPrismarineCleaver.damageAdded");
         }
         resultm.setDisplayName(convertLegacyToSection(this.getConfig().getString("dPrismarineCleaver.name")));
@@ -3478,7 +3462,7 @@ implements Listener {
         resultm.setLore(lore);
         resultm.addItemFlags(new ItemFlag[]{ItemFlag.HIDE_ATTRIBUTES});
         result.setItemMeta(resultm);
-        if (this.getConfig().getString("Prismarine") == "true") {
+        if (this.getConfig().getBoolean("Prismarine")) {
             event.setResult(result);
         }
     }
@@ -3516,10 +3500,10 @@ implements Listener {
         }
         ItemStack result = tool.clone();
         ItemMeta resultm = result.getItemMeta();
-        resultm.setCustomModelData(Integer.valueOf(1210002));
+        resultm.setCustomModelData(1210002);
         double dmg = 6.0;
         double spd = -2.8;
-        if (this.getConfig().getString("UseCustomValues") == "true") {
+        if (this.getConfig().getBoolean("UseCustomValues")) {
             dmg = this.getConfig().getDouble("aPrismarinePickaxe.damage") - 1.0;
             spd = this.getConfig().getDouble("aPrismarinePickaxe.speed") - 4.0;
         }
@@ -3536,7 +3520,7 @@ implements Listener {
         resultm.setLore(lore);
         resultm.addItemFlags(new ItemFlag[]{ItemFlag.HIDE_ATTRIBUTES});
         result.setItemMeta(resultm);
-        if (this.getConfig().getString("Prismarine") == "true") {
+        if (this.getConfig().getBoolean("Prismarine")) {
             event.setResult(result);
         }
     }
@@ -3569,10 +3553,10 @@ implements Listener {
         }
         ItemStack result = tool.clone();
         ItemMeta resultm = result.getItemMeta();
-        resultm.setCustomModelData(Integer.valueOf(1220001));
+        resultm.setCustomModelData(1220001);
         double dmg = 10.0;
         double spd = -3.0;
-        if (this.getConfig().getString("UseCustomValues") == "true") {
+        if (this.getConfig().getBoolean("UseCustomValues")) {
             dmg = this.getConfig().getDouble("aPrismarineAxe.damage") - 1.0;
             spd = this.getConfig().getDouble("aPrismarineAxe.speed") - 4.0;
         }
@@ -3589,7 +3573,7 @@ implements Listener {
         resultm.setLore(lore);
         resultm.addItemFlags(new ItemFlag[]{ItemFlag.HIDE_ATTRIBUTES});
         result.setItemMeta(resultm);
-        if (this.getConfig().getString("Prismarine") == "true") {
+        if (this.getConfig().getBoolean("Prismarine")) {
             event.setResult(result);
         }
     }
@@ -3622,10 +3606,10 @@ implements Listener {
         }
         ItemStack result = tool.clone();
         ItemMeta resultm = result.getItemMeta();
-        resultm.setCustomModelData(Integer.valueOf(1210004));
+        resultm.setCustomModelData(1210004);
         double dmg = 6.5;
         double spd = -3.0;
-        if (this.getConfig().getString("UseCustomValues") == "true") {
+        if (this.getConfig().getBoolean("UseCustomValues")) {
             dmg = this.getConfig().getDouble("aPrismarineShovel.damage") - 1.0;
             spd = this.getConfig().getDouble("aPrismarineShovel.speed") - 4.0;
         }
@@ -3642,7 +3626,7 @@ implements Listener {
         resultm.setLore(lore);
         resultm.addItemFlags(new ItemFlag[]{ItemFlag.HIDE_ATTRIBUTES});
         result.setItemMeta(resultm);
-        if (this.getConfig().getString("Prismarine") == "true") {
+        if (this.getConfig().getBoolean("Prismarine")) {
             event.setResult(result);
         }
     }
@@ -3675,10 +3659,10 @@ implements Listener {
         }
         ItemStack result = tool.clone();
         ItemMeta resultm = result.getItemMeta();
-        resultm.setCustomModelData(Integer.valueOf(1210005));
+        resultm.setCustomModelData(1210005);
         double dmg = 1.0;
         double spd = 0.0;
-        if (this.getConfig().getString("UseCustomValues") == "true") {
+        if (this.getConfig().getBoolean("UseCustomValues")) {
             dmg = this.getConfig().getDouble("aPrismarineHoe.damage") - 1.0;
             spd = this.getConfig().getDouble("aPrismarineHoe.speed") - 4.0;
         }
@@ -3695,7 +3679,7 @@ implements Listener {
         resultm.setLore(lore);
         resultm.addItemFlags(new ItemFlag[]{ItemFlag.HIDE_ATTRIBUTES});
         result.setItemMeta(resultm);
-        if (this.getConfig().getString("Prismarine") == "true") {
+        if (this.getConfig().getBoolean("Prismarine")) {
             event.setResult(result);
         }
     }
@@ -3728,12 +3712,12 @@ implements Listener {
         }
         ItemStack result = tool.clone();
         ItemMeta resultm = result.getItemMeta();
-        resultm.setCustomModelData(Integer.valueOf(1220001));
+        resultm.setCustomModelData(1220001);
         double arm = 4.0;
         double armt = 3.0;
         double kbr = 0.1;
         double hp = 1.0;
-        if (this.getConfig().getString("UseCustomValues") == "true") {
+        if (this.getConfig().getBoolean("UseCustomValues")) {
             arm = this.getConfig().getDouble("aPrismarineHelmet.Armor");
             armt = this.getConfig().getDouble("aPrismarineHelmet.ArmorToughness");
             kbr = this.getConfig().getDouble("aPrismarineHelmet.KBResist") / 10.0;
@@ -3749,7 +3733,7 @@ implements Listener {
         AttributeModifier modifier4 = new AttributeModifier(UUID.randomUUID(), "Armor", hp, AttributeModifier.Operation.ADD_NUMBER, EquipmentSlot.HEAD);
         resultm.addAttributeModifier(Attribute.MAX_HEALTH, modifier4);
         result.setItemMeta(resultm);
-        if (this.getConfig().getString("Prismarine") == "true") {
+        if (this.getConfig().getBoolean("Prismarine")) {
             event.setResult(result);
         }
     }
@@ -3782,12 +3766,12 @@ implements Listener {
         }
         ItemStack result = tool.clone();
         ItemMeta resultm = result.getItemMeta();
-        resultm.setCustomModelData(Integer.valueOf(1220002));
+        resultm.setCustomModelData(1220002);
         double arm = 9.0;
         double armt = 3.0;
         double kbr = 0.1;
         double hp = 2.0;
-        if (this.getConfig().getString("UseCustomValues") == "true") {
+        if (this.getConfig().getBoolean("UseCustomValues")) {
             arm = this.getConfig().getDouble("aPrismarineChestplate.Armor");
             armt = this.getConfig().getDouble("aPrismarineChestplate.ArmorToughness");
             kbr = this.getConfig().getDouble("aPrismarineChestplate.KBResist") / 10.0;
@@ -3803,7 +3787,7 @@ implements Listener {
         AttributeModifier modifier4 = new AttributeModifier(UUID.randomUUID(), "Armor", hp, AttributeModifier.Operation.ADD_NUMBER, EquipmentSlot.CHEST);
         resultm.addAttributeModifier(Attribute.MAX_HEALTH, modifier4);
         result.setItemMeta(resultm);
-        if (this.getConfig().getString("Prismarine") == "true") {
+        if (this.getConfig().getBoolean("Prismarine")) {
             event.setResult(result);
         }
     }
@@ -3836,12 +3820,12 @@ implements Listener {
         }
         ItemStack result = tool.clone();
         ItemMeta resultm = result.getItemMeta();
-        resultm.setCustomModelData(Integer.valueOf(1220003));
+        resultm.setCustomModelData(1220003);
         double arm = 7.0;
         double armt = 3.0;
         double kbr = 0.1;
         double hp = 2.0;
-        if (this.getConfig().getString("UseCustomValues") == "true") {
+        if (this.getConfig().getBoolean("UseCustomValues")) {
             arm = this.getConfig().getDouble("aPrismarineLeggings.Armor");
             armt = this.getConfig().getDouble("aPrismarineLeggings.ArmorToughness");
             kbr = this.getConfig().getDouble("aPrismarineLeggings.KBResist") / 10.0;
@@ -3857,7 +3841,7 @@ implements Listener {
         AttributeModifier modifier4 = new AttributeModifier(UUID.randomUUID(), "Armor", hp, AttributeModifier.Operation.ADD_NUMBER, EquipmentSlot.LEGS);
         resultm.addAttributeModifier(Attribute.MAX_HEALTH, modifier4);
         result.setItemMeta(resultm);
-        if (this.getConfig().getString("Prismarine") == "true") {
+        if (this.getConfig().getBoolean("Prismarine")) {
             event.setResult(result);
         }
     }
@@ -3890,12 +3874,12 @@ implements Listener {
         }
         ItemStack result = tool.clone();
         ItemMeta resultm = result.getItemMeta();
-        resultm.setCustomModelData(Integer.valueOf(1220004));
+        resultm.setCustomModelData(1220004);
         double arm = 4.0;
         double armt = 3.0;
         double kbr = 0.1;
         double hp = 1.0;
-        if (this.getConfig().getString("UseCustomValues") == "true") {
+        if (this.getConfig().getBoolean("UseCustomValues")) {
             arm = this.getConfig().getDouble("aPrismarineBoots.Armor");
             armt = this.getConfig().getDouble("aPrismarineBoots.ArmorToughness");
             kbr = this.getConfig().getDouble("aPrismarineBoots.KBResist") / 10.0;
@@ -3911,7 +3895,7 @@ implements Listener {
         AttributeModifier modifier4 = new AttributeModifier(UUID.randomUUID(), "Armor", hp, AttributeModifier.Operation.ADD_NUMBER, EquipmentSlot.FEET);
         resultm.addAttributeModifier(Attribute.MAX_HEALTH, modifier4);
         result.setItemMeta(resultm);
-        if (this.getConfig().getString("Prismarine") == "true") {
+        if (this.getConfig().getBoolean("Prismarine")) {
             event.setResult(result);
         }
     }
@@ -3924,7 +3908,7 @@ implements Listener {
     public ShapedRecipe getinsttRecipe() {
         ItemStack item = new ItemStack(Material.PRISMARINE_SHARD);
         ItemMeta meta = item.getItemMeta();
-        meta.setCustomModelData(Integer.valueOf(9999901));
+        meta.setCustomModelData(9999901);
         ArrayList<String> lore = new ArrayList<String>();
         lore.add(convertLegacyToSection(this.getConfig().getString("dPrismarineAlloy.line1")));
         lore.add(convertLegacyToSection(this.getConfig().getString("dPrismarineAlloy.line2")));
@@ -3933,7 +3917,7 @@ implements Listener {
         lore.add(convertLegacyToSection(this.getConfig().getString("dPrismarineAlloy.line5")));
         meta.setLore(lore);
         meta.setDisplayName(convertLegacyToSection(this.getConfig().getString("dPrismarineAlloy.name")));
-        meta.addEnchant(Enchantment.DURABILITY, 5, true);
+        meta.addEnchant(Enchantment.UNBREAKING, 5, true);
         meta.addItemFlags(new ItemFlag[]{ItemFlag.HIDE_ENCHANTS});
         meta.addItemFlags(new ItemFlag[]{ItemFlag.HIDE_ATTRIBUTES});
         item.setItemMeta(meta);
@@ -3991,7 +3975,7 @@ implements Listener {
                         Vector vector = player.getLocation().getDirection();
                         double aspd = 4.0;
                         double x = 1.0;
-                        if (this.getConfig().getString("UseCustomValues") == "true") {
+                        if (this.getConfig().getBoolean("UseCustomValues")) {
                             aspd = this.getConfig().getDouble("aLongBow.arrowSpeed");
                             x = this.getConfig().getDouble("aLongBow.dmgMultiplier");
                         }
@@ -4004,7 +3988,7 @@ implements Listener {
                             Vector vector = player.getLocation().getDirection();
                             double aspd = 5.0;
                             double x = 1.0;
-                            if (this.getConfig().getString("UseCustomValues") == "true") {
+                            if (this.getConfig().getBoolean("UseCustomValues")) {
                                 aspd = this.getConfig().getDouble("aRecurveBow.arrowSpeed");
                                 x = this.getConfig().getDouble("aRecurveBow.dmgMultiplier");
                             }
@@ -4017,7 +4001,7 @@ implements Listener {
                                 Vector vector = player.getLocation().getDirection();
                                 double aspd = 6.0;
                                 double x = 1.0;
-                                if (this.getConfig().getString("UseCustomValues") == "true") {
+                                if (this.getConfig().getBoolean("UseCustomValues")) {
                                     aspd = this.getConfig().getDouble("aCompoundBow.arrowSpeed");
                                     x = this.getConfig().getDouble("aCompoundBow.dmgMultiplier");
                                 }
@@ -4046,7 +4030,7 @@ implements Listener {
         lore.add(convertLegacyToSection(this.getConfig().getString("dLongBow.line4")));
         meta.setLore(lore);
         meta.setDisplayName(convertLegacyToSection(this.getConfig().getString("dLongBow.name")));
-        meta.setCustomModelData(Integer.valueOf(3330001));
+        meta.setCustomModelData(3330001);
         AttributeModifier modifier3 = new AttributeModifier(UUID.randomUUID(), "Speed", -0.01, AttributeModifier.Operation.ADD_NUMBER, EquipmentSlot.HAND);
         meta.addAttributeModifier(Attribute.MOVEMENT_SPEED, modifier3);
         item.setItemMeta(meta);
@@ -4072,7 +4056,7 @@ implements Listener {
         AttributeModifier modifier3 = new AttributeModifier(UUID.randomUUID(), "Speed", -0.02, AttributeModifier.Operation.ADD_NUMBER, EquipmentSlot.HAND);
         meta.addAttributeModifier(Attribute.MOVEMENT_SPEED, modifier3);
         meta.setDisplayName(convertLegacyToSection(this.getConfig().getString("dRecurveBow.name")));
-        meta.setCustomModelData(Integer.valueOf(3330002));
+        meta.setCustomModelData(3330002);
         item.setItemMeta(meta);
         NamespacedKey key = new NamespacedKey((Plugin)this, "recurvebow");
         this.keys.add(key);
@@ -4095,7 +4079,7 @@ implements Listener {
         lore.add(convertLegacyToSection(this.getConfig().getString("dCompoundBow.line4")));
         meta.setLore(lore);
         meta.setDisplayName(convertLegacyToSection(this.getConfig().getString("dCompoundBow.name")));
-        meta.setCustomModelData(Integer.valueOf(3330003));
+        meta.setCustomModelData(3330003);
         AttributeModifier modifier3 = new AttributeModifier(UUID.randomUUID(), "Speed", -0.03, AttributeModifier.Operation.ADD_NUMBER, EquipmentSlot.HAND);
         meta.addAttributeModifier(Attribute.MOVEMENT_SPEED, modifier3);
         item.setItemMeta(meta);
@@ -4121,7 +4105,7 @@ implements Listener {
         lore.add("");
         meta.setLore(lore);
         meta.setDisplayName(ChatColor.GOLD + "Eelytra");
-        meta.setCustomModelData(Integer.valueOf(1560001));
+        meta.setCustomModelData(1560001);
         item.setItemMeta(meta);
         NamespacedKey key = new NamespacedKey((Plugin)this, "eelytra");
         this.keys.add(key);
@@ -4138,7 +4122,7 @@ implements Listener {
         Player player = event.getPlayer();
         if (player.getInventory().getChestplate() != null && player.getInventory().getChestplate().getItemMeta() != null && player.getInventory().getChestplate().getItemMeta().hasCustomModelData() && player.getInventory().getChestplate().getItemMeta().hasLore() && player.getInventory().getChestplate().getItemMeta().getCustomModelData() == 1560001 && event.getAction() == Action.RIGHT_CLICK_AIR && player.isGliding()) {
             ItemMeta meta = player.getInventory().getChestplate().getItemMeta();
-            meta.setCustomModelData(Integer.valueOf(1560002));
+            meta.setCustomModelData(1560002);
             player.getInventory().getChestplate().setItemMeta(meta);
             World world = player.getWorld();
             world.playSound(player.getLocation(), Sound.ENTITY_PHANTOM_FLAP, 10.0f, 1.0f);
@@ -4164,7 +4148,7 @@ implements Listener {
                         public void run() {
                             if (player.getInventory().getChestplate() != null) {
                                 ItemMeta meta = player.getInventory().getChestplate().getItemMeta();
-                                meta.setCustomModelData(Integer.valueOf(1560001));
+                                meta.setCustomModelData(1560001);
                                 player.getInventory().getChestplate().setItemMeta(meta);
                             }
                         }
@@ -4213,7 +4197,7 @@ implements Listener {
         ItemStack item = new ItemStack(Material.ACACIA_BOAT);
         ItemMeta meta = item.getItemMeta();
         meta.setDisplayName(ChatColor.GOLD + "aaa ingot");
-        meta.setCustomModelData(Integer.valueOf(3330001));
+        meta.setCustomModelData(3330001);
         meta.addEnchant(Enchantment.MENDING, 43, true);
         item.setItemMeta(meta);
         NamespacedKey key = new NamespacedKey((Plugin)this, "aaaingot");
@@ -4234,7 +4218,7 @@ implements Listener {
         ItemStack item2 = new ItemStack(Material.ACACIA_BOAT);
         ItemMeta meta2 = item.getItemMeta();
         meta2.setDisplayName(ChatColor.GOLD + "aaa ingot");
-        meta2.setCustomModelData(Integer.valueOf(3330001));
+        meta2.setCustomModelData(3330001);
         meta2.addEnchant(Enchantment.MENDING, 43, true);
         item2.setItemMeta(meta2);
         RecipeChoice.ExactChoice custom1Choice = new RecipeChoice.ExactChoice(item2);
@@ -4269,7 +4253,7 @@ implements Listener {
         AttributeModifier modifier2 = new AttributeModifier(UUID.randomUUID(), "Attack Damage", 3.0, AttributeModifier.Operation.ADD_NUMBER, EquipmentSlot.HAND);
         meta.addAttributeModifier(Attribute.ATTACK_DAMAGE, modifier2);
         meta.setDisplayName("Bone Katana");
-        meta.setCustomModelData(Integer.valueOf(4000002));
+        meta.setCustomModelData(4000002);
         item.setItemMeta(meta);
         NamespacedKey key = new NamespacedKey((Plugin)this, "bone_katana");
         this.keys.add(key);
@@ -4294,7 +4278,7 @@ implements Listener {
         meta.addItemFlags(new ItemFlag[]{ItemFlag.HIDE_ATTRIBUTES});
         meta.setLore(lore);
         meta.setDisplayName(convertLegacyToSection(this.getConfig().getString("dReallyGoodSword.name")));
-        meta.setCustomModelData(Integer.valueOf(1234567));
+        meta.setCustomModelData(1234567);
         item.setItemMeta(meta);
         NamespacedKey key = new NamespacedKey((Plugin)this, "reallygoodsword");
         this.keys.add(key);
@@ -4318,7 +4302,7 @@ implements Listener {
         lore.add(convertLegacyToSection(this.getConfig().getString("dRepeatingCrossbow.line5")));
         meta.setLore(lore);
         meta.setDisplayName(convertLegacyToSection(this.getConfig().getString("dRepeatingCrossbow.name")));
-        meta.setCustomModelData(Integer.valueOf(5552001));
+        meta.setCustomModelData(5552001);
         item.setItemMeta(meta);
         NamespacedKey key = new NamespacedKey((Plugin)this, "repeater_crossbow");
         this.keys.add(key);
@@ -4343,7 +4327,7 @@ implements Listener {
         lore.add(convertLegacyToSection(this.getConfig().getString("dBurstCrossbow.line5")));
         meta.setLore(lore);
         meta.setDisplayName(convertLegacyToSection(this.getConfig().getString("dBurstCrossbow.name")));
-        meta.setCustomModelData(Integer.valueOf(5552002));
+        meta.setCustomModelData(5552002);
         item.setItemMeta(meta);
         NamespacedKey key = new NamespacedKey((Plugin)this, "burst_crossbow");
         this.keys.add(key);
@@ -4369,7 +4353,7 @@ implements Listener {
         lore.add(convertLegacyToSection(this.getConfig().getString("dRedstoneBow.line6")));
         meta.setLore(lore);
         meta.setDisplayName(convertLegacyToSection(this.getConfig().getString("dRedstoneBow.name")));
-        meta.setCustomModelData(Integer.valueOf(3330005));
+        meta.setCustomModelData(3330005);
         item.setItemMeta(meta);
         NamespacedKey key = new NamespacedKey((Plugin)this, "redstone_bow");
         this.keys.add(key);
@@ -4856,18 +4840,18 @@ implements Listener {
             int random2;
             World world = killed.getWorld();
             int random = CombatWeaponryPlus.getRandomInt(5);
-            if (random == 1 && this.getConfig().getString("WitherBones") == "true") {
+            if (random == 1 && this.getConfig().getString("WitherBones")) {
                 world.dropItemNaturally(killed.getLocation(), Items.witherBone(this.getConfig()));
             }
-            if (random == 2 && this.getConfig().getString("WitherBones") == "true") {
+            if (random == 2 && this.getConfig().getString("WitherBones")) {
                 world.dropItemNaturally(killed.getLocation(), Items.witherBone(this.getConfig()));
                 world.dropItemNaturally(killed.getLocation(), Items.witherBone(this.getConfig()));
             }
-            if ((random2 = CombatWeaponryPlus.getRandomInt(100).intValue()) == 1 && this.getConfig().getString("Vessel") == "true") {
+            if ((random2 = CombatWeaponryPlus.getRandomInt(100).intValue()) == 1 && this.getConfig().getString("Vessel")) {
                 world.dropItemNaturally(killed.getLocation(), Items.vessel(this.getConfig()));
             }
         }
-        if (this.getConfig().getString("InfusedVessel") == "true" && killed.getType() == EntityType.WITHER && event.getEntity().getKiller() != null && event.getEntity().getKiller().getType() == EntityType.PLAYER) {
+        if (this.getConfig().getBoolean("InfusedVessel") && killed.getType() == EntityType.WITHER && event.getEntity().getKiller() != null && event.getEntity().getKiller().getType() == EntityType.PLAYER) {
             player = event.getEntity().getKiller();
             if (!player.getInventory().getItemInMainHand().hasItemMeta()) {
                 return;
@@ -4880,11 +4864,11 @@ implements Listener {
                 world.spawnParticle(Particle.ENCHANTMENT_TABLE, player.getLocation().getX(), player.getLocation().getY() + 2.0, player.getLocation().getZ(), 500);
                 world.spawnParticle(Particle.CLOUD, player.getLocation(), 100);
                 ItemMeta meta2 = player.getInventory().getItemInMainHand().getItemMeta();
-                meta2.setCustomModelData(Integer.valueOf(2222224));
+                meta2.setCustomModelData(2222224);
                 meta2.setDisplayName(convertLegacyToSection(this.getConfig().getString("dInfusedVessel.name")));
                 dmg = 9.0;
                 spd = -2.4;
-                if (this.getConfig().getString("UseCustomValues") == "true") {
+                if (this.getConfig().getBoolean("UseCustomValues")) {
                     dmg = this.getConfig().getDouble("aInfusedVessel.damage") - 1.0;
                     spd = this.getConfig().getDouble("aInfusedVessel.speed") - 4.0;
                 }
@@ -4909,7 +4893,7 @@ implements Listener {
                 player.getInventory().getItemInMainHand().setItemMeta(meta2);
             }
         }
-        if (this.getConfig().getString("CursedVessel") == "true" && killed.getType() == EntityType.ENDER_DRAGON && event.getEntity().getKiller() != null && event.getEntity().getKiller().getType() == EntityType.PLAYER) {
+        if (this.getConfig().getBoolean("CursedVessel") && killed.getType() == EntityType.ENDER_DRAGON && event.getEntity().getKiller() != null && event.getEntity().getKiller().getType() == EntityType.PLAYER) {
             player = event.getEntity().getKiller();
             if (!player.getInventory().getItemInMainHand().hasItemMeta()) {
                 return;
@@ -4922,11 +4906,11 @@ implements Listener {
                 world.spawnParticle(Particle.ENCHANTMENT_TABLE, player.getLocation().getX(), player.getLocation().getY() + 2.0, player.getLocation().getZ(), 500);
                 world.spawnParticle(Particle.CLOUD, player.getLocation(), 100);
                 ItemMeta meta3 = player.getInventory().getItemInMainHand().getItemMeta();
-                meta3.setCustomModelData(Integer.valueOf(2222225));
+                meta3.setCustomModelData(2222225);
                 meta3.setDisplayName(convertLegacyToSection(this.getConfig().getString("dCursedVessel.name")));
                 dmg = 9.0;
                 spd = -2.4;
-                if (this.getConfig().getString("UseCustomValues") == "true") {
+                if (this.getConfig().getBoolean("UseCustomValues")) {
                     dmg = this.getConfig().getDouble("aCursedVessel.damage") - 1.0;
                     spd = this.getConfig().getDouble("aCursedVessel.speed") - 4.0;
                 }
@@ -4961,12 +4945,12 @@ implements Listener {
     public ShapedRecipe getDiaShieldRecipe() {
         ItemStack item = new ItemStack(Material.SHIELD);
         ItemMeta meta = item.getItemMeta();
-        if (this.getConfig().getString("EnchantsDiamondShield") == "true") {
+        if (this.getConfig().getBoolean("EnchantsDiamondShield")) {
             int num = this.getConfig().getInt("DShieldEnchantLevels.Unbreaking");
-            meta.addEnchant(Enchantment.DURABILITY, num, true);
+            meta.addEnchant(Enchantment.UNBREAKING, num, true);
         }
         meta.setDisplayName("Diamond Shield");
-        meta.setCustomModelData(Integer.valueOf(5430001));
+        meta.setCustomModelData(5430001);
         item.setItemMeta(meta);
         NamespacedKey key = new NamespacedKey((Plugin)this, "diamondshield");
         this.keys.add(key);
@@ -4980,12 +4964,12 @@ implements Listener {
     public ShapedRecipe getNethShieldRecipe() {
         ItemStack item = new ItemStack(Material.SHIELD);
         ItemMeta meta = item.getItemMeta();
-        if (this.getConfig().getString("EnchantsNetheriteShield") == "true") {
+        if (this.getConfig().getBoolean("EnchantsNetheriteShield")) {
             int num = this.getConfig().getInt("NShieldEnchantLevels.Unbreaking");
-            meta.addEnchant(Enchantment.DURABILITY, num, true);
+            meta.addEnchant(Enchantment.UNBREAKING, num, true);
         }
         meta.setDisplayName("Netherite Shield");
-        meta.setCustomModelData(Integer.valueOf(5430002));
+        meta.setCustomModelData(5430002);
         item.setItemMeta(meta);
         NamespacedKey key = new NamespacedKey((Plugin)this, "netheriteshield");
         this.keys.add(key);
@@ -5009,14 +4993,14 @@ implements Listener {
                         world = player.getWorld();
                         world.playSound(player.getLocation(), Sound.ITEM_ARMOR_EQUIP_GENERIC, 10.0f, 1.0f);
                         meta = player.getInventory().getItemInMainHand().getItemMeta();
-                        meta.setCustomModelData(Integer.valueOf(1222223));
+                        meta.setCustomModelData(1222223);
                         player.getInventory().getItemInMainHand().setItemMeta(meta);
                         this.getServer().getScheduler().runTaskLater((Plugin)this, new Runnable(){
 
                             @Override
                             public void run() {
                                 if (player.getInventory().getItemInMainHand().getType() == Material.NETHERITE_SWORD && player.getInventory().getItemInMainHand().getItemMeta().hasCustomModelData() && player.getInventory().getItemInMainHand().getItemMeta().getCustomModelData() == 1222223) {
-                                    meta.setCustomModelData(Integer.valueOf(2222223));
+                                    meta.setCustomModelData(2222223);
                                     player.getInventory().getItemInMainHand().setItemMeta(meta);
                                 }
                             }
@@ -5032,14 +5016,14 @@ implements Listener {
                         world = player.getWorld();
                         world.playSound(player.getLocation(), Sound.ITEM_ARMOR_EQUIP_GENERIC, 10.0f, 1.0f);
                         meta = player.getInventory().getItemInMainHand().getItemMeta();
-                        meta.setCustomModelData(Integer.valueOf(1222224));
+                        meta.setCustomModelData(1222224);
                         player.getInventory().getItemInMainHand().setItemMeta(meta);
                         this.getServer().getScheduler().runTaskLater((Plugin)this, new Runnable(){
 
                             @Override
                             public void run() {
                                 if (player.getInventory().getItemInMainHand().getType() == Material.NETHERITE_SWORD && player.getInventory().getItemInMainHand().getItemMeta().hasCustomModelData() && player.getInventory().getItemInMainHand().getItemMeta().getCustomModelData() == 1222224) {
-                                    meta.setCustomModelData(Integer.valueOf(2222224));
+                                    meta.setCustomModelData(2222224);
                                     player.getInventory().getItemInMainHand().setItemMeta(meta);
                                 }
                             }
@@ -5055,14 +5039,14 @@ implements Listener {
                         world = player.getWorld();
                         world.playSound(player.getLocation(), Sound.ITEM_ARMOR_EQUIP_GENERIC, 10.0f, 1.0f);
                         meta = player.getInventory().getItemInMainHand().getItemMeta();
-                        meta.setCustomModelData(Integer.valueOf(1222225));
+                        meta.setCustomModelData(1222225);
                         player.getInventory().getItemInMainHand().setItemMeta(meta);
                         this.getServer().getScheduler().runTaskLater((Plugin)this, new Runnable(){
 
                             @Override
                             public void run() {
                                 if (player.getInventory().getItemInMainHand().getType() == Material.NETHERITE_SWORD && player.getInventory().getItemInMainHand().getItemMeta().hasCustomModelData() && player.getInventory().getItemInMainHand().getItemMeta().getCustomModelData() == 1222225) {
-                                    meta.setCustomModelData(Integer.valueOf(2222225));
+                                    meta.setCustomModelData(2222225);
                                     player.getInventory().getItemInMainHand().setItemMeta(meta);
                                 }
                             }
@@ -5081,14 +5065,14 @@ implements Listener {
                         world = player.getWorld();
                         world.playSound(player.getLocation(), Sound.ITEM_ARMOR_EQUIP_GENERIC, 10.0f, 1.0f);
                         meta = player.getInventory().getItemInMainHand().getItemMeta();
-                        meta.setCustomModelData(Integer.valueOf(1222226));
+                        meta.setCustomModelData(1222226);
                         player.getInventory().getItemInMainHand().setItemMeta(meta);
                         this.getServer().getScheduler().runTaskLater((Plugin)this, new Runnable(){
 
                             @Override
                             public void run() {
                                 if (player.getInventory().getItemInMainHand().getType() == Material.NETHERITE_SWORD && player.getInventory().getItemInMainHand().getItemMeta().hasCustomModelData() && player.getInventory().getItemInMainHand().getItemMeta().getCustomModelData() == 1222226) {
-                                    meta.setCustomModelData(Integer.valueOf(2222226));
+                                    meta.setCustomModelData(2222226);
                                     player.getInventory().getItemInMainHand().setItemMeta(meta);
                                 }
                             }
@@ -5107,14 +5091,14 @@ implements Listener {
                         world = player.getWorld();
                         world.playSound(player.getLocation(), Sound.ITEM_ARMOR_EQUIP_GENERIC, 10.0f, 1.0f);
                         meta = player.getInventory().getItemInMainHand().getItemMeta();
-                        meta.setCustomModelData(Integer.valueOf(1222227));
+                        meta.setCustomModelData(1222227);
                         player.getInventory().getItemInMainHand().setItemMeta(meta);
                         this.getServer().getScheduler().runTaskLater((Plugin)this, new Runnable(){
 
                             @Override
                             public void run() {
                                 if (player.getInventory().getItemInMainHand().getType() == Material.NETHERITE_SWORD && player.getInventory().getItemInMainHand().getItemMeta().hasCustomModelData() && player.getInventory().getItemInMainHand().getItemMeta().getCustomModelData() == 1222227) {
-                                    meta.setCustomModelData(Integer.valueOf(2222227));
+                                    meta.setCustomModelData(2222227);
                                     player.getInventory().getItemInMainHand().setItemMeta(meta);
                                 }
                             }
@@ -5133,14 +5117,14 @@ implements Listener {
                         world = player.getWorld();
                         world.playSound(player.getLocation(), Sound.ITEM_ARMOR_EQUIP_GENERIC, 10.0f, 1.0f);
                         meta = player.getInventory().getItemInMainHand().getItemMeta();
-                        meta.setCustomModelData(Integer.valueOf(1222228));
+                        meta.setCustomModelData(1222228);
                         player.getInventory().getItemInMainHand().setItemMeta(meta);
                         this.getServer().getScheduler().runTaskLater((Plugin)this, new Runnable(){
 
                             @Override
                             public void run() {
                                 if (player.getInventory().getItemInMainHand().getType() == Material.NETHERITE_SWORD && player.getInventory().getItemInMainHand().getItemMeta().hasCustomModelData() && player.getInventory().getItemInMainHand().getItemMeta().getCustomModelData() == 1222228) {
-                                    meta.setCustomModelData(Integer.valueOf(2222228));
+                                    meta.setCustomModelData(2222228);
                                     player.getInventory().getItemInMainHand().setItemMeta(meta);
                                 }
                             }
@@ -5159,14 +5143,14 @@ implements Listener {
                         world = player.getWorld();
                         world.playSound(player.getLocation(), Sound.ITEM_ARMOR_EQUIP_GENERIC, 10.0f, 1.0f);
                         meta = player.getInventory().getItemInMainHand().getItemMeta();
-                        meta.setCustomModelData(Integer.valueOf(1222229));
+                        meta.setCustomModelData(1222229);
                         player.getInventory().getItemInMainHand().setItemMeta(meta);
                         this.getServer().getScheduler().runTaskLater((Plugin)this, new Runnable(){
 
                             @Override
                             public void run() {
                                 if (player.getInventory().getItemInMainHand().getType() == Material.NETHERITE_SWORD && player.getInventory().getItemInMainHand().getItemMeta().hasCustomModelData() && player.getInventory().getItemInMainHand().getItemMeta().getCustomModelData() == 1222229) {
-                                    meta.setCustomModelData(Integer.valueOf(2222229));
+                                    meta.setCustomModelData(2222229);
                                     player.getInventory().getItemInMainHand().setItemMeta(meta);
                                 }
                             }
@@ -5205,10 +5189,10 @@ implements Listener {
         ItemStack item = new ItemStack(Material.NETHERITE_SWORD);
         ItemMeta meta = item.getItemMeta();
         meta.setDisplayName(convertLegacyToSection(this.getConfig().getString("dAwakenedVesselPurple.name")));
-        meta.setCustomModelData(Integer.valueOf(2222228));
+        meta.setCustomModelData(2222228);
         double dmg = 11.0;
         double spd = -2.6;
-        if (this.getConfig().getString("UseCustomValues") == "true") {
+        if (this.getConfig().getBoolean("UseCustomValues")) {
             dmg = this.getConfig().getDouble("aAwakenedVesselPurple.damage") - 1.0;
             spd = this.getConfig().getDouble("aAwakenedVesselPurple.speed") - 4.0;
         }
@@ -5236,7 +5220,7 @@ implements Listener {
         meta.setLore(lore);
         meta.addItemFlags(new ItemFlag[]{ItemFlag.HIDE_ATTRIBUTES});
         item.setItemMeta(meta);
-        if (this.getConfig().getString("AwakenedVesselPurple") == "true") {
+        if (this.getConfig().getBoolean("AwakenedVesselPurple")) {
             event.setResult(item);
         }
     }
@@ -5268,10 +5252,10 @@ implements Listener {
         ItemStack item = new ItemStack(Material.NETHERITE_SWORD);
         ItemMeta meta = item.getItemMeta();
         meta.setDisplayName(convertLegacyToSection(this.getConfig().getString("dAwakenedVesselWhite.name")));
-        meta.setCustomModelData(Integer.valueOf(2222226));
+        meta.setCustomModelData(2222226);
         double dmg = 11.0;
         double spd = -2.6;
-        if (this.getConfig().getString("UseCustomValues") == "true") {
+        if (this.getConfig().getBoolean("UseCustomValues")) {
             dmg = this.getConfig().getDouble("aAwakenedVesselWhite.damage") - 1.0;
             spd = this.getConfig().getDouble("aAwakenedVesselWhite.speed") - 4.0;
         }
@@ -5299,7 +5283,7 @@ implements Listener {
         meta.setLore(lore);
         meta.addItemFlags(new ItemFlag[]{ItemFlag.HIDE_ATTRIBUTES});
         item.setItemMeta(meta);
-        if (this.getConfig().getString("AwakenedVesselWhite") == "true") {
+        if (this.getConfig().getBoolean("AwakenedVesselWhite")) {
             event.setResult(item);
         }
     }
@@ -5347,14 +5331,14 @@ implements Listener {
             if ((event.getAction() == Action.RIGHT_CLICK_AIR || event.getAction() == Action.RIGHT_CLICK_BLOCK) && player.isSneaking() && Cooldown.checkCooldown(event.getPlayer())) {
                 if (player.getInventory().getItemInMainHand().getItemMeta().getCustomModelData() == 2222226 || player.getInventory().getItemInMainHand().getItemMeta().getCustomModelData() == 1222226) {
                     meta = player.getInventory().getItemInMainHand().getItemMeta();
-                    meta.setCustomModelData(Integer.valueOf(2222227));
+                    meta.setCustomModelData(2222227);
                     player.getInventory().getItemInMainHand().setItemMeta(meta);
                     player.sendMessage(ChatColor.RED + "Magic Aura: DISABLED");
                     Cooldown.setCooldown(event.getPlayer(), 1);
                 }
                 if (Cooldown.checkCooldown(event.getPlayer()) && (player.getInventory().getItemInMainHand().getItemMeta().getCustomModelData() == 2222227 || player.getInventory().getItemInMainHand().getItemMeta().getCustomModelData() == 1222227)) {
                     meta = player.getInventory().getItemInMainHand().getItemMeta();
-                    meta.setCustomModelData(Integer.valueOf(2222226));
+                    meta.setCustomModelData(2222226);
                     player.getInventory().getItemInMainHand().setItemMeta(meta);
                     player.sendMessage(ChatColor.GREEN + "Magic Aura: ENABLED");
                     Cooldown.setCooldown(event.getPlayer(), 1);
@@ -5363,14 +5347,14 @@ implements Listener {
             if ((event.getAction() == Action.RIGHT_CLICK_AIR || event.getAction() == Action.RIGHT_CLICK_BLOCK) && player.isSneaking() && Cooldown.checkCooldown(event.getPlayer())) {
                 if (player.getInventory().getItemInMainHand().getItemMeta().getCustomModelData() == 2222228 || player.getInventory().getItemInMainHand().getItemMeta().getCustomModelData() == 1222228) {
                     meta = player.getInventory().getItemInMainHand().getItemMeta();
-                    meta.setCustomModelData(Integer.valueOf(2222229));
+                    meta.setCustomModelData(2222229);
                     player.getInventory().getItemInMainHand().setItemMeta(meta);
                     player.sendMessage(ChatColor.RED + "Evocation: DISABLED");
                     Cooldown.setCooldown(event.getPlayer(), 1);
                 }
                 if (Cooldown.checkCooldown(event.getPlayer()) && (player.getInventory().getItemInMainHand().getItemMeta().getCustomModelData() == 2222229 || player.getInventory().getItemInMainHand().getItemMeta().getCustomModelData() == 1222229)) {
                     meta = player.getInventory().getItemInMainHand().getItemMeta();
-                    meta.setCustomModelData(Integer.valueOf(2222228));
+                    meta.setCustomModelData(2222228);
                     player.getInventory().getItemInMainHand().setItemMeta(meta);
                     player.sendMessage(ChatColor.GREEN + "Evocation: ENABLED");
                     Cooldown.setCooldown(event.getPlayer(), 1);
@@ -5387,7 +5371,7 @@ implements Listener {
         lore.add(convertLegacyToSection(this.getConfig().getString("dStarCharm.line2")));
         meta.setLore(lore);
         meta.setDisplayName(convertLegacyToSection(this.getConfig().getString("dStarCharm.name")));
-        meta.setCustomModelData(Integer.valueOf(4920001));
+        meta.setCustomModelData(4920001);
         item.setItemMeta(meta);
         NamespacedKey key = new NamespacedKey((Plugin)this, "star_charm");
         this.keys.add(key);
@@ -5403,7 +5387,7 @@ implements Listener {
     public void onRightClickEntity(PlayerInteractEntityEvent event) {
         Player player = event.getPlayer();
         if (event.getHand().equals((Object)EquipmentSlot.HAND) && player.getInventory().getItemInOffHand() != null && player.getInventory().getItemInOffHand().hasItemMeta() && player.getInventory().getItemInOffHand().getItemMeta().hasCustomModelData() && (player.getInventory().getItemInOffHand().getItemMeta().getCustomModelData() == 1000010 || player.getInventory().getItemInOffHand().getItemMeta().getCustomModelData() == 1200010 || player.getInventory().getItemInOffHand().getItemMeta().getCustomModelData() == 1000030)) {
-            if (this.getConfig().getString("DualWieldSaberOnly") == "true" && player.getInventory().getItemInMainHand() != null && player.getInventory().getItemInMainHand().hasItemMeta()) {
+            if (this.getConfig().getBoolean("DualWieldSaberOnly") && player.getInventory().getItemInMainHand() != null && player.getInventory().getItemInMainHand().hasItemMeta()) {
                 if (player.getInventory().getItemInMainHand().getType().equals((Object)Material.WOODEN_SWORD)) {
                     if (player.getInventory().getItemInMainHand().getItemMeta().hasCustomModelData() && player.getInventory().getItemInMainHand().getItemMeta().getCustomModelData() != 1000010 && player.getInventory().getItemInMainHand().getItemMeta().getCustomModelData() != 1200010 && player.getInventory().getItemInMainHand().getItemMeta().getCustomModelData() != 1000030) {
                         return;
@@ -5727,7 +5711,7 @@ implements Listener {
         meta.addItemFlags(new ItemFlag[]{ItemFlag.HIDE_ATTRIBUTES});
         double dmg = 3.0;
         double spd = -2.4;
-        if (this.getConfig().getString("UseCustomValues") == "true") {
+        if (this.getConfig().getBoolean("UseCustomValues")) {
             dmg = this.getConfig().getDouble("aWoodenSaber.damage") - 1.0;
             spd = this.getConfig().getDouble("aWoodenSaber.speed") - 4.0;
         }
@@ -5736,7 +5720,7 @@ implements Listener {
         AttributeModifier modifier2 = new AttributeModifier(UUID.randomUUID(), "Attack Damage", dmg, AttributeModifier.Operation.ADD_NUMBER, EquipmentSlot.HAND);
         meta.addAttributeModifier(Attribute.ATTACK_DAMAGE, modifier2);
         meta.setDisplayName(convertLegacyToSection(this.getConfig().getString("dWoodenSaber.name")));
-        meta.setCustomModelData(Integer.valueOf(1000010));
+        meta.setCustomModelData(1000010);
         item.setItemMeta(meta);
         NamespacedKey key = new NamespacedKey((Plugin)this, "wooden_saber");
         this.keys.add(key);
@@ -5761,7 +5745,7 @@ implements Listener {
         meta.addItemFlags(new ItemFlag[]{ItemFlag.HIDE_ATTRIBUTES});
         double dmg = 3.0;
         double spd = -2.4;
-        if (this.getConfig().getString("UseCustomValues") == "true") {
+        if (this.getConfig().getBoolean("UseCustomValues")) {
             dmg = this.getConfig().getDouble("aGoldenSaber.damage") - 1.0;
             spd = this.getConfig().getDouble("aGoldenSaber.speed") - 4.0;
         }
@@ -5770,7 +5754,7 @@ implements Listener {
         AttributeModifier modifier2 = new AttributeModifier(UUID.randomUUID(), "Attack Damage", dmg, AttributeModifier.Operation.ADD_NUMBER, EquipmentSlot.HAND);
         meta.addAttributeModifier(Attribute.ATTACK_DAMAGE, modifier2);
         meta.setDisplayName(convertLegacyToSection(this.getConfig().getString("dGoldenSaber.name")));
-        meta.setCustomModelData(Integer.valueOf(1000010));
+        meta.setCustomModelData(1000010);
         item.setItemMeta(meta);
         NamespacedKey key = new NamespacedKey((Plugin)this, "golden_saber");
         this.keys.add(key);
@@ -5796,7 +5780,7 @@ implements Listener {
         meta.addItemFlags(new ItemFlag[]{ItemFlag.HIDE_ATTRIBUTES});
         double dmg = 4.0;
         double spd = -2.4;
-        if (this.getConfig().getString("UseCustomValues") == "true") {
+        if (this.getConfig().getBoolean("UseCustomValues")) {
             dmg = this.getConfig().getDouble("aStoneSaber.damage") - 1.0;
             spd = this.getConfig().getDouble("aStoneSaber.speed") - 4.0;
         }
@@ -5805,7 +5789,7 @@ implements Listener {
         AttributeModifier modifier2 = new AttributeModifier(UUID.randomUUID(), "Attack Damage", dmg, AttributeModifier.Operation.ADD_NUMBER, EquipmentSlot.HAND);
         meta.addAttributeModifier(Attribute.ATTACK_DAMAGE, modifier2);
         meta.setDisplayName(convertLegacyToSection(this.getConfig().getString("dStoneSaber.name")));
-        meta.setCustomModelData(Integer.valueOf(1000010));
+        meta.setCustomModelData(1000010);
         item.setItemMeta(meta);
         NamespacedKey key = new NamespacedKey((Plugin)this, "stone_saber");
         this.keys.add(key);
@@ -5831,7 +5815,7 @@ implements Listener {
         meta.addItemFlags(new ItemFlag[]{ItemFlag.HIDE_ATTRIBUTES});
         double dmg = 5.0;
         double spd = -2.4;
-        if (this.getConfig().getString("UseCustomValues") == "true") {
+        if (this.getConfig().getBoolean("UseCustomValues")) {
             dmg = this.getConfig().getDouble("aIronSaber.damage") - 1.0;
             spd = this.getConfig().getDouble("aIronSaber.speed") - 4.0;
         }
@@ -5840,7 +5824,7 @@ implements Listener {
         AttributeModifier modifier2 = new AttributeModifier(UUID.randomUUID(), "Attack Damage", dmg, AttributeModifier.Operation.ADD_NUMBER, EquipmentSlot.HAND);
         meta.addAttributeModifier(Attribute.ATTACK_DAMAGE, modifier2);
         meta.setDisplayName(convertLegacyToSection(this.getConfig().getString("dIronSaber.name")));
-        meta.setCustomModelData(Integer.valueOf(1000010));
+        meta.setCustomModelData(1000010);
         item.setItemMeta(meta);
         NamespacedKey key = new NamespacedKey((Plugin)this, "iron_saber");
         this.keys.add(key);
@@ -5866,7 +5850,7 @@ implements Listener {
         meta.addItemFlags(new ItemFlag[]{ItemFlag.HIDE_ATTRIBUTES});
         double dmg = 5.0;
         double spd = -2.4;
-        if (this.getConfig().getString("UseCustomValues") == "true") {
+        if (this.getConfig().getBoolean("UseCustomValues")) {
             dmg = this.getConfig().getDouble("aEmeraldSaber.damage") - 1.0;
             spd = this.getConfig().getDouble("aEmeraldSaber.speed") - 4.0;
         }
@@ -5875,11 +5859,11 @@ implements Listener {
         AttributeModifier modifier2 = new AttributeModifier(UUID.randomUUID(), "Attack Damage", dmg, AttributeModifier.Operation.ADD_NUMBER, EquipmentSlot.HAND);
         meta.addAttributeModifier(Attribute.ATTACK_DAMAGE, modifier2);
         meta.setDisplayName(convertLegacyToSection(this.getConfig().getString("dEmeraldSaber.name")));
-        meta.setCustomModelData(Integer.valueOf(1000030));
-        if (this.getConfig().getString("EnchantsOnEmeraldGear") == "true") {
+        meta.setCustomModelData(1000030);
+        if (this.getConfig().getBoolean("EnchantsOnEmeraldGear")) {
             int num = this.getConfig().getInt("EmeraldGearEnchantLevels.Unbreaking");
             int num2 = this.getConfig().getInt("EmeraldGearEnchantLevels.Mending");
-            meta.addEnchant(Enchantment.DURABILITY, num, true);
+            meta.addEnchant(Enchantment.UNBREAKING, num, true);
             meta.addEnchant(Enchantment.MENDING, num2, true);
         }
         item.setItemMeta(meta);
@@ -5907,7 +5891,7 @@ implements Listener {
         meta.addItemFlags(new ItemFlag[]{ItemFlag.HIDE_ATTRIBUTES});
         double dmg = 6.0;
         double spd = -2.4;
-        if (this.getConfig().getString("UseCustomValues") == "true") {
+        if (this.getConfig().getBoolean("UseCustomValues")) {
             dmg = this.getConfig().getDouble("aDiamondSaber.damage") - 1.0;
             spd = this.getConfig().getDouble("aDiamondSaber.speed") - 4.0;
         }
@@ -5916,7 +5900,7 @@ implements Listener {
         AttributeModifier modifier2 = new AttributeModifier(UUID.randomUUID(), "Attack Damage", dmg, AttributeModifier.Operation.ADD_NUMBER, EquipmentSlot.HAND);
         meta.addAttributeModifier(Attribute.ATTACK_DAMAGE, modifier2);
         meta.setDisplayName(convertLegacyToSection(this.getConfig().getString("dDiamondSaber.name")));
-        meta.setCustomModelData(Integer.valueOf(1000010));
+        meta.setCustomModelData(1000010);
         item.setItemMeta(meta);
         NamespacedKey key = new NamespacedKey((Plugin)this, "diamond_saber");
         this.keys.add(key);
@@ -5942,7 +5926,7 @@ implements Listener {
         meta.addItemFlags(new ItemFlag[]{ItemFlag.HIDE_ATTRIBUTES});
         double dmg = 7.0;
         double spd = -2.4;
-        if (this.getConfig().getString("UseCustomValues") == "true") {
+        if (this.getConfig().getBoolean("UseCustomValues")) {
             dmg = this.getConfig().getDouble("aNetheriteSaber.damage") - 1.0;
             spd = this.getConfig().getDouble("aNetheriteSaber.speed") - 4.0;
         }
@@ -5951,7 +5935,7 @@ implements Listener {
         AttributeModifier modifier2 = new AttributeModifier(UUID.randomUUID(), "Attack Damage", dmg, AttributeModifier.Operation.ADD_NUMBER, EquipmentSlot.HAND);
         meta.addAttributeModifier(Attribute.ATTACK_DAMAGE, modifier2);
         meta.setDisplayName(convertLegacyToSection(this.getConfig().getString("dNetheriteSaber.name")));
-        meta.setCustomModelData(Integer.valueOf(1000010));
+        meta.setCustomModelData(1000010);
         item.setItemMeta(meta);
         NamespacedKey key = new NamespacedKey((Plugin)this, "netherite_saber");
         this.keys.add(key);
@@ -5975,13 +5959,13 @@ implements Listener {
         meta.setUnbreakable(true);
         meta.addItemFlags(new ItemFlag[]{ItemFlag.HIDE_UNBREAKABLE});
         double arm = 2.0;
-        if (this.getConfig().getString("UseCustomValues") == "true") {
+        if (this.getConfig().getBoolean("UseCustomValues")) {
             arm = this.getConfig().getDouble("aRedstoneCore.Armor");
         }
         AttributeModifier modifier = new AttributeModifier(UUID.randomUUID(), "Armor", arm, AttributeModifier.Operation.ADD_NUMBER, EquipmentSlot.CHEST);
         meta.addAttributeModifier(Attribute.ARMOR, modifier);
         meta.setDisplayName(convertLegacyToSection(this.getConfig().getString("dRedstoneCore.name")));
-        meta.setCustomModelData(Integer.valueOf(1231234));
+        meta.setCustomModelData(1231234);
         item.setItemMeta(meta);
         NamespacedKey key = new NamespacedKey((Plugin)this, "redstone_core");
         this.keys.add(key);
@@ -6010,7 +5994,7 @@ implements Listener {
         meta.addItemFlags(new ItemFlag[]{ItemFlag.HIDE_ATTRIBUTES});
         double dmg = 7.0;
         double spd = -2.6;
-        if (this.getConfig().getString("UseCustomValues") == "true") {
+        if (this.getConfig().getBoolean("UseCustomValues")) {
             dmg = this.getConfig().getDouble("aLongswordBow.damage") - 1.0;
             spd = this.getConfig().getDouble("aLongswordBow.speed") - 4.0;
         }
@@ -6019,7 +6003,7 @@ implements Listener {
         AttributeModifier modifier2 = new AttributeModifier(UUID.randomUUID(), "Attack Speed", spd, AttributeModifier.Operation.ADD_NUMBER, EquipmentSlot.HAND);
         meta.addAttributeModifier(Attribute.ATTACK_SPEED, modifier2);
         meta.setDisplayName(convertLegacyToSection(this.getConfig().getString("dLongswordBow.name")));
-        meta.setCustomModelData(Integer.valueOf(3330004));
+        meta.setCustomModelData(3330004);
         item.setItemMeta(meta);
         NamespacedKey key = new NamespacedKey((Plugin)this, "longsword_bow");
         this.keys.add(key);
@@ -6040,7 +6024,7 @@ implements Listener {
         lore.add("");
         meta.setLore(lore);
         meta.setDisplayName("Trident Bow");
-        meta.setCustomModelData(Integer.valueOf(1069691));
+        meta.setCustomModelData(1069691);
         item.setItemMeta(meta);
         NamespacedKey key = new NamespacedKey((Plugin)this, "trident_bow");
         this.keys.add(key);
@@ -6100,7 +6084,7 @@ implements Listener {
             standd.setGravity(false);
             ItemStack item = new ItemStack(Material.POTATO);
             ItemMeta meta = item.getItemMeta();
-            meta.setCustomModelData(Integer.valueOf(37));
+            meta.setCustomModelData(37);
             item.setItemMeta(meta);
             stand.getEquipment().setHelmet(item);
             stand.addEquipmentLock(EquipmentSlot.HEAD, ArmorStand.LockType.REMOVING_OR_CHANGING);
@@ -6140,7 +6124,7 @@ implements Listener {
         ItemMeta meta = item.getItemMeta();
         double kbr = 0.2;
         double hp = 5.0;
-        if (this.getConfig().getString("UseCustomValues") == "true") {
+        if (this.getConfig().getBoolean("UseCustomValues")) {
             kbr = this.getConfig().getDouble("aWitherHelmet.KBResist") / 10.0;
             hp = this.getConfig().getDouble("aWitherHelmet.BonusHealth");
         }
@@ -6149,7 +6133,7 @@ implements Listener {
         AttributeModifier modifier2 = new AttributeModifier(UUID.randomUUID(), "KnockbackResistance", kbr, AttributeModifier.Operation.ADD_NUMBER, EquipmentSlot.HEAD);
         meta.addAttributeModifier(Attribute.KNOCKBACK_RESISTANCE, modifier2);
         meta.setDisplayName(convertLegacyToSection(this.getConfig().getString("dWitheringHelmet.name")));
-        meta.setCustomModelData(Integer.valueOf(5553331));
+        meta.setCustomModelData(5553331);
         ArrayList<String> lore = new ArrayList<String>();
         lore.add(convertLegacyToSection(this.getConfig().getString("dWitheringArmorSet.line1")));
         lore.add(convertLegacyToSection(this.getConfig().getString("dWitheringArmorSet.line2")));
@@ -6166,7 +6150,7 @@ implements Listener {
         ItemStack wbone = new ItemStack(Material.BONE);
         ItemMeta meta2 = wbone.getItemMeta();
         meta2.setDisplayName(ChatColor.YELLOW + "Wither Bone");
-        meta2.setCustomModelData(Integer.valueOf(2222222));
+        meta2.setCustomModelData(2222222);
         wbone.setItemMeta(meta2);
         RecipeChoice.ExactChoice wibone = new RecipeChoice.ExactChoice(Items.witherBone(this.getConfig()));
         ShapedRecipe recipe = new ShapedRecipe(key, item);
@@ -6181,7 +6165,7 @@ implements Listener {
         ItemMeta meta = item.getItemMeta();
         double kbr = 0.2;
         double hp = 5.0;
-        if (this.getConfig().getString("UseCustomValues") == "true") {
+        if (this.getConfig().getBoolean("UseCustomValues")) {
             kbr = this.getConfig().getDouble("aWitherChestplate.KBResist") / 10.0;
             hp = this.getConfig().getDouble("aWitherChestplate.BonusHealth");
         }
@@ -6190,7 +6174,7 @@ implements Listener {
         AttributeModifier modifier2 = new AttributeModifier(UUID.randomUUID(), "KnockbackResistance", kbr, AttributeModifier.Operation.ADD_NUMBER, EquipmentSlot.CHEST);
         meta.addAttributeModifier(Attribute.KNOCKBACK_RESISTANCE, modifier2);
         meta.setDisplayName(convertLegacyToSection(this.getConfig().getString("dWitheringChestplate.name")));
-        meta.setCustomModelData(Integer.valueOf(5553332));
+        meta.setCustomModelData(5553332);
         ArrayList<String> lore = new ArrayList<String>();
         lore.add(convertLegacyToSection(this.getConfig().getString("dWitheringArmorSet.line1")));
         lore.add(convertLegacyToSection(this.getConfig().getString("dWitheringArmorSet.line2")));
@@ -6207,7 +6191,7 @@ implements Listener {
         ItemStack wbone = new ItemStack(Material.BONE);
         ItemMeta meta2 = wbone.getItemMeta();
         meta2.setDisplayName(ChatColor.YELLOW + "Wither Bone");
-        meta2.setCustomModelData(Integer.valueOf(2222222));
+        meta2.setCustomModelData(2222222);
         wbone.setItemMeta(meta2);
         RecipeChoice.ExactChoice wibone = new RecipeChoice.ExactChoice(Items.witherBone(this.getConfig()));
         ShapedRecipe recipe = new ShapedRecipe(key, item);
@@ -6222,7 +6206,7 @@ implements Listener {
         ItemMeta meta = item.getItemMeta();
         double kbr = 0.2;
         double hp = 5.0;
-        if (this.getConfig().getString("UseCustomValues") == "true") {
+        if (this.getConfig().getBoolean("UseCustomValues")) {
             kbr = this.getConfig().getDouble("aWitherLeggings.KBResist") / 10.0;
             hp = this.getConfig().getDouble("aWitherLeggings.BonusHealth");
         }
@@ -6231,24 +6215,16 @@ implements Listener {
         AttributeModifier modifier2 = new AttributeModifier(UUID.randomUUID(), "KnockbackResistance", kbr, AttributeModifier.Operation.ADD_NUMBER, EquipmentSlot.LEGS);
         meta.addAttributeModifier(Attribute.KNOCKBACK_RESISTANCE, modifier2);
         meta.setDisplayName(convertLegacyToSection(this.getConfig().getString("dWitheringLeggings.name")));
-        meta.setCustomModelData(Integer.valueOf(5553333));
-        ArrayList<String> lore = new ArrayList<String>();
-        lore.add(convertLegacyToSection(this.getConfig().getString("dWitheringArmorSet.line1")));
-        lore.add(convertLegacyToSection(this.getConfig().getString("dWitheringArmorSet.line2")));
-        lore.add(convertLegacyToSection(this.getConfig().getString("dWitheringArmorSet.line3")));
-        lore.add(convertLegacyToSection(this.getConfig().getString("dWitheringArmorSet.line4")));
-        lore.add(convertLegacyToSection(this.getConfig().getString("dWitheringArmorSet.line5")));
-        lore.add(convertLegacyToSection(this.getConfig().getString("dWitheringArmorSet.line6")));
-        lore.add(convertLegacyToSection(this.getConfig().getString("dWitheringArmorSet.line7")));
-        lore.add(convertLegacyToSection(this.getConfig().getString("dWitheringArmorSet.line8")));
-        meta.setLore(lore);
+        meta.setCustomModelData(5553333);
+        List<String> loreList = this.getConfig().getString("dWitheringArmorSet");
+        meta.setLore(loreList);
         item.setItemMeta(meta);
         NamespacedKey key = new NamespacedKey((Plugin)this, "wither_bone_leggings");
         this.keys.add(key);
         ItemStack wbone = new ItemStack(Material.BONE);
         ItemMeta meta2 = wbone.getItemMeta();
         meta2.setDisplayName(ChatColor.YELLOW + "Wither Bone");
-        meta2.setCustomModelData(Integer.valueOf(2222222));
+        meta2.setCustomModelData(2222222);
         wbone.setItemMeta(meta2);
         RecipeChoice.ExactChoice wibone = new RecipeChoice.ExactChoice(Items.witherBone(this.getConfig()));
         ShapedRecipe recipe = new ShapedRecipe(key, item);
@@ -6263,7 +6239,7 @@ implements Listener {
         ItemMeta meta = item.getItemMeta();
         double kbr = 0.2;
         double hp = 5.0;
-        if (this.getConfig().getString("UseCustomValues") == "true") {
+        if (this.getConfig().getBoolean("UseCustomValues")) {
             kbr = this.getConfig().getDouble("aWitherBoots.KBResist") / 10.0;
             hp = this.getConfig().getDouble("aWitherBoots.BonusHealth");
         }
@@ -6272,7 +6248,7 @@ implements Listener {
         AttributeModifier modifier2 = new AttributeModifier(UUID.randomUUID(), "KnockbackResistance", kbr, AttributeModifier.Operation.ADD_NUMBER, EquipmentSlot.FEET);
         meta.addAttributeModifier(Attribute.KNOCKBACK_RESISTANCE, modifier2);
         meta.setDisplayName(convertLegacyToSection(this.getConfig().getString("dWitheringBoots.name")));
-        meta.setCustomModelData(Integer.valueOf(5553334));
+        meta.setCustomModelData(5553334);
         ArrayList<String> lore = new ArrayList<String>();
         lore.add(convertLegacyToSection(this.getConfig().getString("dWitheringArmorSet.line1")));
         lore.add(convertLegacyToSection(this.getConfig().getString("dWitheringArmorSet.line2")));
@@ -6289,7 +6265,7 @@ implements Listener {
         ItemStack wbone = new ItemStack(Material.BONE);
         ItemMeta meta2 = wbone.getItemMeta();
         meta2.setDisplayName(ChatColor.YELLOW + "Wither Bone");
-        meta2.setCustomModelData(Integer.valueOf(2222222));
+        meta2.setCustomModelData(2222222);
         wbone.setItemMeta(meta2);
         RecipeChoice.ExactChoice wibone = new RecipeChoice.ExactChoice(Items.witherBone(this.getConfig()));
         ShapedRecipe recipe = new ShapedRecipe(key, item);
@@ -6388,7 +6364,7 @@ implements Listener {
         AttributeModifier modifier = new AttributeModifier(UUID.randomUUID(), "Armor", 3.0, AttributeModifier.Operation.ADD_NUMBER, EquipmentSlot.CHEST);
         meta.addAttributeModifier(Attribute.ARMOR, modifier);
         meta.setDisplayName(ChatColor.YELLOW + "Jump Elytra");
-        meta.setCustomModelData(Integer.valueOf(1212121));
+        meta.setCustomModelData(1212121);
         ArrayList<String> lore = new ArrayList<String>();
         lore.add("");
         lore.add(convertLegacyToSection("&6Double Jump"));
@@ -6453,7 +6429,7 @@ implements Listener {
         meta.addItemFlags(new ItemFlag[]{ItemFlag.HIDE_ATTRIBUTES});
         double dmg = 8.0;
         double spd = -3.6;
-        if (this.getConfig().getString("UseCustomValues") == "true") {
+        if (this.getConfig().getBoolean("UseCustomValues")) {
             dmg = this.getConfig().getDouble("aWoodenCleaver.damage") - 1.0;
             spd = this.getConfig().getDouble("aWoodenCleaver.speed") - 4.0;
         }
@@ -6462,7 +6438,7 @@ implements Listener {
         AttributeModifier modifier2 = new AttributeModifier(UUID.randomUUID(), "Attack Damage", dmg, AttributeModifier.Operation.ADD_NUMBER, EquipmentSlot.HAND);
         meta.addAttributeModifier(Attribute.ATTACK_DAMAGE, modifier2);
         meta.setDisplayName(convertLegacyToSection(this.getConfig().getString("dWoodenCleaver.name")));
-        meta.setCustomModelData(Integer.valueOf(1000021));
+        meta.setCustomModelData(1000021);
         item.setItemMeta(meta);
         NamespacedKey key = new NamespacedKey((Plugin)this, "wooden_cleaver");
         this.keys.add(key);
@@ -6492,7 +6468,7 @@ implements Listener {
         meta.addItemFlags(new ItemFlag[]{ItemFlag.HIDE_ATTRIBUTES});
         double dmg = 8.0;
         double spd = -3.6;
-        if (this.getConfig().getString("UseCustomValues") == "true") {
+        if (this.getConfig().getBoolean("UseCustomValues")) {
             dmg = this.getConfig().getDouble("aGoldenCleaver.damage") - 1.0;
             spd = this.getConfig().getDouble("aGoldenCleaver.speed") - 4.0;
         }
@@ -6501,7 +6477,7 @@ implements Listener {
         AttributeModifier modifier2 = new AttributeModifier(UUID.randomUUID(), "Attack Damage", dmg, AttributeModifier.Operation.ADD_NUMBER, EquipmentSlot.HAND);
         meta.addAttributeModifier(Attribute.ATTACK_DAMAGE, modifier2);
         meta.setDisplayName(convertLegacyToSection(this.getConfig().getString("dGoldenCleaver.name")));
-        meta.setCustomModelData(Integer.valueOf(1000021));
+        meta.setCustomModelData(1000021);
         item.setItemMeta(meta);
         NamespacedKey key = new NamespacedKey((Plugin)this, "golden_cleaver");
         this.keys.add(key);
@@ -6532,7 +6508,7 @@ implements Listener {
         meta.addItemFlags(new ItemFlag[]{ItemFlag.HIDE_ATTRIBUTES});
         double dmg = 9.0;
         double spd = -3.6;
-        if (this.getConfig().getString("UseCustomValues") == "true") {
+        if (this.getConfig().getBoolean("UseCustomValues")) {
             dmg = this.getConfig().getDouble("aStoneCleaver.damage") - 1.0;
             spd = this.getConfig().getDouble("aStoneCleaver.speed") - 4.0;
         }
@@ -6541,7 +6517,7 @@ implements Listener {
         AttributeModifier modifier2 = new AttributeModifier(UUID.randomUUID(), "Attack Damage", dmg, AttributeModifier.Operation.ADD_NUMBER, EquipmentSlot.HAND);
         meta.addAttributeModifier(Attribute.ATTACK_DAMAGE, modifier2);
         meta.setDisplayName(convertLegacyToSection(this.getConfig().getString("dStoneCleaver.name")));
-        meta.setCustomModelData(Integer.valueOf(1000021));
+        meta.setCustomModelData(1000021);
         item.setItemMeta(meta);
         NamespacedKey key = new NamespacedKey((Plugin)this, "stone_cleaver");
         this.keys.add(key);
@@ -6572,7 +6548,7 @@ implements Listener {
         meta.addItemFlags(new ItemFlag[]{ItemFlag.HIDE_ATTRIBUTES});
         double dmg = 10.0;
         double spd = -3.6;
-        if (this.getConfig().getString("UseCustomValues") == "true") {
+        if (this.getConfig().getBoolean("UseCustomValues")) {
             dmg = this.getConfig().getDouble("aIronCleaver.damage") - 1.0;
             spd = this.getConfig().getDouble("aIronCleaver.speed") - 4.0;
         }
@@ -6581,7 +6557,7 @@ implements Listener {
         AttributeModifier modifier2 = new AttributeModifier(UUID.randomUUID(), "Attack Damage", dmg, AttributeModifier.Operation.ADD_NUMBER, EquipmentSlot.HAND);
         meta.addAttributeModifier(Attribute.ATTACK_DAMAGE, modifier2);
         meta.setDisplayName(convertLegacyToSection(this.getConfig().getString("dIronCleaver.name")));
-        meta.setCustomModelData(Integer.valueOf(1000021));
+        meta.setCustomModelData(1000021);
         item.setItemMeta(meta);
         NamespacedKey key = new NamespacedKey((Plugin)this, "iron_cleaver");
         this.keys.add(key);
@@ -6612,7 +6588,7 @@ implements Listener {
         meta.addItemFlags(new ItemFlag[]{ItemFlag.HIDE_ATTRIBUTES});
         double dmg = 10.0;
         double spd = -3.6;
-        if (this.getConfig().getString("UseCustomValues") == "true") {
+        if (this.getConfig().getBoolean("UseCustomValues")) {
             dmg = this.getConfig().getDouble("aEmeraldCleaver.damage") - 1.0;
             spd = this.getConfig().getDouble("aEmeraldCleaver.speed") - 4.0;
         }
@@ -6621,11 +6597,11 @@ implements Listener {
         AttributeModifier modifier2 = new AttributeModifier(UUID.randomUUID(), "Attack Damage", dmg, AttributeModifier.Operation.ADD_NUMBER, EquipmentSlot.HAND);
         meta.addAttributeModifier(Attribute.ATTACK_DAMAGE, modifier2);
         meta.setDisplayName(convertLegacyToSection(this.getConfig().getString("dEmeraldCleaver.name")));
-        meta.setCustomModelData(Integer.valueOf(1000031));
-        if (this.getConfig().getString("EnchantsOnEmeraldGear") == "true") {
+        meta.setCustomModelData(1000031);
+        if (this.getConfig().getBoolean("EnchantsOnEmeraldGear")) {
             int num = this.getConfig().getInt("EmeraldGearEnchantLevels.Unbreaking");
             int num2 = this.getConfig().getInt("EmeraldGearEnchantLevels.Mending");
-            meta.addEnchant(Enchantment.DURABILITY, num, true);
+            meta.addEnchant(Enchantment.UNBREAKING, num, true);
             meta.addEnchant(Enchantment.MENDING, num2, true);
         }
         item.setItemMeta(meta);
@@ -6658,7 +6634,7 @@ implements Listener {
         meta.addItemFlags(new ItemFlag[]{ItemFlag.HIDE_ATTRIBUTES});
         double dmg = 11.0;
         double spd = -3.6;
-        if (this.getConfig().getString("UseCustomValues") == "true") {
+        if (this.getConfig().getBoolean("UseCustomValues")) {
             dmg = this.getConfig().getDouble("aDiamondCleaver.damage") - 1.0;
             spd = this.getConfig().getDouble("aDiamondCleaver.speed") - 4.0;
         }
@@ -6667,7 +6643,7 @@ implements Listener {
         AttributeModifier modifier2 = new AttributeModifier(UUID.randomUUID(), "Attack Damage", dmg, AttributeModifier.Operation.ADD_NUMBER, EquipmentSlot.HAND);
         meta.addAttributeModifier(Attribute.ATTACK_DAMAGE, modifier2);
         meta.setDisplayName(convertLegacyToSection(this.getConfig().getString("dDiamondCleaver.name")));
-        meta.setCustomModelData(Integer.valueOf(1000021));
+        meta.setCustomModelData(1000021);
         item.setItemMeta(meta);
         NamespacedKey key = new NamespacedKey((Plugin)this, "diamond_cleaver");
         this.keys.add(key);
@@ -6698,7 +6674,7 @@ implements Listener {
         meta.addItemFlags(new ItemFlag[]{ItemFlag.HIDE_ATTRIBUTES});
         double dmg = 12.0;
         double spd = -3.6;
-        if (this.getConfig().getString("UseCustomValues") == "true") {
+        if (this.getConfig().getBoolean("UseCustomValues")) {
             dmg = this.getConfig().getDouble("aNetheriteCleaver.damage") - 1.0;
             spd = this.getConfig().getDouble("aNetheriteCleaver.speed") - 4.0;
         }
@@ -6707,7 +6683,7 @@ implements Listener {
         AttributeModifier modifier2 = new AttributeModifier(UUID.randomUUID(), "Attack Damage", dmg, AttributeModifier.Operation.ADD_NUMBER, EquipmentSlot.HAND);
         meta.addAttributeModifier(Attribute.ATTACK_DAMAGE, modifier2);
         meta.setDisplayName(convertLegacyToSection(this.getConfig().getString("dNetheriteCleaver.name")));
-        meta.setCustomModelData(Integer.valueOf(1000021));
+        meta.setCustomModelData(1000021);
         item.setItemMeta(meta);
         NamespacedKey key = new NamespacedKey((Plugin)this, "netherite_cleaver");
         this.keys.add(key);
@@ -6758,7 +6734,7 @@ implements Listener {
             if (p.getInventory().getItemInOffHand().getType() == Material.AIR && p.getInventory().getItemInMainHand().hasItemMeta() && p.getInventory().getItemInMainHand().getItemMeta().hasCustomModelData() && p.getInventory().getItemInMainHand().getItemMeta().getCustomModelData() == 205) {
                 org.bukkit.entity.Damageable e = (org.bukkit.entity.Damageable)event.getRightClicked();
                 ItemMeta meta = p.getInventory().getItemInMainHand().getItemMeta();
-                meta.setCustomModelData(Integer.valueOf(2000002));
+                meta.setCustomModelData(2000002);
                 p.getInventory().getItemInMainHand().setItemMeta(meta);
                 e.damage(4.0, (Entity)p);
                 e.setVelocity(e.getLocation().getDirection().setX(0).setY(0.5).setZ(0));
@@ -6779,7 +6755,7 @@ implements Listener {
             }
             final org.bukkit.entity.Damageable e = (org.bukkit.entity.Damageable)event.getRightClicked();
             ItemMeta meta = p.getInventory().getItemInOffHand().getItemMeta();
-            meta.setCustomModelData(Integer.valueOf(2000002));
+            meta.setCustomModelData(2000002);
             p.swingOffHand();
             p.getInventory().getItemInOffHand().setItemMeta(meta);
             e.damage(dmg, (Entity)p);
@@ -6841,29 +6817,29 @@ implements Listener {
             }
             ItemMeta meta = p.getInventory().getItemInMainHand().getItemMeta();
             if (p.getInventory().getItemInMainHand().getItemMeta().getCustomModelData() == 2000002) {
-                meta.setCustomModelData(Integer.valueOf(201));
+                meta.setCustomModelData(201);
                 p.getInventory().getItemInMainHand().setItemMeta(meta);
                 return;
             }
             if (p.getInventory().getItemInMainHand().getItemMeta().getCustomModelData() == 201) {
-                meta.setCustomModelData(Integer.valueOf(202));
+                meta.setCustomModelData(202);
                 p.getInventory().getItemInMainHand().setItemMeta(meta);
                 return;
             }
             if (p.getInventory().getItemInMainHand().getItemMeta().getCustomModelData() == 202) {
-                meta.setCustomModelData(Integer.valueOf(203));
+                meta.setCustomModelData(203);
                 p.getInventory().getItemInMainHand().setItemMeta(meta);
                 return;
             }
             if (p.getInventory().getItemInMainHand().getItemMeta().getCustomModelData() == 203) {
-                meta.setCustomModelData(Integer.valueOf(204));
+                meta.setCustomModelData(204);
                 p.getInventory().getItemInMainHand().setItemMeta(meta);
                 return;
             }
             if (p.getInventory().getItemInMainHand().getItemMeta().getCustomModelData() == 204) {
                 World world = p.getWorld();
                 world.playSound(p.getLocation(), Sound.BLOCK_ANVIL_LAND, 10.0f, 2.0f);
-                meta.setCustomModelData(Integer.valueOf(205));
+                meta.setCustomModelData(205);
                 p.getInventory().getItemInMainHand().setItemMeta(meta);
             }
         }
@@ -6896,7 +6872,7 @@ implements Listener {
         AttributeModifier modifier2 = new AttributeModifier(UUID.randomUUID(), "Attack Damage", 5.0, AttributeModifier.Operation.ADD_NUMBER, EquipmentSlot.HAND);
         meta.addAttributeModifier(Attribute.ATTACK_DAMAGE, modifier2);
         meta.setDisplayName(convertLegacyToSection("Diamond Katana v2"));
-        meta.setCustomModelData(Integer.valueOf(2000002));
+        meta.setCustomModelData(2000002);
         item.setItemMeta(meta);
         NamespacedKey key = new NamespacedKey((Plugin)this, "diamond_katana_test");
         this.keys.add(key);
@@ -6927,7 +6903,7 @@ implements Listener {
         AttributeModifier modifier2 = new AttributeModifier(UUID.randomUUID(), "Attack Damage", 8.0, AttributeModifier.Operation.ADD_NUMBER, EquipmentSlot.HAND);
         meta.addAttributeModifier(Attribute.ATTACK_DAMAGE, modifier2);
         meta.setDisplayName(convertLegacyToSection("Diamond Scythe v2"));
-        meta.setCustomModelData(Integer.valueOf(2000003));
+        meta.setCustomModelData(2000003);
         item.setItemMeta(meta);
         NamespacedKey key = new NamespacedKey((Plugin)this, "diamond_scythe_test");
         this.keys.add(key);
@@ -6987,7 +6963,7 @@ implements Listener {
         AttributeModifier modifier2 = new AttributeModifier(UUID.randomUUID(), "Attack Damage", 5.0, AttributeModifier.Operation.ADD_NUMBER, EquipmentSlot.HAND);
         meta.addAttributeModifier(Attribute.ATTACK_DAMAGE, modifier2);
         meta.setDisplayName(convertLegacyToSection("Fish"));
-        meta.setCustomModelData(Integer.valueOf(38));
+        meta.setCustomModelData(38);
         item.setItemMeta(meta);
         NamespacedKey key = new NamespacedKey((Plugin)this, "fish_test");
         this.keys.add(key);
@@ -7017,7 +6993,7 @@ implements Listener {
         AttributeModifier modifier2 = new AttributeModifier(UUID.randomUUID(), "Attack Damage", 5.0, AttributeModifier.Operation.ADD_NUMBER, EquipmentSlot.HAND);
         meta.addAttributeModifier(Attribute.ATTACK_DAMAGE, modifier2);
         meta.setDisplayName(convertLegacyToSection("Wind Blade"));
-        meta.setCustomModelData(Integer.valueOf(21));
+        meta.setCustomModelData(21);
         item.setItemMeta(meta);
         NamespacedKey key = new NamespacedKey((Plugin)this, "wind_sword");
         this.keys.add(key);
@@ -7070,9 +7046,9 @@ implements Listener {
         lore.add(convertLegacyToSection(this.getConfig().getString("dFrostCharm.line3")));
         lore.add(convertLegacyToSection(this.getConfig().getString("dFrostCharm.line4")));
         meta.setLore(lore);
-        meta.setCustomModelData(Integer.valueOf(45));
+        meta.setCustomModelData(45);
         meta.setDisplayName(convertLegacyToSection(this.getConfig().getString("dFrostCharm.name")));
-        meta.addEnchant(Enchantment.DURABILITY, 5, true);
+        meta.addEnchant(Enchantment.UNBREAKING, 5, true);
         meta.addItemFlags(new ItemFlag[]{ItemFlag.HIDE_ENCHANTS});
         meta.addItemFlags(new ItemFlag[]{ItemFlag.HIDE_ATTRIBUTES});
         AttributeModifier modifier = new AttributeModifier(UUID.randomUUID(), "Attack Speed", 0.0, AttributeModifier.Operation.ADD_NUMBER, EquipmentSlot.HAND);
@@ -7108,7 +7084,7 @@ implements Listener {
             ItemMeta meta = p.getInventory().getItemInOffHand().getItemMeta();
             if (meta.getCustomModelData() == 45 && event.getEntity() instanceof LivingEntity) {
                 LivingEntity e = (LivingEntity)event.getEntity();
-                e.addPotionEffect(new PotionEffect(PotionEffectType.SLOW, 20, 0));
+                e.addPotionEffect(new PotionEffect(PotionEffectType.SLOWNESS, 20, 0));
             }
         }
     }
@@ -7132,7 +7108,7 @@ implements Listener {
         meta.addItemFlags(new ItemFlag[]{ItemFlag.HIDE_ATTRIBUTES});
         double dmg = 7.0;
         double spd = -2.4;
-        if (this.getConfig().getString("UseCustomValues") == "true") {
+        if (this.getConfig().getBoolean("UseCustomValues")) {
             dmg = this.getConfig().getDouble("aVolcanicBlade.damage") - 1.0;
             spd = this.getConfig().getDouble("aVolcanicBlade.speed") - 4.0;
         }
@@ -7141,7 +7117,7 @@ implements Listener {
         AttributeModifier modifier2 = new AttributeModifier(UUID.randomUUID(), "Attack Damage", dmg, AttributeModifier.Operation.ADD_NUMBER, EquipmentSlot.HAND);
         meta.addAttributeModifier(Attribute.ATTACK_DAMAGE, modifier2);
         meta.setDisplayName(convertLegacyToSection(this.getConfig().getString("dVolcanicBlade.name")));
-        meta.setCustomModelData(Integer.valueOf(5000));
+        meta.setCustomModelData(5000);
         item.setItemMeta(meta);
         NamespacedKey key = new NamespacedKey((Plugin)this, "fire_sword");
         this.keys.add(key);
@@ -7171,7 +7147,7 @@ implements Listener {
         meta.addItemFlags(new ItemFlag[]{ItemFlag.HIDE_ATTRIBUTES});
         double dmg = 4.0;
         double spd = -1.5;
-        if (this.getConfig().getString("UseCustomValues") == "true") {
+        if (this.getConfig().getBoolean("UseCustomValues")) {
             dmg = this.getConfig().getDouble("aVolcanicSpear.damage") - 1.0;
             spd = this.getConfig().getDouble("aVolcanicSpear.speed") - 4.0;
         }
@@ -7180,7 +7156,7 @@ implements Listener {
         AttributeModifier modifier2 = new AttributeModifier(UUID.randomUUID(), "Attack Damage", dmg, AttributeModifier.Operation.ADD_NUMBER, EquipmentSlot.HAND);
         meta.addAttributeModifier(Attribute.ATTACK_DAMAGE, modifier2);
         meta.setDisplayName(convertLegacyToSection(this.getConfig().getString("dVolcanicSpear.name")));
-        meta.setCustomModelData(Integer.valueOf(5001));
+        meta.setCustomModelData(5001);
         item.setItemMeta(meta);
         NamespacedKey key = new NamespacedKey((Plugin)this, "fire_spear");
         this.keys.add(key);
@@ -7211,7 +7187,7 @@ implements Listener {
         meta.addItemFlags(new ItemFlag[]{ItemFlag.HIDE_ATTRIBUTES});
         double dmg = 9.0;
         double spd = -3.0;
-        if (this.getConfig().getString("UseCustomValues") == "true") {
+        if (this.getConfig().getBoolean("UseCustomValues")) {
             dmg = this.getConfig().getDouble("aVolcanicAxe.damage") - 1.0;
             spd = this.getConfig().getDouble("aVolcanicAxe.speed") - 4.0;
         }
@@ -7220,7 +7196,7 @@ implements Listener {
         AttributeModifier modifier2 = new AttributeModifier(UUID.randomUUID(), "Attack Damage", dmg, AttributeModifier.Operation.ADD_NUMBER, EquipmentSlot.HAND);
         meta.addAttributeModifier(Attribute.ATTACK_DAMAGE, modifier2);
         meta.setDisplayName(convertLegacyToSection(this.getConfig().getString("dVolcanicAxe.name")));
-        meta.setCustomModelData(Integer.valueOf(5002));
+        meta.setCustomModelData(5002);
         item.setItemMeta(meta);
         NamespacedKey key = new NamespacedKey((Plugin)this, "fire_axe");
         this.keys.add(key);
@@ -7251,7 +7227,7 @@ implements Listener {
         meta.addItemFlags(new ItemFlag[]{ItemFlag.HIDE_ATTRIBUTES});
         double dmg = 12.0;
         double spd = -3.6;
-        if (this.getConfig().getString("UseCustomValues") == "true") {
+        if (this.getConfig().getBoolean("UseCustomValues")) {
             dmg = this.getConfig().getDouble("aVolcanicCleaver.damage") - 1.0;
             spd = this.getConfig().getDouble("aVolcanicCleaver.speed") - 4.0;
         }
@@ -7260,7 +7236,7 @@ implements Listener {
         AttributeModifier modifier2 = new AttributeModifier(UUID.randomUUID(), "Attack Damage", dmg, AttributeModifier.Operation.ADD_NUMBER, EquipmentSlot.HAND);
         meta.addAttributeModifier(Attribute.ATTACK_DAMAGE, modifier2);
         meta.setDisplayName(convertLegacyToSection(this.getConfig().getString("dVolcanicCleaver.name")));
-        meta.setCustomModelData(Integer.valueOf(5003));
+        meta.setCustomModelData(5003);
         item.setItemMeta(meta);
         NamespacedKey key = new NamespacedKey((Plugin)this, "fire_cleaver");
         this.keys.add(key);
@@ -7274,71 +7250,72 @@ implements Listener {
 
     @EventHandler
     public void flameParticleEffect(EntityDamageByEntityEvent event) {
-        if (event.getDamager() instanceof Player) {
-            Player player = (Player)event.getDamager();
-            if (player.getInventory().getItemInMainHand().getType() != Material.NETHERITE_SWORD) {
-                return;
-            }
-            if (!player.getInventory().getItemInMainHand().getItemMeta().hasCustomModelData()) {
-                return;
-            }
-            if (player.getInventory().getItemInMainHand().getItemMeta().getCustomModelData() != 5000 && player.getInventory().getItemInMainHand().getItemMeta().getCustomModelData() != 5001 && player.getInventory().getItemInMainHand().getItemMeta().getCustomModelData() != 5002 && player.getInventory().getItemInMainHand().getItemMeta().getCustomModelData() != 5003) {
-                return;
-            }
-            if (event.getEntity().getType().equals((Object)EntityType.ARMOR_STAND)) {
-                return;
-            }
-            if (!(event.getEntity() instanceof LivingEntity)) {
-                return;
-            }
-            if (event.getEntity() instanceof org.bukkit.entity.Damageable) {
-                org.bukkit.entity.Damageable ent = (org.bukkit.entity.Damageable)event.getEntity();
-                if (event.getEntity() instanceof LivingEntity) {
-                    LivingEntity e = (LivingEntity)event.getEntity();
-                    e.setFireTicks(100);
+        if (!(event.getDamager() instanceof Player)) {
+            return;
+        }
+        Player player = (Player) event.getDamager();
+        if (player.getInventory().getItemInMainHand().getType() != Material.NETHERITE_SWORD) {
+            return;
+        }
+        if (!player.getInventory().getItemInMainHand().getItemMeta().hasCustomModelData()) {
+            return;
+        }
+        if (player.getInventory().getItemInMainHand().getItemMeta().getCustomModelData() != 5000 && player.getInventory().getItemInMainHand().getItemMeta().getCustomModelData() != 5001 && player.getInventory().getItemInMainHand().getItemMeta().getCustomModelData() != 5002 && player.getInventory().getItemInMainHand().getItemMeta().getCustomModelData() != 5003) {
+            return;
+        }
+        if (event.getEntity().getType().equals(EntityType.ARMOR_STAND)) {
+            return;
+        }
+        if (!(event.getEntity() instanceof LivingEntity)) {
+            return;
+        }
+        var entity = event.getEntity();
+        if (entity instanceof Damageable ent) {
+            if (entity instanceof LivingEntity) {
+                LivingEntity e = (LivingEntity)event.getEntity();
+                e.setFireTicks(100);
+                player.getWorld().playSound(ent.getLocation(), Sound.ITEM_FIRECHARGE_USE, 10.0f, 1.0f);
+                List ee = e.getNearbyEntities(1.0, 1.0, 1.0);
+                for (int en = 0; en < ee.size(); ++en) {
+                    LivingEntity livingen;
+                    Entity entity = (Entity)ee.get(en);
+                    if (!(entity instanceof LivingEntity) || (livingen = (LivingEntity)entity) == player) continue;
+                    livingen.damage(5.0);
                     player.getWorld().playSound(ent.getLocation(), Sound.ITEM_FIRECHARGE_USE, 10.0f, 1.0f);
-                    List ee = e.getNearbyEntities(1.0, 1.0, 1.0);
-                    for (int en = 0; en < ee.size(); ++en) {
-                        LivingEntity livingen;
-                        Entity entity = (Entity)ee.get(en);
-                        if (!(entity instanceof LivingEntity) || (livingen = (LivingEntity)entity) == player) continue;
-                        livingen.damage(5.0);
-                        player.getWorld().playSound(ent.getLocation(), Sound.ITEM_FIRECHARGE_USE, 10.0f, 1.0f);
-                        livingen.setFireTicks(60);
-                    }
+                    livingen.setFireTicks(60);
                 }
-                float standheight = 3.0f;
-                Vector direc = player.getLocation().getDirection().multiply(1.8);
-                Location loc = player.getLocation().add(direc);
-                Location loca = new Location(player.getWorld(), loc.getX(), loc.getY() + (double)standheight, loc.getZ());
-                ArmorStand stand = (ArmorStand)player.getLocation().getWorld().spawnEntity(loca.setDirection(player.getLocation().getDirection()), EntityType.ARMOR_STAND);
-                stand.setVisible(false);
-                stand.setInvulnerable(true);
-                stand.setGravity(false);
-                ItemStack item = new ItemStack(Material.POTATO);
-                ItemMeta meta = item.getItemMeta();
-                if (player.getInventory().getItemInMainHand().getItemMeta().getCustomModelData() == 5000) {
-                    meta.setCustomModelData(Integer.valueOf(50));
-                }
-                if (player.getInventory().getItemInMainHand().getItemMeta().getCustomModelData() == 5001) {
-                    meta.setCustomModelData(Integer.valueOf(51));
-                }
-                if (player.getInventory().getItemInMainHand().getItemMeta().getCustomModelData() == 5002) {
-                    meta.setCustomModelData(Integer.valueOf(52));
-                }
-                if (player.getInventory().getItemInMainHand().getItemMeta().getCustomModelData() == 5003) {
-                    meta.setCustomModelData(Integer.valueOf(53));
-                }
-                item.setItemMeta(meta);
-                stand.getEquipment().setHelmet(item);
-                stand.addEquipmentLock(EquipmentSlot.HEAD, ArmorStand.LockType.REMOVING_OR_CHANGING);
-                stand.addEquipmentLock(EquipmentSlot.CHEST, ArmorStand.LockType.REMOVING_OR_CHANGING);
-                stand.addEquipmentLock(EquipmentSlot.LEGS, ArmorStand.LockType.REMOVING_OR_CHANGING);
-                stand.addEquipmentLock(EquipmentSlot.FEET, ArmorStand.LockType.REMOVING_OR_CHANGING);
-                stand.addEquipmentLock(EquipmentSlot.HAND, ArmorStand.LockType.REMOVING_OR_CHANGING);
-                stand.addEquipmentLock(EquipmentSlot.OFF_HAND, ArmorStand.LockType.REMOVING_OR_CHANGING);
-                Bukkit.getScheduler().runTaskLater((Plugin)this, () -> stand.remove(), 4L);
             }
+            float standheight = 3.0f;
+            Vector direc = player.getLocation().getDirection().multiply(1.8);
+            Location loc = player.getLocation().add(direc);
+            Location loca = new Location(player.getWorld(), loc.getX(), loc.getY() + (double)standheight, loc.getZ());
+            ArmorStand stand = (ArmorStand)player.getLocation().getWorld().spawnEntity(loca.setDirection(player.getLocation().getDirection()), EntityType.ARMOR_STAND);
+            stand.setVisible(false);
+            stand.setInvulnerable(true);
+            stand.setGravity(false);
+            ItemStack item = new ItemStack(Material.POTATO);
+            ItemMeta meta = item.getItemMeta();
+            if (player.getInventory().getItemInMainHand().getItemMeta().getCustomModelData() == 5000) {
+                meta.setCustomModelData(50);
+            }
+            if (player.getInventory().getItemInMainHand().getItemMeta().getCustomModelData() == 5001) {
+                meta.setCustomModelData(51);
+            }
+            if (player.getInventory().getItemInMainHand().getItemMeta().getCustomModelData() == 5002) {
+                meta.setCustomModelData(52);
+            }
+            if (player.getInventory().getItemInMainHand().getItemMeta().getCustomModelData() == 5003) {
+                meta.setCustomModelData(53);
+            }
+            item.setItemMeta(meta);
+            stand.getEquipment().setHelmet(item);
+            stand.addEquipmentLock(EquipmentSlot.HEAD, ArmorStand.LockType.REMOVING_OR_CHANGING);
+            stand.addEquipmentLock(EquipmentSlot.CHEST, ArmorStand.LockType.REMOVING_OR_CHANGING);
+            stand.addEquipmentLock(EquipmentSlot.LEGS, ArmorStand.LockType.REMOVING_OR_CHANGING);
+            stand.addEquipmentLock(EquipmentSlot.FEET, ArmorStand.LockType.REMOVING_OR_CHANGING);
+            stand.addEquipmentLock(EquipmentSlot.HAND, ArmorStand.LockType.REMOVING_OR_CHANGING);
+            stand.addEquipmentLock(EquipmentSlot.OFF_HAND, ArmorStand.LockType.REMOVING_OR_CHANGING);
+            Bukkit.getScheduler().runTaskLater((Plugin)this, () -> stand.remove(), 4L);
         }
     }
 
@@ -7394,11 +7371,10 @@ implements Listener {
 
     @EventHandler
     public void shieldParry(EntityDamageByEntityEvent event) {
-        if (this.getConfig().getString("ShieldParry") != "true") {
+        if (!this.getConfig().getBoolean("ShieldParry")) {
             return;
         }
-        if (event.getEntity() instanceof Player) {
-            Player p = (Player)event.getEntity();
+        if (event.getEntity() instanceof Player p) {
             if (p.hasCooldown(Material.SHIELD)) {
                 return;
             }
@@ -7470,7 +7446,7 @@ implements Listener {
 
     @EventHandler
     public void shieldBlock(PlayerInteractEvent event) {
-        if (this.getConfig().getString("ShieldParry") != "true") {
+        if (!this.getConfig().getBoolean("ShieldParry")) {
             return;
         }
         Player p = event.getPlayer();
@@ -7522,7 +7498,7 @@ implements Listener {
                         this.spawnParticlesAlongPath(player, start, 20.0, Particle.CRIT_MAGIC, 100, 0.1);
                         arrow.getWorld().createExplosion(arrow.getLocation(), 2.0f, false, false);
                         double blastRadius = 4.0;
-                        List nearbyEntities = arrow.getNearbyEntities(blastRadius, blastRadius, blastRadius);
+                        var nearbyEntities = arrow.getNearbyEntities(blastRadius, blastRadius, blastRadius);
                         for (Entity entity : nearbyEntities) {
                             if (!(entity instanceof Arrow)) continue;
                             Arrow nearbyArrow = (Arrow)entity;
@@ -7550,7 +7526,7 @@ implements Listener {
             Location particleLocation = start.toLocation(player.getWorld());
             particleLocation.getWorld().spawnParticle(particle, particleLocation, 1);
             double detectionRadius = 1.0;
-            Collection nearbyEntities = particleLocation.getWorld().getNearbyEntities(particleLocation, detectionRadius, detectionRadius, detectionRadius);
+            var nearbyEntities = particleLocation.getWorld().getNearbyEntities(particleLocation, detectionRadius, detectionRadius, detectionRadius);
             for (Entity entity : nearbyEntities) {
                 if (entity == player || !(entity instanceof Arrow)) continue;
                 Bukkit.getLogger().info("Arrow nearby");
@@ -7602,7 +7578,7 @@ implements Listener {
         }
         meta.lore(component);
         meta.displayName(Component.text("Explosive Staff"));
-        meta.setCustomModelData(Integer.valueOf(22));
+        meta.setCustomModelData(22);
         item.setItemMeta(meta);
         NamespacedKey key = new NamespacedKey((Plugin)this, "explosive_staff");
         this.keys.add(key);
@@ -7621,29 +7597,31 @@ implements Listener {
             event.getProjectile().remove();
             Player player = (Player)event.getEntity();
             ItemStack item = player.getInventory().getItemInMainHand();
-            if (item.getType() == Material.CROSSBOW) {
-                Vector direc = player.getLocation().getDirection().multiply(2.5);
-                Location loc = player.getLocation().add(direc);
-                Location loca = new Location(player.getWorld(), loc.getX(), loc.getY(), loc.getZ());
-                player.getWorld().createExplosion(loca, 2.0f, false, false);
-                Collection nearent = player.getWorld().getNearbyEntities(loca, 3.0, 3.0, 3.0);
-                for (Entity entity : nearent) {
-                    if (entity instanceof Arrow) {
-                        Arrow nearbyArrow = (Arrow)entity;
-                        Vector explosionDirection = nearbyArrow.getLocation().subtract(loca).toVector().normalize();
-                        double explosionForce = 4.0;
-                        Vector velocity = explosionDirection.multiply(explosionForce);
-                        nearbyArrow.setVelocity(velocity.setY(0));
-                        nearbyArrow.setDamage(nearbyArrow.getDamage() * 3.0);
-                        nearbyArrow.getWorld().playSound(loca, Sound.BLOCK_ANVIL_LAND, 10.0f, 2.0f);
-                        nearbyArrow.getWorld().spawnParticle(Particle.CRIT_MAGIC, loca, 10);
-                        continue;
-                    }
-                    Vector explosionDirection = entity.getLocation().subtract(loca).toVector().normalize();
-                    double explosionForce = 3.0;
+            if (item.getType() != Material.CROSSBOW) {
+                return;
+            }
+            var playerLocation = player.getLocation();
+            Vector direc = playerLocation.getDirection().multiply(2.5);
+            Location loc = playerLocation.add(direc);
+            Location loca = new Location(player.getWorld(), loc.getX(), loc.getY(), loc.getZ());
+            player.getWorld().createExplosion(loca, 2.0f, false, false);
+            var nearent = player.getWorld().getNearbyEntities(loca, 3.0, 3.0, 3.0);
+            for (Entity entity : nearent) {
+                if (entity instanceof Arrow nearbyArrow) {
+                    Vector explosionDirection = nearbyArrow.getLocation().subtract(loca).toVector().normalize();
+                    double explosionForce = 4.0;
                     Vector velocity = explosionDirection.multiply(explosionForce);
-                    entity.setVelocity(velocity);
+                    nearbyArrow.setVelocity(velocity.setY(0));
+                    nearbyArrow.setDamage(nearbyArrow.getDamage() * 3.0);
+                    var world = nearbyArrow.getWorld();
+                    world.playSound(loca, Sound.BLOCK_ANVIL_LAND, 10.0f, 2.0f);
+                    world.spawnParticle(Particle.CRIT_MAGIC, loca, 10);
+                    continue;
                 }
+                Vector explosionDirection = entity.getLocation().subtract(loca).toVector().normalize();
+                double explosionForce = 3.0;
+                Vector velocity = explosionDirection.multiply(explosionForce);
+                entity.setVelocity(velocity);
             }
         }
     }
