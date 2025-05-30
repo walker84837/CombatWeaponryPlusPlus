@@ -37,6 +37,7 @@ import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
 import org.bukkit.entity.Trident;
 import org.bukkit.inventory.EquipmentSlot;
+import org.bukkit.inventory.EquipmentSlotGroup;
 import org.bukkit.inventory.ItemFlag;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.Recipe;
@@ -58,9 +59,11 @@ import org.bukkit.scheduler.BukkitRunnable;
 import org.bukkit.util.RayTraceResult;
 import org.bukkit.util.Vector;
 
-public class CombatWeaponryPlus extends JavaPlugin implements Listener {
+public class CombatWeaponryPlus extends JavaPlugin {
+    NamespacedKey k = new NamespacedKey(this, "");
     public List<NamespacedKey> keys = new ArrayList<NamespacedKey>();
     Random ran = new Random();
+    
     private RetroHue rh = new RetroHue();
 
     public int getRandomInt(int max) {
@@ -70,7 +73,7 @@ public class CombatWeaponryPlus extends JavaPlugin implements Listener {
     public void onEnable() {
         var config = this.getConfig();
         Cooldown.setupCooldown();
-        this.getServer().getPluginManager().registerEvents((Listener)this, (Plugin)this);
+        this.getServer().getPluginManager().registerEvents(new Listeners(), this);
         this.saveDefaultConfig();
         var ee = config.getBoolean("Emerald");
         if (ee) {
@@ -86,22 +89,22 @@ public class CombatWeaponryPlus extends JavaPlugin implements Listener {
             Bukkit.addRecipe(this.getShovelRecipe());
             Bukkit.addRecipe(this.getHoeRecipe());
         }
-        if ((s = config.getString("ChorusBlade")) == "true") {
+        if (config.getBoolean("ChorusBlade")) {
             Bukkit.addRecipe(this.getSworddRecipe());
         }
-        if ((s2 = config.getString("SwordBow"))) {
+        if (config.getBoolean("SwordBow")) {
             Bukkit.addRecipe(this.getSwordbowRecipe());
         }
-        if ((s3 = config.getString("HeavySwordBow"))) {
+        if (config.getBoolean("HeavySwordBow")) {
             Bukkit.addRecipe(this.getHSwordbowRecipe());
         }
-        if ((qq = config.getString("Chainmail"))) {
+        if (config.getBoolean("Chainmail")) {
             Bukkit.addRecipe(this.getChnHelmetRecipe());
             Bukkit.addRecipe(this.getChnChestRecipe());
             Bukkit.addRecipe(this.getChnLegRecipe());
             Bukkit.addRecipe(this.getChnBootsRecipe());
         }
-        if ((q1q = config.getString("PlatedChainmail"))) {
+        if (config.getBoolean("PlatedChainmail")) {
             Bukkit.addRecipe(this.getPChnHelmetRecipe());
             Bukkit.addRecipe(this.getPChnChestRecipe());
             Bukkit.addRecipe(this.getPChnLegRecipe());
@@ -147,7 +150,7 @@ public class CombatWeaponryPlus extends JavaPlugin implements Listener {
             Bukkit.addRecipe(this.getDRapierRecipe());
             Bukkit.addRecipe(this.getNRapierRecipe());
         }
-        if (config.getBoolean("EmeraldGear") && config.getString("Rapiers")) {
+        if (config.getBoolean("EmeraldGear") && config.getBoolean("Rapiers")) {
             Bukkit.addRecipe(this.geteeRapierRecipe());
         }
         if (config.getBoolean("Longswords")) {
@@ -158,7 +161,7 @@ public class CombatWeaponryPlus extends JavaPlugin implements Listener {
             Bukkit.addRecipe(this.getDlongRecipe());
             Bukkit.addRecipe(this.getNlongRecipe());
         }
-        if (config.getBoolean("EmeraldGear") && config.getString("Longswords")) {
+        if (config.getBoolean("EmeraldGear") && config.getBoolean("Longswords")) {
             Bukkit.addRecipe(this.getelongRecipe());
         }
         if (config.getBoolean("Knives")) {
@@ -169,7 +172,7 @@ public class CombatWeaponryPlus extends JavaPlugin implements Listener {
             Bukkit.addRecipe(this.getDknifeRecipe());
             Bukkit.addRecipe(this.getNknifeRecipe());
         }
-        if (config.getBoolean("Knives") && config.getString("EmeraldGear")) {
+        if (config.getBoolean("Knives") && config.getBoolean("EmeraldGear")) {
             Bukkit.addRecipe(this.geteknifeRecipe());
         }
         if (config.getBoolean("Spears")) {
@@ -180,7 +183,7 @@ public class CombatWeaponryPlus extends JavaPlugin implements Listener {
             Bukkit.addRecipe(this.getdspearRecipe());
             Bukkit.addRecipe(this.getnspearRecipe());
         }
-        if (config.getBoolean("EmeraldGear") && config.getString("Spears")) {
+        if (config.getBoolean("EmeraldGear") && config.getBoolean("Spears")) {
             Bukkit.addRecipe(this.getespearRecipe());
         }
         if (config.getBoolean("Katanas")) {
@@ -191,7 +194,7 @@ public class CombatWeaponryPlus extends JavaPlugin implements Listener {
             Bukkit.addRecipe(this.getdkatRecipe());
             Bukkit.addRecipe(this.getnkatRecipe());
         }
-        if (config.getBoolean("EmeraldGear") && config.getString("Katanas")) {
+        if (config.getBoolean("EmeraldGear") && config.getBoolean("Katanas")) {
             Bukkit.addRecipe(this.getekatRecipe());
         }
         if (config.getBoolean("Prismarine")) {
@@ -322,9 +325,10 @@ public class CombatWeaponryPlus extends JavaPlugin implements Listener {
             hp = this.getConfig().getDouble("aEmeraldChestplate.BonusHealth");
             def = this.getConfig().getDouble("aEmeraldChestplate.Armor");
         }
-        AttributeModifier modifier = new AttributeModifier(UUID.randomUUID(), "Health", hp, AttributeModifier.Operation.ADD_NUMBER, EquipmentSlot.CHEST);
+        var k = new NamespacedKey("", "");
+        var modifier = new AttributeModifier(k, hp, AttributeModifier.Operation.ADD_NUMBER, EquipmentSlotGroup.CHEST);
         meta.addAttributeModifier(Attribute.MAX_HEALTH, modifier);
-        AttributeModifier modifier2 = new AttributeModifier(UUID.randomUUID(), "Defense", def, AttributeModifier.Operation.ADD_NUMBER, EquipmentSlot.CHEST);
+        var modifier2 = new AttributeModifier(k, def, AttributeModifier.Operation.ADD_NUMBER, EquipmentSlotGroup.CHEST);
         meta.addAttributeModifier(Attribute.ARMOR, modifier2);
         meta.displayName(Component.text("Emerald Chestplate", NamedTextColor.DARK_GREEN));
         if (this.getConfig().getBoolean("EnchantmentsOnEmeraldArmor")) {
@@ -352,9 +356,9 @@ public class CombatWeaponryPlus extends JavaPlugin implements Listener {
             hp = this.getConfig().getDouble("aEmeraldLeggings.BonusHealth");
             def = this.getConfig().getDouble("aEmeraldLeggings.Armor");
         }
-        AttributeModifier modifier = new AttributeModifier(UUID.randomUUID(), "Health", hp, AttributeModifier.Operation.ADD_NUMBER, EquipmentSlot.LEGS);
+        AttributeModifier modifier = new AttributeModifier(k, hp, AttributeModifier.Operation.ADD_NUMBER, EquipmentSlotGroup.LEGS);
         meta.addAttributeModifier(Attribute.MAX_HEALTH, modifier);
-        AttributeModifier modifier2 = new AttributeModifier(UUID.randomUUID(), "Defense", def, AttributeModifier.Operation.ADD_NUMBER, EquipmentSlot.LEGS);
+        AttributeModifier modifier2 = new AttributeModifier(k, def, AttributeModifier.Operation.ADD_NUMBER, EquipmentSlotGroup.LEGS);
         meta.addAttributeModifier(Attribute.ARMOR, modifier2);
         meta.displayName(Component.text("Emerald Leggings", NamedTextColor.DARK_GREEN));
         if (this.getConfig().getBoolean("EnchantmentsOnEmeraldArmor")) {
@@ -382,9 +386,9 @@ public class CombatWeaponryPlus extends JavaPlugin implements Listener {
             hp = this.getConfig().getDouble("aEmeraldBoots.BonusHealth");
             def = this.getConfig().getDouble("aEmeraldBoots.Armor");
         }
-        AttributeModifier modifier = new AttributeModifier(UUID.randomUUID(), "Health", hp, AttributeModifier.Operation.ADD_NUMBER, EquipmentSlot.FEET);
+        AttributeModifier modifier = new AttributeModifier(k, hp, AttributeModifier.Operation.ADD_NUMBER, EquipmentSlotGroup.FEET);
         meta.addAttributeModifier(Attribute.MAX_HEALTH, modifier);
-        AttributeModifier modifier2 = new AttributeModifier(UUID.randomUUID(), "Defense", def, AttributeModifier.Operation.ADD_NUMBER, EquipmentSlot.FEET);
+        AttributeModifier modifier2 = new AttributeModifier(k, def, AttributeModifier.Operation.ADD_NUMBER, EquipmentSlotGroup.FEET);
         meta.addAttributeModifier(Attribute.ARMOR, modifier2);
         meta.displayName(convertLegacyToComponent(ChatColor.DARK_GREEN + "Emerald Boots"));
         if (this.getConfig().getBoolean("EnchantmentsOnEmeraldArmor")) {
@@ -433,9 +437,11 @@ public class CombatWeaponryPlus extends JavaPlugin implements Listener {
             dmg = this.getConfig().getDouble("aEmeraldSword.damage") - 1.0;
             spd = this.getConfig().getDouble("aEmeraldSword.speed") - 4.0;
         }
-        AttributeModifier modifier = new AttributeModifier(UUID.randomUUID(), "Attack Speed", spd, AttributeModifier.Operation.ADD_NUMBER, EquipmentSlot.HAND);
+        var k = new NamespacedKey("", "");
+        // attack damage
+        AttributeModifier modifier = new AttributeModifier(k, spd, AttributeModifier.Operation.ADD_NUMBER, EquipmentSlotGroup.HAND);
         meta.addAttributeModifier(Attribute.ATTACK_SPEED, modifier);
-        AttributeModifier modifier2 = new AttributeModifier(UUID.randomUUID(), "Attack Damage", dmg, AttributeModifier.Operation.ADD_NUMBER, EquipmentSlot.HAND);
+        AttributeModifier modifier2 = new AttributeModifier(k, dmg, AttributeModifier.Operation.ADD_NUMBER, EquipmentSlotGroup.HAND);
         meta.addAttributeModifier(Attribute.ATTACK_DAMAGE, modifier2);
         ArrayList<String> lore = new ArrayList<String>();
         lore.add("");
@@ -526,8 +532,8 @@ public class CombatWeaponryPlus extends JavaPlugin implements Listener {
     }
 
     public ShapedRecipe getSworddRecipe() {
-        ItemStack item = new ItemStack(Material.IRON_SWORD);
-        ItemMeta meta = item.getItemMeta();
+        var item = new ItemStack(Material.IRON_SWORD);
+        var meta = item.getItemMeta();
         meta.setDisplayName(convertLegacyToSection(this.getConfig().getString("dChorusBlade.name")));
         if (this.getConfig().getBoolean("EnchantsChorusBlade")) {
             int num = this.getConfig().getInt("ChorusEnchantLevels.Unbreaking");
@@ -535,33 +541,31 @@ public class CombatWeaponryPlus extends JavaPlugin implements Listener {
             meta.addEnchant(Enchantment.UNBREAKING, num, true);
             meta.addEnchant(Enchantment.KNOCKBACK, num2, true);
         }
-        ArrayList<String> lore = new ArrayList<String>();
-        lore.add(convertLegacyToSection(this.getConfig().getString("dChorusBlade.line1")));
-        lore.add(convertLegacyToSection(this.getConfig().getString("dChorusBlade.line2")));
-        lore.add(convertLegacyToSection(this.getConfig().getString("dChorusBlade.line3")));
-        lore.add(convertLegacyToSection(this.getConfig().getString("dChorusBlade.line4")));
-        lore.add(convertLegacyToSection(this.getConfig().getString("dChorusBlade.line5")));
-        lore.add(convertLegacyToSection(this.getConfig().getString("dChorusBlade.line6")));
-        lore.add(convertLegacyToSection(this.getConfig().getString("dChorusBlade.line7")));
-        lore.add(convertLegacyToSection(this.getConfig().getString("dChorusBlade.line8")));
-        lore.add(convertLegacyToSection(this.getConfig().getString("dChorusBlade.line9")));
-        meta.setLore(lore);
+        ArrayList<Component> lore = new ArrayList<Component>();
+
+        for (int i = 1; i <= 9; i++) {
+            lore.add(convertLegacyToComponent(this.getConfig().getString("dChorusBlade.line" + i)));
+        }
         meta.addItemFlags(new ItemFlag[]{ItemFlag.HIDE_ATTRIBUTES});
-        meta.setLore(lore);
+        meta.lore(lore);
         double dmg = 3.0;
         double spd = 6.0;
+
         if (this.getConfig().getBoolean("UseCustomValues")) {
             dmg = this.getConfig().getDouble("aChorusBlade.damage") - 1.0;
             spd = this.getConfig().getDouble("aChorusBlade.speed") - 4.0;
         }
-        AttributeModifier modifier = new AttributeModifier(UUID.randomUUID(), "Attack Speed", spd, AttributeModifier.Operation.ADD_NUMBER, EquipmentSlot.HAND);
-        meta.addAttributeModifier(Attribute.ATTACK_SPEED, modifier);
-        AttributeModifier modifier2 = new AttributeModifier(UUID.randomUUID(), "Attack Damage", dmg, AttributeModifier.Operation.ADD_NUMBER, EquipmentSlot.HAND);
-        meta.addAttributeModifier(Attribute.ATTACK_DAMAGE, modifier2);
+
+        var attackSpeedModifier = new AttributeModifier(k, spd, AttributeModifier.Operation.ADD_NUMBER, EquipmentSlotGroup.HAND);
+        meta.addAttributeModifier(Attribute.ATTACK_SPEED, attackSpeedModifier);
+
+        var attackDamageModifier = new AttributeModifier(k, dmg, AttributeModifier.Operation.ADD_NUMBER, EquipmentSlotGroup.HAND);
+        meta.addAttributeModifier(Attribute.ATTACK_DAMAGE, attackDamageModifier);
+
         meta.addItemFlags(new ItemFlag[]{ItemFlag.HIDE_ATTRIBUTES});
         meta.setCustomModelData(1000007);
         item.setItemMeta(meta);
-        NamespacedKey key = new NamespacedKey((Plugin)this, "chorusblade");
+        NamespacedKey key = new NamespacedKey(this, "chorusblade");
         this.keys.add(key);
         ShapedRecipe recipe = new ShapedRecipe(key, item);
         recipe.shape(new String[]{" E ", "PCP", "qBq"});
@@ -596,9 +600,9 @@ public class CombatWeaponryPlus extends JavaPlugin implements Listener {
             dmg = this.getConfig().getDouble("aSwordBow.damage") - 1.0;
             spd = this.getConfig().getDouble("aSwordBow.speed") - 4.0;
         }
-        AttributeModifier modifier = new AttributeModifier(UUID.randomUUID(), "Attack Speed", spd, AttributeModifier.Operation.ADD_NUMBER, EquipmentSlot.HAND);
+        AttributeModifier modifier = new AttributeModifier(k, spd, AttributeModifier.Operation.ADD_NUMBER, EquipmentSlotGroup.HAND);
         meta.addAttributeModifier(Attribute.ATTACK_SPEED, modifier);
-        AttributeModifier modifier2 = new AttributeModifier(UUID.randomUUID(), "Attack Damage", dmg, AttributeModifier.Operation.ADD_NUMBER, EquipmentSlot.HAND);
+        AttributeModifier modifier2 = new AttributeModifier(k, dmg, AttributeModifier.Operation.ADD_NUMBER, EquipmentSlotGroup.HAND);
         meta.addAttributeModifier(Attribute.ATTACK_DAMAGE, modifier2);
         meta.setCustomModelData(1000001);
         item.setItemMeta(meta);
@@ -646,17 +650,17 @@ public class CombatWeaponryPlus extends JavaPlugin implements Listener {
             kbr = this.getConfig().getDouble("aHeavySwordBow.KBResist") / 10.0;
             okbr = this.getConfig().getDouble("aHeavySwordBow.offhandKBResist") / 10.0;
         }
-        AttributeModifier modifier = new AttributeModifier(UUID.randomUUID(), "Attack Speed", spd, AttributeModifier.Operation.ADD_NUMBER, EquipmentSlot.HAND);
+        AttributeModifier modifier = new AttributeModifier(k, spd, AttributeModifier.Operation.ADD_NUMBER, EquipmentSlotGroup.HAND);
         meta.addAttributeModifier(Attribute.ATTACK_SPEED, modifier);
-        AttributeModifier modifier2 = new AttributeModifier(UUID.randomUUID(), "Attack Damage", dmg, AttributeModifier.Operation.ADD_NUMBER, EquipmentSlot.HAND);
+        AttributeModifier modifier2 = new AttributeModifier(k, dmg, AttributeModifier.Operation.ADD_NUMBER, EquipmentSlotGroup.HAND);
         meta.addAttributeModifier(Attribute.ATTACK_DAMAGE, modifier2);
-        AttributeModifier modifier3 = new AttributeModifier(UUID.randomUUID(), "Speed", mspd, AttributeModifier.Operation.ADD_NUMBER, EquipmentSlot.HAND);
+        AttributeModifier modifier3 = new AttributeModifier(k, mspd, AttributeModifier.Operation.ADD_NUMBER, EquipmentSlotGroup.HAND);
         meta.addAttributeModifier(Attribute.MOVEMENT_SPEED, modifier3);
-        AttributeModifier modifier4 = new AttributeModifier(UUID.randomUUID(), "Speed", omspd, AttributeModifier.Operation.ADD_NUMBER, EquipmentSlot.OFF_HAND);
+        AttributeModifier modifier4 = new AttributeModifier(k, omspd, AttributeModifier.Operation.ADD_NUMBER, EquipmentSlotGroup.OFF_HAND);
         meta.addAttributeModifier(Attribute.MOVEMENT_SPEED, modifier4);
-        AttributeModifier modifier5 = new AttributeModifier(UUID.randomUUID(), "KnockbackRes", kbr, AttributeModifier.Operation.ADD_NUMBER, EquipmentSlot.HAND);
+        AttributeModifier modifier5 = new AttributeModifier(k, kbr, AttributeModifier.Operation.ADD_NUMBER, EquipmentSlotGroup.HAND);
         meta.addAttributeModifier(Attribute.KNOCKBACK_RESISTANCE, modifier5);
-        AttributeModifier modifier6 = new AttributeModifier(UUID.randomUUID(), "KnockbackRes", okbr, AttributeModifier.Operation.ADD_NUMBER, EquipmentSlot.OFF_HAND);
+        AttributeModifier modifier6 = new AttributeModifier(k, okbr, AttributeModifier.Operation.ADD_NUMBER, EquipmentSlotGroup.OFF_HAND);
         meta.addAttributeModifier(Attribute.KNOCKBACK_RESISTANCE, modifier6);
         meta.setCustomModelData(1000002);
         item.setItemMeta(meta);
@@ -718,9 +722,9 @@ public class CombatWeaponryPlus extends JavaPlugin implements Listener {
         if (this.getConfig().getBoolean("UseCustomValues")) {
             def = this.getConfig().getDouble("aPlateChainHelmet.Armor");
         }
-        AttributeModifier modifier = new AttributeModifier(UUID.randomUUID(), "Defense", def, AttributeModifier.Operation.ADD_NUMBER, EquipmentSlot.HEAD);
+        AttributeModifier modifier = new AttributeModifier(k, def, AttributeModifier.Operation.ADD_NUMBER, EquipmentSlotGroup.HEAD);
         meta.addAttributeModifier(Attribute.ARMOR, modifier);
-        meta.displayName(Component.text("Plated Chainmail Helmet", TextDecoration.BOLD));
+        meta.displayName(Component.text("Plated Chainmail Helmet").decorate(TextDecoration.BOLD));
         if (this.getConfig().getBoolean("EnchantsPlatedChainmail")) {
             int num = this.getConfig().getInt("PChainEnchantLevels.Unbreaking");
             meta.addEnchant(Enchantment.UNBREAKING, num, true);
@@ -742,7 +746,7 @@ public class CombatWeaponryPlus extends JavaPlugin implements Listener {
         if (this.getConfig().getBoolean("UseCustomValues")) {
             def = this.getConfig().getDouble("aPlateChainChestplate.Armor");
         }
-        AttributeModifier modifier = new AttributeModifier(UUID.randomUUID(), "Defense", def, AttributeModifier.Operation.ADD_NUMBER, EquipmentSlot.CHEST);
+        AttributeModifier modifier = new AttributeModifier(k, def, AttributeModifier.Operation.ADD_NUMBER, EquipmentSlotGroup.CHEST);
         meta.addAttributeModifier(Attribute.ARMOR, modifier);
         meta.setDisplayName(ChatColor.BOLD + "Plated Chainmail Chestplate");
         if (this.getConfig().getBoolean("EnchantsPlatedChainmail")) {
@@ -766,7 +770,7 @@ public class CombatWeaponryPlus extends JavaPlugin implements Listener {
         if (this.getConfig().getBoolean("UseCustomValues")) {
             def = this.getConfig().getDouble("aPlateChainLeggings.Armor");
         }
-        AttributeModifier modifier = new AttributeModifier(UUID.randomUUID(), "Defense", def, AttributeModifier.Operation.ADD_NUMBER, EquipmentSlot.LEGS);
+        AttributeModifier modifier = new AttributeModifier(k, def, AttributeModifier.Operation.ADD_NUMBER, EquipmentSlotGroup.LEGS);
         meta.addAttributeModifier(Attribute.ARMOR, modifier);
         meta.setDisplayName(ChatColor.BOLD + "Plated Chainmail Leggings");
         if (this.getConfig().getBoolean("EnchantsPlatedChainmail")) {
@@ -790,7 +794,7 @@ public class CombatWeaponryPlus extends JavaPlugin implements Listener {
         if (this.getConfig().getBoolean("UseCustomValues")) {
             def = this.getConfig().getDouble("aPlateChainBoots.Armor");
         }
-        AttributeModifier modifier = new AttributeModifier(UUID.randomUUID(), "Defense", def, AttributeModifier.Operation.ADD_NUMBER, EquipmentSlot.FEET);
+        AttributeModifier modifier = new AttributeModifier(k, def, AttributeModifier.Operation.ADD_NUMBER, EquipmentSlotGroup.FEET);
         meta.addAttributeModifier(Attribute.ARMOR, modifier);
         meta.setDisplayName(ChatColor.BOLD + "Plated Chainmail Boots");
         if (this.getConfig().getBoolean("EnchantsPlatedChainmail")) {
@@ -829,9 +833,9 @@ public class CombatWeaponryPlus extends JavaPlugin implements Listener {
             dmg = this.getConfig().getDouble("aWoodenScythe.damage") - 1.0;
             spd = this.getConfig().getDouble("aWoodenScythe.speed") - 4.0;
         }
-        AttributeModifier modifier = new AttributeModifier(UUID.randomUUID(), "Attack Speed", spd, AttributeModifier.Operation.ADD_NUMBER, EquipmentSlot.HAND);
+        AttributeModifier modifier = new AttributeModifier(k, spd, AttributeModifier.Operation.ADD_NUMBER, EquipmentSlotGroup.HAND);
         meta.addAttributeModifier(Attribute.ATTACK_SPEED, modifier);
-        AttributeModifier modifier2 = new AttributeModifier(UUID.randomUUID(), "Attack Damage", dmg, AttributeModifier.Operation.ADD_NUMBER, EquipmentSlot.HAND);
+        AttributeModifier modifier2 = new AttributeModifier(k, dmg, AttributeModifier.Operation.ADD_NUMBER, EquipmentSlotGroup.HAND);
         meta.addAttributeModifier(Attribute.ATTACK_DAMAGE, modifier2);
         meta.setDisplayName(convertLegacyToSection(this.getConfig().getString("dWoodenScythe.name")));
         meta.setCustomModelData(1000003);
@@ -866,9 +870,9 @@ public class CombatWeaponryPlus extends JavaPlugin implements Listener {
             dmg = this.getConfig().getDouble("aStoneScythe.damage") - 1.0;
             spd = this.getConfig().getDouble("aStoneScythe.speed") - 4.0;
         }
-        AttributeModifier modifier = new AttributeModifier(UUID.randomUUID(), "Attack Speed", spd, AttributeModifier.Operation.ADD_NUMBER, EquipmentSlot.HAND);
+        AttributeModifier modifier = new AttributeModifier(k, spd, AttributeModifier.Operation.ADD_NUMBER, EquipmentSlotGroup.HAND);
         meta.addAttributeModifier(Attribute.ATTACK_SPEED, modifier);
-        AttributeModifier modifier2 = new AttributeModifier(UUID.randomUUID(), "Attack Damage", dmg, AttributeModifier.Operation.ADD_NUMBER, EquipmentSlot.HAND);
+        AttributeModifier modifier2 = new AttributeModifier(k, dmg, AttributeModifier.Operation.ADD_NUMBER, EquipmentSlotGroup.HAND);
         meta.addAttributeModifier(Attribute.ATTACK_DAMAGE, modifier2);
         meta.setDisplayName(convertLegacyToSection(this.getConfig().getString("dStoneScythe.name")));
         meta.setCustomModelData(1000003);
@@ -2523,7 +2527,7 @@ public class CombatWeaponryPlus extends JavaPlugin implements Listener {
         this.keys.add(key);
         ShapedRecipe recipe = new ShapedRecipe(key, item);
         recipe.shape(new String[]{"  M", " M ", "S  "});
-        String n = this.getConfig().getString("NetheriteIngots");
+        var n = this.getConfig().getBoolean("NetheriteIngots");
         if (n) {
             recipe.setIngredient('M', Material.NETHERITE_INGOT);
         } else {

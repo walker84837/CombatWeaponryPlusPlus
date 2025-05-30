@@ -1,5 +1,21 @@
 package org.winlogon.combatweaponryplus;
 
+import java.util.ArrayList;
+import java.util.List;
+
+import org.bukkit.Material;
+import org.bukkit.NamespacedKey;
+import org.bukkit.Sound;
+import org.bukkit.Location;
+import org.bukkit.Particle;
+import org.bukkit.World;
+import org.bukkit.configuration.file.FileConfiguration;
+import org.bukkit.entity.Arrow;
+import org.bukkit.entity.EnderPearl;
+import org.bukkit.entity.EntityType;
+import org.bukkit.entity.LivingEntity;
+import org.bukkit.entity.Player;
+import org.bukkit.entity.Entity;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.block.Action;
@@ -12,49 +28,125 @@ import org.bukkit.event.inventory.PrepareSmithingEvent;
 import org.bukkit.event.player.PlayerInteractEntityEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.event.player.PlayerJoinEvent;
-
-import org.bukkit.entity.Player;
+import org.bukkit.inventory.ItemStack;
+import org.bukkit.inventory.SmithingInventory;
+import org.bukkit.inventory.meta.ItemMeta;
+import org.bukkit.potion.PotionEffect;
+import org.bukkit.potion.PotionEffectType;
+import org.bukkit.util.Vector;
 
 class Listeners implements Listener {
+    FileConfiguration config;
+    List<NamespacedKey> keys;
+
+    public Listeners(final FileConfiguration config, final List<NamespacedKey> keys) {
+        this.config = config;
+        this.keys = keys;
+    }
+
+    private void handleSmithingEvent(PrepareSmithingEvent event, 
+                                    Material toolType,
+                                    Material modifierType,
+                                    int requiredModelData,
+                                    int resultModelData,
+                                    String configKey) {
+                                        
+        if (!config.getBoolean(configKey)) return;
+        
+        SmithingInventory inv = event.getInventory();
+        ItemStack template = inv.getItem(0);
+        ItemStack tool = inv.getItem(1);
+        ItemStack modifier = inv.getItem(2);
+        
+        if (template == null || template.getType() != Material.LAPIS_LAZULI) return;
+        if (tool == null || modifier == null) return;
+        if (tool.getType() != toolType || modifier.getType() != modifierType) return;
+        
+        ItemMeta toolMeta = tool.getItemMeta();
+        if (toolMeta == null || toolMeta.getCustomModelData() != requiredModelData) return;
+        
+        ItemStack result = tool.clone();
+        ItemMeta meta = result.getItemMeta();
+        meta.setCustomModelData(resultModelData);
+        result.setItemMeta(meta);
+        event.setResult(result);
+    }
+
+    private boolean isValidItem(Player player, Material material, int modelData) {
+        ItemStack item = player.getInventory().getItemInMainHand();
+        return item.getType() == material && 
+               item.getItemMeta() != null && 
+               item.getItemMeta().getCustomModelData() == modelData;
+    }
+
+    private void applyCooldown(Player player, Material material, int seconds) {
+        player.setCooldown(material, seconds * 20);
+    }
+
+    private void spawnParticles(Location location, Particle particle, int count) {
+        location.getWorld().spawnParticle(particle, location, count);
+    }
+
+    private void playSound(Location location, Sound sound, float volume, float pitch) {
+        location.getWorld().playSound(location, sound, volume, pitch);
+    }
+
     @EventHandler
     public void onJoin(PlayerJoinEvent event) {
         Player player = event.getPlayer();
-        if (this.getConfig().getBoolean("ResourcePack")) {
-            player.setResourcePack(this.getConfig().getString("PackLink"));
+        if (this.config.getBoolean("ResourcePack")) {
+            player.setResourcePack(this.config.getString("PackLink"));
         };
         player.discoverRecipes(this.keys);
     }
     
     @EventHandler
     public void onClick(PlayerInteractEvent event) {
-        if (event.getPlayer().getInventory().getItemInMainHand().getType().equals((Object)Material.IRON_SWORD) && event.getPlayer().getInventory().getItemInMainHand().getItemMeta().hasCustomModelData() && event.getPlayer().getInventory().getItemInMainHand().getItemMeta().hasLore() && event.getPlayer().getInventory().getItemInMainHand().getItemMeta().getCustomModelData() == 1000007) {
-            Player player = event.getPlayer();
-            if (event.getAction() == Action.RIGHT_CLICK_AIR && Cooldown.checkCooldown(event.getPlayer())) {
+        var player = event.getPlayer();
+        var itemInHand = player.getInventory().getItemInMainHand();
+        var itemMeta = itemInHand.getItemMeta();
+
+        var isIronSword = itemInHand.getType().equals(Material.IRON_SWORD);
+        var hasModelData = itemMeta.hasCustomModelData();
+        var hasLore = itemMeta.hasLore();
+        var hasCorrectModelData = itemMeta.getCustomModelData() == 1000007;
+
+        if (isIronSword && hasModelData && hasLore && hasCorrectModelData) {
+            if (event.getAction() == Action.RIGHT_CLICK_AIR && Cooldown.checkCooldown(player)) {
                 player.launchProjectile(EnderPearl.class);
-                Cooldown.setCooldown(event.getPlayer(), 2);
+                Cooldown.setCooldown(player, 2);
             }
         }
     }
 
-
     @EventHandler
     public void oncClick(PlayerInteractEvent event) {
-        Player player;
-        if (event.getPlayer().getInventory().getItemInMainHand().getType().equals((Object)Material.NETHERITE_PICKAXE) && event.getPlayer().getInventory().getItemInMainHand().getItemMeta().hasCustomModelData() && event.getPlayer().getInventory().getItemInMainHand().getItemMeta().hasLore() && (player = event.getPlayer()).getInventory().getItemInMainHand().getItemMeta().getCustomModelData() == 1000001 && event.getAction() == Action.LEFT_CLICK_BLOCK) {
+        var player = event.getPlayer();
+        var itemInHand = player.getInventory().getItemInMainHand();
+        var meta = itemInHand.getItemMeta();
+
+        var cond1 = itemInHand.getType().equals(Material.NETHERITE_PICKAXE);
+        var cond2 = meta.hasCustomModelData();
+        var cond3 = meta.hasLore();
+        var cond4 = meta.getCustomModelData() == 1000001;
+        var cond5 = event.getAction() == Action.LEFT_CLICK_BLOCK;
+
+        if (cond1 && cond2 && cond3 && cond4 && cond5) {
             player.addPotionEffect(new PotionEffect(PotionEffectType.HASTE, 40, 2));
         }
     }
 
+    // TODO: is this a test event?
     @EventHandler
     public void onccccClick(PlayerInteractEvent event) {
         if (event.getPlayer().getInventory().getItemInMainHand().getType().equals((Object)Material.NETHERITE_HOE) && event.getPlayer().getInventory().getItemInMainHand().getItemMeta().hasCustomModelData() && event.getPlayer().getInventory().getItemInMainHand().getItemMeta().hasLore()) {
             Player player = event.getPlayer();
             if (event.getAction() == Action.RIGHT_CLICK_AIR && player.getInventory().getItemInMainHand().getItemMeta().getCustomModelData() == 1234567) {
-                World world = player.getWorld();
+                var world = player.getWorld();
                 world.playSound(player.getLocation(), Sound.MUSIC_DISC_CAT, 10.0f, 1.0f);
-                ItemMeta meta = player.getInventory().getItemInMainHand().getItemMeta();
+                var meta = player.getInventory().getItemInMainHand().getItemMeta();
                 meta.setDisplayName("GOTTEM");
-                ArrayList<String> lore = new ArrayList<String>();
+                List<String> lore = new ArrayList<String>();
                 lore.add("");
                 lore.add(convertLegacyToSection("&6im sorry"));
                 lore.add("");
@@ -67,7 +159,8 @@ class Listeners implements Listener {
 
     @EventHandler
     public void eeeeee(final EntityDamageByEntityEvent event) {
-        Player damager;
+        // TODO: simplify if statements or export to private handler method
+        Player attacker; // should be 
         Player damaged;
         Player player;
         if (event.getDamager() instanceof Player && (player = (Player)event.getDamager()).getInventory().getItemInMainHand().hasItemMeta() && player.getInventory().getItemInMainHand().getItemMeta().hasCustomModelData() && (player.getInventory().getItemInMainHand().getItemMeta().getCustomModelData() == 1000006 || player.getInventory().getItemInMainHand().getItemMeta().getCustomModelData() == 1200006 || player.getInventory().getItemInMainHand().getItemMeta().getCustomModelData() == 1000016 || player.getInventory().getItemInMainHand().getItemMeta().getCustomModelData() == 4000006)) {
@@ -92,14 +185,15 @@ class Listeners implements Listener {
                 player.addPotionEffect(new PotionEffect(PotionEffectType.INCREASE_DAMAGE, 15, 0));
             }
         }
+
         if (event.getEntity().getType().equals((Object)EntityType.PLAYER) && (damaged = (Player)event.getEntity()).getInventory().getItemInMainHand().getType() == Material.NETHERITE_SWORD && damaged.getInventory().getItemInMainHand().getItemMeta().hasCustomModelData() && (damaged.getInventory().getItemInMainHand().getItemMeta().getCustomModelData() == 1222225 || damaged.getInventory().getItemInMainHand().getItemMeta().getCustomModelData() == 2222225)) {
             event.setDamage(event.getDamage() * 1.5);
         }
-        if (event.getDamager().getType() == EntityType.PLAYER && (damager = (Player)event.getDamager()).getInventory().getItemInMainHand().getType() == Material.NETHERITE_SWORD && damager.getInventory().getItemInMainHand().getItemMeta().hasCustomModelData() && (damager.getInventory().getItemInMainHand().getItemMeta().getCustomModelData() == 1222224 || damager.getInventory().getItemInMainHand().getItemMeta().getCustomModelData() == 2222224)) {
-            LivingEntity entity = (LivingEntity)event.getEntity();
+        if (event.getDamager().getType() == EntityType.PLAYER && (attacker = (Player)event.getDamager()).getInventory().getItemInMainHand().getType() == Material.NETHERITE_SWORD && attacker.getInventory().getItemInMainHand().getItemMeta().hasCustomModelData() && (attacker.getInventory().getItemInMainHand().getItemMeta().getCustomModelData() == 1222224 || attacker.getInventory().getItemInMainHand().getItemMeta().getCustomModelData() == 2222224)) {
+            LivingEntity entity = (LivingEntity) event.getEntity();
             entity.addPotionEffect(new PotionEffect(PotionEffectType.WITHER, 60, 1));
         }
-        if (event.getDamager().getType() == EntityType.PLAYER && (damager = (Player)event.getDamager()).getInventory().getItemInMainHand().getType() == Material.NETHERITE_SWORD && damager.getInventory().getItemInMainHand().getItemMeta().hasCustomModelData() && (damager.getInventory().getItemInMainHand().getItemMeta().getCustomModelData() == 1222225 || damager.getInventory().getItemInMainHand().getItemMeta().getCustomModelData() == 2222225)) {
+        if (event.getDamager().getType() == EntityType.PLAYER && (attacker = (Player)event.getDamager()).getInventory().getItemInMainHand().getType() == Material.NETHERITE_SWORD && attacker.getInventory().getItemInMainHand().getItemMeta().hasCustomModelData() && (attacker.getInventory().getItemInMainHand().getItemMeta().getCustomModelData() == 1222225 || attacker.getInventory().getItemInMainHand().getItemMeta().getCustomModelData() == 2222225)) {
             event.setDamage(event.getDamage() * 1.5);
         }
         World world1 = event.getEntity().getWorld();
@@ -373,24 +467,24 @@ class Listeners implements Listener {
         resultm.setCustomModelData(1210001);
         double dmg = 8.0;
         double spd = -2.4;
-        if (this.getConfig().getBoolean("UseCustomValues")) {
-            dmg = this.getConfig().getDouble("aPrismarineSword.damage") - 1.0;
-            spd = this.getConfig().getDouble("aPrismarineSword.speed") - 4.0;
+        if (this.config.getBoolean("UseCustomValues")) {
+            dmg = this.config.getDouble("aPrismarineSword.damage") - 1.0;
+            spd = this.config.getDouble("aPrismarineSword.speed") - 4.0;
         }
-        resultm.setDisplayName(convertLegacyToSection(this.getConfig().getString("dPrismarineSword.name")));
+        resultm.setDisplayName(convertLegacyToSection(this.config.getString("dPrismarineSword.name")));
         AttributeModifier modifier1 = new AttributeModifier(UUID.randomUUID(), "Damage", dmg, AttributeModifier.Operation.ADD_NUMBER, EquipmentSlot.HAND);
         resultm.addAttributeModifier(Attribute.ATTACK_DAMAGE, modifier1);
         AttributeModifier modifier2 = new AttributeModifier(UUID.randomUUID(), "Atackspeed", spd, AttributeModifier.Operation.ADD_NUMBER, EquipmentSlot.HAND);
         resultm.addAttributeModifier(Attribute.ATTACK_SPEED, modifier2);
         ArrayList<String> lore = new ArrayList<String>();
-        lore.add(convertLegacyToSection(this.getConfig().getString("dPrismarineSword.line1")));
-        lore.add(convertLegacyToSection(this.getConfig().getString("dPrismarineSword.line2")));
-        lore.add(convertLegacyToSection(this.getConfig().getString("dPrismarineSword.line3")));
-        lore.add(convertLegacyToSection(this.getConfig().getString("dPrismarineSword.line4")));
+        lore.add(convertLegacyToSection(this.config.getString("dPrismarineSword.line1")));
+        lore.add(convertLegacyToSection(this.config.getString("dPrismarineSword.line2")));
+        lore.add(convertLegacyToSection(this.config.getString("dPrismarineSword.line3")));
+        lore.add(convertLegacyToSection(this.config.getString("dPrismarineSword.line4")));
         resultm.setLore(lore);
         resultm.addItemFlags(new ItemFlag[]{ItemFlag.HIDE_ATTRIBUTES});
         result.setItemMeta(resultm);
-        if (this.getConfig().getBoolean("Prismarine")) {
+        if (this.config.getBoolean("Prismarine")) {
             event.setResult(result);
         }
     }
@@ -423,25 +517,25 @@ class Listeners implements Listener {
         ItemMeta resultm = result.getItemMeta();
         resultm.setCustomModelData(1200001);
         double dmg = 1.0;
-        if (this.getConfig().getBoolean("UseCustomValues")) {
-            dmg = this.getConfig().getDouble("aPrismarineLongsword.damageAdded");
+        if (this.config.getBoolean("UseCustomValues")) {
+            dmg = this.config.getDouble("aPrismarineLongsword.damageAdded");
         }
-        resultm.setDisplayName(convertLegacyToSection(this.getConfig().getString("dPrismarineLongsword.name")));
+        resultm.setDisplayName(convertLegacyToSection(this.config.getString("dPrismarineLongsword.name")));
         AttributeModifier modifier1 = new AttributeModifier(UUID.randomUUID(), "Damage", dmg, AttributeModifier.Operation.ADD_NUMBER, EquipmentSlot.HAND);
         resultm.addAttributeModifier(Attribute.ATTACK_DAMAGE, modifier1);
         ArrayList<String> lore = new ArrayList<String>();
-        lore.add(convertLegacyToSection(this.getConfig().getString("LongswordDescription.line1")));
-        lore.add(convertLegacyToSection(this.getConfig().getString("LongswordDescription.line2")));
-        lore.add(convertLegacyToSection(this.getConfig().getString("LongswordDescription.line3")));
-        lore.add(convertLegacyToSection(this.getConfig().getString("LongswordDescription.line4")));
-        lore.add(convertLegacyToSection(this.getConfig().getString("LongswordDescription.line5")));
-        lore.add(convertLegacyToSection(this.getConfig().getString("dPrismarineLongsword.line6")));
-        lore.add(convertLegacyToSection(this.getConfig().getString("dPrismarineLongsword.line7")));
-        lore.add(convertLegacyToSection(this.getConfig().getString("dPrismarineLongsword.line8")));
+        lore.add(convertLegacyToSection(this.config.getString("LongswordDescription.line1")));
+        lore.add(convertLegacyToSection(this.config.getString("LongswordDescription.line2")));
+        lore.add(convertLegacyToSection(this.config.getString("LongswordDescription.line3")));
+        lore.add(convertLegacyToSection(this.config.getString("LongswordDescription.line4")));
+        lore.add(convertLegacyToSection(this.config.getString("LongswordDescription.line5")));
+        lore.add(convertLegacyToSection(this.config.getString("dPrismarineLongsword.line6")));
+        lore.add(convertLegacyToSection(this.config.getString("dPrismarineLongsword.line7")));
+        lore.add(convertLegacyToSection(this.config.getString("dPrismarineLongsword.line8")));
         resultm.setLore(lore);
         resultm.addItemFlags(new ItemFlag[]{ItemFlag.HIDE_ATTRIBUTES});
         result.setItemMeta(resultm);
-        if (this.getConfig().getBoolean("Prismarine")) {
+        if (this.config.getBoolean("Prismarine")) {
             event.setResult(result);
         }
     }
@@ -474,27 +568,27 @@ class Listeners implements Listener {
         ItemMeta resultm = result.getItemMeta();
         resultm.setCustomModelData(1200003);
         double dmg = 1.0;
-        if (this.getConfig().getBoolean("UseCustomValues")) {
-            dmg = this.getConfig().getDouble("aPrismarineScythe.damageAdded");
+        if (this.config.getBoolean("UseCustomValues")) {
+            dmg = this.config.getDouble("aPrismarineScythe.damageAdded");
         }
-        resultm.setDisplayName(convertLegacyToSection(this.getConfig().getString("dPrismarineScythe.name")));
+        resultm.setDisplayName(convertLegacyToSection(this.config.getString("dPrismarineScythe.name")));
         AttributeModifier modifier1 = new AttributeModifier(UUID.randomUUID(), "Damage", dmg, AttributeModifier.Operation.ADD_NUMBER, EquipmentSlot.HAND);
         resultm.addAttributeModifier(Attribute.ATTACK_DAMAGE, modifier1);
         ArrayList<String> lore = new ArrayList<String>();
-        lore.add(convertLegacyToSection(this.getConfig().getString("ScytheDescription.line1")));
-        lore.add(convertLegacyToSection(this.getConfig().getString("ScytheDescription.line2")));
-        lore.add(convertLegacyToSection(this.getConfig().getString("ScytheDescription.line3")));
-        lore.add(convertLegacyToSection(this.getConfig().getString("ScytheDescription.line4")));
-        lore.add(convertLegacyToSection(this.getConfig().getString("ScytheDescription.line5")));
-        lore.add(convertLegacyToSection(this.getConfig().getString("ScytheDescription.line6")));
-        lore.add(convertLegacyToSection(this.getConfig().getString("ScytheDescription.line7")));
-        lore.add(convertLegacyToSection(this.getConfig().getString("dPrismarineScythe.line8")));
-        lore.add(convertLegacyToSection(this.getConfig().getString("dPrismarineScythe.line9")));
-        lore.add(convertLegacyToSection(this.getConfig().getString("dPrismarineScythe.line10")));
+        lore.add(convertLegacyToSection(this.config.getString("ScytheDescription.line1")));
+        lore.add(convertLegacyToSection(this.config.getString("ScytheDescription.line2")));
+        lore.add(convertLegacyToSection(this.config.getString("ScytheDescription.line3")));
+        lore.add(convertLegacyToSection(this.config.getString("ScytheDescription.line4")));
+        lore.add(convertLegacyToSection(this.config.getString("ScytheDescription.line5")));
+        lore.add(convertLegacyToSection(this.config.getString("ScytheDescription.line6")));
+        lore.add(convertLegacyToSection(this.config.getString("ScytheDescription.line7")));
+        lore.add(convertLegacyToSection(this.config.getString("dPrismarineScythe.line8")));
+        lore.add(convertLegacyToSection(this.config.getString("dPrismarineScythe.line9")));
+        lore.add(convertLegacyToSection(this.config.getString("dPrismarineScythe.line10")));
         resultm.setLore(lore);
         resultm.addItemFlags(new ItemFlag[]{ItemFlag.HIDE_ATTRIBUTES});
         result.setItemMeta(resultm);
-        if (this.getConfig().getBoolean("Prismarine")) {
+        if (this.config.getBoolean("Prismarine")) {
             event.setResult(result);
         }
     }
@@ -527,27 +621,27 @@ class Listeners implements Listener {
         ItemMeta resultm = result.getItemMeta();
         resultm.setCustomModelData(1200005);
         double dmg = 1.0;
-        if (this.getConfig().getBoolean("UseCustomValues")) {
-            dmg = this.getConfig().getDouble("aPrismarineRapier.damageAdded");
+        if (this.config.getBoolean("UseCustomValues")) {
+            dmg = this.config.getDouble("aPrismarineRapier.damageAdded");
         }
-        resultm.setDisplayName(convertLegacyToSection(this.getConfig().getString("dPrismarineRapier.name")));
+        resultm.setDisplayName(convertLegacyToSection(this.config.getString("dPrismarineRapier.name")));
         AttributeModifier modifier1 = new AttributeModifier(UUID.randomUUID(), "Damage", dmg, AttributeModifier.Operation.ADD_NUMBER, EquipmentSlot.HAND);
         resultm.addAttributeModifier(Attribute.ATTACK_DAMAGE, modifier1);
         ArrayList<String> lore = new ArrayList<String>();
-        lore.add(convertLegacyToSection(this.getConfig().getString("RapierDescription.line1")));
-        lore.add(convertLegacyToSection(this.getConfig().getString("RapierDescription.line2")));
-        lore.add(convertLegacyToSection(this.getConfig().getString("RapierDescription.line3")));
-        lore.add(convertLegacyToSection(this.getConfig().getString("RapierDescription.line4")));
-        lore.add(convertLegacyToSection(this.getConfig().getString("RapierDescription.line5")));
-        lore.add(convertLegacyToSection(this.getConfig().getString("RapierDescription.line6")));
-        lore.add(convertLegacyToSection(this.getConfig().getString("RapierDescription.line7")));
-        lore.add(convertLegacyToSection(this.getConfig().getString("dPrismarineRapier.line8")));
-        lore.add(convertLegacyToSection(this.getConfig().getString("dPrismarineRapier.line9")));
-        lore.add(convertLegacyToSection(this.getConfig().getString("dPrismarineRapier.line10")));
+        lore.add(convertLegacyToSection(this.config.getString("RapierDescription.line1")));
+        lore.add(convertLegacyToSection(this.config.getString("RapierDescription.line2")));
+        lore.add(convertLegacyToSection(this.config.getString("RapierDescription.line3")));
+        lore.add(convertLegacyToSection(this.config.getString("RapierDescription.line4")));
+        lore.add(convertLegacyToSection(this.config.getString("RapierDescription.line5")));
+        lore.add(convertLegacyToSection(this.config.getString("RapierDescription.line6")));
+        lore.add(convertLegacyToSection(this.config.getString("RapierDescription.line7")));
+        lore.add(convertLegacyToSection(this.config.getString("dPrismarineRapier.line8")));
+        lore.add(convertLegacyToSection(this.config.getString("dPrismarineRapier.line9")));
+        lore.add(convertLegacyToSection(this.config.getString("dPrismarineRapier.line10")));
         resultm.setLore(lore);
         resultm.addItemFlags(new ItemFlag[]{ItemFlag.HIDE_ATTRIBUTES});
         result.setItemMeta(resultm);
-        if (this.getConfig().getBoolean("Prismarine")) {
+        if (this.config.getBoolean("Prismarine")) {
             event.setResult(result);
         }
     }
@@ -583,29 +677,29 @@ class Listeners implements Listener {
         ItemMeta resultm = result.getItemMeta();
         resultm.setCustomModelData(1200004);
         double dmg = 1.0;
-        if (this.getConfig().getBoolean("UseCustomValues")) {
-            dmg = this.getConfig().getDouble("aPrismarineSpear.damageAdded");
+        if (this.config.getBoolean("UseCustomValues")) {
+            dmg = this.config.getDouble("aPrismarineSpear.damageAdded");
         }
-        resultm.setDisplayName(convertLegacyToSection(this.getConfig().getString("dPrismarineSpear.name")));
+        resultm.setDisplayName(convertLegacyToSection(this.config.getString("dPrismarineSpear.name")));
         AttributeModifier modifier1 = new AttributeModifier(UUID.randomUUID(), "Damage", dmg, AttributeModifier.Operation.ADD_NUMBER, EquipmentSlot.HAND);
         resultm.addAttributeModifier(Attribute.ATTACK_DAMAGE, modifier1);
         ArrayList<String> lore = new ArrayList<String>();
-        lore.add(convertLegacyToSection(this.getConfig().getString("SpearDescription.line1")));
-        lore.add(convertLegacyToSection(this.getConfig().getString("SpearDescription.line2")));
-        lore.add(convertLegacyToSection(this.getConfig().getString("SpearDescription.line3")));
-        lore.add(convertLegacyToSection(this.getConfig().getString("SpearDescription.line4")));
-        lore.add(convertLegacyToSection(this.getConfig().getString("SpearDescription.line5")));
-        lore.add(convertLegacyToSection(this.getConfig().getString("SpearDescription.line6")));
-        lore.add(convertLegacyToSection(this.getConfig().getString("SpearDescription.line7")));
-        lore.add(convertLegacyToSection(this.getConfig().getString("SpearDescription.line8")));
-        lore.add(convertLegacyToSection(this.getConfig().getString("SpearDescription.line9")));
-        lore.add(convertLegacyToSection(this.getConfig().getString("dPrismarineSpear.line10")));
-        lore.add(convertLegacyToSection(this.getConfig().getString("dPrismarineSpear.line11")));
-        lore.add(convertLegacyToSection(this.getConfig().getString("dPrismarineSpear.line12")));
+        lore.add(convertLegacyToSection(this.config.getString("SpearDescription.line1")));
+        lore.add(convertLegacyToSection(this.config.getString("SpearDescription.line2")));
+        lore.add(convertLegacyToSection(this.config.getString("SpearDescription.line3")));
+        lore.add(convertLegacyToSection(this.config.getString("SpearDescription.line4")));
+        lore.add(convertLegacyToSection(this.config.getString("SpearDescription.line5")));
+        lore.add(convertLegacyToSection(this.config.getString("SpearDescription.line6")));
+        lore.add(convertLegacyToSection(this.config.getString("SpearDescription.line7")));
+        lore.add(convertLegacyToSection(this.config.getString("SpearDescription.line8")));
+        lore.add(convertLegacyToSection(this.config.getString("SpearDescription.line9")));
+        lore.add(convertLegacyToSection(this.config.getString("dPrismarineSpear.line10")));
+        lore.add(convertLegacyToSection(this.config.getString("dPrismarineSpear.line11")));
+        lore.add(convertLegacyToSection(this.config.getString("dPrismarineSpear.line12")));
         resultm.setLore(lore);
         resultm.addItemFlags(new ItemFlag[]{ItemFlag.HIDE_ATTRIBUTES});
         result.setItemMeta(resultm);
-        if (this.getConfig().getBoolean("Prismarine")) {
+        if (this.config.getBoolean("Prismarine")) {
             event.setResult(result);
         }
     }
@@ -638,31 +732,31 @@ class Listeners implements Listener {
         ItemMeta resultm = result.getItemMeta();
         resultm.setCustomModelData(1200002);
         double dmg = 1.0;
-        if (this.getConfig().getBoolean("UseCustomValues")) {
-            dmg = this.getConfig().getDouble("aPrismarineKatana.damageAdded");
+        if (this.config.getBoolean("UseCustomValues")) {
+            dmg = this.config.getDouble("aPrismarineKatana.damageAdded");
         }
-        resultm.setDisplayName(convertLegacyToSection(this.getConfig().getString("dPrismarineKatana.name")));
+        resultm.setDisplayName(convertLegacyToSection(this.config.getString("dPrismarineKatana.name")));
         AttributeModifier modifier1 = new AttributeModifier(UUID.randomUUID(), "Damage", dmg, AttributeModifier.Operation.ADD_NUMBER, EquipmentSlot.HAND);
         resultm.addAttributeModifier(Attribute.ATTACK_DAMAGE, modifier1);
         ArrayList<String> lore = new ArrayList<String>();
-        lore.add(convertLegacyToSection(this.getConfig().getString("KatanaDescription.line1")));
-        lore.add(convertLegacyToSection(this.getConfig().getString("KatanaDescription.line2")));
-        lore.add(convertLegacyToSection(this.getConfig().getString("KatanaDescription.line3")));
-        lore.add(convertLegacyToSection(this.getConfig().getString("KatanaDescription.line4")));
-        lore.add(convertLegacyToSection(this.getConfig().getString("KatanaDescription.line5")));
-        lore.add(convertLegacyToSection(this.getConfig().getString("KatanaDescription.line6")));
-        lore.add(convertLegacyToSection(this.getConfig().getString("KatanaDescription.line7")));
-        lore.add(convertLegacyToSection(this.getConfig().getString("KatanaDescription.line8")));
-        lore.add(convertLegacyToSection(this.getConfig().getString("KatanaDescription.line9")));
-        lore.add(convertLegacyToSection(this.getConfig().getString("KatanaDescription.line10")));
-        lore.add(convertLegacyToSection(this.getConfig().getString("KatanaDescription.line11")));
-        lore.add(convertLegacyToSection(this.getConfig().getString("dPrismarineKatana.line12")));
-        lore.add(convertLegacyToSection(this.getConfig().getString("dPrismarineKatana.line13")));
-        lore.add(convertLegacyToSection(this.getConfig().getString("dPrismarineKatana.line14")));
+        lore.add(convertLegacyToSection(this.config.getString("KatanaDescription.line1")));
+        lore.add(convertLegacyToSection(this.config.getString("KatanaDescription.line2")));
+        lore.add(convertLegacyToSection(this.config.getString("KatanaDescription.line3")));
+        lore.add(convertLegacyToSection(this.config.getString("KatanaDescription.line4")));
+        lore.add(convertLegacyToSection(this.config.getString("KatanaDescription.line5")));
+        lore.add(convertLegacyToSection(this.config.getString("KatanaDescription.line6")));
+        lore.add(convertLegacyToSection(this.config.getString("KatanaDescription.line7")));
+        lore.add(convertLegacyToSection(this.config.getString("KatanaDescription.line8")));
+        lore.add(convertLegacyToSection(this.config.getString("KatanaDescription.line9")));
+        lore.add(convertLegacyToSection(this.config.getString("KatanaDescription.line10")));
+        lore.add(convertLegacyToSection(this.config.getString("KatanaDescription.line11")));
+        lore.add(convertLegacyToSection(this.config.getString("dPrismarineKatana.line12")));
+        lore.add(convertLegacyToSection(this.config.getString("dPrismarineKatana.line13")));
+        lore.add(convertLegacyToSection(this.config.getString("dPrismarineKatana.line14")));
         resultm.setLore(lore);
         resultm.addItemFlags(new ItemFlag[]{ItemFlag.HIDE_ATTRIBUTES});
         result.setItemMeta(resultm);
-        if (this.getConfig().getBoolean("Prismarine")) {
+        if (this.config.getBoolean("Prismarine")) {
             event.setResult(result);
         }
     }
@@ -695,26 +789,26 @@ class Listeners implements Listener {
         ItemMeta resultm = result.getItemMeta();
         resultm.setCustomModelData(1200006);
         double dmg = 1.0;
-        if (this.getConfig().getBoolean("UseCustomValues")) {
-            dmg = this.getConfig().getDouble("aPrismarineKnife.damageAdded");
+        if (this.config.getBoolean("UseCustomValues")) {
+            dmg = this.config.getDouble("aPrismarineKnife.damageAdded");
         }
-        resultm.setDisplayName(convertLegacyToSection(this.getConfig().getString("dPrismarineKnife.name")));
+        resultm.setDisplayName(convertLegacyToSection(this.config.getString("dPrismarineKnife.name")));
         AttributeModifier modifier1 = new AttributeModifier(UUID.randomUUID(), "Damage", dmg, AttributeModifier.Operation.ADD_NUMBER, EquipmentSlot.HAND);
         resultm.addAttributeModifier(Attribute.ATTACK_DAMAGE, modifier1);
         ArrayList<String> lore = new ArrayList<String>();
-        lore.add(convertLegacyToSection(this.getConfig().getString("KnifeDescription.line1")));
-        lore.add(convertLegacyToSection(this.getConfig().getString("KnifeDescription.line2")));
-        lore.add(convertLegacyToSection(this.getConfig().getString("KnifeDescription.line3")));
-        lore.add(convertLegacyToSection(this.getConfig().getString("KnifeDescription.line4")));
-        lore.add(convertLegacyToSection(this.getConfig().getString("KnifeDescription.line5")));
-        lore.add(convertLegacyToSection(this.getConfig().getString("KnifeDescription.line6")));
-        lore.add(convertLegacyToSection(this.getConfig().getString("dPrismarineKnife.line7")));
-        lore.add(convertLegacyToSection(this.getConfig().getString("dPrismarineKnife.line8")));
-        lore.add(convertLegacyToSection(this.getConfig().getString("dPrismarineKnife.line9")));
+        lore.add(convertLegacyToSection(this.config.getString("KnifeDescription.line1")));
+        lore.add(convertLegacyToSection(this.config.getString("KnifeDescription.line2")));
+        lore.add(convertLegacyToSection(this.config.getString("KnifeDescription.line3")));
+        lore.add(convertLegacyToSection(this.config.getString("KnifeDescription.line4")));
+        lore.add(convertLegacyToSection(this.config.getString("KnifeDescription.line5")));
+        lore.add(convertLegacyToSection(this.config.getString("KnifeDescription.line6")));
+        lore.add(convertLegacyToSection(this.config.getString("dPrismarineKnife.line7")));
+        lore.add(convertLegacyToSection(this.config.getString("dPrismarineKnife.line8")));
+        lore.add(convertLegacyToSection(this.config.getString("dPrismarineKnife.line9")));
         resultm.setLore(lore);
         resultm.addItemFlags(new ItemFlag[]{ItemFlag.HIDE_ATTRIBUTES});
         result.setItemMeta(resultm);
-        if (this.getConfig().getBoolean("Prismarine")) {
+        if (this.config.getBoolean("Prismarine")) {
             event.setResult(result);
         }
     }
@@ -747,24 +841,24 @@ class Listeners implements Listener {
         ItemMeta resultm = result.getItemMeta();
         resultm.setCustomModelData(1200010);
         double dmg = 1.0;
-        if (this.getConfig().getBoolean("UseCustomValues")) {
-            dmg = this.getConfig().getDouble("aPrismarineSaber.damageAdded");
+        if (this.config.getBoolean("UseCustomValues")) {
+            dmg = this.config.getDouble("aPrismarineSaber.damageAdded");
         }
-        resultm.setDisplayName(convertLegacyToSection(this.getConfig().getString("dPrismarineSaber.name")));
+        resultm.setDisplayName(convertLegacyToSection(this.config.getString("dPrismarineSaber.name")));
         AttributeModifier modifier1 = new AttributeModifier(UUID.randomUUID(), "Damage", dmg, AttributeModifier.Operation.ADD_NUMBER, EquipmentSlot.HAND);
         resultm.addAttributeModifier(Attribute.ATTACK_DAMAGE, modifier1);
         ArrayList<String> lore = new ArrayList<String>();
-        lore.add(convertLegacyToSection(this.getConfig().getString("SaberDescription.line1")));
-        lore.add(convertLegacyToSection(this.getConfig().getString("SaberDescription.line2")));
-        lore.add(convertLegacyToSection(this.getConfig().getString("SaberDescription.line3")));
-        lore.add(convertLegacyToSection(this.getConfig().getString("SaberDescription.line4")));
-        lore.add(convertLegacyToSection(this.getConfig().getString("dPrismarineSaber.line5")));
-        lore.add(convertLegacyToSection(this.getConfig().getString("dPrismarineSaber.line6")));
-        lore.add(convertLegacyToSection(this.getConfig().getString("dPrismarineSaber.line7")));
+        lore.add(convertLegacyToSection(this.config.getString("SaberDescription.line1")));
+        lore.add(convertLegacyToSection(this.config.getString("SaberDescription.line2")));
+        lore.add(convertLegacyToSection(this.config.getString("SaberDescription.line3")));
+        lore.add(convertLegacyToSection(this.config.getString("SaberDescription.line4")));
+        lore.add(convertLegacyToSection(this.config.getString("dPrismarineSaber.line5")));
+        lore.add(convertLegacyToSection(this.config.getString("dPrismarineSaber.line6")));
+        lore.add(convertLegacyToSection(this.config.getString("dPrismarineSaber.line7")));
         resultm.setLore(lore);
         resultm.addItemFlags(new ItemFlag[]{ItemFlag.HIDE_ATTRIBUTES});
         result.setItemMeta(resultm);
-        if (this.getConfig().getBoolean("Prismarine")) {
+        if (this.config.getBoolean("Prismarine")) {
             event.setResult(result);
         }
     }
@@ -797,29 +891,29 @@ class Listeners implements Listener {
         ItemMeta resultm = result.getItemMeta();
         resultm.setCustomModelData(1200021);
         double dmg = 1.0;
-        if (this.getConfig().getBoolean("UseCustomValues")) {
-            dmg = this.getConfig().getDouble("aPrismarineCleaver.damageAdded");
+        if (this.config.getBoolean("UseCustomValues")) {
+            dmg = this.config.getDouble("aPrismarineCleaver.damageAdded");
         }
-        resultm.setDisplayName(convertLegacyToSection(this.getConfig().getString("dPrismarineCleaver.name")));
+        resultm.setDisplayName(convertLegacyToSection(this.config.getString("dPrismarineCleaver.name")));
         AttributeModifier modifier1 = new AttributeModifier(UUID.randomUUID(), "Damage", dmg, AttributeModifier.Operation.ADD_NUMBER, EquipmentSlot.HAND);
         resultm.addAttributeModifier(Attribute.ATTACK_DAMAGE, modifier1);
         ArrayList<String> lore = new ArrayList<String>();
-        lore.add(convertLegacyToSection(this.getConfig().getString("CleaverDescription.line1")));
-        lore.add(convertLegacyToSection(this.getConfig().getString("CleaverDescription.line2")));
-        lore.add(convertLegacyToSection(this.getConfig().getString("CleaverDescription.line3")));
-        lore.add(convertLegacyToSection(this.getConfig().getString("CleaverDescription.line4")));
-        lore.add(convertLegacyToSection(this.getConfig().getString("CleaverDescription.line5")));
-        lore.add(convertLegacyToSection(this.getConfig().getString("CleaverDescription.line6")));
-        lore.add(convertLegacyToSection(this.getConfig().getString("CleaverDescription.line7")));
-        lore.add(convertLegacyToSection(this.getConfig().getString("CleaverDescription.line8")));
-        lore.add(convertLegacyToSection(this.getConfig().getString("CleaverDescription.line9")));
-        lore.add(convertLegacyToSection(this.getConfig().getString("dPrismarineCleaver.line10")));
-        lore.add(convertLegacyToSection(this.getConfig().getString("dPrismarineCleaver.line11")));
-        lore.add(convertLegacyToSection(this.getConfig().getString("dPrismarineCleaver.line12")));
+        lore.add(convertLegacyToSection(this.config.getString("CleaverDescription.line1")));
+        lore.add(convertLegacyToSection(this.config.getString("CleaverDescription.line2")));
+        lore.add(convertLegacyToSection(this.config.getString("CleaverDescription.line3")));
+        lore.add(convertLegacyToSection(this.config.getString("CleaverDescription.line4")));
+        lore.add(convertLegacyToSection(this.config.getString("CleaverDescription.line5")));
+        lore.add(convertLegacyToSection(this.config.getString("CleaverDescription.line6")));
+        lore.add(convertLegacyToSection(this.config.getString("CleaverDescription.line7")));
+        lore.add(convertLegacyToSection(this.config.getString("CleaverDescription.line8")));
+        lore.add(convertLegacyToSection(this.config.getString("CleaverDescription.line9")));
+        lore.add(convertLegacyToSection(this.config.getString("dPrismarineCleaver.line10")));
+        lore.add(convertLegacyToSection(this.config.getString("dPrismarineCleaver.line11")));
+        lore.add(convertLegacyToSection(this.config.getString("dPrismarineCleaver.line12")));
         resultm.setLore(lore);
         resultm.addItemFlags(new ItemFlag[]{ItemFlag.HIDE_ATTRIBUTES});
         result.setItemMeta(resultm);
-        if (this.getConfig().getBoolean("Prismarine")) {
+        if (this.config.getBoolean("Prismarine")) {
             event.setResult(result);
         }
     }
@@ -850,24 +944,24 @@ class Listeners implements Listener {
         resultm.setCustomModelData(1210002);
         double dmg = 6.0;
         double spd = -2.8;
-        if (this.getConfig().getBoolean("UseCustomValues")) {
-            dmg = this.getConfig().getDouble("aPrismarinePickaxe.damage") - 1.0;
-            spd = this.getConfig().getDouble("aPrismarinePickaxe.speed") - 4.0;
+        if (this.config.getBoolean("UseCustomValues")) {
+            dmg = this.config.getDouble("aPrismarinePickaxe.damage") - 1.0;
+            spd = this.config.getDouble("aPrismarinePickaxe.speed") - 4.0;
         }
-        resultm.setDisplayName(convertLegacyToSection(this.getConfig().getString("dPrismarinePickaxe.name")));
+        resultm.setDisplayName(convertLegacyToSection(this.config.getString("dPrismarinePickaxe.name")));
         AttributeModifier modifier1 = new AttributeModifier(UUID.randomUUID(), "Damage", dmg, AttributeModifier.Operation.ADD_NUMBER, EquipmentSlot.HAND);
         resultm.addAttributeModifier(Attribute.ATTACK_DAMAGE, modifier1);
         AttributeModifier modifier2 = new AttributeModifier(UUID.randomUUID(), "Atackspeed", spd, AttributeModifier.Operation.ADD_NUMBER, EquipmentSlot.HAND);
         resultm.addAttributeModifier(Attribute.ATTACK_SPEED, modifier2);
         ArrayList<String> lore = new ArrayList<String>();
-        lore.add(convertLegacyToSection(this.getConfig().getString("dPrismarinePickaxe.line1")));
-        lore.add(convertLegacyToSection(this.getConfig().getString("dPrismarinePickaxe.line2")));
-        lore.add(convertLegacyToSection(this.getConfig().getString("dPrismarinePickaxe.line3")));
-        lore.add(convertLegacyToSection(this.getConfig().getString("dPrismarinePickaxe.line4")));
+        lore.add(convertLegacyToSection(this.config.getString("dPrismarinePickaxe.line1")));
+        lore.add(convertLegacyToSection(this.config.getString("dPrismarinePickaxe.line2")));
+        lore.add(convertLegacyToSection(this.config.getString("dPrismarinePickaxe.line3")));
+        lore.add(convertLegacyToSection(this.config.getString("dPrismarinePickaxe.line4")));
         resultm.setLore(lore);
         resultm.addItemFlags(new ItemFlag[]{ItemFlag.HIDE_ATTRIBUTES});
         result.setItemMeta(resultm);
-        if (this.getConfig().getBoolean("Prismarine")) {
+        if (this.config.getBoolean("Prismarine")) {
             event.setResult(result);
         }
     }
@@ -898,24 +992,24 @@ class Listeners implements Listener {
         resultm.setCustomModelData(1220001);
         double dmg = 10.0;
         double spd = -3.0;
-        if (this.getConfig().getBoolean("UseCustomValues")) {
-            dmg = this.getConfig().getDouble("aPrismarineAxe.damage") - 1.0;
-            spd = this.getConfig().getDouble("aPrismarineAxe.speed") - 4.0;
+        if (this.config.getBoolean("UseCustomValues")) {
+            dmg = this.config.getDouble("aPrismarineAxe.damage") - 1.0;
+            spd = this.config.getDouble("aPrismarineAxe.speed") - 4.0;
         }
-        resultm.setDisplayName(convertLegacyToSection(this.getConfig().getString("dPrismarineAxe.name")));
+        resultm.setDisplayName(convertLegacyToSection(this.config.getString("dPrismarineAxe.name")));
         AttributeModifier modifier1 = new AttributeModifier(UUID.randomUUID(), "Damage", dmg, AttributeModifier.Operation.ADD_NUMBER, EquipmentSlot.HAND);
         resultm.addAttributeModifier(Attribute.ATTACK_DAMAGE, modifier1);
         AttributeModifier modifier2 = new AttributeModifier(UUID.randomUUID(), "Atackspeed", spd, AttributeModifier.Operation.ADD_NUMBER, EquipmentSlot.HAND);
         resultm.addAttributeModifier(Attribute.ATTACK_SPEED, modifier2);
         ArrayList<String> lore = new ArrayList<String>();
-        lore.add(convertLegacyToSection(this.getConfig().getString("dPrismarineAxe.line1")));
-        lore.add(convertLegacyToSection(this.getConfig().getString("dPrismarineAxe.line2")));
-        lore.add(convertLegacyToSection(this.getConfig().getString("dPrismarineAxe.line3")));
-        lore.add(convertLegacyToSection(this.getConfig().getString("dPrismarineAxe.line4")));
+        lore.add(convertLegacyToSection(this.config.getString("dPrismarineAxe.line1")));
+        lore.add(convertLegacyToSection(this.config.getString("dPrismarineAxe.line2")));
+        lore.add(convertLegacyToSection(this.config.getString("dPrismarineAxe.line3")));
+        lore.add(convertLegacyToSection(this.config.getString("dPrismarineAxe.line4")));
         resultm.setLore(lore);
         resultm.addItemFlags(new ItemFlag[]{ItemFlag.HIDE_ATTRIBUTES});
         result.setItemMeta(resultm);
-        if (this.getConfig().getBoolean("Prismarine")) {
+        if (this.config.getBoolean("Prismarine")) {
             event.setResult(result);
         }
     }
@@ -946,24 +1040,24 @@ class Listeners implements Listener {
         resultm.setCustomModelData(1210004);
         double dmg = 6.5;
         double spd = -3.0;
-        if (this.getConfig().getBoolean("UseCustomValues")) {
-            dmg = this.getConfig().getDouble("aPrismarineShovel.damage") - 1.0;
-            spd = this.getConfig().getDouble("aPrismarineShovel.speed") - 4.0;
+        if (this.config.getBoolean("UseCustomValues")) {
+            dmg = this.config.getDouble("aPrismarineShovel.damage") - 1.0;
+            spd = this.config.getDouble("aPrismarineShovel.speed") - 4.0;
         }
-        resultm.setDisplayName(convertLegacyToSection(this.getConfig().getString("dPrismarineShovel.name")));
+        resultm.setDisplayName(convertLegacyToSection(this.config.getString("dPrismarineShovel.name")));
         AttributeModifier modifier1 = new AttributeModifier(UUID.randomUUID(), "Damage", dmg, AttributeModifier.Operation.ADD_NUMBER, EquipmentSlot.HAND);
         resultm.addAttributeModifier(Attribute.ATTACK_DAMAGE, modifier1);
         AttributeModifier modifier2 = new AttributeModifier(UUID.randomUUID(), "Atackspeed", spd, AttributeModifier.Operation.ADD_NUMBER, EquipmentSlot.HAND);
         resultm.addAttributeModifier(Attribute.ATTACK_SPEED, modifier2);
         ArrayList<String> lore = new ArrayList<String>();
-        lore.add(convertLegacyToSection(this.getConfig().getString("dPrismarineShovel.line1")));
-        lore.add(convertLegacyToSection(this.getConfig().getString("dPrismarineShovel.line2")));
-        lore.add(convertLegacyToSection(this.getConfig().getString("dPrismarineShovel.line3")));
-        lore.add(convertLegacyToSection(this.getConfig().getString("dPrismarineShovel.line4")));
+        lore.add(convertLegacyToSection(this.config.getString("dPrismarineShovel.line1")));
+        lore.add(convertLegacyToSection(this.config.getString("dPrismarineShovel.line2")));
+        lore.add(convertLegacyToSection(this.config.getString("dPrismarineShovel.line3")));
+        lore.add(convertLegacyToSection(this.config.getString("dPrismarineShovel.line4")));
         resultm.setLore(lore);
         resultm.addItemFlags(new ItemFlag[]{ItemFlag.HIDE_ATTRIBUTES});
         result.setItemMeta(resultm);
-        if (this.getConfig().getBoolean("Prismarine")) {
+        if (this.config.getBoolean("Prismarine")) {
             event.setResult(result);
         }
     }
@@ -995,24 +1089,24 @@ class Listeners implements Listener {
         resultm.setCustomModelData(1210005);
         double dmg = 1.0;
         double spd = 0.0;
-        if (this.getConfig().getBoolean("UseCustomValues")) {
-            dmg = this.getConfig().getDouble("aPrismarineHoe.damage") - 1.0;
-            spd = this.getConfig().getDouble("aPrismarineHoe.speed") - 4.0;
+        if (this.config.getBoolean("UseCustomValues")) {
+            dmg = this.config.getDouble("aPrismarineHoe.damage") - 1.0;
+            spd = this.config.getDouble("aPrismarineHoe.speed") - 4.0;
         }
-        resultm.setDisplayName(convertLegacyToSection(this.getConfig().getString("dPrismarineHoe.name")));
+        resultm.setDisplayName(convertLegacyToSection(this.config.getString("dPrismarineHoe.name")));
         AttributeModifier modifier1 = new AttributeModifier(UUID.randomUUID(), "Damage", dmg, AttributeModifier.Operation.ADD_NUMBER, EquipmentSlot.HAND);
         resultm.addAttributeModifier(Attribute.ATTACK_DAMAGE, modifier1);
         AttributeModifier modifier2 = new AttributeModifier(UUID.randomUUID(), "Attack speed", spd, AttributeModifier.Operation.ADD_NUMBER, EquipmentSlot.HAND);
         resultm.addAttributeModifier(Attribute.ATTACK_DAMAGE, modifier2);
         ArrayList<String> lore = new ArrayList<String>();
-        lore.add(convertLegacyToSection(this.getConfig().getString("dPrismarineHoe.line1")));
-        lore.add(convertLegacyToSection(this.getConfig().getString("dPrismarineHoe.line2")));
-        lore.add(convertLegacyToSection(this.getConfig().getString("dPrismarineHoe.line3")));
-        lore.add(convertLegacyToSection(this.getConfig().getString("dPrismarineHoe.line4")));
+        lore.add(convertLegacyToSection(this.config.getString("dPrismarineHoe.line1")));
+        lore.add(convertLegacyToSection(this.config.getString("dPrismarineHoe.line2")));
+        lore.add(convertLegacyToSection(this.config.getString("dPrismarineHoe.line3")));
+        lore.add(convertLegacyToSection(this.config.getString("dPrismarineHoe.line4")));
         resultm.setLore(lore);
         resultm.addItemFlags(new ItemFlag[]{ItemFlag.HIDE_ATTRIBUTES});
         result.setItemMeta(resultm);
-        if (this.getConfig().getBoolean("Prismarine")) {
+        if (this.config.getBoolean("Prismarine")) {
             event.setResult(result);
         }
     }
@@ -1046,11 +1140,11 @@ class Listeners implements Listener {
         double armt = 3.0;
         double kbr = 0.1;
         double hp = 1.0;
-        if (this.getConfig().getBoolean("UseCustomValues")) {
-            arm = this.getConfig().getDouble("aPrismarineHelmet.Armor");
-            armt = this.getConfig().getDouble("aPrismarineHelmet.ArmorToughness");
-            kbr = this.getConfig().getDouble("aPrismarineHelmet.KBResist") / 10.0;
-            hp = this.getConfig().getDouble("aPrismarineHelmet.BonusHealth");
+        if (this.config.getBoolean("UseCustomValues")) {
+            arm = this.config.getDouble("aPrismarineHelmet.Armor");
+            armt = this.config.getDouble("aPrismarineHelmet.ArmorToughness");
+            kbr = this.config.getDouble("aPrismarineHelmet.KBResist") / 10.0;
+            hp = this.config.getDouble("aPrismarineHelmet.BonusHealth");
         }
         resultm.setDisplayName(ChatColor.GREEN + "Prismarine Helmet");
         AttributeModifier modifier1 = new AttributeModifier(UUID.randomUUID(), "Armor", arm, AttributeModifier.Operation.ADD_NUMBER, EquipmentSlot.HEAD);
@@ -1062,7 +1156,7 @@ class Listeners implements Listener {
         AttributeModifier modifier4 = new AttributeModifier(UUID.randomUUID(), "Armor", hp, AttributeModifier.Operation.ADD_NUMBER, EquipmentSlot.HEAD);
         resultm.addAttributeModifier(Attribute.MAX_HEALTH, modifier4);
         result.setItemMeta(resultm);
-        if (this.getConfig().getBoolean("Prismarine")) {
+        if (this.config.getBoolean("Prismarine")) {
             event.setResult(result);
         }
     }
@@ -1093,24 +1187,24 @@ class Listeners implements Listener {
         resultm.setCustomModelData(1210005);
         double dmg = 1.0;
         double spd = 0.0;
-        if (this.getConfig().getBoolean("UseCustomValues")) {
-            dmg = this.getConfig().getDouble("aPrismarineHoe.damage") - 1.0;
-            spd = this.getConfig().getDouble("aPrismarineHoe.speed") - 4.0;
+        if (this.config.getBoolean("UseCustomValues")) {
+            dmg = this.config.getDouble("aPrismarineHoe.damage") - 1.0;
+            spd = this.config.getDouble("aPrismarineHoe.speed") - 4.0;
         }
-        resultm.setDisplayName(convertLegacyToSection(this.getConfig().getString("dPrismarineHoe.name")));
+        resultm.setDisplayName(convertLegacyToSection(this.config.getString("dPrismarineHoe.name")));
         AttributeModifier modifier1 = new AttributeModifier(UUID.randomUUID(), "Damage", dmg, AttributeModifier.Operation.ADD_NUMBER, EquipmentSlot.HAND);
         resultm.addAttributeModifier(Attribute.ATTACK_DAMAGE, modifier1);
         AttributeModifier modifier2 = new AttributeModifier(UUID.randomUUID(), "Attack speed", spd, AttributeModifier.Operation.ADD_NUMBER, EquipmentSlot.HAND);
         resultm.addAttributeModifier(Attribute.ATTACK_DAMAGE, modifier2);
         ArrayList<String> lore = new ArrayList<String>();
-        lore.add(convertLegacyToSection(this.getConfig().getString("dPrismarineHoe.line1")));
-        lore.add(convertLegacyToSection(this.getConfig().getString("dPrismarineHoe.line2")));
-        lore.add(convertLegacyToSection(this.getConfig().getString("dPrismarineHoe.line3")));
-        lore.add(convertLegacyToSection(this.getConfig().getString("dPrismarineHoe.line4")));
+        lore.add(convertLegacyToSection(this.config.getString("dPrismarineHoe.line1")));
+        lore.add(convertLegacyToSection(this.config.getString("dPrismarineHoe.line2")));
+        lore.add(convertLegacyToSection(this.config.getString("dPrismarineHoe.line3")));
+        lore.add(convertLegacyToSection(this.config.getString("dPrismarineHoe.line4")));
         resultm.setLore(lore);
         resultm.addItemFlags(new ItemFlag[]{ItemFlag.HIDE_ATTRIBUTES});
         result.setItemMeta(resultm);
-        if (this.getConfig().getBoolean("Prismarine")) {
+        if (this.config.getBoolean("Prismarine")) {
             event.setResult(result);
         }
     }
@@ -1143,11 +1237,11 @@ class Listeners implements Listener {
         double armt = 3.0;
         double kbr = 0.1;
         double hp = 1.0;
-        if (this.getConfig().getBoolean("UseCustomValues")) {
-            arm = this.getConfig().getDouble("aPrismarineHelmet.Armor");
-            armt = this.getConfig().getDouble("aPrismarineHelmet.ArmorToughness");
-            kbr = this.getConfig().getDouble("aPrismarineHelmet.KBResist") / 10.0;
-            hp = this.getConfig().getDouble("aPrismarineHelmet.BonusHealth");
+        if (this.config.getBoolean("UseCustomValues")) {
+            arm = this.config.getDouble("aPrismarineHelmet.Armor");
+            armt = this.config.getDouble("aPrismarineHelmet.ArmorToughness");
+            kbr = this.config.getDouble("aPrismarineHelmet.KBResist") / 10.0;
+            hp = this.config.getDouble("aPrismarineHelmet.BonusHealth");
         }
         resultm.setDisplayName(ChatColor.GREEN + "Prismarine Helmet");
         AttributeModifier modifier1 = new AttributeModifier(UUID.randomUUID(), "Armor", arm, AttributeModifier.Operation.ADD_NUMBER, EquipmentSlot.HEAD);
@@ -1159,7 +1253,7 @@ class Listeners implements Listener {
         AttributeModifier modifier4 = new AttributeModifier(UUID.randomUUID(), "Armor", hp, AttributeModifier.Operation.ADD_NUMBER, EquipmentSlot.HEAD);
         resultm.addAttributeModifier(Attribute.MAX_HEALTH, modifier4);
         result.setItemMeta(resultm);
-        if (this.getConfig().getBoolean("Prismarine")) {
+        if (this.config.getBoolean("Prismarine")) {
             event.setResult(result);
         }
     }
@@ -1191,11 +1285,11 @@ class Listeners implements Listener {
         double armt = 3.0;
         double kbr = 0.1;
         double hp = 2.0;
-        if (this.getConfig().getBoolean("UseCustomValues")) {
-            arm = this.getConfig().getDouble("aPrismarineChestplate.Armor");
-            armt = this.getConfig().getDouble("aPrismarineChestplate.ArmorToughness");
-            kbr = this.getConfig().getDouble("aPrismarineChestplate.KBResist") / 10.0;
-            hp = this.getConfig().getDouble("aPrismarineChestplate.BonusHealth");
+        if (this.config.getBoolean("UseCustomValues")) {
+            arm = this.config.getDouble("aPrismarineChestplate.Armor");
+            armt = this.config.getDouble("aPrismarineChestplate.ArmorToughness");
+            kbr = this.config.getDouble("aPrismarineChestplate.KBResist") / 10.0;
+            hp = this.config.getDouble("aPrismarineChestplate.BonusHealth");
         }
         resultm.setDisplayName(ChatColor.GREEN + "Prismarine Chestplate");
         AttributeModifier modifier1 = new AttributeModifier(UUID.randomUUID(), "Armor", arm, AttributeModifier.Operation.ADD_NUMBER, EquipmentSlot.CHEST);
@@ -1207,7 +1301,7 @@ class Listeners implements Listener {
         AttributeModifier modifier4 = new AttributeModifier(UUID.randomUUID(), "Armor", hp, AttributeModifier.Operation.ADD_NUMBER, EquipmentSlot.CHEST);
         resultm.addAttributeModifier(Attribute.MAX_HEALTH, modifier4);
         result.setItemMeta(resultm);
-        if (this.getConfig().getBoolean("Prismarine")) {
+        if (this.config.getBoolean("Prismarine")) {
             event.setResult(result);
         }
     }
@@ -1241,11 +1335,11 @@ class Listeners implements Listener {
         double armt = 3.0;
         double kbr = 0.1;
         double hp = 2.0;
-        if (this.getConfig().getBoolean("UseCustomValues")) {
-            arm = this.getConfig().getDouble("aPrismarineLeggings.Armor");
-            armt = this.getConfig().getDouble("aPrismarineLeggings.ArmorToughness");
-            kbr = this.getConfig().getDouble("aPrismarineLeggings.KBResist") / 10.0;
-            hp = this.getConfig().getDouble("aPrismarineLeggings.BonusHealth");
+        if (this.config.getBoolean("UseCustomValues")) {
+            arm = this.config.getDouble("aPrismarineLeggings.Armor");
+            armt = this.config.getDouble("aPrismarineLeggings.ArmorToughness");
+            kbr = this.config.getDouble("aPrismarineLeggings.KBResist") / 10.0;
+            hp = this.config.getDouble("aPrismarineLeggings.BonusHealth");
         }
         resultm.setDisplayName(ChatColor.GREEN + "Prismarine Leggings");
         AttributeModifier modifier1 = new AttributeModifier(UUID.randomUUID(), "Armor", arm, AttributeModifier.Operation.ADD_NUMBER, EquipmentSlot.LEGS);
@@ -1257,7 +1351,7 @@ class Listeners implements Listener {
         AttributeModifier modifier4 = new AttributeModifier(UUID.randomUUID(), "Armor", hp, AttributeModifier.Operation.ADD_NUMBER, EquipmentSlot.LEGS);
         resultm.addAttributeModifier(Attribute.MAX_HEALTH, modifier4);
         result.setItemMeta(resultm);
-        if (this.getConfig().getBoolean("Prismarine")) {
+        if (this.config.getBoolean("Prismarine")) {
             event.setResult(result);
         }
     }
@@ -1290,11 +1384,11 @@ class Listeners implements Listener {
         double armt = 3.0;
         double kbr = 0.1;
         double hp = 1.0;
-        if (this.getConfig().getBoolean("UseCustomValues")) {
-            arm = this.getConfig().getDouble("aPrismarineBoots.Armor");
-            armt = this.getConfig().getDouble("aPrismarineBoots.ArmorToughness");
-            kbr = this.getConfig().getDouble("aPrismarineBoots.KBResist") / 10.0;
-            hp = this.getConfig().getDouble("aPrismarineBoots.BonusHealth");
+        if (this.config.getBoolean("UseCustomValues")) {
+            arm = this.config.getDouble("aPrismarineBoots.Armor");
+            armt = this.config.getDouble("aPrismarineBoots.ArmorToughness");
+            kbr = this.config.getDouble("aPrismarineBoots.KBResist") / 10.0;
+            hp = this.config.getDouble("aPrismarineBoots.BonusHealth");
         }
         resultm.setDisplayName(ChatColor.GREEN + "Prismarine Boots");
         AttributeModifier modifier1 = new AttributeModifier(UUID.randomUUID(), "Armor", arm, AttributeModifier.Operation.ADD_NUMBER, EquipmentSlot.FEET);
@@ -1306,7 +1400,7 @@ class Listeners implements Listener {
         AttributeModifier modifier4 = new AttributeModifier(UUID.randomUUID(), "Armor", hp, AttributeModifier.Operation.ADD_NUMBER, EquipmentSlot.FEET);
         resultm.addAttributeModifier(Attribute.MAX_HEALTH, modifier4);
         result.setItemMeta(resultm);
-        if (this.getConfig().getBoolean("Prismarine")) {
+        if (this.config.getBoolean("Prismarine")) {
             event.setResult(result);
         }
     }
@@ -1354,9 +1448,9 @@ class Listeners implements Listener {
                         Vector vector = player.getLocation().getDirection();
                         double aspd = 4.0;
                         double x = 1.0;
-                        if (this.getConfig().getBoolean("UseCustomValues")) {
-                            aspd = this.getConfig().getDouble("aLongBow.arrowSpeed");
-                            x = this.getConfig().getDouble("aLongBow.dmgMultiplier");
+                        if (this.config.getBoolean("UseCustomValues")) {
+                            aspd = this.config.getDouble("aLongBow.arrowSpeed");
+                            x = this.config.getDouble("aLongBow.dmgMultiplier");
                         }
                         arrow.setVelocity(new Vector(vector.getX() * (double)speed.floatValue() * aspd, vector.getY() * (double)speed.floatValue() * aspd, vector.getZ() * (double)speed.floatValue() * aspd));
                         arrow.setDamage(arrow.getDamage() * x);
@@ -1367,9 +1461,9 @@ class Listeners implements Listener {
                             Vector vector = player.getLocation().getDirection();
                             double aspd = 5.0;
                             double x = 1.0;
-                            if (this.getConfig().getBoolean("UseCustomValues")) {
-                                aspd = this.getConfig().getDouble("aRecurveBow.arrowSpeed");
-                                x = this.getConfig().getDouble("aRecurveBow.dmgMultiplier");
+                            if (this.config.getBoolean("UseCustomValues")) {
+                                aspd = this.config.getDouble("aRecurveBow.arrowSpeed");
+                                x = this.config.getDouble("aRecurveBow.dmgMultiplier");
                             }
                             arrow.setVelocity(new Vector(vector.getX() * (double)speed.floatValue() * aspd, vector.getY() * (double)speed.floatValue() * aspd, vector.getZ() * (double)speed.floatValue() * aspd));
                             arrow.setDamage(arrow.getDamage() * x);
@@ -1380,9 +1474,9 @@ class Listeners implements Listener {
                                 Vector vector = player.getLocation().getDirection();
                                 double aspd = 6.0;
                                 double x = 1.0;
-                                if (this.getConfig().getBoolean("UseCustomValues")) {
-                                    aspd = this.getConfig().getDouble("aCompoundBow.arrowSpeed");
-                                    x = this.getConfig().getDouble("aCompoundBow.dmgMultiplier");
+                                if (this.config.getBoolean("UseCustomValues")) {
+                                    aspd = this.config.getDouble("aCompoundBow.arrowSpeed");
+                                    x = this.config.getDouble("aCompoundBow.dmgMultiplier");
                                 }
                                 arrow.setVelocity(new Vector(vector.getX() * (double)speed.floatValue() * aspd, vector.getY() * (double)speed.floatValue() * aspd, vector.getZ() * (double)speed.floatValue() * aspd));
                                 arrow.setDamage(arrow.getDamage() * x);
@@ -1950,18 +2044,18 @@ class Listeners implements Listener {
             int random2;
             World world = killed.getWorld();
             int random = CombatWeaponryPlus.getRandomInt(5);
-            if (random == 1 && this.getConfig().getString("WitherBones")) {
-                world.dropItemNaturally(killed.getLocation(), Items.witherBone(this.getConfig()));
+            if (random == 1 && this.config.getString("WitherBones")) {
+                world.dropItemNaturally(killed.getLocation(), Items.witherBone(this.config));
             }
-            if (random == 2 && this.getConfig().getString("WitherBones")) {
-                world.dropItemNaturally(killed.getLocation(), Items.witherBone(this.getConfig()));
-                world.dropItemNaturally(killed.getLocation(), Items.witherBone(this.getConfig()));
+            if (random == 2 && this.config.getString("WitherBones")) {
+                world.dropItemNaturally(killed.getLocation(), Items.witherBone(this.config));
+                world.dropItemNaturally(killed.getLocation(), Items.witherBone(this.config));
             }
-            if ((random2 = CombatWeaponryPlus.getRandomInt(100).intValue()) == 1 && this.getConfig().getString("Vessel")) {
-                world.dropItemNaturally(killed.getLocation(), Items.vessel(this.getConfig()));
+            if ((random2 = CombatWeaponryPlus.getRandomInt(100).intValue()) == 1 && this.config.getString("Vessel")) {
+                world.dropItemNaturally(killed.getLocation(), Items.vessel(this.config));
             }
         }
-        if (this.getConfig().getBoolean("InfusedVessel") && killed.getType() == EntityType.WITHER && event.getEntity().getKiller() != null && event.getEntity().getKiller().getType() == EntityType.PLAYER) {
+        if (this.config.getBoolean("InfusedVessel") && killed.getType() == EntityType.WITHER && event.getEntity().getKiller() != null && event.getEntity().getKiller().getType() == EntityType.PLAYER) {
             player = event.getEntity().getKiller();
             if (!player.getInventory().getItemInMainHand().hasItemMeta()) {
                 return;
@@ -1975,35 +2069,35 @@ class Listeners implements Listener {
                 world.spawnParticle(Particle.CLOUD, player.getLocation(), 100);
                 ItemMeta meta2 = player.getInventory().getItemInMainHand().getItemMeta();
                 meta2.setCustomModelData(2222224);
-                meta2.setDisplayName(convertLegacyToSection(this.getConfig().getString("dInfusedVessel.name")));
+                meta2.setDisplayName(convertLegacyToSection(this.config.getString("dInfusedVessel.name")));
                 dmg = 9.0;
                 spd = -2.4;
-                if (this.getConfig().getBoolean("UseCustomValues")) {
-                    dmg = this.getConfig().getDouble("aInfusedVessel.damage") - 1.0;
-                    spd = this.getConfig().getDouble("aInfusedVessel.speed") - 4.0;
+                if (this.config.getBoolean("UseCustomValues")) {
+                    dmg = this.config.getDouble("aInfusedVessel.damage") - 1.0;
+                    spd = this.config.getDouble("aInfusedVessel.speed") - 4.0;
                 }
                 AttributeModifier modifier1a = new AttributeModifier(UUID.randomUUID(), "Damage", dmg, AttributeModifier.Operation.ADD_NUMBER, EquipmentSlot.HAND);
                 meta2.addAttributeModifier(Attribute.ATTACK_DAMAGE, modifier1a);
                 AttributeModifier modifier2a = new AttributeModifier(UUID.randomUUID(), "Atackspeed", spd, AttributeModifier.Operation.ADD_NUMBER, EquipmentSlot.HAND);
                 meta2.addAttributeModifier(Attribute.ATTACK_SPEED, modifier2a);
                 ArrayList<String> lore2 = new ArrayList<String>();
-                lore2.add(convertLegacyToSection(this.getConfig().getString("dInfusedVessel.line1")));
-                lore2.add(convertLegacyToSection(this.getConfig().getString("dInfusedVessel.line2")));
-                lore2.add(convertLegacyToSection(this.getConfig().getString("dInfusedVessel.line3")));
-                lore2.add(convertLegacyToSection(this.getConfig().getString("dInfusedVessel.line4")));
-                lore2.add(convertLegacyToSection(this.getConfig().getString("dInfusedVessel.line5")));
-                lore2.add(convertLegacyToSection(this.getConfig().getString("dInfusedVessel.line6")));
-                lore2.add(convertLegacyToSection(this.getConfig().getString("dInfusedVessel.line7")));
-                lore2.add(convertLegacyToSection(this.getConfig().getString("dInfusedVessel.line8")));
-                lore2.add(convertLegacyToSection(this.getConfig().getString("dInfusedVessel.line9")));
-                lore2.add(convertLegacyToSection(this.getConfig().getString("dInfusedVessel.line10")));
-                lore2.add(convertLegacyToSection(this.getConfig().getString("dInfusedVessel.line11")));
+                lore2.add(convertLegacyToSection(this.config.getString("dInfusedVessel.line1")));
+                lore2.add(convertLegacyToSection(this.config.getString("dInfusedVessel.line2")));
+                lore2.add(convertLegacyToSection(this.config.getString("dInfusedVessel.line3")));
+                lore2.add(convertLegacyToSection(this.config.getString("dInfusedVessel.line4")));
+                lore2.add(convertLegacyToSection(this.config.getString("dInfusedVessel.line5")));
+                lore2.add(convertLegacyToSection(this.config.getString("dInfusedVessel.line6")));
+                lore2.add(convertLegacyToSection(this.config.getString("dInfusedVessel.line7")));
+                lore2.add(convertLegacyToSection(this.config.getString("dInfusedVessel.line8")));
+                lore2.add(convertLegacyToSection(this.config.getString("dInfusedVessel.line9")));
+                lore2.add(convertLegacyToSection(this.config.getString("dInfusedVessel.line10")));
+                lore2.add(convertLegacyToSection(this.config.getString("dInfusedVessel.line11")));
                 meta2.setLore(lore2);
                 meta2.addItemFlags(new ItemFlag[]{ItemFlag.HIDE_ATTRIBUTES});
                 player.getInventory().getItemInMainHand().setItemMeta(meta2);
             }
         }
-        if (this.getConfig().getBoolean("CursedVessel") && killed.getType() == EntityType.ENDER_DRAGON && event.getEntity().getKiller() != null && event.getEntity().getKiller().getType() == EntityType.PLAYER) {
+        if (this.config.getBoolean("CursedVessel") && killed.getType() == EntityType.ENDER_DRAGON && event.getEntity().getKiller() != null && event.getEntity().getKiller().getType() == EntityType.PLAYER) {
             player = event.getEntity().getKiller();
             if (!player.getInventory().getItemInMainHand().hasItemMeta()) {
                 return;
@@ -2017,29 +2111,29 @@ class Listeners implements Listener {
                 world.spawnParticle(Particle.CLOUD, player.getLocation(), 100);
                 ItemMeta meta3 = player.getInventory().getItemInMainHand().getItemMeta();
                 meta3.setCustomModelData(2222225);
-                meta3.setDisplayName(convertLegacyToSection(this.getConfig().getString("dCursedVessel.name")));
+                meta3.setDisplayName(convertLegacyToSection(this.config.getString("dCursedVessel.name")));
                 dmg = 9.0;
                 spd = -2.4;
-                if (this.getConfig().getBoolean("UseCustomValues")) {
-                    dmg = this.getConfig().getDouble("aCursedVessel.damage") - 1.0;
-                    spd = this.getConfig().getDouble("aCursedVessel.speed") - 4.0;
+                if (this.config.getBoolean("UseCustomValues")) {
+                    dmg = this.config.getDouble("aCursedVessel.damage") - 1.0;
+                    spd = this.config.getDouble("aCursedVessel.speed") - 4.0;
                 }
                 AttributeModifier modifier1e = new AttributeModifier(UUID.randomUUID(), "Damage", dmg, AttributeModifier.Operation.ADD_NUMBER, EquipmentSlot.HAND);
                 meta3.addAttributeModifier(Attribute.ATTACK_DAMAGE, modifier1e);
                 AttributeModifier modifier2e = new AttributeModifier(UUID.randomUUID(), "Atackspeed", spd, AttributeModifier.Operation.ADD_NUMBER, EquipmentSlot.HAND);
                 meta3.addAttributeModifier(Attribute.ATTACK_SPEED, modifier2e);
                 ArrayList<String> lore3 = new ArrayList<String>();
-                lore3.add(convertLegacyToSection(this.getConfig().getString("dCursedVessel.line1")));
-                lore3.add(convertLegacyToSection(this.getConfig().getString("dCursedVessel.line2")));
-                lore3.add(convertLegacyToSection(this.getConfig().getString("dCursedVessel.line3")));
-                lore3.add(convertLegacyToSection(this.getConfig().getString("dCursedVessel.line4")));
-                lore3.add(convertLegacyToSection(this.getConfig().getString("dCursedVessel.line5")));
-                lore3.add(convertLegacyToSection(this.getConfig().getString("dCursedVessel.line6")));
-                lore3.add(convertLegacyToSection(this.getConfig().getString("dCursedVessel.line7")));
-                lore3.add(convertLegacyToSection(this.getConfig().getString("dCursedVessel.line8")));
-                lore3.add(convertLegacyToSection(this.getConfig().getString("dCursedVessel.line9")));
-                lore3.add(convertLegacyToSection(this.getConfig().getString("dCursedVessel.line10")));
-                lore3.add(convertLegacyToSection(this.getConfig().getString("dCursedVessel.line11")));
+                lore3.add(convertLegacyToSection(this.config.getString("dCursedVessel.line1")));
+                lore3.add(convertLegacyToSection(this.config.getString("dCursedVessel.line2")));
+                lore3.add(convertLegacyToSection(this.config.getString("dCursedVessel.line3")));
+                lore3.add(convertLegacyToSection(this.config.getString("dCursedVessel.line4")));
+                lore3.add(convertLegacyToSection(this.config.getString("dCursedVessel.line5")));
+                lore3.add(convertLegacyToSection(this.config.getString("dCursedVessel.line6")));
+                lore3.add(convertLegacyToSection(this.config.getString("dCursedVessel.line7")));
+                lore3.add(convertLegacyToSection(this.config.getString("dCursedVessel.line8")));
+                lore3.add(convertLegacyToSection(this.config.getString("dCursedVessel.line9")));
+                lore3.add(convertLegacyToSection(this.config.getString("dCursedVessel.line10")));
+                lore3.add(convertLegacyToSection(this.config.getString("dCursedVessel.line11")));
                 meta3.setLore(lore3);
                 meta3.addItemFlags(new ItemFlag[]{ItemFlag.HIDE_ATTRIBUTES});
                 player.getInventory().getItemInMainHand().setItemMeta(meta3);
@@ -2261,39 +2355,39 @@ class Listeners implements Listener {
         }
         ItemStack item = new ItemStack(Material.NETHERITE_SWORD);
         ItemMeta meta = item.getItemMeta();
-        meta.setDisplayName(convertLegacyToSection(this.getConfig().getString("dAwakenedVesselPurple.name")));
+        meta.setDisplayName(convertLegacyToSection(this.config.getString("dAwakenedVesselPurple.name")));
         meta.setCustomModelData(2222228);
         double dmg = 11.0;
         double spd = -2.6;
-        if (this.getConfig().getBoolean("UseCustomValues")) {
-            dmg = this.getConfig().getDouble("aAwakenedVesselPurple.damage") - 1.0;
-            spd = this.getConfig().getDouble("aAwakenedVesselPurple.speed") - 4.0;
+        if (this.config.getBoolean("UseCustomValues")) {
+            dmg = this.config.getDouble("aAwakenedVesselPurple.damage") - 1.0;
+            spd = this.config.getDouble("aAwakenedVesselPurple.speed") - 4.0;
         }
         AttributeModifier modifier1 = new AttributeModifier(UUID.randomUUID(), "Damage", dmg, AttributeModifier.Operation.ADD_NUMBER, EquipmentSlot.HAND);
         meta.addAttributeModifier(Attribute.ATTACK_DAMAGE, modifier1);
         AttributeModifier modifier2 = new AttributeModifier(UUID.randomUUID(), "Atackspeed", spd, AttributeModifier.Operation.ADD_NUMBER, EquipmentSlot.HAND);
         meta.addAttributeModifier(Attribute.ATTACK_SPEED, modifier2);
         ArrayList<String> lore = new ArrayList<String>();
-        lore.add(convertLegacyToSection(this.getConfig().getString("dAwakenedVesselPurple.line1")));
-        lore.add(convertLegacyToSection(this.getConfig().getString("dAwakenedVesselPurple.line2")));
-        lore.add(convertLegacyToSection(this.getConfig().getString("dAwakenedVesselPurple.line3")));
-        lore.add(convertLegacyToSection(this.getConfig().getString("dAwakenedVesselPurple.line4")));
-        lore.add(convertLegacyToSection(this.getConfig().getString("dAwakenedVesselPurple.line5")));
-        lore.add(convertLegacyToSection(this.getConfig().getString("dAwakenedVesselPurple.line6")));
-        lore.add(convertLegacyToSection(this.getConfig().getString("dAwakenedVesselPurple.line7")));
-        lore.add(convertLegacyToSection(this.getConfig().getString("dAwakenedVesselPurple.line8")));
-        lore.add(convertLegacyToSection(this.getConfig().getString("dAwakenedVesselPurple.line9")));
-        lore.add(convertLegacyToSection(this.getConfig().getString("dAwakenedVesselPurple.line10")));
-        lore.add(convertLegacyToSection(this.getConfig().getString("dAwakenedVesselPurple.line11")));
-        lore.add(convertLegacyToSection(this.getConfig().getString("dAwakenedVesselPurple.line12")));
-        lore.add(convertLegacyToSection(this.getConfig().getString("dAwakenedVesselPurple.line13")));
-        lore.add(convertLegacyToSection(this.getConfig().getString("dAwakenedVesselPurple.line14")));
-        lore.add(convertLegacyToSection(this.getConfig().getString("dAwakenedVesselPurple.line15")));
-        lore.add(convertLegacyToSection(this.getConfig().getString("dAwakenedVesselPurple.line16")));
+        lore.add(convertLegacyToSection(this.config.getString("dAwakenedVesselPurple.line1")));
+        lore.add(convertLegacyToSection(this.config.getString("dAwakenedVesselPurple.line2")));
+        lore.add(convertLegacyToSection(this.config.getString("dAwakenedVesselPurple.line3")));
+        lore.add(convertLegacyToSection(this.config.getString("dAwakenedVesselPurple.line4")));
+        lore.add(convertLegacyToSection(this.config.getString("dAwakenedVesselPurple.line5")));
+        lore.add(convertLegacyToSection(this.config.getString("dAwakenedVesselPurple.line6")));
+        lore.add(convertLegacyToSection(this.config.getString("dAwakenedVesselPurple.line7")));
+        lore.add(convertLegacyToSection(this.config.getString("dAwakenedVesselPurple.line8")));
+        lore.add(convertLegacyToSection(this.config.getString("dAwakenedVesselPurple.line9")));
+        lore.add(convertLegacyToSection(this.config.getString("dAwakenedVesselPurple.line10")));
+        lore.add(convertLegacyToSection(this.config.getString("dAwakenedVesselPurple.line11")));
+        lore.add(convertLegacyToSection(this.config.getString("dAwakenedVesselPurple.line12")));
+        lore.add(convertLegacyToSection(this.config.getString("dAwakenedVesselPurple.line13")));
+        lore.add(convertLegacyToSection(this.config.getString("dAwakenedVesselPurple.line14")));
+        lore.add(convertLegacyToSection(this.config.getString("dAwakenedVesselPurple.line15")));
+        lore.add(convertLegacyToSection(this.config.getString("dAwakenedVesselPurple.line16")));
         meta.setLore(lore);
         meta.addItemFlags(new ItemFlag[]{ItemFlag.HIDE_ATTRIBUTES});
         item.setItemMeta(meta);
-        if (this.getConfig().getBoolean("AwakenedVesselPurple")) {
+        if (this.config.getBoolean("AwakenedVesselPurple")) {
             event.setResult(item);
         }
     }
@@ -2324,39 +2418,39 @@ class Listeners implements Listener {
         }
         ItemStack item = new ItemStack(Material.NETHERITE_SWORD);
         ItemMeta meta = item.getItemMeta();
-        meta.setDisplayName(convertLegacyToSection(this.getConfig().getString("dAwakenedVesselWhite.name")));
+        meta.setDisplayName(convertLegacyToSection(this.config.getString("dAwakenedVesselWhite.name")));
         meta.setCustomModelData(2222226);
         double dmg = 11.0;
         double spd = -2.6;
-        if (this.getConfig().getBoolean("UseCustomValues")) {
-            dmg = this.getConfig().getDouble("aAwakenedVesselWhite.damage") - 1.0;
-            spd = this.getConfig().getDouble("aAwakenedVesselWhite.speed") - 4.0;
+        if (this.config.getBoolean("UseCustomValues")) {
+            dmg = this.config.getDouble("aAwakenedVesselWhite.damage") - 1.0;
+            spd = this.config.getDouble("aAwakenedVesselWhite.speed") - 4.0;
         }
         AttributeModifier modifier1 = new AttributeModifier(UUID.randomUUID(), "Damage", dmg, AttributeModifier.Operation.ADD_NUMBER, EquipmentSlot.HAND);
         meta.addAttributeModifier(Attribute.ATTACK_DAMAGE, modifier1);
         AttributeModifier modifier2 = new AttributeModifier(UUID.randomUUID(), "Atackspeed", spd, AttributeModifier.Operation.ADD_NUMBER, EquipmentSlot.HAND);
         meta.addAttributeModifier(Attribute.ATTACK_SPEED, modifier2);
         ArrayList<String> lore = new ArrayList<String>();
-        lore.add(convertLegacyToSection(this.getConfig().getString("dAwakenedVesselWhite.line1")));
-        lore.add(convertLegacyToSection(this.getConfig().getString("dAwakenedVesselWhite.line2")));
-        lore.add(convertLegacyToSection(this.getConfig().getString("dAwakenedVesselWhite.line3")));
-        lore.add(convertLegacyToSection(this.getConfig().getString("dAwakenedVesselWhite.line4")));
-        lore.add(convertLegacyToSection(this.getConfig().getString("dAwakenedVesselWhite.line5")));
-        lore.add(convertLegacyToSection(this.getConfig().getString("dAwakenedVesselWhite.line6")));
-        lore.add(convertLegacyToSection(this.getConfig().getString("dAwakenedVesselWhite.line7")));
-        lore.add(convertLegacyToSection(this.getConfig().getString("dAwakenedVesselWhite.line8")));
-        lore.add(convertLegacyToSection(this.getConfig().getString("dAwakenedVesselWhite.line9")));
-        lore.add(convertLegacyToSection(this.getConfig().getString("dAwakenedVesselWhite.line10")));
-        lore.add(convertLegacyToSection(this.getConfig().getString("dAwakenedVesselWhite.line11")));
-        lore.add(convertLegacyToSection(this.getConfig().getString("dAwakenedVesselWhite.line12")));
-        lore.add(convertLegacyToSection(this.getConfig().getString("dAwakenedVesselWhite.line13")));
-        lore.add(convertLegacyToSection(this.getConfig().getString("dAwakenedVesselWhite.line14")));
-        lore.add(convertLegacyToSection(this.getConfig().getString("dAwakenedVesselWhite.line15")));
-        lore.add(convertLegacyToSection(this.getConfig().getString("dAwakenedVesselWhite.line16")));
+        lore.add(convertLegacyToSection(this.config.getString("dAwakenedVesselWhite.line1")));
+        lore.add(convertLegacyToSection(this.config.getString("dAwakenedVesselWhite.line2")));
+        lore.add(convertLegacyToSection(this.config.getString("dAwakenedVesselWhite.line3")));
+        lore.add(convertLegacyToSection(this.config.getString("dAwakenedVesselWhite.line4")));
+        lore.add(convertLegacyToSection(this.config.getString("dAwakenedVesselWhite.line5")));
+        lore.add(convertLegacyToSection(this.config.getString("dAwakenedVesselWhite.line6")));
+        lore.add(convertLegacyToSection(this.config.getString("dAwakenedVesselWhite.line7")));
+        lore.add(convertLegacyToSection(this.config.getString("dAwakenedVesselWhite.line8")));
+        lore.add(convertLegacyToSection(this.config.getString("dAwakenedVesselWhite.line9")));
+        lore.add(convertLegacyToSection(this.config.getString("dAwakenedVesselWhite.line10")));
+        lore.add(convertLegacyToSection(this.config.getString("dAwakenedVesselWhite.line11")));
+        lore.add(convertLegacyToSection(this.config.getString("dAwakenedVesselWhite.line12")));
+        lore.add(convertLegacyToSection(this.config.getString("dAwakenedVesselWhite.line13")));
+        lore.add(convertLegacyToSection(this.config.getString("dAwakenedVesselWhite.line14")));
+        lore.add(convertLegacyToSection(this.config.getString("dAwakenedVesselWhite.line15")));
+        lore.add(convertLegacyToSection(this.config.getString("dAwakenedVesselWhite.line16")));
         meta.setLore(lore);
         meta.addItemFlags(new ItemFlag[]{ItemFlag.HIDE_ATTRIBUTES});
         item.setItemMeta(meta);
-        if (this.getConfig().getBoolean("AwakenedVesselWhite")) {
+        if (this.config.getBoolean("AwakenedVesselWhite")) {
             event.setResult(item);
         }
     }
@@ -2437,7 +2531,7 @@ class Listeners implements Listener {
     public void onRightClickEntity(PlayerInteractEntityEvent event) {
         Player player = event.getPlayer();
         if (event.getHand().equals((Object)EquipmentSlot.HAND) && player.getInventory().getItemInOffHand() != null && player.getInventory().getItemInOffHand().hasItemMeta() && player.getInventory().getItemInOffHand().getItemMeta().hasCustomModelData() && (player.getInventory().getItemInOffHand().getItemMeta().getCustomModelData() == 1000010 || player.getInventory().getItemInOffHand().getItemMeta().getCustomModelData() == 1200010 || player.getInventory().getItemInOffHand().getItemMeta().getCustomModelData() == 1000030)) {
-            if (this.getConfig().getBoolean("DualWieldSaberOnly") && player.getInventory().getItemInMainHand() != null && player.getInventory().getItemInMainHand().hasItemMeta()) {
+            if (this.config.getBoolean("DualWieldSaberOnly") && player.getInventory().getItemInMainHand() != null && player.getInventory().getItemInMainHand().hasItemMeta()) {
                 if (player.getInventory().getItemInMainHand().getType().equals((Object)Material.WOODEN_SWORD)) {
                     if (player.getInventory().getItemInMainHand().getItemMeta().hasCustomModelData() && player.getInventory().getItemInMainHand().getItemMeta().getCustomModelData() != 1000010 && player.getInventory().getItemInMainHand().getItemMeta().getCustomModelData() != 1200010 && player.getInventory().getItemInMainHand().getItemMeta().getCustomModelData() != 1000030) {
                         return;
@@ -2836,25 +2930,25 @@ class Listeners implements Listener {
         ItemMeta meta = item.getItemMeta();
         double kbr = 0.2;
         double hp = 5.0;
-        if (this.getConfig().getBoolean("UseCustomValues")) {
-            kbr = this.getConfig().getDouble("aWitherHelmet.KBResist") / 10.0;
-            hp = this.getConfig().getDouble("aWitherHelmet.BonusHealth");
+        if (this.config.getBoolean("UseCustomValues")) {
+            kbr = this.config.getDouble("aWitherHelmet.KBResist") / 10.0;
+            hp = this.config.getDouble("aWitherHelmet.BonusHealth");
         }
         AttributeModifier modifier = new AttributeModifier(UUID.randomUUID(), "Health", hp, AttributeModifier.Operation.ADD_NUMBER, EquipmentSlot.HEAD);
         meta.addAttributeModifier(Attribute.MAX_HEALTH, modifier);
         AttributeModifier modifier2 = new AttributeModifier(UUID.randomUUID(), "KnockbackResistance", kbr, AttributeModifier.Operation.ADD_NUMBER, EquipmentSlot.HEAD);
         meta.addAttributeModifier(Attribute.KNOCKBACK_RESISTANCE, modifier2);
-        meta.setDisplayName(convertLegacyToSection(this.getConfig().getString("dWitheringHelmet.name")));
+        meta.setDisplayName(convertLegacyToSection(this.config.getString("dWitheringHelmet.name")));
         meta.setCustomModelData(5553331);
         ArrayList<String> lore = new ArrayList<String>();
-        lore.add(convertLegacyToSection(this.getConfig().getString("dWitheringArmorSet.line1")));
-        lore.add(convertLegacyToSection(this.getConfig().getString("dWitheringArmorSet.line2")));
-        lore.add(convertLegacyToSection(this.getConfig().getString("dWitheringArmorSet.line3")));
-        lore.add(convertLegacyToSection(this.getConfig().getString("dWitheringArmorSet.line4")));
-        lore.add(convertLegacyToSection(this.getConfig().getString("dWitheringArmorSet.line5")));
-        lore.add(convertLegacyToSection(this.getConfig().getString("dWitheringArmorSet.line6")));
-        lore.add(convertLegacyToSection(this.getConfig().getString("dWitheringArmorSet.line7")));
-        lore.add(convertLegacyToSection(this.getConfig().getString("dWitheringArmorSet.line8")));
+        lore.add(convertLegacyToSection(this.config.getString("dWitheringArmorSet.line1")));
+        lore.add(convertLegacyToSection(this.config.getString("dWitheringArmorSet.line2")));
+        lore.add(convertLegacyToSection(this.config.getString("dWitheringArmorSet.line3")));
+        lore.add(convertLegacyToSection(this.config.getString("dWitheringArmorSet.line4")));
+        lore.add(convertLegacyToSection(this.config.getString("dWitheringArmorSet.line5")));
+        lore.add(convertLegacyToSection(this.config.getString("dWitheringArmorSet.line6")));
+        lore.add(convertLegacyToSection(this.config.getString("dWitheringArmorSet.line7")));
+        lore.add(convertLegacyToSection(this.config.getString("dWitheringArmorSet.line8")));
         meta.setLore(lore);
         item.setItemMeta(meta);
         NamespacedKey key = new NamespacedKey((Plugin)this, "wither_bone_helmet");
@@ -2864,7 +2958,7 @@ class Listeners implements Listener {
         meta2.setDisplayName(ChatColor.YELLOW + "Wither Bone");
         meta2.setCustomModelData(2222222);
         wbone.setItemMeta(meta2);
-        RecipeChoice.ExactChoice wibone = new RecipeChoice.ExactChoice(Items.witherBone(this.getConfig()));
+        RecipeChoice.ExactChoice wibone = new RecipeChoice.ExactChoice(Items.witherBone(this.config));
         ShapedRecipe recipe = new ShapedRecipe(key, item);
         recipe.shape(new String[]{"BBB", "B B", " N "});
         recipe.setIngredient('N', Material.NETHERITE_INGOT);
@@ -3307,35 +3401,35 @@ class Listeners implements Listener {
             }
             double dmg = event.getDamage();
             if (player.getInventory().getItemInMainHand().getItemMeta().getCustomModelData() == 1000006 || player.getInventory().getItemInMainHand().getItemMeta().getCustomModelData() == 1000016 || player.getInventory().getItemInMainHand().getItemMeta().getCustomModelData() == 1200006) {
-                m = this.getConfig().getDouble("mKnives");
+                m = this.config.getDouble("mKnives");
                 event.setDamage(dmg * m);
             }
             if (player.getInventory().getItemInMainHand().getItemMeta().getCustomModelData() == 1000005 || player.getInventory().getItemInMainHand().getItemMeta().getCustomModelData() == 1000015 || player.getInventory().getItemInMainHand().getItemMeta().getCustomModelData() == 1200005) {
-                m = this.getConfig().getDouble("mRapiers");
+                m = this.config.getDouble("mRapiers");
                 event.setDamage(dmg * m);
             }
             if (player.getInventory().getItemInMainHand().getItemMeta().getCustomModelData() == 1000002 || player.getInventory().getItemInMainHand().getItemMeta().getCustomModelData() == 1000012 || player.getInventory().getItemInMainHand().getItemMeta().getCustomModelData() == 1200002) {
-                m = this.getConfig().getDouble("mKatanas");
+                m = this.config.getDouble("mKatanas");
                 event.setDamage(dmg * m);
             }
             if (player.getInventory().getItemInMainHand().getItemMeta().getCustomModelData() == 1000003 || player.getInventory().getItemInMainHand().getItemMeta().getCustomModelData() == 1000013 || player.getInventory().getItemInMainHand().getItemMeta().getCustomModelData() == 1200003) {
-                m = this.getConfig().getDouble("mScythes");
+                m = this.config.getDouble("mScythes");
                 event.setDamage(dmg * m);
             }
             if (player.getInventory().getItemInMainHand().getItemMeta().getCustomModelData() == 1000001 || player.getInventory().getItemInMainHand().getItemMeta().getCustomModelData() == 1000011 || player.getInventory().getItemInMainHand().getItemMeta().getCustomModelData() == 1200001) {
-                m = this.getConfig().getDouble("mLongswords");
+                m = this.config.getDouble("mLongswords");
                 event.setDamage(dmg * m);
             }
             if (player.getInventory().getItemInMainHand().getItemMeta().getCustomModelData() == 1000004 || player.getInventory().getItemInMainHand().getItemMeta().getCustomModelData() == 1000014 || player.getInventory().getItemInMainHand().getItemMeta().getCustomModelData() == 1200004) {
-                m = this.getConfig().getDouble("mSpears");
+                m = this.config.getDouble("mSpears");
                 event.setDamage(dmg * m);
             }
             if (player.getInventory().getItemInMainHand().getItemMeta().getCustomModelData() == 1000010 || player.getInventory().getItemInMainHand().getItemMeta().getCustomModelData() == 1000030 || player.getInventory().getItemInMainHand().getItemMeta().getCustomModelData() == 1200010) {
-                m = this.getConfig().getDouble("mSabers");
+                m = this.config.getDouble("mSabers");
                 event.setDamage(dmg * m);
             }
             if (player.getInventory().getItemInMainHand().getItemMeta().getCustomModelData() == 1000021 || player.getInventory().getItemInMainHand().getItemMeta().getCustomModelData() == 1000031 || player.getInventory().getItemInMainHand().getItemMeta().getCustomModelData() == 1200021) {
-                m = this.getConfig().getDouble("mCleavers");
+                m = this.config.getDouble("mCleavers");
                 event.setDamage(dmg * m);
             }
         }
@@ -3343,7 +3437,7 @@ class Listeners implements Listener {
 
     @EventHandler
     public void shieldParry(EntityDamageByEntityEvent event) {
-        if (!this.getConfig().getBoolean("ShieldParry")) {
+        if (!this.config.getBoolean("ShieldParry")) {
             return;
         }
         if (event.getEntity() instanceof Player p) {
@@ -3418,7 +3512,7 @@ class Listeners implements Listener {
 
     @EventHandler
     public void shieldBlock(PlayerInteractEvent event) {
-        if (!this.getConfig().getBoolean("ShieldParry")) {
+        if (!this.config.getBoolean("ShieldParry")) {
             return;
         }
         Player p = event.getPlayer();
