@@ -116,13 +116,13 @@ public class CombatWeaponryPlus extends JavaPlugin implements Listener {
             Bukkit.addRecipe(this.getPChnLegRecipe());
             Bukkit.addRecipe(this.getPChnBootsRecipe());
         }
-        if ((fc = config.getString("FeatherCharm"))) {
+        if (config.getBoolean("FeatherCharm")) {
             Bukkit.addRecipe(this.getFCharmRecipe());
         }
-        if ((ec = config.getString("EmeraldCharm"))) {
+        if (config.getBoolean("EmeraldCharm")) {
             Bukkit.addRecipe(this.getECharmRecipe());
         }
-        if ((bc = config.getString("BlazeCharm"))) {
+        if (config.getBoolean("BlazeCharm")) {
             Bukkit.addRecipe(this.getBCharmRecipe());
         }
         if (config.getBoolean("GoldCharm")) {
@@ -131,7 +131,7 @@ public class CombatWeaponryPlus extends JavaPlugin implements Listener {
         if (config.getBoolean("StarCharm")) {
             Bukkit.addRecipe(this.getERecipe());
         }
-        if ((frc = config.getString("FrostCharm"))) {
+        if (config.getBoolean("FrostCharm")) {
             Bukkit.addRecipe(this.getFrCharmRecipe());
         }
         if (config.getBoolean("Scythes")) {
@@ -142,10 +142,10 @@ public class CombatWeaponryPlus extends JavaPlugin implements Listener {
             Bukkit.addRecipe(this.getDScytheRecipe());
             Bukkit.addRecipe(this.getNScytheRecipe());
         }
-        if (config.getBoolean("EmeraldGear") && config.getString("Scythes")) {
+        if (config.getBoolean("EmeraldGear") && config.getBoolean("Scythes")) {
             Bukkit.addRecipe(this.getEScytheRecipe());
         }
-        if ((breh = config.getString("ObsidianPickaxe"))) {
+        if (config.getBoolean("ObsidianPickaxe")) {
             Bukkit.addRecipe(this.getobpickRecipe());
         }
         if (config.getBoolean("Rapiers")) {
