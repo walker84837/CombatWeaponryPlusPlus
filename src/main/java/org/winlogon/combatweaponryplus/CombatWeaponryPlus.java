@@ -2,6 +2,7 @@ package org.winlogon.combatweaponryplus;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.List;
 import java.util.Random;
 import java.util.UUID;
@@ -73,7 +74,7 @@ public class CombatWeaponryPlus extends JavaPlugin {
     public void onEnable() {
         var config = this.getConfig();
         Cooldown.setupCooldown();
-        this.getServer().getPluginManager().registerEvents(new Listeners(), this);
+        this.getServer().getPluginManager().registerEvents(new Listeners(this.getConfig(), keys), this);
         this.saveDefaultConfig();
         var ee = config.getBoolean("Emerald");
         if (ee) {
@@ -656,11 +657,11 @@ public class CombatWeaponryPlus extends JavaPlugin {
         meta.addAttributeModifier(Attribute.ATTACK_DAMAGE, modifier2);
         AttributeModifier modifier3 = new AttributeModifier(k, mspd, AttributeModifier.Operation.ADD_NUMBER, EquipmentSlotGroup.HAND);
         meta.addAttributeModifier(Attribute.MOVEMENT_SPEED, modifier3);
-        AttributeModifier modifier4 = new AttributeModifier(k, omspd, AttributeModifier.Operation.ADD_NUMBER, EquipmentSlotGroup.OFF_HAND);
+        AttributeModifier modifier4 = new AttributeModifier(k, omspd, AttributeModifier.Operation.ADD_NUMBER, EquipmentSlotGroup.OFFHAND);
         meta.addAttributeModifier(Attribute.MOVEMENT_SPEED, modifier4);
         AttributeModifier modifier5 = new AttributeModifier(k, kbr, AttributeModifier.Operation.ADD_NUMBER, EquipmentSlotGroup.HAND);
         meta.addAttributeModifier(Attribute.KNOCKBACK_RESISTANCE, modifier5);
-        AttributeModifier modifier6 = new AttributeModifier(k, okbr, AttributeModifier.Operation.ADD_NUMBER, EquipmentSlotGroup.OFF_HAND);
+        AttributeModifier modifier6 = new AttributeModifier(k, okbr, AttributeModifier.Operation.ADD_NUMBER, EquipmentSlotGroup.OFFHAND);
         meta.addAttributeModifier(Attribute.KNOCKBACK_RESISTANCE, modifier6);
         meta.setCustomModelData(1000002);
         item.setItemMeta(meta);
@@ -2568,10 +2569,12 @@ public class CombatWeaponryPlus extends JavaPlugin {
             hp = this.getConfig().getDouble("aEmeraldCharm.BonusHealth");
             def = this.getConfig().getDouble("aEmeraldCharm.BonusArmor");
         }
-        AttributeModifier modifier = new AttributeModifier(UUID.randomUUID(), "Health", hp, AttributeModifier.Operation.ADD_NUMBER, EquipmentSlot.OFF_HAND);
+        AttributeModifier modifier = new AttributeModifier(k, hp, AttributeModifier.Operation.ADD_NUMBER, EquipmentSlotGroup.OFFHAND);
         meta.addAttributeModifier(Attribute.MAX_HEALTH, modifier);
-        AttributeModifier modifier2 = new AttributeModifier(UUID.randomUUID(), "Armor", def, AttributeModifier.Operation.ADD_NUMBER, EquipmentSlot.OFF_HAND);
+
+        AttributeModifier modifier2 = new AttributeModifier(k, def, AttributeModifier.Operation.ADD_NUMBER, EquipmentSlotGroup.OFFHAND);
         meta.addAttributeModifier(Attribute.ARMOR, modifier2);
+
         ArrayList<String> lore = new ArrayList<String>();
         lore.add(convertLegacyToSection(this.getConfig().getString("dEmeraldCharm.line1")));
         lore.add(convertLegacyToSection(this.getConfig().getString("dEmeraldCharm.line2")));
@@ -4123,7 +4126,13 @@ public class CombatWeaponryPlus extends JavaPlugin {
     public ShapedRecipe getFlameCleaverRecipe() {
         ItemStack item = new ItemStack(Material.NETHERITE_SWORD);
         ItemMeta meta = item.getItemMeta();
+        double dmg = 12.0;
+        double spd = -3.6;
+        NamespacedKey key = new NamespacedKey((Plugin)this, "fire_cleaver");
+        String configString;
+
         ArrayList<String> lore = new ArrayList<String>();
+
         lore.add(convertLegacyToSection(this.getConfig().getString("dVolcanicCleaver.line1")));
         lore.add(convertLegacyToSection(this.getConfig().getString("dVolcanicCleaver.line2")));
         lore.add(convertLegacyToSection(this.getConfig().getString("dVolcanicCleaver.line3")));
@@ -4137,8 +4146,6 @@ public class CombatWeaponryPlus extends JavaPlugin {
         lore.add(convertLegacyToSection(this.getConfig().getString("dVolcanicCleaver.line11")));
         meta.setLore(lore);
         meta.addItemFlags(new ItemFlag[]{ItemFlag.HIDE_ATTRIBUTES});
-        double dmg = 12.0;
-        double spd = -3.6;
         if (this.getConfig().getBoolean("UseCustomValues")) {
             dmg = this.getConfig().getDouble("aVolcanicCleaver.damage") - 1.0;
             spd = this.getConfig().getDouble("aVolcanicCleaver.speed") - 4.0;
@@ -4150,7 +4157,6 @@ public class CombatWeaponryPlus extends JavaPlugin {
         meta.setDisplayName(convertLegacyToSection(this.getConfig().getString("dVolcanicCleaver.name")));
         meta.setCustomModelData(5003);
         item.setItemMeta(meta);
-        NamespacedKey key = new NamespacedKey((Plugin)this, "fire_cleaver");
         this.keys.add(key);
         ShapedRecipe recipe = new ShapedRecipe(key, item);
         recipe.shape(new String[]{" MM", "MNM", "SM "});
@@ -4238,9 +4244,36 @@ public class CombatWeaponryPlus extends JavaPlugin {
         return ChatColor.translateAlternateColorCodes('&', s);
     }
 
+    private ShapedRecipe makeRecipe(Material item, double dmg, double spd, NamespacedKey key, String configString) {
+        var itemStack = new ItemStack(item);
+        var meta = itemStack.getItemMeta();
+        
+    }
+    
     private Component convertLegacyToComponent(String s) {
         LegacyComponentSerializer serializer = LegacyComponentSerializer.legacySection();
         return serializer.deserialize(s);
+    }
+
+    private List<AttributeModifier> makeModifiers(List<NamespacedKey> keys, List<Double> values, List<EquipmentSlotGroup> groups) {
+        // all lists must be the same size -> same number of elements
+        if (keys.size() != values.size() || keys.size() != groups.size()) {
+            return Collections.emptyList();
+        }
+
+        var attributes = new ArrayList<AttributeModifier>();
+          
+        for (int i = 0; i < keys.size(); i++) {
+            attributes.add(new AttributeModifier(keys.get(i), values.get(i), AttributeModifier.Operation.ADD_NUMBER, groups.get(i)));
+        }
+
+        return attributes;
+    }
+
+    private void lkjdakls(List<AttributeModifier> modifiers, List<Attribute> attributes, ItemMeta meta) {
+        for (int i = 0; i < modifiers.size(); i++) {
+            meta.addAttributeModifier(attributes.get(i), modifiers.get(i));
+        }
     }
 }
 
