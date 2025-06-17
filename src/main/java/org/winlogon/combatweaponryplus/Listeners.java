@@ -2907,16 +2907,16 @@ class Listeners implements Listener {
             standd.addEquipmentLock(EquipmentSlot.HAND, ArmorStand.LockType.REMOVING_OR_CHANGING);
             standd.addEquipmentLock(EquipmentSlot.OFF_HAND, ArmorStand.LockType.REMOVING_OR_CHANGING);
             player.getWorld().playSound(ent.getLocation(), Sound.ENTITY_PLAYER_ATTACK_SWEEP, 10.0f, 4.0f);
-            Bukkit.getScheduler().runTaskLater((Plugin)this, () -> player.getWorld().playSound(ent.getLocation(), Sound.ENTITY_PLAYER_ATTACK_SWEEP, 10.0f, 4.0f), 0L);
-            Bukkit.getScheduler().runTaskLater((Plugin)this, () -> player.getWorld().playSound(ent.getLocation(), Sound.ENTITY_PLAYER_ATTACK_SWEEP, 10.0f, 4.0f), 1L);
-            Bukkit.getScheduler().runTaskLater((Plugin)this, () -> player.getWorld().playSound(ent.getLocation(), Sound.ENTITY_PLAYER_ATTACK_SWEEP, 10.0f, 4.0f), 1L);
-            Bukkit.getScheduler().runTaskLater((Plugin)this, () -> player.getWorld().playSound(ent.getLocation(), Sound.ENTITY_PLAYER_ATTACK_SWEEP, 10.0f, 4.0f), 2L);
-            Bukkit.getScheduler().runTaskLater((Plugin)this, () -> player.getWorld().playSound(ent.getLocation(), Sound.ENTITY_PLAYER_ATTACK_SWEEP, 10.0f, 4.0f), 2L);
-            Bukkit.getScheduler().runTaskLater((Plugin)this, () -> player.getWorld().playSound(ent.getLocation(), Sound.ENTITY_PLAYER_ATTACK_SWEEP, 10.0f, 4.0f), 3L);
-            Bukkit.getScheduler().runTaskLater((Plugin)this, () -> player.getWorld().playSound(ent.getLocation(), Sound.ENTITY_PLAYER_ATTACK_SWEEP, 10.0f, 4.0f), 3L);
-            Bukkit.getScheduler().runTaskLater((Plugin)this, () -> player.getWorld().playSound(ent.getLocation(), Sound.ENTITY_PLAYER_ATTACK_SWEEP, 10.0f, 4.0f), 4L);
-            Bukkit.getScheduler().runTaskLater((Plugin)this, () -> player.getWorld().playSound(ent.getLocation(), Sound.ENTITY_PLAYER_ATTACK_SWEEP, 10.0f, 4.0f), 4L);
-            Bukkit.getScheduler().runTaskLater((Plugin)this, () -> {
+            Bukkit.getScheduler().runTaskLater(this, () -> player.getWorld().playSound(ent.getLocation(), Sound.ENTITY_PLAYER_ATTACK_SWEEP, 10.0f, 4.0f), 0L);
+            Bukkit.getScheduler().runTaskLater(this, () -> player.getWorld().playSound(ent.getLocation(), Sound.ENTITY_PLAYER_ATTACK_SWEEP, 10.0f, 4.0f), 1L);
+            Bukkit.getScheduler().runTaskLater(this, () -> player.getWorld().playSound(ent.getLocation(), Sound.ENTITY_PLAYER_ATTACK_SWEEP, 10.0f, 4.0f), 1L);
+            Bukkit.getScheduler().runTaskLater(this, () -> player.getWorld().playSound(ent.getLocation(), Sound.ENTITY_PLAYER_ATTACK_SWEEP, 10.0f, 4.0f), 2L);
+            Bukkit.getScheduler().runTaskLater(this, () -> player.getWorld().playSound(ent.getLocation(), Sound.ENTITY_PLAYER_ATTACK_SWEEP, 10.0f, 4.0f), 2L);
+            Bukkit.getScheduler().runTaskLater(this, () -> player.getWorld().playSound(ent.getLocation(), Sound.ENTITY_PLAYER_ATTACK_SWEEP, 10.0f, 4.0f), 3L);
+            Bukkit.getScheduler().runTaskLater(this, () -> player.getWorld().playSound(ent.getLocation(), Sound.ENTITY_PLAYER_ATTACK_SWEEP, 10.0f, 4.0f), 3L);
+            Bukkit.getScheduler().runTaskLater(this, () -> player.getWorld().playSound(ent.getLocation(), Sound.ENTITY_PLAYER_ATTACK_SWEEP, 10.0f, 4.0f), 4L);
+            Bukkit.getScheduler().runTaskLater(this, () -> player.getWorld().playSound(ent.getLocation(), Sound.ENTITY_PLAYER_ATTACK_SWEEP, 10.0f, 4.0f), 4L);
+            Bukkit.getScheduler().runTaskLater(this, () -> {
                 stand.remove();
                 standd.remove();
                 player.getWorld().playSound(ent.getLocation(), Sound.ENTITY_PLAYER_ATTACK_SWEEP, 10.0f, 4.0f);

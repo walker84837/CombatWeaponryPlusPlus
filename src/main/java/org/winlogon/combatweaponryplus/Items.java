@@ -34,14 +34,14 @@ public class Items {
             def = config.getDouble("aEmeraldHelmet.Armor");
         }
         AttributeModifier modifier = new AttributeModifier(UUID.randomUUID(), "Health", hp, AttributeModifier.Operation.ADD_NUMBER, EquipmentSlot.HEAD);
-        meta.addAttributeModifier(Attribute.GENERIC_MAX_HEALTH, modifier);
+        meta.addAttributeModifier(Attribute.MAX_HEALTH, modifier);
         AttributeModifier modifier2 = new AttributeModifier(UUID.randomUUID(), "Defense", def, AttributeModifier.Operation.ADD_NUMBER, EquipmentSlot.HEAD);
-        meta.addAttributeModifier(Attribute.GENERIC_ARMOR, modifier2);
+        meta.addAttributeModifier(Attribute.ARMOR, modifier2);
         meta.setDisplayName(ChatColor.DARK_GREEN + "Emerald Helmet");
         if (config.getString("EnchantmentsOnEmeraldArmor") == "true") {
             int num = config.getInt("EmeraldArmorEnchantLevels.Unbreaking");
             int num2 = config.getInt("EmeraldArmorEnchantLevels.Mending");
-            meta.addEnchant(Enchantment.DURABILITY, num, true);
+            meta.addEnchant(Enchantment.UNBREAKING, num, true);
             meta.addEnchant(Enchantment.MENDING, num2, true);
         }
         meta.setCustomModelData(Integer.valueOf(1000001));

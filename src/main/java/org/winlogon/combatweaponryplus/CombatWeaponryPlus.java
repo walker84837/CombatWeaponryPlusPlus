@@ -3,7 +3,10 @@ package org.winlogon.combatweaponryplus;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.HashSet;
+import java.util.Set;
 import java.util.List;
+import java.util.Optional;
 import java.util.Random;
 import java.util.UUID;
 
@@ -14,6 +17,7 @@ import org.winlogon.retrohue.RetroHue;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
 import net.kyori.adventure.text.format.TextDecoration;
+import net.kyori.adventure.text.minimessage.MiniMessage;
 import net.kyori.adventure.text.serializer.legacy.LegacyComponentSerializer;
 import net.md_5.bungee.api.ChatColor;
 import org.bukkit.Bukkit;
@@ -25,6 +29,7 @@ import org.bukkit.Sound;
 import org.bukkit.World;
 import org.bukkit.attribute.Attribute;
 import org.bukkit.attribute.AttributeModifier;
+import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.enchantments.Enchantment;
 import org.bukkit.entity.AbstractArrow;
 import org.bukkit.entity.ArmorStand;
@@ -64,18 +69,27 @@ public class CombatWeaponryPlus extends JavaPlugin {
     NamespacedKey k = new NamespacedKey(this, "");
     public List<NamespacedKey> keys = new ArrayList<NamespacedKey>();
     Random ran = new Random();
+    FileConfiguration config;
     
-    private RetroHue rh = new RetroHue();
+    MiniMessage mm = MiniMessage.miniMessage();
+    private RetroHue rh = new RetroHue(mm);
+    Set<Recipe> recipes = new HashSet<Recipe>();
 
     public int getRandomInt(int max) {
         return ran.nextInt(max);
     }
 
     public void onEnable() {
-        var config = this.getConfig();
+        this.config = getConfig();
+
         Cooldown.setupCooldown();
-        this.getServer().getPluginManager().registerEvents(new Listeners(this.getConfig(), keys), this);
-        this.saveDefaultConfig();
+
+        var serverListeners = new Listeners(this.config, keys);
+        getServer().getPluginManager().registerEvents(serverListeners, this);
+        saveDefaultConfig();
+
+        // recipes.addIfEnabled(String, Recipe[]); ?
+        // recipes.addIfEnabled(String[], Recipe[]); ?
         var ee = config.getBoolean("Emerald");
         if (ee) {
             Bukkit.addRecipe(this.getRecipe());
@@ -262,7 +276,8 @@ public class CombatWeaponryPlus extends JavaPlugin {
             Bukkit.addRecipe(this.getTridentBowRecipe());
         }
         if (config.getBoolean("WitherArmor")) {
-            Bukkit.addRecipe(this.getWitherHelmetRecipe());
+            // Was this even included ??? HOW DID THIS EVEN COMPILE
+            // Bukkit.addRecipe(this.getWitherHelmetRecipe());
             Bukkit.addRecipe(this.getWitherChestRecipe());
             Bukkit.addRecipe(this.getWitherLegRecipe());
             Bukkit.addRecipe(this.getWitherBootsRecipe());
@@ -306,12 +321,13 @@ public class CombatWeaponryPlus extends JavaPlugin {
     }
 
     public void onDisable() {
+        this.config = Optional.empty();
     }
 
     public ShapedRecipe getRecipe() {
         NamespacedKey key = new NamespacedKey(this, "emerald_helmet");
         this.keys.add(key);
-        ShapedRecipe recipe = new ShapedRecipe(key, Items.emeraldHelmet(this.getConfig()));
+        ShapedRecipe recipe = new ShapedRecipe(key, Items.emeraldHelmet(this.config));
         recipe.shape(new String[]{"EEE", "E E", "   "});
         recipe.setIngredient('E', Material.EMERALD);
         return recipe;
@@ -322,9 +338,9 @@ public class CombatWeaponryPlus extends JavaPlugin {
         ItemMeta meta = item.getItemMeta();
         double hp = 1.0;
         double def = 6.0;
-        if (this.getConfig().getBoolean("UseCustomValues")) {
-            hp = this.getConfig().getDouble("aEmeraldChestplate.BonusHealth");
-            def = this.getConfig().getDouble("aEmeraldChestplate.Armor");
+        if (this.config.getBoolean("UseCustomValues")) {
+            hp = this.config.getDouble("aEmeraldChestplate.BonusHealth");
+            def = this.config.getDouble("aEmeraldChestplate.Armor");
         }
         var k = new NamespacedKey("", "");
         var modifier = new AttributeModifier(k, hp, AttributeModifier.Operation.ADD_NUMBER, EquipmentSlotGroup.CHEST);
@@ -332,9 +348,9 @@ public class CombatWeaponryPlus extends JavaPlugin {
         var modifier2 = new AttributeModifier(k, def, AttributeModifier.Operation.ADD_NUMBER, EquipmentSlotGroup.CHEST);
         meta.addAttributeModifier(Attribute.ARMOR, modifier2);
         meta.displayName(Component.text("Emerald Chestplate", NamedTextColor.DARK_GREEN));
-        if (this.getConfig().getBoolean("EnchantmentsOnEmeraldArmor")) {
-            int num = this.getConfig().getInt("EmeraldArmorEnchantLevels.Unbreaking");
-            int num2 = this.getConfig().getInt("EmeraldArmorEnchantLevels.Mending");
+        if (this.config.getBoolean("EnchantmentsOnEmeraldArmor")) {
+            int num = this.config.getInt("EmeraldArmorEnchantLevels.Unbreaking");
+            int num2 = this.config.getInt("EmeraldArmorEnchantLevels.Mending");
             meta.addEnchant(Enchantment.UNBREAKING, num, true);
             meta.addEnchant(Enchantment.MENDING, num2, true);
         }
@@ -353,18 +369,18 @@ public class CombatWeaponryPlus extends JavaPlugin {
         ItemMeta meta = item.getItemMeta();
         double hp = 1.0;
         double def = 5.0;
-        if (this.getConfig().getBoolean("UseCustomValues")) {
-            hp = this.getConfig().getDouble("aEmeraldLeggings.BonusHealth");
-            def = this.getConfig().getDouble("aEmeraldLeggings.Armor");
+        if (this.config.getBoolean("UseCustomValues")) {
+            hp = this.config.getDouble("aEmeraldLeggings.BonusHealth");
+            def = this.config.getDouble("aEmeraldLeggings.Armor");
         }
         AttributeModifier modifier = new AttributeModifier(k, hp, AttributeModifier.Operation.ADD_NUMBER, EquipmentSlotGroup.LEGS);
         meta.addAttributeModifier(Attribute.MAX_HEALTH, modifier);
         AttributeModifier modifier2 = new AttributeModifier(k, def, AttributeModifier.Operation.ADD_NUMBER, EquipmentSlotGroup.LEGS);
         meta.addAttributeModifier(Attribute.ARMOR, modifier2);
         meta.displayName(Component.text("Emerald Leggings", NamedTextColor.DARK_GREEN));
-        if (this.getConfig().getBoolean("EnchantmentsOnEmeraldArmor")) {
-            int num = this.getConfig().getInt("EmeraldArmorEnchantLevels.Unbreaking");
-            int num2 = this.getConfig().getInt("EmeraldArmorEnchantLevels.Mending");
+        if (this.config.getBoolean("EnchantmentsOnEmeraldArmor")) {
+            int num = this.config.getInt("EmeraldArmorEnchantLevels.Unbreaking");
+            int num2 = this.config.getInt("EmeraldArmorEnchantLevels.Mending");
             meta.addEnchant(Enchantment.UNBREAKING, num, true);
             meta.addEnchant(Enchantment.MENDING, num2, true);
         }
@@ -383,18 +399,18 @@ public class CombatWeaponryPlus extends JavaPlugin {
         ItemMeta meta = item.getItemMeta();
         double hp = 1.0;
         double def = 2.0;
-        if (this.getConfig().getBoolean("UseCustomValues")) {
-            hp = this.getConfig().getDouble("aEmeraldBoots.BonusHealth");
-            def = this.getConfig().getDouble("aEmeraldBoots.Armor");
+        if (this.config.getBoolean("UseCustomValues")) {
+            hp = this.config.getDouble("aEmeraldBoots.BonusHealth");
+            def = this.config.getDouble("aEmeraldBoots.Armor");
         }
         AttributeModifier modifier = new AttributeModifier(k, hp, AttributeModifier.Operation.ADD_NUMBER, EquipmentSlotGroup.FEET);
         meta.addAttributeModifier(Attribute.MAX_HEALTH, modifier);
         AttributeModifier modifier2 = new AttributeModifier(k, def, AttributeModifier.Operation.ADD_NUMBER, EquipmentSlotGroup.FEET);
         meta.addAttributeModifier(Attribute.ARMOR, modifier2);
         meta.displayName(convertLegacyToComponent(ChatColor.DARK_GREEN + "Emerald Boots"));
-        if (this.getConfig().getBoolean("EnchantmentsOnEmeraldArmor")) {
-            int num = this.getConfig().getInt("EmeraldArmorEnchantLevels.Unbreaking");
-            int num2 = this.getConfig().getInt("EmeraldArmorEnchantLevels.Mending");
+        if (this.config.getBoolean("EnchantmentsOnEmeraldArmor")) {
+            int num = this.config.getInt("EmeraldArmorEnchantLevels.Unbreaking");
+            int num2 = this.config.getInt("EmeraldArmorEnchantLevels.Mending");
             meta.addEnchant(Enchantment.UNBREAKING, num, true);
             meta.addEnchant(Enchantment.MENDING, num2, true);
         }
@@ -412,9 +428,9 @@ public class CombatWeaponryPlus extends JavaPlugin {
         ItemStack item = new ItemStack(Material.GOLDEN_PICKAXE);
         ItemMeta meta = item.getItemMeta();
         meta.displayName(Component.text("Emerald Pickaxe", NamedTextColor.DARK_GREEN));
-        if (this.getConfig().getBoolean("EnchantsOnEmeraldGear")) {
-            int num = this.getConfig().getInt("EmeraldGearEnchantLevels.Unbreaking");
-            int num2 = this.getConfig().getInt("EmeraldGearEnchantLevels.Mending");
+        if (this.config.getBoolean("EnchantsOnEmeraldGear")) {
+            int num = this.config.getInt("EmeraldGearEnchantLevels.Unbreaking");
+            int num2 = this.config.getInt("EmeraldGearEnchantLevels.Mending");
             meta.addEnchant(Enchantment.UNBREAKING, num, true);
             meta.addEnchant(Enchantment.MENDING, num2, true);
         }
@@ -434,9 +450,9 @@ public class CombatWeaponryPlus extends JavaPlugin {
         ItemMeta meta = item.getItemMeta();
         double dmg = 5.0;
         double spd = -2.2;
-        if (this.getConfig().getBoolean("UseCustomValues")) {
-            dmg = this.getConfig().getDouble("aEmeraldSword.damage") - 1.0;
-            spd = this.getConfig().getDouble("aEmeraldSword.speed") - 4.0;
+        if (this.config.getBoolean("UseCustomValues")) {
+            dmg = this.config.getDouble("aEmeraldSword.damage") - 1.0;
+            spd = this.config.getDouble("aEmeraldSword.speed") - 4.0;
         }
         var k = new NamespacedKey("", "");
         // attack damage
@@ -453,9 +469,9 @@ public class CombatWeaponryPlus extends JavaPlugin {
         meta.addItemFlags(new ItemFlag[]{ItemFlag.HIDE_ATTRIBUTES});
         meta.displayName(convertLegacyToComponent(ChatColor.DARK_GREEN + "Emerald Sword"));
         meta.setCustomModelData(1000017);
-        if (this.getConfig().getBoolean("EnchantsOnEmeraldGear")) {
-            int num = this.getConfig().getInt("EmeraldGearEnchantLevels.Unbreaking");
-            int num2 = this.getConfig().getInt("EmeraldGearEnchantLevels.Mending");
+        if (this.config.getBoolean("EnchantsOnEmeraldGear")) {
+            int num = this.config.getInt("EmeraldGearEnchantLevels.Unbreaking");
+            int num2 = this.config.getInt("EmeraldGearEnchantLevels.Mending");
             meta.addEnchant(Enchantment.UNBREAKING, num, true);
             meta.addEnchant(Enchantment.MENDING, num2, true);
         }
@@ -473,9 +489,9 @@ public class CombatWeaponryPlus extends JavaPlugin {
         ItemStack item = new ItemStack(Material.GOLDEN_AXE);
         ItemMeta meta = item.getItemMeta();
         meta.displayName(Component.text("Emerald Axe", NamedTextColor.DARK_GREEN));
-        if (this.getConfig().getBoolean("EnchantsOnEmeraldGear")) {
-            int num = this.getConfig().getInt("EmeraldGearEnchantLevels.Unbreaking");
-            int num2 = this.getConfig().getInt("EmeraldGearEnchantLevels.Mending");
+        if (this.config.getBoolean("EnchantsOnEmeraldGear")) {
+            int num = this.config.getInt("EmeraldGearEnchantLevels.Unbreaking");
+            int num2 = this.config.getInt("EmeraldGearEnchantLevels.Mending");
             meta.addEnchant(Enchantment.UNBREAKING, num, true);
             meta.addEnchant(Enchantment.MENDING, num2, true);
         }
@@ -494,9 +510,9 @@ public class CombatWeaponryPlus extends JavaPlugin {
         ItemStack item = new ItemStack(Material.GOLDEN_SHOVEL);
         ItemMeta meta = item.getItemMeta();
         meta.displayName(Component.text("Emerald Shovel", NamedTextColor.DARK_GREEN));
-        if (this.getConfig().getBoolean("EnchantsOnEmeraldGear")) {
-            int num = this.getConfig().getInt("EmeraldGearEnchantLevels.Unbreaking");
-            int num2 = this.getConfig().getInt("EmeraldGearEnchantLevels.Mending");
+        if (this.config.getBoolean("EnchantsOnEmeraldGear")) {
+            int num = this.config.getInt("EmeraldGearEnchantLevels.Unbreaking");
+            int num2 = this.config.getInt("EmeraldGearEnchantLevels.Mending");
             meta.addEnchant(Enchantment.UNBREAKING, num, true);
             meta.addEnchant(Enchantment.MENDING, num2, true);
         }
@@ -515,9 +531,9 @@ public class CombatWeaponryPlus extends JavaPlugin {
         ItemStack item = new ItemStack(Material.GOLDEN_HOE);
         ItemMeta meta = item.getItemMeta();
         meta.displayName(Component.text("Emerald Hoe", NamedTextColor.DARK_GREEN));
-        if (this.getConfig().getBoolean("EnchantsOnEmeraldGear")) {
-            int num = this.getConfig().getInt("EmeraldGearEnchantLevels.Unbreaking");
-            int num2 = this.getConfig().getInt("EmeraldGearEnchantLevels.Mending");
+        if (this.config.getBoolean("EnchantsOnEmeraldGear")) {
+            int num = this.config.getInt("EmeraldGearEnchantLevels.Unbreaking");
+            int num2 = this.config.getInt("EmeraldGearEnchantLevels.Mending");
             meta.addEnchant(Enchantment.UNBREAKING, num, true);
             meta.addEnchant(Enchantment.MENDING, num2, true);
         }
@@ -535,26 +551,26 @@ public class CombatWeaponryPlus extends JavaPlugin {
     public ShapedRecipe getSworddRecipe() {
         var item = new ItemStack(Material.IRON_SWORD);
         var meta = item.getItemMeta();
-        meta.setDisplayName(convertLegacyToSection(this.getConfig().getString("dChorusBlade.name")));
-        if (this.getConfig().getBoolean("EnchantsChorusBlade")) {
-            int num = this.getConfig().getInt("ChorusEnchantLevels.Unbreaking");
-            int num2 = this.getConfig().getInt("ChorusEnchantLevels.Knockback");
+        meta.setDisplayName(convertLegacyToSectionWithConfig("dChorusBlade.name", this.config));
+        if (this.config.getBoolean("EnchantsChorusBlade")) {
+            int num = this.config.getInt("ChorusEnchantLevels.Unbreaking");
+            int num2 = this.config.getInt("ChorusEnchantLevels.Knockback");
             meta.addEnchant(Enchantment.UNBREAKING, num, true);
             meta.addEnchant(Enchantment.KNOCKBACK, num2, true);
         }
         ArrayList<Component> lore = new ArrayList<Component>();
 
         for (int i = 1; i <= 9; i++) {
-            lore.add(convertLegacyToComponent(this.getConfig().getString("dChorusBlade.line" + i)));
+            lore.add(convertLegacyToComponent(this.config.getString("dChorusBlade.line" + i)));
         }
         meta.addItemFlags(new ItemFlag[]{ItemFlag.HIDE_ATTRIBUTES});
         meta.lore(lore);
         double dmg = 3.0;
         double spd = 6.0;
 
-        if (this.getConfig().getBoolean("UseCustomValues")) {
-            dmg = this.getConfig().getDouble("aChorusBlade.damage") - 1.0;
-            spd = this.getConfig().getDouble("aChorusBlade.speed") - 4.0;
+        if (this.config.getBoolean("UseCustomValues")) {
+            dmg = this.config.getDouble("aChorusBlade.damage") - 1.0;
+            spd = this.config.getDouble("aChorusBlade.speed") - 4.0;
         }
 
         var attackSpeedModifier = new AttributeModifier(k, spd, AttributeModifier.Operation.ADD_NUMBER, EquipmentSlotGroup.HAND);
@@ -581,25 +597,25 @@ public class CombatWeaponryPlus extends JavaPlugin {
     public ShapedRecipe getSwordbowRecipe() {
         ItemStack item = new ItemStack(Material.BOW);
         ItemMeta meta = item.getItemMeta();
-        meta.setDisplayName(convertLegacyToSection(this.getConfig().getString("dSwordBow.name")));
-        if (this.getConfig().getBoolean("EnchantsSwordBow")) {
-            int num = this.getConfig().getInt("SbowEnchantLevels.Smite");
-            int num2 = this.getConfig().getInt("SbowEnchantLevels.Unbreaking");
-            int num4 = this.getConfig().getInt("SbowEnchantLevels.Mending");
+        meta.setDisplayName(convertLegacyToSection(this.config.getString("dSwordBow.name")));
+        if (this.config.getBoolean("EnchantsSwordBow")) {
+            int num = this.config.getInt("SbowEnchantLevels.Smite");
+            int num2 = this.config.getInt("SbowEnchantLevels.Unbreaking");
+            int num4 = this.config.getInt("SbowEnchantLevels.Mending");
             meta.addEnchant(Enchantment.SMITE, num, true);
             meta.addEnchant(Enchantment.UNBREAKING, num2, true);
             meta.addEnchant(Enchantment.MENDING, num4, true);
         }
         ArrayList<String> lore = new ArrayList<String>();
-        lore.add(convertLegacyToSection(this.getConfig().getString("dSwordBow.line1")));
-        lore.add(convertLegacyToSection(this.getConfig().getString("dSwordBow.line2")));
-        lore.add(convertLegacyToSection(this.getConfig().getString("dSwordBow.line3")));
+        lore.add(convertLegacyToSection(this.config.getString("dSwordBow.line1")));
+        lore.add(convertLegacyToSection(this.config.getString("dSwordBow.line2")));
+        lore.add(convertLegacyToSection(this.config.getString("dSwordBow.line3")));
         meta.setLore(lore);
         double dmg = 8.0;
         double spd = -3.0;
-        if (this.getConfig().getBoolean("UseCustomValues")) {
-            dmg = this.getConfig().getDouble("aSwordBow.damage") - 1.0;
-            spd = this.getConfig().getDouble("aSwordBow.speed") - 4.0;
+        if (this.config.getBoolean("UseCustomValues")) {
+            dmg = this.config.getDouble("aSwordBow.damage") - 1.0;
+            spd = this.config.getDouble("aSwordBow.speed") - 4.0;
         }
         AttributeModifier modifier = new AttributeModifier(k, spd, AttributeModifier.Operation.ADD_NUMBER, EquipmentSlotGroup.HAND);
         meta.addAttributeModifier(Attribute.ATTACK_SPEED, modifier);
@@ -621,21 +637,21 @@ public class CombatWeaponryPlus extends JavaPlugin {
     public ShapedRecipe getHSwordbowRecipe() {
         ItemStack item = new ItemStack(Material.BOW);
         ItemMeta meta = item.getItemMeta();
-        meta.setDisplayName(convertLegacyToSection(this.getConfig().getString("dHeavySwordBow.name")));
-        if (this.getConfig().getBoolean("EnchantsHeavySwordBow")) {
-            int num = this.getConfig().getInt("HSbowEnchantLevels.Power");
-            int num2 = this.getConfig().getInt("HSbowEnchantLevels.Unbreaking");
-            int num3 = this.getConfig().getInt("HSbowEnchantLevels.Smite");
-            int num4 = this.getConfig().getInt("HSbowEnchantLevels.Mending");
+        meta.setDisplayName(convertLegacyToSection(this.config.getString("dHeavySwordBow.name")));
+        if (this.config.getBoolean("EnchantsHeavySwordBow")) {
+            int num = this.config.getInt("HSbowEnchantLevels.Power");
+            int num2 = this.config.getInt("HSbowEnchantLevels.Unbreaking");
+            int num3 = this.config.getInt("HSbowEnchantLevels.Smite");
+            int num4 = this.config.getInt("HSbowEnchantLevels.Mending");
             meta.addEnchant(Enchantment.POWER, num, true);
             meta.addEnchant(Enchantment.UNBREAKING, num2, true);
             meta.addEnchant(Enchantment.SMITE, num3, true);
             meta.addEnchant(Enchantment.MENDING, num4, true);
         }
         ArrayList<String> lore = new ArrayList<String>();
-        lore.add(convertLegacyToSection(this.getConfig().getString("dHeavySwordBow.line1")));
-        lore.add(convertLegacyToSection(this.getConfig().getString("dHeavySwordBow.line2")));
-        lore.add(convertLegacyToSection(this.getConfig().getString("dHeavySwordBow.line3")));
+        lore.add(convertLegacyToSection(this.config.getString("dHeavySwordBow.line1")));
+        lore.add(convertLegacyToSection(this.config.getString("dHeavySwordBow.line2")));
+        lore.add(convertLegacyToSection(this.config.getString("dHeavySwordBow.line3")));
         meta.setLore(lore);
         double dmg = 10.0;
         double spd = -3.2;
@@ -643,13 +659,13 @@ public class CombatWeaponryPlus extends JavaPlugin {
         double omspd = -0.05;
         double kbr = 0.5;
         double okbr = 0.5;
-        if (this.getConfig().getBoolean("UseCustomValues")) {
-            dmg = this.getConfig().getDouble("aHeavySwordBow.damage") - 1.0;
-            spd = this.getConfig().getDouble("aHeavySwordBow.speed") - 4.0;
-            mspd = this.getConfig().getDouble("aHeavySwordBow.moveSpeed");
-            omspd = this.getConfig().getDouble("aHeavySwordBow.offhandMoveSpeed");
-            kbr = this.getConfig().getDouble("aHeavySwordBow.KBResist") / 10.0;
-            okbr = this.getConfig().getDouble("aHeavySwordBow.offhandKBResist") / 10.0;
+        if (this.config.getBoolean("UseCustomValues")) {
+            dmg = this.config.getDouble("aHeavySwordBow.damage") - 1.0;
+            spd = this.config.getDouble("aHeavySwordBow.speed") - 4.0;
+            mspd = this.config.getDouble("aHeavySwordBow.moveSpeed");
+            omspd = this.config.getDouble("aHeavySwordBow.offhandMoveSpeed");
+            kbr = this.config.getDouble("aHeavySwordBow.KBResist") / 10.0;
+            okbr = this.config.getDouble("aHeavySwordBow.offhandKBResist") / 10.0;
         }
         AttributeModifier modifier = new AttributeModifier(k, spd, AttributeModifier.Operation.ADD_NUMBER, EquipmentSlotGroup.HAND);
         meta.addAttributeModifier(Attribute.ATTACK_SPEED, modifier);
@@ -720,14 +736,14 @@ public class CombatWeaponryPlus extends JavaPlugin {
         ItemStack item = new ItemStack(Material.IRON_HELMET);
         ItemMeta meta = item.getItemMeta();
         double def = 4.0;
-        if (this.getConfig().getBoolean("UseCustomValues")) {
-            def = this.getConfig().getDouble("aPlateChainHelmet.Armor");
+        if (this.config.getBoolean("UseCustomValues")) {
+            def = this.config.getDouble("aPlateChainHelmet.Armor");
         }
         AttributeModifier modifier = new AttributeModifier(k, def, AttributeModifier.Operation.ADD_NUMBER, EquipmentSlotGroup.HEAD);
         meta.addAttributeModifier(Attribute.ARMOR, modifier);
         meta.displayName(Component.text("Plated Chainmail Helmet").decorate(TextDecoration.BOLD));
-        if (this.getConfig().getBoolean("EnchantsPlatedChainmail")) {
-            int num = this.getConfig().getInt("PChainEnchantLevels.Unbreaking");
+        if (this.config.getBoolean("EnchantsPlatedChainmail")) {
+            int num = this.config.getInt("PChainEnchantLevels.Unbreaking");
             meta.addEnchant(Enchantment.UNBREAKING, num, true);
         }
         item.setItemMeta(meta);
@@ -744,14 +760,14 @@ public class CombatWeaponryPlus extends JavaPlugin {
         ItemStack item = new ItemStack(Material.IRON_CHESTPLATE);
         ItemMeta meta = item.getItemMeta();
         double def = 6.0;
-        if (this.getConfig().getBoolean("UseCustomValues")) {
-            def = this.getConfig().getDouble("aPlateChainChestplate.Armor");
+        if (this.config.getBoolean("UseCustomValues")) {
+            def = this.config.getDouble("aPlateChainChestplate.Armor");
         }
         AttributeModifier modifier = new AttributeModifier(k, def, AttributeModifier.Operation.ADD_NUMBER, EquipmentSlotGroup.CHEST);
         meta.addAttributeModifier(Attribute.ARMOR, modifier);
         meta.setDisplayName(ChatColor.BOLD + "Plated Chainmail Chestplate");
-        if (this.getConfig().getBoolean("EnchantsPlatedChainmail")) {
-            int num = this.getConfig().getInt("PChainEnchantLevels.Unbreaking");
+        if (this.config.getBoolean("EnchantsPlatedChainmail")) {
+            int num = this.config.getInt("PChainEnchantLevels.Unbreaking");
             meta.addEnchant(Enchantment.UNBREAKING, num, true);
         }
         item.setItemMeta(meta);
@@ -768,14 +784,14 @@ public class CombatWeaponryPlus extends JavaPlugin {
         ItemStack item = new ItemStack(Material.IRON_LEGGINGS);
         ItemMeta meta = item.getItemMeta();
         double def = 6.0;
-        if (this.getConfig().getBoolean("UseCustomValues")) {
-            def = this.getConfig().getDouble("aPlateChainLeggings.Armor");
+        if (this.config.getBoolean("UseCustomValues")) {
+            def = this.config.getDouble("aPlateChainLeggings.Armor");
         }
         AttributeModifier modifier = new AttributeModifier(k, def, AttributeModifier.Operation.ADD_NUMBER, EquipmentSlotGroup.LEGS);
         meta.addAttributeModifier(Attribute.ARMOR, modifier);
         meta.setDisplayName(ChatColor.BOLD + "Plated Chainmail Leggings");
-        if (this.getConfig().getBoolean("EnchantsPlatedChainmail")) {
-            int num = this.getConfig().getInt("PChainEnchantLevels.Unbreaking");
+        if (this.config.getBoolean("EnchantsPlatedChainmail")) {
+            int num = this.config.getInt("PChainEnchantLevels.Unbreaking");
             meta.addEnchant(Enchantment.UNBREAKING, num, true);
         }
         item.setItemMeta(meta);
@@ -792,14 +808,14 @@ public class CombatWeaponryPlus extends JavaPlugin {
         ItemStack item = new ItemStack(Material.IRON_BOOTS);
         ItemMeta meta = item.getItemMeta();
         double def = 4.0;
-        if (this.getConfig().getBoolean("UseCustomValues")) {
-            def = this.getConfig().getDouble("aPlateChainBoots.Armor");
+        if (this.config.getBoolean("UseCustomValues")) {
+            def = this.config.getDouble("aPlateChainBoots.Armor");
         }
         AttributeModifier modifier = new AttributeModifier(k, def, AttributeModifier.Operation.ADD_NUMBER, EquipmentSlotGroup.FEET);
         meta.addAttributeModifier(Attribute.ARMOR, modifier);
         meta.setDisplayName(ChatColor.BOLD + "Plated Chainmail Boots");
-        if (this.getConfig().getBoolean("EnchantsPlatedChainmail")) {
-            int num = this.getConfig().getInt("PChainEnchantLevels.Unbreaking");
+        if (this.config.getBoolean("EnchantsPlatedChainmail")) {
+            int num = this.config.getInt("PChainEnchantLevels.Unbreaking");
             meta.addEnchant(Enchantment.UNBREAKING, num, true);
         }
         item.setItemMeta(meta);
@@ -816,29 +832,29 @@ public class CombatWeaponryPlus extends JavaPlugin {
         ItemStack item = new ItemStack(Material.WOODEN_SWORD);
         ItemMeta meta = item.getItemMeta();
         ArrayList<String> lore = new ArrayList<String>();
-        lore.add(convertLegacyToSection(this.getConfig().getString("ScytheDescription.line1")));
-        lore.add(convertLegacyToSection(this.getConfig().getString("ScytheDescription.line2")));
-        lore.add(convertLegacyToSection(this.getConfig().getString("ScytheDescription.line3")));
-        lore.add(convertLegacyToSection(this.getConfig().getString("ScytheDescription.line4")));
-        lore.add(convertLegacyToSection(this.getConfig().getString("ScytheDescription.line5")));
-        lore.add(convertLegacyToSection(this.getConfig().getString("ScytheDescription.line6")));
-        lore.add(convertLegacyToSection(this.getConfig().getString("ScytheDescription.line7")));
-        lore.add(convertLegacyToSection(this.getConfig().getString("dWoodenScythe.line8")));
-        lore.add(convertLegacyToSection(this.getConfig().getString("dWoodenScythe.line9")));
-        lore.add(convertLegacyToSection(this.getConfig().getString("dWoodenScythe.line10")));
+        lore.add(convertLegacyToSection(this.config.getString("ScytheDescription.line1")));
+        lore.add(convertLegacyToSection(this.config.getString("ScytheDescription.line2")));
+        lore.add(convertLegacyToSection(this.config.getString("ScytheDescription.line3")));
+        lore.add(convertLegacyToSection(this.config.getString("ScytheDescription.line4")));
+        lore.add(convertLegacyToSection(this.config.getString("ScytheDescription.line5")));
+        lore.add(convertLegacyToSection(this.config.getString("ScytheDescription.line6")));
+        lore.add(convertLegacyToSection(this.config.getString("ScytheDescription.line7")));
+        lore.add(convertLegacyToSection(this.config.getString("dWoodenScythe.line8")));
+        lore.add(convertLegacyToSection(this.config.getString("dWoodenScythe.line9")));
+        lore.add(convertLegacyToSection(this.config.getString("dWoodenScythe.line10")));
         meta.setLore(lore);
         meta.addItemFlags(new ItemFlag[]{ItemFlag.HIDE_ATTRIBUTES});
         double dmg = 6.0;
         double spd = -3.0;
-        if (this.getConfig().getBoolean("UseCustomValues")) {
-            dmg = this.getConfig().getDouble("aWoodenScythe.damage") - 1.0;
-            spd = this.getConfig().getDouble("aWoodenScythe.speed") - 4.0;
+        if (this.config.getBoolean("UseCustomValues")) {
+            dmg = this.config.getDouble("aWoodenScythe.damage") - 1.0;
+            spd = this.config.getDouble("aWoodenScythe.speed") - 4.0;
         }
         AttributeModifier modifier = new AttributeModifier(k, spd, AttributeModifier.Operation.ADD_NUMBER, EquipmentSlotGroup.HAND);
         meta.addAttributeModifier(Attribute.ATTACK_SPEED, modifier);
         AttributeModifier modifier2 = new AttributeModifier(k, dmg, AttributeModifier.Operation.ADD_NUMBER, EquipmentSlotGroup.HAND);
         meta.addAttributeModifier(Attribute.ATTACK_DAMAGE, modifier2);
-        meta.setDisplayName(convertLegacyToSection(this.getConfig().getString("dWoodenScythe.name")));
+        meta.setDisplayName(convertLegacyToSection(this.config.getString("dWoodenScythe.name")));
         meta.setCustomModelData(1000003);
         item.setItemMeta(meta);
         NamespacedKey key = new NamespacedKey((Plugin)this, "wooden_scythe");
@@ -853,29 +869,29 @@ public class CombatWeaponryPlus extends JavaPlugin {
         ItemStack item = new ItemStack(Material.STONE_SWORD);
         ItemMeta meta = item.getItemMeta();
         ArrayList<String> lore = new ArrayList<String>();
-        lore.add(convertLegacyToSection(this.getConfig().getString("ScytheDescription.line1")));
-        lore.add(convertLegacyToSection(this.getConfig().getString("ScytheDescription.line2")));
-        lore.add(convertLegacyToSection(this.getConfig().getString("ScytheDescription.line3")));
-        lore.add(convertLegacyToSection(this.getConfig().getString("ScytheDescription.line4")));
-        lore.add(convertLegacyToSection(this.getConfig().getString("ScytheDescription.line5")));
-        lore.add(convertLegacyToSection(this.getConfig().getString("ScytheDescription.line6")));
-        lore.add(convertLegacyToSection(this.getConfig().getString("ScytheDescription.line7")));
-        lore.add(convertLegacyToSection(this.getConfig().getString("dStoneScythe.line8")));
-        lore.add(convertLegacyToSection(this.getConfig().getString("dStoneScythe.line9")));
-        lore.add(convertLegacyToSection(this.getConfig().getString("dStoneScythe.line10")));
+        lore.add(convertLegacyToSection(this.config.getString("ScytheDescription.line1")));
+        lore.add(convertLegacyToSection(this.config.getString("ScytheDescription.line2")));
+        lore.add(convertLegacyToSection(this.config.getString("ScytheDescription.line3")));
+        lore.add(convertLegacyToSection(this.config.getString("ScytheDescription.line4")));
+        lore.add(convertLegacyToSection(this.config.getString("ScytheDescription.line5")));
+        lore.add(convertLegacyToSection(this.config.getString("ScytheDescription.line6")));
+        lore.add(convertLegacyToSection(this.config.getString("ScytheDescription.line7")));
+        lore.add(convertLegacyToSection(this.config.getString("dStoneScythe.line8")));
+        lore.add(convertLegacyToSection(this.config.getString("dStoneScythe.line9")));
+        lore.add(convertLegacyToSection(this.config.getString("dStoneScythe.line10")));
         meta.setLore(lore);
         meta.addItemFlags(new ItemFlag[]{ItemFlag.HIDE_ATTRIBUTES});
         double dmg = 6.5;
         double spd = -3.0;
-        if (this.getConfig().getBoolean("UseCustomValues")) {
-            dmg = this.getConfig().getDouble("aStoneScythe.damage") - 1.0;
-            spd = this.getConfig().getDouble("aStoneScythe.speed") - 4.0;
+        if (this.config.getBoolean("UseCustomValues")) {
+            dmg = this.config.getDouble("aStoneScythe.damage") - 1.0;
+            spd = this.config.getDouble("aStoneScythe.speed") - 4.0;
         }
         AttributeModifier modifier = new AttributeModifier(k, spd, AttributeModifier.Operation.ADD_NUMBER, EquipmentSlotGroup.HAND);
         meta.addAttributeModifier(Attribute.ATTACK_SPEED, modifier);
         AttributeModifier modifier2 = new AttributeModifier(k, dmg, AttributeModifier.Operation.ADD_NUMBER, EquipmentSlotGroup.HAND);
         meta.addAttributeModifier(Attribute.ATTACK_DAMAGE, modifier2);
-        meta.setDisplayName(convertLegacyToSection(this.getConfig().getString("dStoneScythe.name")));
+        meta.setDisplayName(convertLegacyToSection(this.config.getString("dStoneScythe.name")));
         meta.setCustomModelData(1000003);
         item.setItemMeta(meta);
         NamespacedKey key = new NamespacedKey((Plugin)this, "stone_scythe");
@@ -891,29 +907,29 @@ public class CombatWeaponryPlus extends JavaPlugin {
         ItemStack item = new ItemStack(Material.GOLDEN_SWORD);
         ItemMeta meta = item.getItemMeta();
         ArrayList<String> lore = new ArrayList<String>();
-        lore.add(convertLegacyToSection(this.getConfig().getString("ScytheDescription.line1")));
-        lore.add(convertLegacyToSection(this.getConfig().getString("ScytheDescription.line2")));
-        lore.add(convertLegacyToSection(this.getConfig().getString("ScytheDescription.line3")));
-        lore.add(convertLegacyToSection(this.getConfig().getString("ScytheDescription.line4")));
-        lore.add(convertLegacyToSection(this.getConfig().getString("ScytheDescription.line5")));
-        lore.add(convertLegacyToSection(this.getConfig().getString("ScytheDescription.line6")));
-        lore.add(convertLegacyToSection(this.getConfig().getString("ScytheDescription.line7")));
-        lore.add(convertLegacyToSection(this.getConfig().getString("dGoldenScythe.line8")));
-        lore.add(convertLegacyToSection(this.getConfig().getString("dGoldenScythe.line9")));
-        lore.add(convertLegacyToSection(this.getConfig().getString("dGoldenScythe.line10")));
+        lore.add(convertLegacyToSection(this.config.getString("ScytheDescription.line1")));
+        lore.add(convertLegacyToSection(this.config.getString("ScytheDescription.line2")));
+        lore.add(convertLegacyToSection(this.config.getString("ScytheDescription.line3")));
+        lore.add(convertLegacyToSection(this.config.getString("ScytheDescription.line4")));
+        lore.add(convertLegacyToSection(this.config.getString("ScytheDescription.line5")));
+        lore.add(convertLegacyToSection(this.config.getString("ScytheDescription.line6")));
+        lore.add(convertLegacyToSection(this.config.getString("ScytheDescription.line7")));
+        lore.add(convertLegacyToSection(this.config.getString("dGoldenScythe.line8")));
+        lore.add(convertLegacyToSection(this.config.getString("dGoldenScythe.line9")));
+        lore.add(convertLegacyToSection(this.config.getString("dGoldenScythe.line10")));
         meta.setLore(lore);
         meta.addItemFlags(new ItemFlag[]{ItemFlag.HIDE_ATTRIBUTES});
         double dmg = 6.0;
         double spd = -2.8;
-        if (this.getConfig().getBoolean("UseCustomValues")) {
-            dmg = this.getConfig().getDouble("aGoldenScythe.damage") - 1.0;
-            spd = this.getConfig().getDouble("aGoldenScythe.speed") - 4.0;
+        if (this.config.getBoolean("UseCustomValues")) {
+            dmg = this.config.getDouble("aGoldenScythe.damage") - 1.0;
+            spd = this.config.getDouble("aGoldenScythe.speed") - 4.0;
         }
         AttributeModifier modifier = new AttributeModifier(UUID.randomUUID(), "Attack Speed", spd, AttributeModifier.Operation.ADD_NUMBER, EquipmentSlot.HAND);
         meta.addAttributeModifier(Attribute.ATTACK_SPEED, modifier);
         AttributeModifier modifier2 = new AttributeModifier(UUID.randomUUID(), "Attack Damage", dmg, AttributeModifier.Operation.ADD_NUMBER, EquipmentSlot.HAND);
         meta.addAttributeModifier(Attribute.ATTACK_DAMAGE, modifier2);
-        meta.setDisplayName(convertLegacyToSection(this.getConfig().getString("dGoldenScythe.name")));
+        meta.setDisplayName(convertLegacyToSection(this.config.getString("dGoldenScythe.name")));
         meta.setCustomModelData(1000003);
         item.setItemMeta(meta);
         NamespacedKey key = new NamespacedKey((Plugin)this, "golden_scythe");
@@ -928,8 +944,8 @@ public class CombatWeaponryPlus extends JavaPlugin {
     public ShapedRecipe getEScytheRecipe() {
         ItemStack item = new ItemStack(Material.GOLDEN_SWORD);
         ItemMeta meta = item.getItemMeta();
-        List<String> scytheLore = this.getConfig().getStringList("ScytheDescription");
-        List<String> emeraldScytheLore = this.getConfig().getStringList("dEmeraldScythe.main-hand");
+        List<String> scytheLore = this.config.getStringList("ScytheDescription");
+        List<String> emeraldScytheLore = this.config.getStringList("dEmeraldScythe.main-hand");
         for (int i = 0; i < scytheLore.size(); ++i) {
             scytheLore.set(i, convertLegacyToSection(scytheLore.get(i)));
         }
@@ -943,25 +959,25 @@ public class CombatWeaponryPlus extends JavaPlugin {
         }
         meta.lore(finalList);
         meta.addItemFlags(new ItemFlag[]{ItemFlag.HIDE_ATTRIBUTES});
-        if (this.getConfig().getBoolean("EnchantsOnEmeraldGear")) {
-            int num = this.getConfig().getInt("EmeraldGearEnchantLevels.Unbreaking");
-            int num2 = this.getConfig().getInt("EmeraldGearEnchantLevels.Mending");
+        if (this.config.getBoolean("EnchantsOnEmeraldGear")) {
+            int num = this.config.getInt("EmeraldGearEnchantLevels.Unbreaking");
+            int num2 = this.config.getInt("EmeraldGearEnchantLevels.Mending");
             // TODO: change this using https://jd.papermc.io/paper/1.21.5/org/bukkit/entity/Damageable.html
             meta.addEnchant(Enchantment.UNBREAKING, num, true);
             meta.addEnchant(Enchantment.MENDING, num2, true);
         }
         double dmg = 7.0;
         double spd = -2.8;
-        if (this.getConfig().getBoolean("UseCustomValues")) {
-            dmg = this.getConfig().getDouble("aEmeraldScythe.damage") - 1.0;
-            spd = this.getConfig().getDouble("aEmeraldScythe.speed") - 4.0;
+        if (this.config.getBoolean("UseCustomValues")) {
+            dmg = this.config.getDouble("aEmeraldScythe.damage") - 1.0;
+            spd = this.config.getDouble("aEmeraldScythe.speed") - 4.0;
         }
         // TODO: find an alternative to this (https://jd.papermc.io/paper/1.21.5/org/bukkit/attribute/AttributeModifier.html)
         AttributeModifier modifier = new AttributeModifier(UUID.randomUUID(), "Attack Speed", spd, AttributeModifier.Operation.ADD_NUMBER, EquipmentSlot.HAND);
         meta.addAttributeModifier(Attribute.ATTACK_SPEED, modifier);
         AttributeModifier modifier2 = new AttributeModifier(UUID.randomUUID(), "Attack Damage", dmg, AttributeModifier.Operation.ADD_NUMBER, EquipmentSlot.HAND);
         meta.addAttributeModifier(Attribute.ATTACK_DAMAGE, modifier2);
-        meta.setDisplayName(convertLegacyToSection(this.getConfig().getString("dEmeraldScythe.name")));
+        meta.setDisplayName(convertLegacyToSection(this.config.getString("dEmeraldScythe.name")));
         meta.setCustomModelData(1000013);
         item.setItemMeta(meta);
         NamespacedKey key = new NamespacedKey((Plugin)this, "emerald_scythe");
@@ -977,29 +993,29 @@ public class CombatWeaponryPlus extends JavaPlugin {
         ItemStack item = new ItemStack(Material.IRON_SWORD);
         ItemMeta meta = item.getItemMeta();
         ArrayList<String> lore = new ArrayList<String>();
-        lore.add(convertLegacyToSection(this.getConfig().getString("ScytheDescription.line1")));
-        lore.add(convertLegacyToSection(this.getConfig().getString("ScytheDescription.line2")));
-        lore.add(convertLegacyToSection(this.getConfig().getString("ScytheDescription.line3")));
-        lore.add(convertLegacyToSection(this.getConfig().getString("ScytheDescription.line4")));
-        lore.add(convertLegacyToSection(this.getConfig().getString("ScytheDescription.line5")));
-        lore.add(convertLegacyToSection(this.getConfig().getString("ScytheDescription.line6")));
-        lore.add(convertLegacyToSection(this.getConfig().getString("ScytheDescription.line7")));
-        lore.add(convertLegacyToSection(this.getConfig().getString("dIronScythe.line8")));
-        lore.add(convertLegacyToSection(this.getConfig().getString("dIronScythe.line9")));
-        lore.add(convertLegacyToSection(this.getConfig().getString("dIronScythe.line10")));
+        lore.add(convertLegacyToSection(this.config.getString("ScytheDescription.line1")));
+        lore.add(convertLegacyToSection(this.config.getString("ScytheDescription.line2")));
+        lore.add(convertLegacyToSection(this.config.getString("ScytheDescription.line3")));
+        lore.add(convertLegacyToSection(this.config.getString("ScytheDescription.line4")));
+        lore.add(convertLegacyToSection(this.config.getString("ScytheDescription.line5")));
+        lore.add(convertLegacyToSection(this.config.getString("ScytheDescription.line6")));
+        lore.add(convertLegacyToSection(this.config.getString("ScytheDescription.line7")));
+        lore.add(convertLegacyToSection(this.config.getString("dIronScythe.line8")));
+        lore.add(convertLegacyToSection(this.config.getString("dIronScythe.line9")));
+        lore.add(convertLegacyToSection(this.config.getString("dIronScythe.line10")));
         meta.setLore(lore);
         meta.addItemFlags(new ItemFlag[]{ItemFlag.HIDE_ATTRIBUTES});
         double dmg = 7.0;
         double spd = -3.0;
-        if (this.getConfig().getBoolean("UseCustomValues")) {
-            dmg = this.getConfig().getDouble("aIronScythe.damage") - 1.0;
-            spd = this.getConfig().getDouble("aIronScythe.speed") - 4.0;
+        if (this.config.getBoolean("UseCustomValues")) {
+            dmg = this.config.getDouble("aIronScythe.damage") - 1.0;
+            spd = this.config.getDouble("aIronScythe.speed") - 4.0;
         }
         AttributeModifier modifier = new AttributeModifier(UUID.randomUUID(), "Attack Speed", spd, AttributeModifier.Operation.ADD_NUMBER, EquipmentSlot.HAND);
         meta.addAttributeModifier(Attribute.ATTACK_SPEED, modifier);
         AttributeModifier modifier2 = new AttributeModifier(UUID.randomUUID(), "Attack Damage", dmg, AttributeModifier.Operation.ADD_NUMBER, EquipmentSlot.HAND);
         meta.addAttributeModifier(Attribute.ATTACK_DAMAGE, modifier2);
-        meta.setDisplayName(convertLegacyToSection(this.getConfig().getString("dIronScythe.name")));
+        meta.setDisplayName(convertLegacyToSection(this.config.getString("dIronScythe.name")));
         meta.setCustomModelData(1000003);
         item.setItemMeta(meta);
         NamespacedKey key = new NamespacedKey((Plugin)this, "iron_scythe");
@@ -1015,29 +1031,29 @@ public class CombatWeaponryPlus extends JavaPlugin {
         ItemStack item = new ItemStack(Material.DIAMOND_SWORD);
         ItemMeta meta = item.getItemMeta();
         ArrayList<String> lore = new ArrayList<String>();
-        lore.add(convertLegacyToSection(this.getConfig().getString("ScytheDescription.line1")));
-        lore.add(convertLegacyToSection(this.getConfig().getString("ScytheDescription.line2")));
-        lore.add(convertLegacyToSection(this.getConfig().getString("ScytheDescription.line3")));
-        lore.add(convertLegacyToSection(this.getConfig().getString("ScytheDescription.line4")));
-        lore.add(convertLegacyToSection(this.getConfig().getString("ScytheDescription.line5")));
-        lore.add(convertLegacyToSection(this.getConfig().getString("ScytheDescription.line6")));
-        lore.add(convertLegacyToSection(this.getConfig().getString("ScytheDescription.line7")));
-        lore.add(convertLegacyToSection(this.getConfig().getString("dDiamondScythe.line8")));
-        lore.add(convertLegacyToSection(this.getConfig().getString("dDiamondScythe.line9")));
-        lore.add(convertLegacyToSection(this.getConfig().getString("dDiamondScythe.line10")));
+        lore.add(convertLegacyToSection(this.config.getString("ScytheDescription.line1")));
+        lore.add(convertLegacyToSection(this.config.getString("ScytheDescription.line2")));
+        lore.add(convertLegacyToSection(this.config.getString("ScytheDescription.line3")));
+        lore.add(convertLegacyToSection(this.config.getString("ScytheDescription.line4")));
+        lore.add(convertLegacyToSection(this.config.getString("ScytheDescription.line5")));
+        lore.add(convertLegacyToSection(this.config.getString("ScytheDescription.line6")));
+        lore.add(convertLegacyToSection(this.config.getString("ScytheDescription.line7")));
+        lore.add(convertLegacyToSection(this.config.getString("dDiamondScythe.line8")));
+        lore.add(convertLegacyToSection(this.config.getString("dDiamondScythe.line9")));
+        lore.add(convertLegacyToSection(this.config.getString("dDiamondScythe.line10")));
         meta.setLore(lore);
         meta.addItemFlags(new ItemFlag[]{ItemFlag.HIDE_ATTRIBUTES});
         double dmg = 8.0;
         double spd = -3.0;
-        if (this.getConfig().getBoolean("UseCustomValues")) {
-            dmg = this.getConfig().getDouble("aDiamondScythe.damage") - 1.0;
-            spd = this.getConfig().getDouble("aDiamondScythe.speed") - 4.0;
+        if (this.config.getBoolean("UseCustomValues")) {
+            dmg = this.config.getDouble("aDiamondScythe.damage") - 1.0;
+            spd = this.config.getDouble("aDiamondScythe.speed") - 4.0;
         }
         AttributeModifier modifier = new AttributeModifier(UUID.randomUUID(), "Attack Speed", spd, AttributeModifier.Operation.ADD_NUMBER, EquipmentSlot.HAND);
         meta.addAttributeModifier(Attribute.ATTACK_SPEED, modifier);
         AttributeModifier modifier2 = new AttributeModifier(UUID.randomUUID(), "Attack Damage", dmg, AttributeModifier.Operation.ADD_NUMBER, EquipmentSlot.HAND);
         meta.addAttributeModifier(Attribute.ATTACK_DAMAGE, modifier2);
-        meta.setDisplayName(convertLegacyToSection(this.getConfig().getString("dDiamondScythe.name")));
+        meta.setDisplayName(convertLegacyToSection(this.config.getString("dDiamondScythe.name")));
         meta.setCustomModelData(1000003);
         item.setItemMeta(meta);
         NamespacedKey key = new NamespacedKey((Plugin)this, "diamond_scythe");
@@ -1053,29 +1069,29 @@ public class CombatWeaponryPlus extends JavaPlugin {
         ItemStack item = new ItemStack(Material.NETHERITE_SWORD);
         ItemMeta meta = item.getItemMeta();
         ArrayList<String> lore = new ArrayList<String>();
-        lore.add(convertLegacyToSection(this.getConfig().getString("ScytheDescription.line1")));
-        lore.add(convertLegacyToSection(this.getConfig().getString("ScytheDescription.line2")));
-        lore.add(convertLegacyToSection(this.getConfig().getString("ScytheDescription.line3")));
-        lore.add(convertLegacyToSection(this.getConfig().getString("ScytheDescription.line4")));
-        lore.add(convertLegacyToSection(this.getConfig().getString("ScytheDescription.line5")));
-        lore.add(convertLegacyToSection(this.getConfig().getString("ScytheDescription.line6")));
-        lore.add(convertLegacyToSection(this.getConfig().getString("ScytheDescription.line7")));
-        lore.add(convertLegacyToSection(this.getConfig().getString("dNetheriteScythe.line8")));
-        lore.add(convertLegacyToSection(this.getConfig().getString("dNetheriteScythe.line9")));
-        lore.add(convertLegacyToSection(this.getConfig().getString("dNetheriteScythe.line10")));
+        lore.add(convertLegacyToSection(this.config.getString("ScytheDescription.line1")));
+        lore.add(convertLegacyToSection(this.config.getString("ScytheDescription.line2")));
+        lore.add(convertLegacyToSection(this.config.getString("ScytheDescription.line3")));
+        lore.add(convertLegacyToSection(this.config.getString("ScytheDescription.line4")));
+        lore.add(convertLegacyToSection(this.config.getString("ScytheDescription.line5")));
+        lore.add(convertLegacyToSection(this.config.getString("ScytheDescription.line6")));
+        lore.add(convertLegacyToSection(this.config.getString("ScytheDescription.line7")));
+        lore.add(convertLegacyToSection(this.config.getString("dNetheriteScythe.line8")));
+        lore.add(convertLegacyToSection(this.config.getString("dNetheriteScythe.line9")));
+        lore.add(convertLegacyToSection(this.config.getString("dNetheriteScythe.line10")));
         meta.setLore(lore);
         meta.addItemFlags(new ItemFlag[]{ItemFlag.HIDE_ATTRIBUTES});
         double dmg = 9.0;
         double spd = -3.0;
-        if (this.getConfig().getBoolean("UseCustomValues")) {
-            dmg = this.getConfig().getDouble("aNetheriteScythe.damage") - 1.0;
-            spd = this.getConfig().getDouble("aNetheriteScythe.speed") - 4.0;
+        if (this.config.getBoolean("UseCustomValues")) {
+            dmg = this.config.getDouble("aNetheriteScythe.damage") - 1.0;
+            spd = this.config.getDouble("aNetheriteScythe.speed") - 4.0;
         }
         AttributeModifier modifier = new AttributeModifier(UUID.randomUUID(), "Attack Speed", spd, AttributeModifier.Operation.ADD_NUMBER, EquipmentSlot.HAND);
         meta.addAttributeModifier(Attribute.ATTACK_SPEED, modifier);
         AttributeModifier modifier2 = new AttributeModifier(UUID.randomUUID(), "Attack Damage", dmg, AttributeModifier.Operation.ADD_NUMBER, EquipmentSlot.HAND);
         meta.addAttributeModifier(Attribute.ATTACK_DAMAGE, modifier2);
-        meta.setDisplayName(convertLegacyToSection(this.getConfig().getString("dNetheriteScythe.name")));
+        meta.setDisplayName(convertLegacyToSection(this.config.getString("dNetheriteScythe.name")));
         meta.setCustomModelData(1000003);
         item.setItemMeta(meta);
         NamespacedKey key = new NamespacedKey((Plugin)this, "netherite_scythe");
@@ -1083,7 +1099,7 @@ public class CombatWeaponryPlus extends JavaPlugin {
         ShapedRecipe recipe = new ShapedRecipe(key, item);
         recipe.shape(new String[]{"NNN", "  S", "  S"});
         recipe.setIngredient('S', Material.STICK);
-        String n = this.getConfig().getString("NetheriteIngots");
+        String n = this.config.getString("NetheriteIngots");
         if (n) {
             recipe.setIngredient('N', Material.NETHERITE_INGOT);
         } else {
@@ -1096,15 +1112,15 @@ public class CombatWeaponryPlus extends JavaPlugin {
         ItemStack item = new ItemStack(Material.NETHERITE_PICKAXE);
         ItemMeta meta = item.getItemMeta();
         ArrayList<String> lore = new ArrayList<String>();
-        lore.add(convertLegacyToSection(this.getConfig().getString("dObsidianPickaxe.line1")));
-        lore.add(convertLegacyToSection(this.getConfig().getString("dObsidianPickaxe.line2")));
-        lore.add(convertLegacyToSection(this.getConfig().getString("dObsidianPickaxe.line3")));
+        lore.add(convertLegacyToSection(this.config.getString("dObsidianPickaxe.line1")));
+        lore.add(convertLegacyToSection(this.config.getString("dObsidianPickaxe.line2")));
+        lore.add(convertLegacyToSection(this.config.getString("dObsidianPickaxe.line3")));
         meta.setLore(lore);
-        if (this.getConfig().getBoolean("EnchantsObsidianPick")) {
-            int num = this.getConfig().getInt("OPickEnchantLevels.Unbreaking");
+        if (this.config.getBoolean("EnchantsObsidianPick")) {
+            int num = this.config.getInt("OPickEnchantLevels.Unbreaking");
             meta.addEnchant(Enchantment.UNBREAKING, num, true);
         }
-        meta.setDisplayName(convertLegacyToSection(this.getConfig().getString("dObsidianPickaxe.name")));
+        meta.setDisplayName(convertLegacyToSection(this.config.getString("dObsidianPickaxe.name")));
         meta.setCustomModelData(1000001);
         item.setItemMeta(meta);
         NamespacedKey key = new NamespacedKey((Plugin)this, "obsidian_pickaxe");
@@ -1121,29 +1137,29 @@ public class CombatWeaponryPlus extends JavaPlugin {
         ItemStack item = new ItemStack(Material.WOODEN_SWORD);
         ItemMeta meta = item.getItemMeta();
         ArrayList<String> lore = new ArrayList<String>();
-        lore.add(convertLegacyToSection(this.getConfig().getString("RapierDescription.line1")));
-        lore.add(convertLegacyToSection(this.getConfig().getString("RapierDescription.line2")));
-        lore.add(convertLegacyToSection(this.getConfig().getString("RapierDescription.line3")));
-        lore.add(convertLegacyToSection(this.getConfig().getString("RapierDescription.line4")));
-        lore.add(convertLegacyToSection(this.getConfig().getString("RapierDescription.line5")));
-        lore.add(convertLegacyToSection(this.getConfig().getString("RapierDescription.line6")));
-        lore.add(convertLegacyToSection(this.getConfig().getString("RapierDescription.line7")));
-        lore.add(convertLegacyToSection(this.getConfig().getString("dWoodenRapier.line8")));
-        lore.add(convertLegacyToSection(this.getConfig().getString("dWoodenRapier.line9")));
-        lore.add(convertLegacyToSection(this.getConfig().getString("dWoodenRapier.line10")));
+        lore.add(convertLegacyToSection(this.config.getString("RapierDescription.line1")));
+        lore.add(convertLegacyToSection(this.config.getString("RapierDescription.line2")));
+        lore.add(convertLegacyToSection(this.config.getString("RapierDescription.line3")));
+        lore.add(convertLegacyToSection(this.config.getString("RapierDescription.line4")));
+        lore.add(convertLegacyToSection(this.config.getString("RapierDescription.line5")));
+        lore.add(convertLegacyToSection(this.config.getString("RapierDescription.line6")));
+        lore.add(convertLegacyToSection(this.config.getString("RapierDescription.line7")));
+        lore.add(convertLegacyToSection(this.config.getString("dWoodenRapier.line8")));
+        lore.add(convertLegacyToSection(this.config.getString("dWoodenRapier.line9")));
+        lore.add(convertLegacyToSection(this.config.getString("dWoodenRapier.line10")));
         meta.setLore(lore);
         meta.addItemFlags(new ItemFlag[]{ItemFlag.HIDE_ATTRIBUTES});
         double dmg = 2.0;
         double spd = -2.1;
-        if (this.getConfig().getBoolean("UseCustomValues")) {
-            dmg = this.getConfig().getDouble("aWoodenRapier.damage") - 1.0;
-            spd = this.getConfig().getDouble("aWoodenRapier.speed") - 4.0;
+        if (this.config.getBoolean("UseCustomValues")) {
+            dmg = this.config.getDouble("aWoodenRapier.damage") - 1.0;
+            spd = this.config.getDouble("aWoodenRapier.speed") - 4.0;
         }
         AttributeModifier modifier = new AttributeModifier(UUID.randomUUID(), "Attack Speed", spd, AttributeModifier.Operation.ADD_NUMBER, EquipmentSlot.HAND);
         meta.addAttributeModifier(Attribute.ATTACK_SPEED, modifier);
         AttributeModifier modifier2 = new AttributeModifier(UUID.randomUUID(), "Attack Damage", dmg, AttributeModifier.Operation.ADD_NUMBER, EquipmentSlot.HAND);
         meta.addAttributeModifier(Attribute.ATTACK_DAMAGE, modifier2);
-        meta.setDisplayName(convertLegacyToSection(this.getConfig().getString("dWoodenRapier.name")));
+        meta.setDisplayName(convertLegacyToSection(this.config.getString("dWoodenRapier.name")));
         meta.setCustomModelData(1000005);
         item.setItemMeta(meta);
         NamespacedKey key = new NamespacedKey((Plugin)this, "wooden_rapier");
@@ -1158,29 +1174,29 @@ public class CombatWeaponryPlus extends JavaPlugin {
         ItemStack item = new ItemStack(Material.STONE_SWORD);
         ItemMeta meta = item.getItemMeta();
         ArrayList<String> lore = new ArrayList<String>();
-        lore.add(convertLegacyToSection(this.getConfig().getString("RapierDescription.line1")));
-        lore.add(convertLegacyToSection(this.getConfig().getString("RapierDescription.line2")));
-        lore.add(convertLegacyToSection(this.getConfig().getString("RapierDescription.line3")));
-        lore.add(convertLegacyToSection(this.getConfig().getString("RapierDescription.line4")));
-        lore.add(convertLegacyToSection(this.getConfig().getString("RapierDescription.line5")));
-        lore.add(convertLegacyToSection(this.getConfig().getString("RapierDescription.line6")));
-        lore.add(convertLegacyToSection(this.getConfig().getString("RapierDescription.line7")));
-        lore.add(convertLegacyToSection(this.getConfig().getString("dStoneRapier.line8")));
-        lore.add(convertLegacyToSection(this.getConfig().getString("dStoneRapier.line9")));
-        lore.add(convertLegacyToSection(this.getConfig().getString("dStoneRapier.line10")));
+        lore.add(convertLegacyToSection(this.config.getString("RapierDescription.line1")));
+        lore.add(convertLegacyToSection(this.config.getString("RapierDescription.line2")));
+        lore.add(convertLegacyToSection(this.config.getString("RapierDescription.line3")));
+        lore.add(convertLegacyToSection(this.config.getString("RapierDescription.line4")));
+        lore.add(convertLegacyToSection(this.config.getString("RapierDescription.line5")));
+        lore.add(convertLegacyToSection(this.config.getString("RapierDescription.line6")));
+        lore.add(convertLegacyToSection(this.config.getString("RapierDescription.line7")));
+        lore.add(convertLegacyToSection(this.config.getString("dStoneRapier.line8")));
+        lore.add(convertLegacyToSection(this.config.getString("dStoneRapier.line9")));
+        lore.add(convertLegacyToSection(this.config.getString("dStoneRapier.line10")));
         meta.setLore(lore);
         meta.addItemFlags(new ItemFlag[]{ItemFlag.HIDE_ATTRIBUTES});
         double dmg = 2.5;
         double spd = -2.1;
-        if (this.getConfig().getBoolean("UseCustomValues")) {
-            dmg = this.getConfig().getDouble("aStoneRapier.damage") - 1.0;
-            spd = this.getConfig().getDouble("aStoneRapier.speed") - 4.0;
+        if (this.config.getBoolean("UseCustomValues")) {
+            dmg = this.config.getDouble("aStoneRapier.damage") - 1.0;
+            spd = this.config.getDouble("aStoneRapier.speed") - 4.0;
         }
         AttributeModifier modifier = new AttributeModifier(UUID.randomUUID(), "Attack Speed", spd, AttributeModifier.Operation.ADD_NUMBER, EquipmentSlot.HAND);
         meta.addAttributeModifier(Attribute.ATTACK_SPEED, modifier);
         AttributeModifier modifier2 = new AttributeModifier(UUID.randomUUID(), "Attack Damage", dmg, AttributeModifier.Operation.ADD_NUMBER, EquipmentSlot.HAND);
         meta.addAttributeModifier(Attribute.ATTACK_DAMAGE, modifier2);
-        meta.setDisplayName(convertLegacyToSection(this.getConfig().getString("dStoneRapier.name")));
+        meta.setDisplayName(convertLegacyToSection(this.config.getString("dStoneRapier.name")));
         meta.setCustomModelData(1000005);
         item.setItemMeta(meta);
         NamespacedKey key = new NamespacedKey((Plugin)this, "stone_rapier");
@@ -1196,29 +1212,29 @@ public class CombatWeaponryPlus extends JavaPlugin {
         ItemStack item = new ItemStack(Material.GOLDEN_SWORD);
         ItemMeta meta = item.getItemMeta();
         ArrayList<String> lore = new ArrayList<String>();
-        lore.add(convertLegacyToSection(this.getConfig().getString("RapierDescription.line1")));
-        lore.add(convertLegacyToSection(this.getConfig().getString("RapierDescription.line2")));
-        lore.add(convertLegacyToSection(this.getConfig().getString("RapierDescription.line3")));
-        lore.add(convertLegacyToSection(this.getConfig().getString("RapierDescription.line4")));
-        lore.add(convertLegacyToSection(this.getConfig().getString("RapierDescription.line5")));
-        lore.add(convertLegacyToSection(this.getConfig().getString("RapierDescription.line6")));
-        lore.add(convertLegacyToSection(this.getConfig().getString("RapierDescription.line7")));
-        lore.add(convertLegacyToSection(this.getConfig().getString("dGoldenRapier.line8")));
-        lore.add(convertLegacyToSection(this.getConfig().getString("dGoldenRapier.line9")));
-        lore.add(convertLegacyToSection(this.getConfig().getString("dGoldenRapier.line10")));
+        lore.add(convertLegacyToSection(this.config.getString("RapierDescription.line1")));
+        lore.add(convertLegacyToSection(this.config.getString("RapierDescription.line2")));
+        lore.add(convertLegacyToSection(this.config.getString("RapierDescription.line3")));
+        lore.add(convertLegacyToSection(this.config.getString("RapierDescription.line4")));
+        lore.add(convertLegacyToSection(this.config.getString("RapierDescription.line5")));
+        lore.add(convertLegacyToSection(this.config.getString("RapierDescription.line6")));
+        lore.add(convertLegacyToSection(this.config.getString("RapierDescription.line7")));
+        lore.add(convertLegacyToSection(this.config.getString("dGoldenRapier.line8")));
+        lore.add(convertLegacyToSection(this.config.getString("dGoldenRapier.line9")));
+        lore.add(convertLegacyToSection(this.config.getString("dGoldenRapier.line10")));
         meta.setLore(lore);
         meta.addItemFlags(new ItemFlag[]{ItemFlag.HIDE_ATTRIBUTES});
         double dmg = 2.0;
         double spd = -1.6;
-        if (this.getConfig().getBoolean("UseCustomValues")) {
-            dmg = this.getConfig().getDouble("aGoldenRapier.damage") - 1.0;
-            spd = this.getConfig().getDouble("aGoldenRapier.speed") - 4.0;
+        if (this.config.getBoolean("UseCustomValues")) {
+            dmg = this.config.getDouble("aGoldenRapier.damage") - 1.0;
+            spd = this.config.getDouble("aGoldenRapier.speed") - 4.0;
         }
         AttributeModifier modifier = new AttributeModifier(UUID.randomUUID(), "Attack Speed", spd, AttributeModifier.Operation.ADD_NUMBER, EquipmentSlot.HAND);
         meta.addAttributeModifier(Attribute.ATTACK_SPEED, modifier);
         AttributeModifier modifier2 = new AttributeModifier(UUID.randomUUID(), "Attack Damage", dmg, AttributeModifier.Operation.ADD_NUMBER, EquipmentSlot.HAND);
         meta.addAttributeModifier(Attribute.ATTACK_DAMAGE, modifier2);
-        meta.setDisplayName(convertLegacyToSection(this.getConfig().getString("dGoldenRapier.name")));
+        meta.setDisplayName(convertLegacyToSection(this.config.getString("dGoldenRapier.name")));
         meta.setCustomModelData(1000005);
         item.setItemMeta(meta);
         NamespacedKey key = new NamespacedKey((Plugin)this, "golden_rapier");
@@ -1234,29 +1250,29 @@ public class CombatWeaponryPlus extends JavaPlugin {
         ItemStack item = new ItemStack(Material.IRON_SWORD);
         ItemMeta meta = item.getItemMeta();
         ArrayList<String> lore = new ArrayList<String>();
-        lore.add(convertLegacyToSection(this.getConfig().getString("RapierDescription.line1")));
-        lore.add(convertLegacyToSection(this.getConfig().getString("RapierDescription.line2")));
-        lore.add(convertLegacyToSection(this.getConfig().getString("RapierDescription.line3")));
-        lore.add(convertLegacyToSection(this.getConfig().getString("RapierDescription.line4")));
-        lore.add(convertLegacyToSection(this.getConfig().getString("RapierDescription.line5")));
-        lore.add(convertLegacyToSection(this.getConfig().getString("RapierDescription.line6")));
-        lore.add(convertLegacyToSection(this.getConfig().getString("RapierDescription.line7")));
-        lore.add(convertLegacyToSection(this.getConfig().getString("dIronRapier.line8")));
-        lore.add(convertLegacyToSection(this.getConfig().getString("dIronRapier.line9")));
-        lore.add(convertLegacyToSection(this.getConfig().getString("dIronRapier.line10")));
+        lore.add(convertLegacyToSection(this.config.getString("RapierDescription.line1")));
+        lore.add(convertLegacyToSection(this.config.getString("RapierDescription.line2")));
+        lore.add(convertLegacyToSection(this.config.getString("RapierDescription.line3")));
+        lore.add(convertLegacyToSection(this.config.getString("RapierDescription.line4")));
+        lore.add(convertLegacyToSection(this.config.getString("RapierDescription.line5")));
+        lore.add(convertLegacyToSection(this.config.getString("RapierDescription.line6")));
+        lore.add(convertLegacyToSection(this.config.getString("RapierDescription.line7")));
+        lore.add(convertLegacyToSection(this.config.getString("dIronRapier.line8")));
+        lore.add(convertLegacyToSection(this.config.getString("dIronRapier.line9")));
+        lore.add(convertLegacyToSection(this.config.getString("dIronRapier.line10")));
         meta.setLore(lore);
         meta.addItemFlags(new ItemFlag[]{ItemFlag.HIDE_ATTRIBUTES});
         double dmg = 3.0;
         double spd = -2.1;
-        if (this.getConfig().getBoolean("UseCustomValues")) {
-            dmg = this.getConfig().getDouble("aIronRapier.damage") - 1.0;
-            spd = this.getConfig().getDouble("aIronRapier.speed") - 4.0;
+        if (this.config.getBoolean("UseCustomValues")) {
+            dmg = this.config.getDouble("aIronRapier.damage") - 1.0;
+            spd = this.config.getDouble("aIronRapier.speed") - 4.0;
         }
         AttributeModifier modifier = new AttributeModifier(UUID.randomUUID(), "Attack Speed", spd, AttributeModifier.Operation.ADD_NUMBER, EquipmentSlot.HAND);
         meta.addAttributeModifier(Attribute.ATTACK_SPEED, modifier);
         AttributeModifier modifier2 = new AttributeModifier(UUID.randomUUID(), "Attack Damage", dmg, AttributeModifier.Operation.ADD_NUMBER, EquipmentSlot.HAND);
         meta.addAttributeModifier(Attribute.ATTACK_DAMAGE, modifier2);
-        meta.setDisplayName(convertLegacyToSection(this.getConfig().getString("dIronRapier.name")));
+        meta.setDisplayName(convertLegacyToSection(this.config.getString("dIronRapier.name")));
         meta.setCustomModelData(1000005);
         item.setItemMeta(meta);
         NamespacedKey key = new NamespacedKey((Plugin)this, "iron_rapier");
@@ -1272,33 +1288,33 @@ public class CombatWeaponryPlus extends JavaPlugin {
         ItemStack item = new ItemStack(Material.GOLDEN_SWORD);
         ItemMeta meta = item.getItemMeta();
         ArrayList<String> lore = new ArrayList<String>();
-        lore.add(convertLegacyToSection(this.getConfig().getString("RapierDescription.line1")));
-        lore.add(convertLegacyToSection(this.getConfig().getString("RapierDescription.line2")));
-        lore.add(convertLegacyToSection(this.getConfig().getString("RapierDescription.line3")));
-        lore.add(convertLegacyToSection(this.getConfig().getString("RapierDescription.line4")));
-        lore.add(convertLegacyToSection(this.getConfig().getString("RapierDescription.line5")));
-        lore.add(convertLegacyToSection(this.getConfig().getString("RapierDescription.line6")));
-        lore.add(convertLegacyToSection(this.getConfig().getString("RapierDescription.line7")));
-        lore.add(convertLegacyToSection(this.getConfig().getString("dEmeraldRapier.line8")));
-        lore.add(convertLegacyToSection(this.getConfig().getString("dEmeraldRapier.line9")));
-        lore.add(convertLegacyToSection(this.getConfig().getString("dEmeraldRapier.line10")));
+        lore.add(convertLegacyToSection(this.config.getString("RapierDescription.line1")));
+        lore.add(convertLegacyToSection(this.config.getString("RapierDescription.line2")));
+        lore.add(convertLegacyToSection(this.config.getString("RapierDescription.line3")));
+        lore.add(convertLegacyToSection(this.config.getString("RapierDescription.line4")));
+        lore.add(convertLegacyToSection(this.config.getString("RapierDescription.line5")));
+        lore.add(convertLegacyToSection(this.config.getString("RapierDescription.line6")));
+        lore.add(convertLegacyToSection(this.config.getString("RapierDescription.line7")));
+        lore.add(convertLegacyToSection(this.config.getString("dEmeraldRapier.line8")));
+        lore.add(convertLegacyToSection(this.config.getString("dEmeraldRapier.line9")));
+        lore.add(convertLegacyToSection(this.config.getString("dEmeraldRapier.line10")));
         meta.setLore(lore);
         meta.addItemFlags(new ItemFlag[]{ItemFlag.HIDE_ATTRIBUTES});
         double dmg = 3.0;
         double spd = -1.6;
-        if (this.getConfig().getBoolean("UseCustomValues")) {
-            dmg = this.getConfig().getDouble("aEmeraldRapier.damage") - 1.0;
-            spd = this.getConfig().getDouble("aEmeraldRapier.speed") - 4.0;
+        if (this.config.getBoolean("UseCustomValues")) {
+            dmg = this.config.getDouble("aEmeraldRapier.damage") - 1.0;
+            spd = this.config.getDouble("aEmeraldRapier.speed") - 4.0;
         }
         AttributeModifier modifier = new AttributeModifier(UUID.randomUUID(), "Attack Speed", spd, AttributeModifier.Operation.ADD_NUMBER, EquipmentSlot.HAND);
         meta.addAttributeModifier(Attribute.ATTACK_SPEED, modifier);
         AttributeModifier modifier2 = new AttributeModifier(UUID.randomUUID(), "Attack Damage", dmg, AttributeModifier.Operation.ADD_NUMBER, EquipmentSlot.HAND);
         meta.addAttributeModifier(Attribute.ATTACK_DAMAGE, modifier2);
-        meta.setDisplayName(convertLegacyToSection(this.getConfig().getString("dEmeraldRapier.name")));
+        meta.setDisplayName(convertLegacyToSection(this.config.getString("dEmeraldRapier.name")));
         meta.setCustomModelData(1000015);
-        if (this.getConfig().getBoolean("EnchantsOnEmeraldGear")) {
-            int num = this.getConfig().getInt("EmeraldGearEnchantLevels.Unbreaking");
-            int num2 = this.getConfig().getInt("EmeraldGearEnchantLevels.Mending");
+        if (this.config.getBoolean("EnchantsOnEmeraldGear")) {
+            int num = this.config.getInt("EmeraldGearEnchantLevels.Unbreaking");
+            int num2 = this.config.getInt("EmeraldGearEnchantLevels.Mending");
             meta.addEnchant(Enchantment.UNBREAKING, num, true);
             meta.addEnchant(Enchantment.MENDING, num2, true);
         }
@@ -1316,29 +1332,29 @@ public class CombatWeaponryPlus extends JavaPlugin {
         ItemStack item = new ItemStack(Material.DIAMOND_SWORD);
         ItemMeta meta = item.getItemMeta();
         ArrayList<String> lore = new ArrayList<String>();
-        lore.add(convertLegacyToSection(this.getConfig().getString("RapierDescription.line1")));
-        lore.add(convertLegacyToSection(this.getConfig().getString("RapierDescription.line2")));
-        lore.add(convertLegacyToSection(this.getConfig().getString("RapierDescription.line3")));
-        lore.add(convertLegacyToSection(this.getConfig().getString("RapierDescription.line4")));
-        lore.add(convertLegacyToSection(this.getConfig().getString("RapierDescription.line5")));
-        lore.add(convertLegacyToSection(this.getConfig().getString("RapierDescription.line6")));
-        lore.add(convertLegacyToSection(this.getConfig().getString("RapierDescription.line7")));
-        lore.add(convertLegacyToSection(this.getConfig().getString("dDiamondRapier.line8")));
-        lore.add(convertLegacyToSection(this.getConfig().getString("dDiamondRapier.line9")));
-        lore.add(convertLegacyToSection(this.getConfig().getString("dDiamondRapier.line10")));
+        lore.add(convertLegacyToSection(this.config.getString("RapierDescription.line1")));
+        lore.add(convertLegacyToSection(this.config.getString("RapierDescription.line2")));
+        lore.add(convertLegacyToSection(this.config.getString("RapierDescription.line3")));
+        lore.add(convertLegacyToSection(this.config.getString("RapierDescription.line4")));
+        lore.add(convertLegacyToSection(this.config.getString("RapierDescription.line5")));
+        lore.add(convertLegacyToSection(this.config.getString("RapierDescription.line6")));
+        lore.add(convertLegacyToSection(this.config.getString("RapierDescription.line7")));
+        lore.add(convertLegacyToSection(this.config.getString("dDiamondRapier.line8")));
+        lore.add(convertLegacyToSection(this.config.getString("dDiamondRapier.line9")));
+        lore.add(convertLegacyToSection(this.config.getString("dDiamondRapier.line10")));
         meta.setLore(lore);
         meta.addItemFlags(new ItemFlag[]{ItemFlag.HIDE_ATTRIBUTES});
         double dmg = 4.0;
         double spd = -2.1;
-        if (this.getConfig().getBoolean("UseCustomValues")) {
-            dmg = this.getConfig().getDouble("aDiamondRapier.damage") - 1.0;
-            spd = this.getConfig().getDouble("aDiamondRapier.speed") - 4.0;
+        if (this.config.getBoolean("UseCustomValues")) {
+            dmg = this.config.getDouble("aDiamondRapier.damage") - 1.0;
+            spd = this.config.getDouble("aDiamondRapier.speed") - 4.0;
         }
         AttributeModifier modifier = new AttributeModifier(UUID.randomUUID(), "Attack Speed", spd, AttributeModifier.Operation.ADD_NUMBER, EquipmentSlot.HAND);
         meta.addAttributeModifier(Attribute.ATTACK_SPEED, modifier);
         AttributeModifier modifier2 = new AttributeModifier(UUID.randomUUID(), "Attack Damage", dmg, AttributeModifier.Operation.ADD_NUMBER, EquipmentSlot.HAND);
         meta.addAttributeModifier(Attribute.ATTACK_DAMAGE, modifier2);
-        meta.setDisplayName(convertLegacyToSection(this.getConfig().getString("dDiamondRapier.name")));
+        meta.setDisplayName(convertLegacyToSection(this.config.getString("dDiamondRapier.name")));
         meta.setCustomModelData(1000005);
         item.setItemMeta(meta);
         NamespacedKey key = new NamespacedKey((Plugin)this, "diamond_rapier");
@@ -1354,29 +1370,29 @@ public class CombatWeaponryPlus extends JavaPlugin {
         ItemStack item = new ItemStack(Material.NETHERITE_SWORD);
         ItemMeta meta = item.getItemMeta();
         ArrayList<String> lore = new ArrayList<String>();
-        lore.add(convertLegacyToSection(this.getConfig().getString("RapierDescription.line1")));
-        lore.add(convertLegacyToSection(this.getConfig().getString("RapierDescription.line2")));
-        lore.add(convertLegacyToSection(this.getConfig().getString("RapierDescription.line3")));
-        lore.add(convertLegacyToSection(this.getConfig().getString("RapierDescription.line4")));
-        lore.add(convertLegacyToSection(this.getConfig().getString("RapierDescription.line5")));
-        lore.add(convertLegacyToSection(this.getConfig().getString("RapierDescription.line6")));
-        lore.add(convertLegacyToSection(this.getConfig().getString("RapierDescription.line7")));
-        lore.add(convertLegacyToSection(this.getConfig().getString("dNetheriteRapier.line8")));
-        lore.add(convertLegacyToSection(this.getConfig().getString("dNetheriteRapier.line9")));
-        lore.add(convertLegacyToSection(this.getConfig().getString("dNetheriteRapier.line10")));
+        lore.add(convertLegacyToSection(this.config.getString("RapierDescription.line1")));
+        lore.add(convertLegacyToSection(this.config.getString("RapierDescription.line2")));
+        lore.add(convertLegacyToSection(this.config.getString("RapierDescription.line3")));
+        lore.add(convertLegacyToSection(this.config.getString("RapierDescription.line4")));
+        lore.add(convertLegacyToSection(this.config.getString("RapierDescription.line5")));
+        lore.add(convertLegacyToSection(this.config.getString("RapierDescription.line6")));
+        lore.add(convertLegacyToSection(this.config.getString("RapierDescription.line7")));
+        lore.add(convertLegacyToSection(this.config.getString("dNetheriteRapier.line8")));
+        lore.add(convertLegacyToSection(this.config.getString("dNetheriteRapier.line9")));
+        lore.add(convertLegacyToSection(this.config.getString("dNetheriteRapier.line10")));
         meta.setLore(lore);
         meta.addItemFlags(new ItemFlag[]{ItemFlag.HIDE_ATTRIBUTES});
         double dmg = 5.0;
         double spd = -2.1;
-        if (this.getConfig().getBoolean("UseCustomValues")) {
-            dmg = this.getConfig().getDouble("aNetheriteRapier.damage") - 1.0;
-            spd = this.getConfig().getDouble("aNetheriteRapier.speed") - 4.0;
+        if (this.config.getBoolean("UseCustomValues")) {
+            dmg = this.config.getDouble("aNetheriteRapier.damage") - 1.0;
+            spd = this.config.getDouble("aNetheriteRapier.speed") - 4.0;
         }
         AttributeModifier modifier = new AttributeModifier(UUID.randomUUID(), "Attack Speed", spd, AttributeModifier.Operation.ADD_NUMBER, EquipmentSlot.HAND);
         meta.addAttributeModifier(Attribute.ATTACK_SPEED, modifier);
         AttributeModifier modifier2 = new AttributeModifier(UUID.randomUUID(), "Attack Damage", dmg, AttributeModifier.Operation.ADD_NUMBER, EquipmentSlot.HAND);
         meta.addAttributeModifier(Attribute.ATTACK_DAMAGE, modifier2);
-        meta.setDisplayName(convertLegacyToSection(this.getConfig().getString("dNetheriteRapier.name")));
+        meta.setDisplayName(convertLegacyToSection(this.config.getString("dNetheriteRapier.name")));
         meta.setCustomModelData(1000005);
         item.setItemMeta(meta);
         NamespacedKey key = new NamespacedKey((Plugin)this, "netherite_rapier");
@@ -1384,7 +1400,7 @@ public class CombatWeaponryPlus extends JavaPlugin {
         ShapedRecipe recipe = new ShapedRecipe(key, item);
         recipe.shape(new String[]{"  C", "CC ", "SC "});
         recipe.setIngredient('S', Material.STICK);
-        boolean n = this.getConfig().getBoolean("NetheriteIngots");
+        boolean n = this.config.getBoolean("NetheriteIngots");
         Material finalMaterial = n ? Material.NETHERITE_INGOT : Material.NETHERITE_SCRAP;
         recipe.setIngredient('C', finalMaterial);
 
@@ -1395,27 +1411,27 @@ public class CombatWeaponryPlus extends JavaPlugin {
         ItemStack item = new ItemStack(Material.WOODEN_SWORD);
         ItemMeta meta = item.getItemMeta();
         ArrayList<String> lore = new ArrayList<String>();
-        lore.add(convertLegacyToSection(this.getConfig().getString("LongswordDescription.line1")));
-        lore.add(convertLegacyToSection(this.getConfig().getString("LongswordDescription.line2")));
-        lore.add(convertLegacyToSection(this.getConfig().getString("LongswordDescription.line3")));
-        lore.add(convertLegacyToSection(this.getConfig().getString("LongswordDescription.line4")));
-        lore.add(convertLegacyToSection(this.getConfig().getString("LongswordDescription.line5")));
-        lore.add(convertLegacyToSection(this.getConfig().getString("dWoodenLongsword.line6")));
-        lore.add(convertLegacyToSection(this.getConfig().getString("dWoodenLongsword.line7")));
-        lore.add(convertLegacyToSection(this.getConfig().getString("dWoodenLongsword.line8")));
+        lore.add(convertLegacyToSection(this.config.getString("LongswordDescription.line1")));
+        lore.add(convertLegacyToSection(this.config.getString("LongswordDescription.line2")));
+        lore.add(convertLegacyToSection(this.config.getString("LongswordDescription.line3")));
+        lore.add(convertLegacyToSection(this.config.getString("LongswordDescription.line4")));
+        lore.add(convertLegacyToSection(this.config.getString("LongswordDescription.line5")));
+        lore.add(convertLegacyToSection(this.config.getString("dWoodenLongsword.line6")));
+        lore.add(convertLegacyToSection(this.config.getString("dWoodenLongsword.line7")));
+        lore.add(convertLegacyToSection(this.config.getString("dWoodenLongsword.line8")));
         meta.setLore(lore);
         meta.addItemFlags(new ItemFlag[]{ItemFlag.HIDE_ATTRIBUTES});
         double dmg = 4.0;
         double spd = -2.8;
-        if (this.getConfig().getBoolean("UseCustomValues")) {
-            dmg = this.getConfig().getDouble("aWoodenLongsword.damage") - 1.0;
-            spd = this.getConfig().getDouble("aWoodenLongsword.speed") - 4.0;
+        if (this.config.getBoolean("UseCustomValues")) {
+            dmg = this.config.getDouble("aWoodenLongsword.damage") - 1.0;
+            spd = this.config.getDouble("aWoodenLongsword.speed") - 4.0;
         }
         AttributeModifier modifier = new AttributeModifier(UUID.randomUUID(), "Attack Speed", spd, AttributeModifier.Operation.ADD_NUMBER, EquipmentSlot.HAND);
         meta.addAttributeModifier(Attribute.ATTACK_SPEED, modifier);
         AttributeModifier modifier2 = new AttributeModifier(UUID.randomUUID(), "Attack Damage", dmg, AttributeModifier.Operation.ADD_NUMBER, EquipmentSlot.HAND);
         meta.addAttributeModifier(Attribute.ATTACK_DAMAGE, modifier2);
-        meta.setDisplayName(convertLegacyToSection(this.getConfig().getString("dWoodenLongsword.name")));
+        meta.setDisplayName(convertLegacyToSection(this.config.getString("dWoodenLongsword.name")));
         meta.setCustomModelData(1000001);
         item.setItemMeta(meta);
         NamespacedKey key = new NamespacedKey((Plugin)this, "wooden_longsword");
@@ -1430,27 +1446,27 @@ public class CombatWeaponryPlus extends JavaPlugin {
         ItemStack item = new ItemStack(Material.STONE_SWORD);
         ItemMeta meta = item.getItemMeta();
         ArrayList<String> lore = new ArrayList<String>();
-        lore.add(convertLegacyToSection(this.getConfig().getString("LongswordDescription.line1")));
-        lore.add(convertLegacyToSection(this.getConfig().getString("LongswordDescription.line2")));
-        lore.add(convertLegacyToSection(this.getConfig().getString("LongswordDescription.line3")));
-        lore.add(convertLegacyToSection(this.getConfig().getString("LongswordDescription.line4")));
-        lore.add(convertLegacyToSection(this.getConfig().getString("LongswordDescription.line5")));
-        lore.add(convertLegacyToSection(this.getConfig().getString("dStoneLongsword.line6")));
-        lore.add(convertLegacyToSection(this.getConfig().getString("dStoneLongsword.line7")));
-        lore.add(convertLegacyToSection(this.getConfig().getString("dStoneLongsword.line8")));
+        lore.add(convertLegacyToSection(this.config.getString("LongswordDescription.line1")));
+        lore.add(convertLegacyToSection(this.config.getString("LongswordDescription.line2")));
+        lore.add(convertLegacyToSection(this.config.getString("LongswordDescription.line3")));
+        lore.add(convertLegacyToSection(this.config.getString("LongswordDescription.line4")));
+        lore.add(convertLegacyToSection(this.config.getString("LongswordDescription.line5")));
+        lore.add(convertLegacyToSection(this.config.getString("dStoneLongsword.line6")));
+        lore.add(convertLegacyToSection(this.config.getString("dStoneLongsword.line7")));
+        lore.add(convertLegacyToSection(this.config.getString("dStoneLongsword.line8")));
         meta.setLore(lore);
         meta.addItemFlags(new ItemFlag[]{ItemFlag.HIDE_ATTRIBUTES});
         double dmg = 5.0;
         double spd = -2.8;
-        if (this.getConfig().getBoolean("UseCustomValues")) {
-            dmg = this.getConfig().getDouble("aStoneLongsword.damage") - 1.0;
-            spd = this.getConfig().getDouble("aStoneLongsword.speed") - 4.0;
+        if (this.config.getBoolean("UseCustomValues")) {
+            dmg = this.config.getDouble("aStoneLongsword.damage") - 1.0;
+            spd = this.config.getDouble("aStoneLongsword.speed") - 4.0;
         }
         AttributeModifier modifier = new AttributeModifier(UUID.randomUUID(), "Attack Speed", spd, AttributeModifier.Operation.ADD_NUMBER, EquipmentSlot.HAND);
         meta.addAttributeModifier(Attribute.ATTACK_SPEED, modifier);
         AttributeModifier modifier2 = new AttributeModifier(UUID.randomUUID(), "Attack Damage", dmg, AttributeModifier.Operation.ADD_NUMBER, EquipmentSlot.HAND);
         meta.addAttributeModifier(Attribute.ATTACK_DAMAGE, modifier2);
-        meta.setDisplayName(convertLegacyToSection(this.getConfig().getString("dStoneLongsword.name")));
+        meta.setDisplayName(convertLegacyToSection(this.config.getString("dStoneLongsword.name")));
         meta.setCustomModelData(1000001);
         item.setItemMeta(meta);
         NamespacedKey key = new NamespacedKey((Plugin)this, "stone_longsword");
@@ -1466,27 +1482,27 @@ public class CombatWeaponryPlus extends JavaPlugin {
         ItemStack item = new ItemStack(Material.GOLDEN_SWORD);
         ItemMeta meta = item.getItemMeta();
         ArrayList<String> lore = new ArrayList<String>();
-        lore.add(convertLegacyToSection(this.getConfig().getString("LongswordDescription.line1")));
-        lore.add(convertLegacyToSection(this.getConfig().getString("LongswordDescription.line2")));
-        lore.add(convertLegacyToSection(this.getConfig().getString("LongswordDescription.line3")));
-        lore.add(convertLegacyToSection(this.getConfig().getString("LongswordDescription.line4")));
-        lore.add(convertLegacyToSection(this.getConfig().getString("LongswordDescription.line5")));
-        lore.add(convertLegacyToSection(this.getConfig().getString("dGoldenLongsword.line6")));
-        lore.add(convertLegacyToSection(this.getConfig().getString("dGoldenLongsword.line7")));
-        lore.add(convertLegacyToSection(this.getConfig().getString("dGoldenLongsword.line8")));
+        lore.add(convertLegacyToSection(this.config.getString("LongswordDescription.line1")));
+        lore.add(convertLegacyToSection(this.config.getString("LongswordDescription.line2")));
+        lore.add(convertLegacyToSection(this.config.getString("LongswordDescription.line3")));
+        lore.add(convertLegacyToSection(this.config.getString("LongswordDescription.line4")));
+        lore.add(convertLegacyToSection(this.config.getString("LongswordDescription.line5")));
+        lore.add(convertLegacyToSection(this.config.getString("dGoldenLongsword.line6")));
+        lore.add(convertLegacyToSection(this.config.getString("dGoldenLongsword.line7")));
+        lore.add(convertLegacyToSection(this.config.getString("dGoldenLongsword.line8")));
         meta.setLore(lore);
         meta.addItemFlags(new ItemFlag[]{ItemFlag.HIDE_ATTRIBUTES});
         double dmg = 4.0;
         double spd = -2.6;
-        if (this.getConfig().getBoolean("UseCustomValues")) {
-            dmg = this.getConfig().getDouble("aGoldenLongsword.damage") - 1.0;
-            spd = this.getConfig().getDouble("aGoldenLongsword.speed") - 4.0;
+        if (this.config.getBoolean("UseCustomValues")) {
+            dmg = this.config.getDouble("aGoldenLongsword.damage") - 1.0;
+            spd = this.config.getDouble("aGoldenLongsword.speed") - 4.0;
         }
         AttributeModifier modifier = new AttributeModifier(UUID.randomUUID(), "Attack Speed", spd, AttributeModifier.Operation.ADD_NUMBER, EquipmentSlot.HAND);
         meta.addAttributeModifier(Attribute.ATTACK_SPEED, modifier);
         AttributeModifier modifier2 = new AttributeModifier(UUID.randomUUID(), "Attack Damage", dmg, AttributeModifier.Operation.ADD_NUMBER, EquipmentSlot.HAND);
         meta.addAttributeModifier(Attribute.ATTACK_DAMAGE, modifier2);
-        meta.setDisplayName(convertLegacyToSection(this.getConfig().getString("dGoldenLongsword.name")));
+        meta.setDisplayName(convertLegacyToSection(this.config.getString("dGoldenLongsword.name")));
         meta.setCustomModelData(1000001);
         item.setItemMeta(meta);
         NamespacedKey key = new NamespacedKey((Plugin)this, "golden_longsword");
@@ -1502,27 +1518,27 @@ public class CombatWeaponryPlus extends JavaPlugin {
         ItemStack item = new ItemStack(Material.IRON_SWORD);
         ItemMeta meta = item.getItemMeta();
         ArrayList<String> lore = new ArrayList<String>();
-        lore.add(convertLegacyToSection(this.getConfig().getString("LongswordDescription.line1")));
-        lore.add(convertLegacyToSection(this.getConfig().getString("LongswordDescription.line2")));
-        lore.add(convertLegacyToSection(this.getConfig().getString("LongswordDescription.line3")));
-        lore.add(convertLegacyToSection(this.getConfig().getString("LongswordDescription.line4")));
-        lore.add(convertLegacyToSection(this.getConfig().getString("LongswordDescription.line5")));
-        lore.add(convertLegacyToSection(this.getConfig().getString("dIronLongsword.line6")));
-        lore.add(convertLegacyToSection(this.getConfig().getString("dIronLongsword.line7")));
-        lore.add(convertLegacyToSection(this.getConfig().getString("dIronLongsword.line8")));
+        lore.add(convertLegacyToSection(this.config.getString("LongswordDescription.line1")));
+        lore.add(convertLegacyToSection(this.config.getString("LongswordDescription.line2")));
+        lore.add(convertLegacyToSection(this.config.getString("LongswordDescription.line3")));
+        lore.add(convertLegacyToSection(this.config.getString("LongswordDescription.line4")));
+        lore.add(convertLegacyToSection(this.config.getString("LongswordDescription.line5")));
+        lore.add(convertLegacyToSection(this.config.getString("dIronLongsword.line6")));
+        lore.add(convertLegacyToSection(this.config.getString("dIronLongsword.line7")));
+        lore.add(convertLegacyToSection(this.config.getString("dIronLongsword.line8")));
         meta.setLore(lore);
         meta.addItemFlags(new ItemFlag[]{ItemFlag.HIDE_ATTRIBUTES});
         double dmg = 6.0;
         double spd = -2.8;
-        if (this.getConfig().getBoolean("UseCustomValues")) {
-            dmg = this.getConfig().getDouble("aIronLongsword.damage") - 1.0;
-            spd = this.getConfig().getDouble("aIronLongsword.speed") - 4.0;
+        if (this.config.getBoolean("UseCustomValues")) {
+            dmg = this.config.getDouble("aIronLongsword.damage") - 1.0;
+            spd = this.config.getDouble("aIronLongsword.speed") - 4.0;
         }
         AttributeModifier modifier = new AttributeModifier(UUID.randomUUID(), "Attack Speed", spd, AttributeModifier.Operation.ADD_NUMBER, EquipmentSlot.HAND);
         meta.addAttributeModifier(Attribute.ATTACK_SPEED, modifier);
         AttributeModifier modifier2 = new AttributeModifier(UUID.randomUUID(), "Attack Damage", dmg, AttributeModifier.Operation.ADD_NUMBER, EquipmentSlot.HAND);
         meta.addAttributeModifier(Attribute.ATTACK_DAMAGE, modifier2);
-        meta.setDisplayName(convertLegacyToSection(this.getConfig().getString("dIronLongsword.name")));
+        meta.setDisplayName(convertLegacyToSection(this.config.getString("dIronLongsword.name")));
         meta.setCustomModelData(1000001);
         item.setItemMeta(meta);
         NamespacedKey key = new NamespacedKey((Plugin)this, "iron_longsword");
@@ -1538,31 +1554,31 @@ public class CombatWeaponryPlus extends JavaPlugin {
         ItemStack item = new ItemStack(Material.GOLDEN_SWORD);
         ItemMeta meta = item.getItemMeta();
         ArrayList<String> lore = new ArrayList<String>();
-        lore.add(convertLegacyToSection(this.getConfig().getString("LongswordDescription.line1")));
-        lore.add(convertLegacyToSection(this.getConfig().getString("LongswordDescription.line2")));
-        lore.add(convertLegacyToSection(this.getConfig().getString("LongswordDescription.line3")));
-        lore.add(convertLegacyToSection(this.getConfig().getString("LongswordDescription.line4")));
-        lore.add(convertLegacyToSection(this.getConfig().getString("LongswordDescription.line5")));
-        lore.add(convertLegacyToSection(this.getConfig().getString("dEmeraldLongsword.line6")));
-        lore.add(convertLegacyToSection(this.getConfig().getString("dEmeraldLongsword.line7")));
-        lore.add(convertLegacyToSection(this.getConfig().getString("dEmeraldLongsword.line8")));
+        lore.add(convertLegacyToSection(this.config.getString("LongswordDescription.line1")));
+        lore.add(convertLegacyToSection(this.config.getString("LongswordDescription.line2")));
+        lore.add(convertLegacyToSection(this.config.getString("LongswordDescription.line3")));
+        lore.add(convertLegacyToSection(this.config.getString("LongswordDescription.line4")));
+        lore.add(convertLegacyToSection(this.config.getString("LongswordDescription.line5")));
+        lore.add(convertLegacyToSection(this.config.getString("dEmeraldLongsword.line6")));
+        lore.add(convertLegacyToSection(this.config.getString("dEmeraldLongsword.line7")));
+        lore.add(convertLegacyToSection(this.config.getString("dEmeraldLongsword.line8")));
         meta.setLore(lore);
         meta.addItemFlags(new ItemFlag[]{ItemFlag.HIDE_ATTRIBUTES});
         double dmg = 6.0;
         double spd = -2.6;
-        if (this.getConfig().getBoolean("UseCustomValues")) {
-            dmg = this.getConfig().getDouble("aEmeraldLongsword.damage") - 1.0;
-            spd = this.getConfig().getDouble("aEmeraldLongsword.speed") - 4.0;
+        if (this.config.getBoolean("UseCustomValues")) {
+            dmg = this.config.getDouble("aEmeraldLongsword.damage") - 1.0;
+            spd = this.config.getDouble("aEmeraldLongsword.speed") - 4.0;
         }
         AttributeModifier modifier = new AttributeModifier(UUID.randomUUID(), "Attack Speed", spd, AttributeModifier.Operation.ADD_NUMBER, EquipmentSlot.HAND);
         meta.addAttributeModifier(Attribute.ATTACK_SPEED, modifier);
         AttributeModifier modifier2 = new AttributeModifier(UUID.randomUUID(), "Attack Damage", dmg, AttributeModifier.Operation.ADD_NUMBER, EquipmentSlot.HAND);
         meta.addAttributeModifier(Attribute.ATTACK_DAMAGE, modifier2);
-        meta.setDisplayName(convertLegacyToSection(this.getConfig().getString("dEmeraldLongsword.name")));
+        meta.setDisplayName(convertLegacyToSection(this.config.getString("dEmeraldLongsword.name")));
         meta.setCustomModelData(1000011);
-        if (this.getConfig().getBoolean("EnchantsOnEmeraldGear")) {
-            int num = this.getConfig().getInt("EmeraldGearEnchantLevels.Unbreaking");
-            int num2 = this.getConfig().getInt("EmeraldGearEnchantLevels.Mending");
+        if (this.config.getBoolean("EnchantsOnEmeraldGear")) {
+            int num = this.config.getInt("EmeraldGearEnchantLevels.Unbreaking");
+            int num2 = this.config.getInt("EmeraldGearEnchantLevels.Mending");
             meta.addEnchant(Enchantment.UNBREAKING, num, true);
             meta.addEnchant(Enchantment.MENDING, num2, true);
         }
@@ -1580,27 +1596,27 @@ public class CombatWeaponryPlus extends JavaPlugin {
         ItemStack item = new ItemStack(Material.DIAMOND_SWORD);
         ItemMeta meta = item.getItemMeta();
         ArrayList<String> lore = new ArrayList<String>();
-        lore.add(convertLegacyToSection(this.getConfig().getString("LongswordDescription.line1")));
-        lore.add(convertLegacyToSection(this.getConfig().getString("LongswordDescription.line2")));
-        lore.add(convertLegacyToSection(this.getConfig().getString("LongswordDescription.line3")));
-        lore.add(convertLegacyToSection(this.getConfig().getString("LongswordDescription.line4")));
-        lore.add(convertLegacyToSection(this.getConfig().getString("LongswordDescription.line5")));
-        lore.add(convertLegacyToSection(this.getConfig().getString("dDiamondLongsword.line6")));
-        lore.add(convertLegacyToSection(this.getConfig().getString("dDiamondLongsword.line7")));
-        lore.add(convertLegacyToSection(this.getConfig().getString("dDiamondLongsword.line8")));
+        lore.add(convertLegacyToSection(this.config.getString("LongswordDescription.line1")));
+        lore.add(convertLegacyToSection(this.config.getString("LongswordDescription.line2")));
+        lore.add(convertLegacyToSection(this.config.getString("LongswordDescription.line3")));
+        lore.add(convertLegacyToSection(this.config.getString("LongswordDescription.line4")));
+        lore.add(convertLegacyToSection(this.config.getString("LongswordDescription.line5")));
+        lore.add(convertLegacyToSection(this.config.getString("dDiamondLongsword.line6")));
+        lore.add(convertLegacyToSection(this.config.getString("dDiamondLongsword.line7")));
+        lore.add(convertLegacyToSection(this.config.getString("dDiamondLongsword.line8")));
         meta.setLore(lore);
         meta.addItemFlags(new ItemFlag[]{ItemFlag.HIDE_ATTRIBUTES});
         double dmg = 7.0;
         double spd = -2.8;
-        if (this.getConfig().getBoolean("UseCustomValues")) {
-            dmg = this.getConfig().getDouble("aDiamondLongsword.damage") - 1.0;
-            spd = this.getConfig().getDouble("aDiamondLongsword.speed") - 4.0;
+        if (this.config.getBoolean("UseCustomValues")) {
+            dmg = this.config.getDouble("aDiamondLongsword.damage") - 1.0;
+            spd = this.config.getDouble("aDiamondLongsword.speed") - 4.0;
         }
         AttributeModifier modifier = new AttributeModifier(UUID.randomUUID(), "Attack Speed", spd, AttributeModifier.Operation.ADD_NUMBER, EquipmentSlot.HAND);
         meta.addAttributeModifier(Attribute.ATTACK_SPEED, modifier);
         AttributeModifier modifier2 = new AttributeModifier(UUID.randomUUID(), "Attack Damage", dmg, AttributeModifier.Operation.ADD_NUMBER, EquipmentSlot.HAND);
         meta.addAttributeModifier(Attribute.ATTACK_DAMAGE, modifier2);
-        meta.setDisplayName(convertLegacyToSection(this.getConfig().getString("dDiamondLongsword.name")));
+        meta.setDisplayName(convertLegacyToSection(this.config.getString("dDiamondLongsword.name")));
         meta.setCustomModelData(1000001);
         item.setItemMeta(meta);
         NamespacedKey key = new NamespacedKey((Plugin)this, "diamond_longsword");
@@ -1616,34 +1632,34 @@ public class CombatWeaponryPlus extends JavaPlugin {
         ItemStack item = new ItemStack(Material.NETHERITE_SWORD);
         ItemMeta meta = item.getItemMeta();
         ArrayList<String> lore = new ArrayList<String>();
-        lore.add(convertLegacyToSection(this.getConfig().getString("LongswordDescription.line1")));
-        lore.add(convertLegacyToSection(this.getConfig().getString("LongswordDescription.line2")));
-        lore.add(convertLegacyToSection(this.getConfig().getString("LongswordDescription.line3")));
-        lore.add(convertLegacyToSection(this.getConfig().getString("LongswordDescription.line4")));
-        lore.add(convertLegacyToSection(this.getConfig().getString("LongswordDescription.line5")));
-        lore.add(convertLegacyToSection(this.getConfig().getString("dNetheriteLongsword.line6")));
-        lore.add(convertLegacyToSection(this.getConfig().getString("dNetheriteLongsword.line7")));
-        lore.add(convertLegacyToSection(this.getConfig().getString("dNetheriteLongsword.line8")));
+        lore.add(convertLegacyToSection(this.config.getString("LongswordDescription.line1")));
+        lore.add(convertLegacyToSection(this.config.getString("LongswordDescription.line2")));
+        lore.add(convertLegacyToSection(this.config.getString("LongswordDescription.line3")));
+        lore.add(convertLegacyToSection(this.config.getString("LongswordDescription.line4")));
+        lore.add(convertLegacyToSection(this.config.getString("LongswordDescription.line5")));
+        lore.add(convertLegacyToSection(this.config.getString("dNetheriteLongsword.line6")));
+        lore.add(convertLegacyToSection(this.config.getString("dNetheriteLongsword.line7")));
+        lore.add(convertLegacyToSection(this.config.getString("dNetheriteLongsword.line8")));
         meta.setLore(lore);
         meta.addItemFlags(new ItemFlag[]{ItemFlag.HIDE_ATTRIBUTES});
         double dmg = 8.0;
         double spd = -2.8;
-        if (this.getConfig().getBoolean("UseCustomValues")) {
-            dmg = this.getConfig().getDouble("aNetheriteLongsword.damage") - 1.0;
-            spd = this.getConfig().getDouble("aNetheriteLongsword.speed") - 4.0;
+        if (this.config.getBoolean("UseCustomValues")) {
+            dmg = this.config.getDouble("aNetheriteLongsword.damage") - 1.0;
+            spd = this.config.getDouble("aNetheriteLongsword.speed") - 4.0;
         }
         AttributeModifier modifier = new AttributeModifier(UUID.randomUUID(), "Attack Speed", spd, AttributeModifier.Operation.ADD_NUMBER, EquipmentSlot.HAND);
         meta.addAttributeModifier(Attribute.ATTACK_SPEED, modifier);
         AttributeModifier modifier2 = new AttributeModifier(UUID.randomUUID(), "Attack Damage", dmg, AttributeModifier.Operation.ADD_NUMBER, EquipmentSlot.HAND);
         meta.addAttributeModifier(Attribute.ATTACK_DAMAGE, modifier2);
-        meta.setDisplayName(convertLegacyToSection(this.getConfig().getString("dNetheriteLongsword.name")));
+        meta.setDisplayName(convertLegacyToSection(this.config.getString("dNetheriteLongsword.name")));
         meta.setCustomModelData(1000001);
         item.setItemMeta(meta);
         NamespacedKey key = new NamespacedKey((Plugin)this, "netherite_longsword");
         this.keys.add(key);
         ShapedRecipe recipe = new ShapedRecipe(key, item);
         recipe.shape(new String[]{" C ", " C ", "CSC"});
-        var n = this.getConfig().getBoolean("NetheriteIngots");
+        var n = this.config.getBoolean("NetheriteIngots");
         if (n) {
             recipe.setIngredient('C', Material.NETHERITE_INGOT);
         } else {
@@ -1657,28 +1673,28 @@ public class CombatWeaponryPlus extends JavaPlugin {
         ItemStack item = new ItemStack(Material.WOODEN_SWORD);
         ItemMeta meta = item.getItemMeta();
         ArrayList<String> lore = new ArrayList<String>();
-        lore.add(convertLegacyToSection(this.getConfig().getString("KnifeDescription.line1")));
-        lore.add(convertLegacyToSection(this.getConfig().getString("KnifeDescription.line2")));
-        lore.add(convertLegacyToSection(this.getConfig().getString("KnifeDescription.line3")));
-        lore.add(convertLegacyToSection(this.getConfig().getString("KnifeDescription.line4")));
-        lore.add(convertLegacyToSection(this.getConfig().getString("KnifeDescription.line5")));
-        lore.add(convertLegacyToSection(this.getConfig().getString("KnifeDescription.line6")));
-        lore.add(convertLegacyToSection(this.getConfig().getString("dWoodenKnife.line7")));
-        lore.add(convertLegacyToSection(this.getConfig().getString("dWoodenKnife.line8")));
-        lore.add(convertLegacyToSection(this.getConfig().getString("dWoodenKnife.line9")));
+        lore.add(convertLegacyToSection(this.config.getString("KnifeDescription.line1")));
+        lore.add(convertLegacyToSection(this.config.getString("KnifeDescription.line2")));
+        lore.add(convertLegacyToSection(this.config.getString("KnifeDescription.line3")));
+        lore.add(convertLegacyToSection(this.config.getString("KnifeDescription.line4")));
+        lore.add(convertLegacyToSection(this.config.getString("KnifeDescription.line5")));
+        lore.add(convertLegacyToSection(this.config.getString("KnifeDescription.line6")));
+        lore.add(convertLegacyToSection(this.config.getString("dWoodenKnife.line7")));
+        lore.add(convertLegacyToSection(this.config.getString("dWoodenKnife.line8")));
+        lore.add(convertLegacyToSection(this.config.getString("dWoodenKnife.line9")));
         meta.setLore(lore);
         meta.addItemFlags(new ItemFlag[]{ItemFlag.HIDE_ATTRIBUTES});
         double dmg = 1.0;
         double spd = -1.0;
-        if (this.getConfig().getBoolean("UseCustomValues")) {
-            dmg = this.getConfig().getDouble("aWoodenKnife.damage") - 1.0;
-            spd = this.getConfig().getDouble("aWoodenKnife.speed") - 4.0;
+        if (this.config.getBoolean("UseCustomValues")) {
+            dmg = this.config.getDouble("aWoodenKnife.damage") - 1.0;
+            spd = this.config.getDouble("aWoodenKnife.speed") - 4.0;
         }
         AttributeModifier modifier = new AttributeModifier(UUID.randomUUID(), "Attack Speed", spd, AttributeModifier.Operation.ADD_NUMBER, EquipmentSlot.HAND);
         meta.addAttributeModifier(Attribute.ATTACK_SPEED, modifier);
         AttributeModifier modifier2 = new AttributeModifier(UUID.randomUUID(), "Attack Damage", dmg, AttributeModifier.Operation.ADD_NUMBER, EquipmentSlot.HAND);
         meta.addAttributeModifier(Attribute.ATTACK_DAMAGE, modifier2);
-        meta.setDisplayName(convertLegacyToSection(this.getConfig().getString("dWoodenKnife.name")));
+        meta.setDisplayName(convertLegacyToSection(this.config.getString("dWoodenKnife.name")));
         meta.setCustomModelData(1000006);
         item.setItemMeta(meta);
         NamespacedKey key = new NamespacedKey((Plugin)this, "wooden_knife");
@@ -1693,28 +1709,28 @@ public class CombatWeaponryPlus extends JavaPlugin {
         ItemStack item = new ItemStack(Material.STONE_SWORD);
         ItemMeta meta = item.getItemMeta();
         ArrayList<String> lore = new ArrayList<String>();
-        lore.add(convertLegacyToSection(this.getConfig().getString("KnifeDescription.line1")));
-        lore.add(convertLegacyToSection(this.getConfig().getString("KnifeDescription.line2")));
-        lore.add(convertLegacyToSection(this.getConfig().getString("KnifeDescription.line3")));
-        lore.add(convertLegacyToSection(this.getConfig().getString("KnifeDescription.line4")));
-        lore.add(convertLegacyToSection(this.getConfig().getString("KnifeDescription.line5")));
-        lore.add(convertLegacyToSection(this.getConfig().getString("KnifeDescription.line6")));
-        lore.add(convertLegacyToSection(this.getConfig().getString("dStoneKnife.line7")));
-        lore.add(convertLegacyToSection(this.getConfig().getString("dStoneKnife.line8")));
-        lore.add(convertLegacyToSection(this.getConfig().getString("dStoneKnife.line9")));
+        lore.add(convertLegacyToSection(this.config.getString("KnifeDescription.line1")));
+        lore.add(convertLegacyToSection(this.config.getString("KnifeDescription.line2")));
+        lore.add(convertLegacyToSection(this.config.getString("KnifeDescription.line3")));
+        lore.add(convertLegacyToSection(this.config.getString("KnifeDescription.line4")));
+        lore.add(convertLegacyToSection(this.config.getString("KnifeDescription.line5")));
+        lore.add(convertLegacyToSection(this.config.getString("KnifeDescription.line6")));
+        lore.add(convertLegacyToSection(this.config.getString("dStoneKnife.line7")));
+        lore.add(convertLegacyToSection(this.config.getString("dStoneKnife.line8")));
+        lore.add(convertLegacyToSection(this.config.getString("dStoneKnife.line9")));
         meta.setLore(lore);
         meta.addItemFlags(new ItemFlag[]{ItemFlag.HIDE_ATTRIBUTES});
         double dmg = 1.5;
         double spd = -1.0;
-        if (this.getConfig().getBoolean("UseCustomValues")) {
-            dmg = this.getConfig().getDouble("aStoneKnife.damage") - 1.0;
-            spd = this.getConfig().getDouble("aStoneKnife.speed") - 4.0;
+        if (this.config.getBoolean("UseCustomValues")) {
+            dmg = this.config.getDouble("aStoneKnife.damage") - 1.0;
+            spd = this.config.getDouble("aStoneKnife.speed") - 4.0;
         }
         AttributeModifier modifier = new AttributeModifier(UUID.randomUUID(), "Attack Speed", spd, AttributeModifier.Operation.ADD_NUMBER, EquipmentSlot.HAND);
         meta.addAttributeModifier(Attribute.ATTACK_SPEED, modifier);
         AttributeModifier modifier2 = new AttributeModifier(UUID.randomUUID(), "Attack Damage", dmg, AttributeModifier.Operation.ADD_NUMBER, EquipmentSlot.HAND);
         meta.addAttributeModifier(Attribute.ATTACK_DAMAGE, modifier2);
-        meta.setDisplayName(convertLegacyToSection(this.getConfig().getString("dStoneKnife.name")));
+        meta.setDisplayName(convertLegacyToSection(this.config.getString("dStoneKnife.name")));
         meta.setCustomModelData(1000006);
         item.setItemMeta(meta);
         NamespacedKey key = new NamespacedKey((Plugin)this, "stone_knife");
@@ -1730,28 +1746,28 @@ public class CombatWeaponryPlus extends JavaPlugin {
         ItemStack item = new ItemStack(Material.GOLDEN_SWORD);
         ItemMeta meta = item.getItemMeta();
         ArrayList<String> lore = new ArrayList<String>();
-        lore.add(convertLegacyToSection(this.getConfig().getString("KnifeDescription.line1")));
-        lore.add(convertLegacyToSection(this.getConfig().getString("KnifeDescription.line2")));
-        lore.add(convertLegacyToSection(this.getConfig().getString("KnifeDescription.line3")));
-        lore.add(convertLegacyToSection(this.getConfig().getString("KnifeDescription.line4")));
-        lore.add(convertLegacyToSection(this.getConfig().getString("KnifeDescription.line5")));
-        lore.add(convertLegacyToSection(this.getConfig().getString("KnifeDescription.line6")));
-        lore.add(convertLegacyToSection(this.getConfig().getString("dGoldenKnife.line7")));
-        lore.add(convertLegacyToSection(this.getConfig().getString("dGoldenKnife.line8")));
-        lore.add(convertLegacyToSection(this.getConfig().getString("dGoldenKnife.line9")));
+        lore.add(convertLegacyToSection(this.config.getString("KnifeDescription.line1")));
+        lore.add(convertLegacyToSection(this.config.getString("KnifeDescription.line2")));
+        lore.add(convertLegacyToSection(this.config.getString("KnifeDescription.line3")));
+        lore.add(convertLegacyToSection(this.config.getString("KnifeDescription.line4")));
+        lore.add(convertLegacyToSection(this.config.getString("KnifeDescription.line5")));
+        lore.add(convertLegacyToSection(this.config.getString("KnifeDescription.line6")));
+        lore.add(convertLegacyToSection(this.config.getString("dGoldenKnife.line7")));
+        lore.add(convertLegacyToSection(this.config.getString("dGoldenKnife.line8")));
+        lore.add(convertLegacyToSection(this.config.getString("dGoldenKnife.line9")));
         meta.setLore(lore);
         meta.addItemFlags(new ItemFlag[]{ItemFlag.HIDE_ATTRIBUTES});
         double dmg = 1.0;
         double spd = 0.0;
-        if (this.getConfig().getBoolean("UseCustomValues")) {
-            dmg = this.getConfig().getDouble("aGoldenKnife.damage") - 1.0;
-            spd = this.getConfig().getDouble("aGoldenKnife.speed") - 4.0;
+        if (this.config.getBoolean("UseCustomValues")) {
+            dmg = this.config.getDouble("aGoldenKnife.damage") - 1.0;
+            spd = this.config.getDouble("aGoldenKnife.speed") - 4.0;
         }
         AttributeModifier modifier = new AttributeModifier(UUID.randomUUID(), "Attack Speed", spd, AttributeModifier.Operation.ADD_NUMBER, EquipmentSlot.HAND);
         meta.addAttributeModifier(Attribute.ATTACK_SPEED, modifier);
         AttributeModifier modifier2 = new AttributeModifier(UUID.randomUUID(), "Attack Damage", dmg, AttributeModifier.Operation.ADD_NUMBER, EquipmentSlot.HAND);
         meta.addAttributeModifier(Attribute.ATTACK_DAMAGE, modifier2);
-        meta.setDisplayName(convertLegacyToSection(this.getConfig().getString("dGoldenKnife.name")));
+        meta.setDisplayName(convertLegacyToSection(this.config.getString("dGoldenKnife.name")));
         meta.setCustomModelData(1000006);
         item.setItemMeta(meta);
         NamespacedKey key = new NamespacedKey((Plugin)this, "golden_knife");
@@ -1767,28 +1783,28 @@ public class CombatWeaponryPlus extends JavaPlugin {
         ItemStack item = new ItemStack(Material.IRON_SWORD);
         ItemMeta meta = item.getItemMeta();
         ArrayList<String> lore = new ArrayList<String>();
-        lore.add(convertLegacyToSection(this.getConfig().getString("KnifeDescription.line1")));
-        lore.add(convertLegacyToSection(this.getConfig().getString("KnifeDescription.line2")));
-        lore.add(convertLegacyToSection(this.getConfig().getString("KnifeDescription.line3")));
-        lore.add(convertLegacyToSection(this.getConfig().getString("KnifeDescription.line4")));
-        lore.add(convertLegacyToSection(this.getConfig().getString("KnifeDescription.line5")));
-        lore.add(convertLegacyToSection(this.getConfig().getString("KnifeDescription.line6")));
-        lore.add(convertLegacyToSection(this.getConfig().getString("dIronKnife.line7")));
-        lore.add(convertLegacyToSection(this.getConfig().getString("dIronKnife.line8")));
-        lore.add(convertLegacyToSection(this.getConfig().getString("dIronKnife.line9")));
+        lore.add(convertLegacyToSection(this.config.getString("KnifeDescription.line1")));
+        lore.add(convertLegacyToSection(this.config.getString("KnifeDescription.line2")));
+        lore.add(convertLegacyToSection(this.config.getString("KnifeDescription.line3")));
+        lore.add(convertLegacyToSection(this.config.getString("KnifeDescription.line4")));
+        lore.add(convertLegacyToSection(this.config.getString("KnifeDescription.line5")));
+        lore.add(convertLegacyToSection(this.config.getString("KnifeDescription.line6")));
+        lore.add(convertLegacyToSection(this.config.getString("dIronKnife.line7")));
+        lore.add(convertLegacyToSection(this.config.getString("dIronKnife.line8")));
+        lore.add(convertLegacyToSection(this.config.getString("dIronKnife.line9")));
         meta.setLore(lore);
         meta.addItemFlags(new ItemFlag[]{ItemFlag.HIDE_ATTRIBUTES});
         double dmg = 2.0;
         double spd = -1.0;
-        if (this.getConfig().getBoolean("UseCustomValues")) {
-            dmg = this.getConfig().getDouble("aIronKnife.damage") - 1.0;
-            spd = this.getConfig().getDouble("aIronKnife.speed") - 4.0;
+        if (this.config.getBoolean("UseCustomValues")) {
+            dmg = this.config.getDouble("aIronKnife.damage") - 1.0;
+            spd = this.config.getDouble("aIronKnife.speed") - 4.0;
         }
         AttributeModifier modifier = new AttributeModifier(UUID.randomUUID(), "Attack Speed", spd, AttributeModifier.Operation.ADD_NUMBER, EquipmentSlot.HAND);
         meta.addAttributeModifier(Attribute.ATTACK_SPEED, modifier);
         AttributeModifier modifier2 = new AttributeModifier(UUID.randomUUID(), "Attack Damage", dmg, AttributeModifier.Operation.ADD_NUMBER, EquipmentSlot.HAND);
         meta.addAttributeModifier(Attribute.ATTACK_DAMAGE, modifier2);
-        meta.setDisplayName(convertLegacyToSection(this.getConfig().getString("dIronKnife.name")));
+        meta.setDisplayName(convertLegacyToSection(this.config.getString("dIronKnife.name")));
         meta.setCustomModelData(1000006);
         item.setItemMeta(meta);
         NamespacedKey key = new NamespacedKey((Plugin)this, "iron_knife");
@@ -1804,31 +1820,31 @@ public class CombatWeaponryPlus extends JavaPlugin {
         ItemStack item = new ItemStack(Material.GOLDEN_SWORD);
         ItemMeta meta = item.getItemMeta();
         ArrayList<String> lore = new ArrayList<String>();
-        lore.add(convertLegacyToSection(this.getConfig().getString("KnifeDescription.line1")));
-        lore.add(convertLegacyToSection(this.getConfig().getString("KnifeDescription.line2")));
-        lore.add(convertLegacyToSection(this.getConfig().getString("KnifeDescription.line3")));
-        lore.add(convertLegacyToSection(this.getConfig().getString("KnifeDescription.line4")));
-        lore.add(convertLegacyToSection(this.getConfig().getString("KnifeDescription.line5")));
-        lore.add(convertLegacyToSection(this.getConfig().getString("KnifeDescription.line6")));
-        lore.add(convertLegacyToSection(this.getConfig().getString("dEmeraldKnife.line7")));
-        lore.add(convertLegacyToSection(this.getConfig().getString("dEmeraldKnife.line8")));
-        lore.add(convertLegacyToSection(this.getConfig().getString("dEmeraldKnife.line9")));
+        lore.add(convertLegacyToSection(this.config.getString("KnifeDescription.line1")));
+        lore.add(convertLegacyToSection(this.config.getString("KnifeDescription.line2")));
+        lore.add(convertLegacyToSection(this.config.getString("KnifeDescription.line3")));
+        lore.add(convertLegacyToSection(this.config.getString("KnifeDescription.line4")));
+        lore.add(convertLegacyToSection(this.config.getString("KnifeDescription.line5")));
+        lore.add(convertLegacyToSection(this.config.getString("KnifeDescription.line6")));
+        lore.add(convertLegacyToSection(this.config.getString("dEmeraldKnife.line7")));
+        lore.add(convertLegacyToSection(this.config.getString("dEmeraldKnife.line8")));
+        lore.add(convertLegacyToSection(this.config.getString("dEmeraldKnife.line9")));
         meta.setLore(lore);
         meta.addItemFlags(new ItemFlag[]{ItemFlag.HIDE_ATTRIBUTES});
         double dmg = 2.0;
         double spd = 0.0;
-        if (this.getConfig().getBoolean("UseCustomValues")) {
-            dmg = this.getConfig().getDouble("aEmeraldKnife.damage") - 1.0;
-            spd = this.getConfig().getDouble("aEmeraldKnife.speed") - 4.0;
+        if (this.config.getBoolean("UseCustomValues")) {
+            dmg = this.config.getDouble("aEmeraldKnife.damage") - 1.0;
+            spd = this.config.getDouble("aEmeraldKnife.speed") - 4.0;
         }
         AttributeModifier modifier = new AttributeModifier(UUID.randomUUID(), "Attack Speed", spd, AttributeModifier.Operation.ADD_NUMBER, EquipmentSlot.HAND);
         meta.addAttributeModifier(Attribute.ATTACK_SPEED, modifier);
         AttributeModifier modifier2 = new AttributeModifier(UUID.randomUUID(), "Attack Damage", dmg, AttributeModifier.Operation.ADD_NUMBER, EquipmentSlot.HAND);
         meta.addAttributeModifier(Attribute.ATTACK_DAMAGE, modifier2);
-        meta.setDisplayName(convertLegacyToSection(this.getConfig().getString("dEmeraldKnife.name")));
-        if (this.getConfig().getBoolean("EnchantsOnEmeraldGear")) {
-            int num = this.getConfig().getInt("EmeraldGearEnchantLevels.Unbreaking");
-            int num2 = this.getConfig().getInt("EmeraldGearEnchantLevels.Mending");
+        meta.setDisplayName(convertLegacyToSection(this.config.getString("dEmeraldKnife.name")));
+        if (this.config.getBoolean("EnchantsOnEmeraldGear")) {
+            int num = this.config.getInt("EmeraldGearEnchantLevels.Unbreaking");
+            int num2 = this.config.getInt("EmeraldGearEnchantLevels.Mending");
             meta.addEnchant(Enchantment.UNBREAKING, num, true);
             meta.addEnchant(Enchantment.MENDING, num2, true);
         }
@@ -1847,28 +1863,28 @@ public class CombatWeaponryPlus extends JavaPlugin {
         ItemStack item = new ItemStack(Material.DIAMOND_SWORD);
         ItemMeta meta = item.getItemMeta();
         ArrayList<String> lore = new ArrayList<String>();
-        lore.add(convertLegacyToSection(this.getConfig().getString("KnifeDescription.line1")));
-        lore.add(convertLegacyToSection(this.getConfig().getString("KnifeDescription.line2")));
-        lore.add(convertLegacyToSection(this.getConfig().getString("KnifeDescription.line3")));
-        lore.add(convertLegacyToSection(this.getConfig().getString("KnifeDescription.line4")));
-        lore.add(convertLegacyToSection(this.getConfig().getString("KnifeDescription.line5")));
-        lore.add(convertLegacyToSection(this.getConfig().getString("KnifeDescription.line6")));
-        lore.add(convertLegacyToSection(this.getConfig().getString("dDiamondKnife.line7")));
-        lore.add(convertLegacyToSection(this.getConfig().getString("dDiamondKnife.line8")));
-        lore.add(convertLegacyToSection(this.getConfig().getString("dDiamondKnife.line9")));
+        lore.add(convertLegacyToSection(this.config.getString("KnifeDescription.line1")));
+        lore.add(convertLegacyToSection(this.config.getString("KnifeDescription.line2")));
+        lore.add(convertLegacyToSection(this.config.getString("KnifeDescription.line3")));
+        lore.add(convertLegacyToSection(this.config.getString("KnifeDescription.line4")));
+        lore.add(convertLegacyToSection(this.config.getString("KnifeDescription.line5")));
+        lore.add(convertLegacyToSection(this.config.getString("KnifeDescription.line6")));
+        lore.add(convertLegacyToSection(this.config.getString("dDiamondKnife.line7")));
+        lore.add(convertLegacyToSection(this.config.getString("dDiamondKnife.line8")));
+        lore.add(convertLegacyToSection(this.config.getString("dDiamondKnife.line9")));
         meta.setLore(lore);
         meta.addItemFlags(new ItemFlag[]{ItemFlag.HIDE_ATTRIBUTES});
         double dmg = 3.0;
         double spd = -1.0;
-        if (this.getConfig().getBoolean("UseCustomValues")) {
-            dmg = this.getConfig().getDouble("aDiamondKnife.damage") - 1.0;
-            spd = this.getConfig().getDouble("aDiamondKnife.speed") - 4.0;
+        if (this.config.getBoolean("UseCustomValues")) {
+            dmg = this.config.getDouble("aDiamondKnife.damage") - 1.0;
+            spd = this.config.getDouble("aDiamondKnife.speed") - 4.0;
         }
         AttributeModifier modifier = new AttributeModifier(UUID.randomUUID(), "Attack Speed", spd, AttributeModifier.Operation.ADD_NUMBER, EquipmentSlot.HAND);
         meta.addAttributeModifier(Attribute.ATTACK_SPEED, modifier);
         AttributeModifier modifier2 = new AttributeModifier(UUID.randomUUID(), "Attack Damage", dmg, AttributeModifier.Operation.ADD_NUMBER, EquipmentSlot.HAND);
         meta.addAttributeModifier(Attribute.ATTACK_DAMAGE, modifier2);
-        meta.setDisplayName(convertLegacyToSection(this.getConfig().getString("dDiamondKnife.name")));
+        meta.setDisplayName(convertLegacyToSection(this.config.getString("dDiamondKnife.name")));
         meta.setCustomModelData(1000006);
         item.setItemMeta(meta);
         NamespacedKey key = new NamespacedKey((Plugin)this, "diamond_knife");
@@ -1884,35 +1900,35 @@ public class CombatWeaponryPlus extends JavaPlugin {
         ItemStack item = new ItemStack(Material.NETHERITE_SWORD);
         ItemMeta meta = item.getItemMeta();
         ArrayList<String> lore = new ArrayList<String>();
-        lore.add(convertLegacyToSection(this.getConfig().getString("KnifeDescription.line1")));
-        lore.add(convertLegacyToSection(this.getConfig().getString("KnifeDescription.line2")));
-        lore.add(convertLegacyToSection(this.getConfig().getString("KnifeDescription.line3")));
-        lore.add(convertLegacyToSection(this.getConfig().getString("KnifeDescription.line4")));
-        lore.add(convertLegacyToSection(this.getConfig().getString("KnifeDescription.line5")));
-        lore.add(convertLegacyToSection(this.getConfig().getString("KnifeDescription.line6")));
-        lore.add(convertLegacyToSection(this.getConfig().getString("dNetheriteKnife.line7")));
-        lore.add(convertLegacyToSection(this.getConfig().getString("dNetheriteKnife.line8")));
-        lore.add(convertLegacyToSection(this.getConfig().getString("dNetheriteKnife.line9")));
+        lore.add(convertLegacyToSection(this.config.getString("KnifeDescription.line1")));
+        lore.add(convertLegacyToSection(this.config.getString("KnifeDescription.line2")));
+        lore.add(convertLegacyToSection(this.config.getString("KnifeDescription.line3")));
+        lore.add(convertLegacyToSection(this.config.getString("KnifeDescription.line4")));
+        lore.add(convertLegacyToSection(this.config.getString("KnifeDescription.line5")));
+        lore.add(convertLegacyToSection(this.config.getString("KnifeDescription.line6")));
+        lore.add(convertLegacyToSection(this.config.getString("dNetheriteKnife.line7")));
+        lore.add(convertLegacyToSection(this.config.getString("dNetheriteKnife.line8")));
+        lore.add(convertLegacyToSection(this.config.getString("dNetheriteKnife.line9")));
         meta.setLore(lore);
         meta.addItemFlags(new ItemFlag[]{ItemFlag.HIDE_ATTRIBUTES});
         double dmg = 4.0;
         double spd = -1.0;
-        if (this.getConfig().getBoolean("UseCustomValues")) {
-            dmg = this.getConfig().getDouble("aNetheriteKnife.damage") - 1.0;
-            spd = this.getConfig().getDouble("aNetheriteKnife.speed") - 4.0;
+        if (this.config.getBoolean("UseCustomValues")) {
+            dmg = this.config.getDouble("aNetheriteKnife.damage") - 1.0;
+            spd = this.config.getDouble("aNetheriteKnife.speed") - 4.0;
         }
         AttributeModifier modifier = new AttributeModifier(UUID.randomUUID(), "Attack Speed", spd, AttributeModifier.Operation.ADD_NUMBER, EquipmentSlot.HAND);
         meta.addAttributeModifier(Attribute.ATTACK_SPEED, modifier);
         AttributeModifier modifier2 = new AttributeModifier(UUID.randomUUID(), "Attack Damage", dmg, AttributeModifier.Operation.ADD_NUMBER, EquipmentSlot.HAND);
         meta.addAttributeModifier(Attribute.ATTACK_DAMAGE, modifier2);
-        meta.setDisplayName(convertLegacyToSection(this.getConfig().getString("dNetheriteKnife.name")));
+        meta.setDisplayName(convertLegacyToSection(this.config.getString("dNetheriteKnife.name")));
         meta.setCustomModelData(1000006);
         item.setItemMeta(meta);
         NamespacedKey key = new NamespacedKey((Plugin)this, "netherite_knife");
         this.keys.add(key);
         ShapedRecipe recipe = new ShapedRecipe(key, item);
         recipe.shape(new String[]{"   ", " C ", " S "});
-        boolean n = this.getConfig().getBoolean("NetheriteIngots");
+        boolean n = this.config.getBoolean("NetheriteIngots");
         Material finalMaterial = n ? Material.NETHERITE_INGOT : Material.NETHERITE_SCRAP;
         recipe.setIngredient('C', finalMaterial);
         recipe.setIngredient('S', Material.STICK);
@@ -1923,31 +1939,31 @@ public class CombatWeaponryPlus extends JavaPlugin {
         ItemStack item = new ItemStack(Material.WOODEN_SWORD);
         ItemMeta meta = item.getItemMeta();
         ArrayList<String> lore = new ArrayList<String>();
-        lore.add(convertLegacyToSection(this.getConfig().getString("SpearDescription.line1")));
-        lore.add(convertLegacyToSection(this.getConfig().getString("SpearDescription.line2")));
-        lore.add(convertLegacyToSection(this.getConfig().getString("SpearDescription.line3")));
-        lore.add(convertLegacyToSection(this.getConfig().getString("SpearDescription.line4")));
-        lore.add(convertLegacyToSection(this.getConfig().getString("SpearDescription.line5")));
-        lore.add(convertLegacyToSection(this.getConfig().getString("SpearDescription.line6")));
-        lore.add(convertLegacyToSection(this.getConfig().getString("SpearDescription.line7")));
-        lore.add(convertLegacyToSection(this.getConfig().getString("SpearDescription.line8")));
-        lore.add(convertLegacyToSection(this.getConfig().getString("SpearDescription.line9")));
-        lore.add(convertLegacyToSection(this.getConfig().getString("dWoodenSpear.line10")));
-        lore.add(convertLegacyToSection(this.getConfig().getString("dWoodenSpear.line11")));
-        lore.add(convertLegacyToSection(this.getConfig().getString("dWoodenSpear.line12")));
+        lore.add(convertLegacyToSection(this.config.getString("SpearDescription.line1")));
+        lore.add(convertLegacyToSection(this.config.getString("SpearDescription.line2")));
+        lore.add(convertLegacyToSection(this.config.getString("SpearDescription.line3")));
+        lore.add(convertLegacyToSection(this.config.getString("SpearDescription.line4")));
+        lore.add(convertLegacyToSection(this.config.getString("SpearDescription.line5")));
+        lore.add(convertLegacyToSection(this.config.getString("SpearDescription.line6")));
+        lore.add(convertLegacyToSection(this.config.getString("SpearDescription.line7")));
+        lore.add(convertLegacyToSection(this.config.getString("SpearDescription.line8")));
+        lore.add(convertLegacyToSection(this.config.getString("SpearDescription.line9")));
+        lore.add(convertLegacyToSection(this.config.getString("dWoodenSpear.line10")));
+        lore.add(convertLegacyToSection(this.config.getString("dWoodenSpear.line11")));
+        lore.add(convertLegacyToSection(this.config.getString("dWoodenSpear.line12")));
         meta.setLore(lore);
         meta.addItemFlags(new ItemFlag[]{ItemFlag.HIDE_ATTRIBUTES});
         double dmg = 1.0;
         double spd = -1.5;
-        if (this.getConfig().getBoolean("UseCustomValues")) {
-            dmg = this.getConfig().getDouble("aWoodenSpear.damage") - 1.0;
-            spd = this.getConfig().getDouble("aWoodenSpear.speed") - 4.0;
+        if (this.config.getBoolean("UseCustomValues")) {
+            dmg = this.config.getDouble("aWoodenSpear.damage") - 1.0;
+            spd = this.config.getDouble("aWoodenSpear.speed") - 4.0;
         }
         AttributeModifier modifier = new AttributeModifier(UUID.randomUUID(), "Attack Speed", spd, AttributeModifier.Operation.ADD_NUMBER, EquipmentSlot.HAND);
         meta.addAttributeModifier(Attribute.ATTACK_SPEED, modifier);
         AttributeModifier modifier2 = new AttributeModifier(UUID.randomUUID(), "Attack Damage", dmg, AttributeModifier.Operation.ADD_NUMBER, EquipmentSlot.HAND);
         meta.addAttributeModifier(Attribute.ATTACK_DAMAGE, modifier2);
-        meta.setDisplayName(convertLegacyToSection(this.getConfig().getString("dWoodenSpear.name")));
+        meta.setDisplayName(convertLegacyToSection(this.config.getString("dWoodenSpear.name")));
         meta.setCustomModelData(1000004);
         item.setItemMeta(meta);
         NamespacedKey key = new NamespacedKey((Plugin)this, "wooden_spear");
@@ -1962,31 +1978,31 @@ public class CombatWeaponryPlus extends JavaPlugin {
         ItemStack item = new ItemStack(Material.STONE_SWORD);
         ItemMeta meta = item.getItemMeta();
         ArrayList<String> lore = new ArrayList<String>();
-        lore.add(convertLegacyToSection(this.getConfig().getString("SpearDescription.line1")));
-        lore.add(convertLegacyToSection(this.getConfig().getString("SpearDescription.line2")));
-        lore.add(convertLegacyToSection(this.getConfig().getString("SpearDescription.line3")));
-        lore.add(convertLegacyToSection(this.getConfig().getString("SpearDescription.line4")));
-        lore.add(convertLegacyToSection(this.getConfig().getString("SpearDescription.line5")));
-        lore.add(convertLegacyToSection(this.getConfig().getString("SpearDescription.line6")));
-        lore.add(convertLegacyToSection(this.getConfig().getString("SpearDescription.line7")));
-        lore.add(convertLegacyToSection(this.getConfig().getString("SpearDescription.line8")));
-        lore.add(convertLegacyToSection(this.getConfig().getString("SpearDescription.line9")));
-        lore.add(convertLegacyToSection(this.getConfig().getString("dStoneSpear.line10")));
-        lore.add(convertLegacyToSection(this.getConfig().getString("dStoneSpear.line11")));
-        lore.add(convertLegacyToSection(this.getConfig().getString("dStoneSpear.line12")));
+        lore.add(convertLegacyToSection(this.config.getString("SpearDescription.line1")));
+        lore.add(convertLegacyToSection(this.config.getString("SpearDescription.line2")));
+        lore.add(convertLegacyToSection(this.config.getString("SpearDescription.line3")));
+        lore.add(convertLegacyToSection(this.config.getString("SpearDescription.line4")));
+        lore.add(convertLegacyToSection(this.config.getString("SpearDescription.line5")));
+        lore.add(convertLegacyToSection(this.config.getString("SpearDescription.line6")));
+        lore.add(convertLegacyToSection(this.config.getString("SpearDescription.line7")));
+        lore.add(convertLegacyToSection(this.config.getString("SpearDescription.line8")));
+        lore.add(convertLegacyToSection(this.config.getString("SpearDescription.line9")));
+        lore.add(convertLegacyToSection(this.config.getString("dStoneSpear.line10")));
+        lore.add(convertLegacyToSection(this.config.getString("dStoneSpear.line11")));
+        lore.add(convertLegacyToSection(this.config.getString("dStoneSpear.line12")));
         meta.setLore(lore);
         meta.addItemFlags(new ItemFlag[]{ItemFlag.HIDE_ATTRIBUTES});
         double dmg = 1.5;
         double spd = -1.5;
-        if (this.getConfig().getBoolean("UseCustomValues")) {
-            dmg = this.getConfig().getDouble("aStoneSpear.damage") - 1.0;
-            spd = this.getConfig().getDouble("aStoneSpear.speed") - 4.0;
+        if (this.config.getBoolean("UseCustomValues")) {
+            dmg = this.config.getDouble("aStoneSpear.damage") - 1.0;
+            spd = this.config.getDouble("aStoneSpear.speed") - 4.0;
         }
         AttributeModifier modifier = new AttributeModifier(UUID.randomUUID(), "Attack Speed", spd, AttributeModifier.Operation.ADD_NUMBER, EquipmentSlot.HAND);
         meta.addAttributeModifier(Attribute.ATTACK_SPEED, modifier);
         AttributeModifier modifier2 = new AttributeModifier(UUID.randomUUID(), "Attack Damage", dmg, AttributeModifier.Operation.ADD_NUMBER, EquipmentSlot.HAND);
         meta.addAttributeModifier(Attribute.ATTACK_DAMAGE, modifier2);
-        meta.setDisplayName(convertLegacyToSection(this.getConfig().getString("dStoneSpear.name")));
+        meta.setDisplayName(convertLegacyToSection(this.config.getString("dStoneSpear.name")));
         meta.setCustomModelData(1000004);
         item.setItemMeta(meta);
         NamespacedKey key = new NamespacedKey((Plugin)this, "stone_spear");
@@ -2002,31 +2018,31 @@ public class CombatWeaponryPlus extends JavaPlugin {
         ItemStack item = new ItemStack(Material.GOLDEN_SWORD);
         ItemMeta meta = item.getItemMeta();
         ArrayList<String> lore = new ArrayList<String>();
-        lore.add(convertLegacyToSection(this.getConfig().getString("SpearDescription.line1")));
-        lore.add(convertLegacyToSection(this.getConfig().getString("SpearDescription.line2")));
-        lore.add(convertLegacyToSection(this.getConfig().getString("SpearDescription.line3")));
-        lore.add(convertLegacyToSection(this.getConfig().getString("SpearDescription.line4")));
-        lore.add(convertLegacyToSection(this.getConfig().getString("SpearDescription.line5")));
-        lore.add(convertLegacyToSection(this.getConfig().getString("SpearDescription.line6")));
-        lore.add(convertLegacyToSection(this.getConfig().getString("SpearDescription.line7")));
-        lore.add(convertLegacyToSection(this.getConfig().getString("SpearDescription.line8")));
-        lore.add(convertLegacyToSection(this.getConfig().getString("SpearDescription.line9")));
-        lore.add(convertLegacyToSection(this.getConfig().getString("dGoldenSpear.line10")));
-        lore.add(convertLegacyToSection(this.getConfig().getString("dGoldenSpear.line11")));
-        lore.add(convertLegacyToSection(this.getConfig().getString("dGoldenSpear.line12")));
+        lore.add(convertLegacyToSection(this.config.getString("SpearDescription.line1")));
+        lore.add(convertLegacyToSection(this.config.getString("SpearDescription.line2")));
+        lore.add(convertLegacyToSection(this.config.getString("SpearDescription.line3")));
+        lore.add(convertLegacyToSection(this.config.getString("SpearDescription.line4")));
+        lore.add(convertLegacyToSection(this.config.getString("SpearDescription.line5")));
+        lore.add(convertLegacyToSection(this.config.getString("SpearDescription.line6")));
+        lore.add(convertLegacyToSection(this.config.getString("SpearDescription.line7")));
+        lore.add(convertLegacyToSection(this.config.getString("SpearDescription.line8")));
+        lore.add(convertLegacyToSection(this.config.getString("SpearDescription.line9")));
+        lore.add(convertLegacyToSection(this.config.getString("dGoldenSpear.line10")));
+        lore.add(convertLegacyToSection(this.config.getString("dGoldenSpear.line11")));
+        lore.add(convertLegacyToSection(this.config.getString("dGoldenSpear.line12")));
         meta.setLore(lore);
         meta.addItemFlags(new ItemFlag[]{ItemFlag.HIDE_ATTRIBUTES});
         double dmg = 1.0;
         double spd = -1.2;
-        if (this.getConfig().getBoolean("UseCustomValues")) {
-            dmg = this.getConfig().getDouble("aGoldenSpear.damage") - 1.0;
-            spd = this.getConfig().getDouble("aGoldenSpear.speed") - 4.0;
+        if (this.config.getBoolean("UseCustomValues")) {
+            dmg = this.config.getDouble("aGoldenSpear.damage") - 1.0;
+            spd = this.config.getDouble("aGoldenSpear.speed") - 4.0;
         }
         AttributeModifier modifier = new AttributeModifier(UUID.randomUUID(), "Attack Speed", spd, AttributeModifier.Operation.ADD_NUMBER, EquipmentSlot.HAND);
         meta.addAttributeModifier(Attribute.ATTACK_SPEED, modifier);
         AttributeModifier modifier2 = new AttributeModifier(UUID.randomUUID(), "Attack Damage", dmg, AttributeModifier.Operation.ADD_NUMBER, EquipmentSlot.HAND);
         meta.addAttributeModifier(Attribute.ATTACK_DAMAGE, modifier2);
-        meta.setDisplayName(convertLegacyToSection(this.getConfig().getString("dGoldenSpear.name")));
+        meta.setDisplayName(convertLegacyToSection(this.config.getString("dGoldenSpear.name")));
         meta.setCustomModelData(1000004);
         item.setItemMeta(meta);
         NamespacedKey key = new NamespacedKey((Plugin)this, "golden_spear");
@@ -2042,31 +2058,31 @@ public class CombatWeaponryPlus extends JavaPlugin {
         ItemStack item = new ItemStack(Material.IRON_SWORD);
         ItemMeta meta = item.getItemMeta();
         ArrayList<String> lore = new ArrayList<String>();
-        lore.add(convertLegacyToSection(this.getConfig().getString("SpearDescription.line1")));
-        lore.add(convertLegacyToSection(this.getConfig().getString("SpearDescription.line2")));
-        lore.add(convertLegacyToSection(this.getConfig().getString("SpearDescription.line3")));
-        lore.add(convertLegacyToSection(this.getConfig().getString("SpearDescription.line4")));
-        lore.add(convertLegacyToSection(this.getConfig().getString("SpearDescription.line5")));
-        lore.add(convertLegacyToSection(this.getConfig().getString("SpearDescription.line6")));
-        lore.add(convertLegacyToSection(this.getConfig().getString("SpearDescription.line7")));
-        lore.add(convertLegacyToSection(this.getConfig().getString("SpearDescription.line8")));
-        lore.add(convertLegacyToSection(this.getConfig().getString("SpearDescription.line9")));
-        lore.add(convertLegacyToSection(this.getConfig().getString("dIronSpear.line10")));
-        lore.add(convertLegacyToSection(this.getConfig().getString("dIronSpear.line11")));
-        lore.add(convertLegacyToSection(this.getConfig().getString("dIronSpear.line12")));
+        lore.add(convertLegacyToSection(this.config.getString("SpearDescription.line1")));
+        lore.add(convertLegacyToSection(this.config.getString("SpearDescription.line2")));
+        lore.add(convertLegacyToSection(this.config.getString("SpearDescription.line3")));
+        lore.add(convertLegacyToSection(this.config.getString("SpearDescription.line4")));
+        lore.add(convertLegacyToSection(this.config.getString("SpearDescription.line5")));
+        lore.add(convertLegacyToSection(this.config.getString("SpearDescription.line6")));
+        lore.add(convertLegacyToSection(this.config.getString("SpearDescription.line7")));
+        lore.add(convertLegacyToSection(this.config.getString("SpearDescription.line8")));
+        lore.add(convertLegacyToSection(this.config.getString("SpearDescription.line9")));
+        lore.add(convertLegacyToSection(this.config.getString("dIronSpear.line10")));
+        lore.add(convertLegacyToSection(this.config.getString("dIronSpear.line11")));
+        lore.add(convertLegacyToSection(this.config.getString("dIronSpear.line12")));
         meta.setLore(lore);
         meta.addItemFlags(new ItemFlag[]{ItemFlag.HIDE_ATTRIBUTES});
         double dmg = 2.0;
         double spd = -1.5;
-        if (this.getConfig().getBoolean("UseCustomValues")) {
-            dmg = this.getConfig().getDouble("aIronSpear.damage") - 1.0;
-            spd = this.getConfig().getDouble("aIronSpear.speed") - 4.0;
+        if (this.config.getBoolean("UseCustomValues")) {
+            dmg = this.config.getDouble("aIronSpear.damage") - 1.0;
+            spd = this.config.getDouble("aIronSpear.speed") - 4.0;
         }
         AttributeModifier modifier = new AttributeModifier(UUID.randomUUID(), "Attack Speed", spd, AttributeModifier.Operation.ADD_NUMBER, EquipmentSlot.HAND);
         meta.addAttributeModifier(Attribute.ATTACK_SPEED, modifier);
         AttributeModifier modifier2 = new AttributeModifier(UUID.randomUUID(), "Attack Damage", dmg, AttributeModifier.Operation.ADD_NUMBER, EquipmentSlot.HAND);
         meta.addAttributeModifier(Attribute.ATTACK_DAMAGE, modifier2);
-        meta.setDisplayName(convertLegacyToSection(this.getConfig().getString("dIronSpear.name")));
+        meta.setDisplayName(convertLegacyToSection(this.config.getString("dIronSpear.name")));
         meta.setCustomModelData(1000004);
         item.setItemMeta(meta);
         NamespacedKey key = new NamespacedKey((Plugin)this, "iron_spear");
@@ -2082,35 +2098,35 @@ public class CombatWeaponryPlus extends JavaPlugin {
         ItemStack item = new ItemStack(Material.GOLDEN_SWORD);
         ItemMeta meta = item.getItemMeta();
         ArrayList<String> lore = new ArrayList<String>();
-        lore.add(convertLegacyToSection(this.getConfig().getString("SpearDescription.line1")));
-        lore.add(convertLegacyToSection(this.getConfig().getString("SpearDescription.line2")));
-        lore.add(convertLegacyToSection(this.getConfig().getString("SpearDescription.line3")));
-        lore.add(convertLegacyToSection(this.getConfig().getString("SpearDescription.line4")));
-        lore.add(convertLegacyToSection(this.getConfig().getString("SpearDescription.line5")));
-        lore.add(convertLegacyToSection(this.getConfig().getString("SpearDescription.line6")));
-        lore.add(convertLegacyToSection(this.getConfig().getString("SpearDescription.line7")));
-        lore.add(convertLegacyToSection(this.getConfig().getString("SpearDescription.line8")));
-        lore.add(convertLegacyToSection(this.getConfig().getString("SpearDescription.line9")));
-        lore.add(convertLegacyToSection(this.getConfig().getString("dEmeraldSpear.line10")));
-        lore.add(convertLegacyToSection(this.getConfig().getString("dEmeraldSpear.line11")));
-        lore.add(convertLegacyToSection(this.getConfig().getString("dEmeraldSpear.line12")));
+        lore.add(convertLegacyToSection(this.config.getString("SpearDescription.line1")));
+        lore.add(convertLegacyToSection(this.config.getString("SpearDescription.line2")));
+        lore.add(convertLegacyToSection(this.config.getString("SpearDescription.line3")));
+        lore.add(convertLegacyToSection(this.config.getString("SpearDescription.line4")));
+        lore.add(convertLegacyToSection(this.config.getString("SpearDescription.line5")));
+        lore.add(convertLegacyToSection(this.config.getString("SpearDescription.line6")));
+        lore.add(convertLegacyToSection(this.config.getString("SpearDescription.line7")));
+        lore.add(convertLegacyToSection(this.config.getString("SpearDescription.line8")));
+        lore.add(convertLegacyToSection(this.config.getString("SpearDescription.line9")));
+        lore.add(convertLegacyToSection(this.config.getString("dEmeraldSpear.line10")));
+        lore.add(convertLegacyToSection(this.config.getString("dEmeraldSpear.line11")));
+        lore.add(convertLegacyToSection(this.config.getString("dEmeraldSpear.line12")));
         meta.setLore(lore);
         meta.addItemFlags(new ItemFlag[]{ItemFlag.HIDE_ATTRIBUTES});
         double dmg = 2.0;
         double spd = -1.2;
-        if (this.getConfig().getBoolean("UseCustomValues")) {
-            dmg = this.getConfig().getDouble("aEmeraldSpear.damage") - 1.0;
-            spd = this.getConfig().getDouble("aEmeraldSpear.speed") - 4.0;
+        if (this.config.getBoolean("UseCustomValues")) {
+            dmg = this.config.getDouble("aEmeraldSpear.damage") - 1.0;
+            spd = this.config.getDouble("aEmeraldSpear.speed") - 4.0;
         }
         AttributeModifier modifier = new AttributeModifier(UUID.randomUUID(), "Attack Speed", spd, AttributeModifier.Operation.ADD_NUMBER, EquipmentSlot.HAND);
         meta.addAttributeModifier(Attribute.ATTACK_SPEED, modifier);
         AttributeModifier modifier2 = new AttributeModifier(UUID.randomUUID(), "Attack Damage", dmg, AttributeModifier.Operation.ADD_NUMBER, EquipmentSlot.HAND);
         meta.addAttributeModifier(Attribute.ATTACK_DAMAGE, modifier2);
-        meta.setDisplayName(convertLegacyToSection(this.getConfig().getString("dEmeraldSpear.name")));
+        meta.setDisplayName(convertLegacyToSection(this.config.getString("dEmeraldSpear.name")));
         meta.setCustomModelData(1000014);
-        if (this.getConfig().getBoolean("EnchantsOnEmeraldGear")) {
-            int num = this.getConfig().getInt("EmeraldGearEnchantLevels.Unbreaking");
-            int num2 = this.getConfig().getInt("EmeraldGearEnchantLevels.Mending");
+        if (this.config.getBoolean("EnchantsOnEmeraldGear")) {
+            int num = this.config.getInt("EmeraldGearEnchantLevels.Unbreaking");
+            int num2 = this.config.getInt("EmeraldGearEnchantLevels.Mending");
             meta.addEnchant(Enchantment.UNBREAKING, num, true);
             meta.addEnchant(Enchantment.MENDING, num2, true);
         }
@@ -2128,31 +2144,31 @@ public class CombatWeaponryPlus extends JavaPlugin {
         ItemStack item = new ItemStack(Material.DIAMOND_SWORD);
         ItemMeta meta = item.getItemMeta();
         ArrayList<String> lore = new ArrayList<String>();
-        lore.add(convertLegacyToSection(this.getConfig().getString("SpearDescription.line1")));
-        lore.add(convertLegacyToSection(this.getConfig().getString("SpearDescription.line2")));
-        lore.add(convertLegacyToSection(this.getConfig().getString("SpearDescription.line3")));
-        lore.add(convertLegacyToSection(this.getConfig().getString("SpearDescription.line4")));
-        lore.add(convertLegacyToSection(this.getConfig().getString("SpearDescription.line5")));
-        lore.add(convertLegacyToSection(this.getConfig().getString("SpearDescription.line6")));
-        lore.add(convertLegacyToSection(this.getConfig().getString("SpearDescription.line7")));
-        lore.add(convertLegacyToSection(this.getConfig().getString("SpearDescription.line8")));
-        lore.add(convertLegacyToSection(this.getConfig().getString("SpearDescription.line9")));
-        lore.add(convertLegacyToSection(this.getConfig().getString("dDiamondSpear.line10")));
-        lore.add(convertLegacyToSection(this.getConfig().getString("dDiamondSpear.line11")));
-        lore.add(convertLegacyToSection(this.getConfig().getString("dDiamondSpear.line12")));
+        lore.add(convertLegacyToSection(this.config.getString("SpearDescription.line1")));
+        lore.add(convertLegacyToSection(this.config.getString("SpearDescription.line2")));
+        lore.add(convertLegacyToSection(this.config.getString("SpearDescription.line3")));
+        lore.add(convertLegacyToSection(this.config.getString("SpearDescription.line4")));
+        lore.add(convertLegacyToSection(this.config.getString("SpearDescription.line5")));
+        lore.add(convertLegacyToSection(this.config.getString("SpearDescription.line6")));
+        lore.add(convertLegacyToSection(this.config.getString("SpearDescription.line7")));
+        lore.add(convertLegacyToSection(this.config.getString("SpearDescription.line8")));
+        lore.add(convertLegacyToSection(this.config.getString("SpearDescription.line9")));
+        lore.add(convertLegacyToSection(this.config.getString("dDiamondSpear.line10")));
+        lore.add(convertLegacyToSection(this.config.getString("dDiamondSpear.line11")));
+        lore.add(convertLegacyToSection(this.config.getString("dDiamondSpear.line12")));
         meta.setLore(lore);
         meta.addItemFlags(new ItemFlag[]{ItemFlag.HIDE_ATTRIBUTES});
         double dmg = 3.0;
         double spd = -1.5;
-        if (this.getConfig().getBoolean("UseCustomValues")) {
-            dmg = this.getConfig().getDouble("aDiamondSpear.damage") - 1.0;
-            spd = this.getConfig().getDouble("aDiamondSpear.speed") - 4.0;
+        if (this.config.getBoolean("UseCustomValues")) {
+            dmg = this.config.getDouble("aDiamondSpear.damage") - 1.0;
+            spd = this.config.getDouble("aDiamondSpear.speed") - 4.0;
         }
         AttributeModifier modifier = new AttributeModifier(UUID.randomUUID(), "Attack Speed", spd, AttributeModifier.Operation.ADD_NUMBER, EquipmentSlot.HAND);
         meta.addAttributeModifier(Attribute.ATTACK_SPEED, modifier);
         AttributeModifier modifier2 = new AttributeModifier(UUID.randomUUID(), "Attack Damage", dmg, AttributeModifier.Operation.ADD_NUMBER, EquipmentSlot.HAND);
         meta.addAttributeModifier(Attribute.ATTACK_DAMAGE, modifier2);
-        meta.setDisplayName(convertLegacyToSection(this.getConfig().getString("dDiamondSpear.name")));
+        meta.setDisplayName(convertLegacyToSection(this.config.getString("dDiamondSpear.name")));
         meta.setCustomModelData(1000004);
         item.setItemMeta(meta);
         NamespacedKey key = new NamespacedKey((Plugin)this, "diamond_spear");
@@ -2168,38 +2184,38 @@ public class CombatWeaponryPlus extends JavaPlugin {
         ItemStack item = new ItemStack(Material.NETHERITE_SWORD);
         ItemMeta meta = item.getItemMeta();
         ArrayList<String> lore = new ArrayList<String>();
-        lore.add(convertLegacyToSection(this.getConfig().getString("SpearDescription.line1")));
-        lore.add(convertLegacyToSection(this.getConfig().getString("SpearDescription.line2")));
-        lore.add(convertLegacyToSection(this.getConfig().getString("SpearDescription.line3")));
-        lore.add(convertLegacyToSection(this.getConfig().getString("SpearDescription.line4")));
-        lore.add(convertLegacyToSection(this.getConfig().getString("SpearDescription.line5")));
-        lore.add(convertLegacyToSection(this.getConfig().getString("SpearDescription.line6")));
-        lore.add(convertLegacyToSection(this.getConfig().getString("SpearDescription.line7")));
-        lore.add(convertLegacyToSection(this.getConfig().getString("SpearDescription.line8")));
-        lore.add(convertLegacyToSection(this.getConfig().getString("SpearDescription.line9")));
-        lore.add(convertLegacyToSection(this.getConfig().getString("dNetheriteSpear.line10")));
-        lore.add(convertLegacyToSection(this.getConfig().getString("dNetheriteSpear.line11")));
-        lore.add(convertLegacyToSection(this.getConfig().getString("dNetheriteSpear.line12")));
+        lore.add(convertLegacyToSection(this.config.getString("SpearDescription.line1")));
+        lore.add(convertLegacyToSection(this.config.getString("SpearDescription.line2")));
+        lore.add(convertLegacyToSection(this.config.getString("SpearDescription.line3")));
+        lore.add(convertLegacyToSection(this.config.getString("SpearDescription.line4")));
+        lore.add(convertLegacyToSection(this.config.getString("SpearDescription.line5")));
+        lore.add(convertLegacyToSection(this.config.getString("SpearDescription.line6")));
+        lore.add(convertLegacyToSection(this.config.getString("SpearDescription.line7")));
+        lore.add(convertLegacyToSection(this.config.getString("SpearDescription.line8")));
+        lore.add(convertLegacyToSection(this.config.getString("SpearDescription.line9")));
+        lore.add(convertLegacyToSection(this.config.getString("dNetheriteSpear.line10")));
+        lore.add(convertLegacyToSection(this.config.getString("dNetheriteSpear.line11")));
+        lore.add(convertLegacyToSection(this.config.getString("dNetheriteSpear.line12")));
         meta.setLore(lore);
         meta.addItemFlags(new ItemFlag[]{ItemFlag.HIDE_ATTRIBUTES});
         double dmg = 4.0;
         double spd = -1.5;
-        if (this.getConfig().getBoolean("UseCustomValues")) {
-            dmg = this.getConfig().getDouble("aNetheriteSpear.damage") - 1.0;
-            spd = this.getConfig().getDouble("aNetheriteSpear.speed") - 4.0;
+        if (this.config.getBoolean("UseCustomValues")) {
+            dmg = this.config.getDouble("aNetheriteSpear.damage") - 1.0;
+            spd = this.config.getDouble("aNetheriteSpear.speed") - 4.0;
         }
         AttributeModifier modifier = new AttributeModifier(UUID.randomUUID(), "Attack Speed", spd, AttributeModifier.Operation.ADD_NUMBER, EquipmentSlot.HAND);
         meta.addAttributeModifier(Attribute.ATTACK_SPEED, modifier);
         AttributeModifier modifier2 = new AttributeModifier(UUID.randomUUID(), "Attack Damage", dmg, AttributeModifier.Operation.ADD_NUMBER, EquipmentSlot.HAND);
         meta.addAttributeModifier(Attribute.ATTACK_DAMAGE, modifier2);
-        meta.setDisplayName(convertLegacyToSection(this.getConfig().getString("dNetheriteSpear.name")));
+        meta.setDisplayName(convertLegacyToSection(this.config.getString("dNetheriteSpear.name")));
         meta.setCustomModelData(1000004);
         item.setItemMeta(meta);
         NamespacedKey key = new NamespacedKey((Plugin)this, "netherite_spear");
         this.keys.add(key);
         ShapedRecipe recipe = new ShapedRecipe(key, item);
         recipe.shape(new String[]{" MM", " SM", "S  "});
-        boolean n = this.getConfig().getBoolean("NetheriteIngots");
+        boolean n = this.config.getBoolean("NetheriteIngots");
         Material finalMaterial = n ? Material.NETHERITE_INGOT : Material.NETHERITE_SCRAP;
         recipe.setIngredient('M', finalMaterial);
         recipe.setIngredient('S', Material.STICK);
@@ -2210,29 +2226,29 @@ public class CombatWeaponryPlus extends JavaPlugin {
         ItemStack item = new ItemStack(Material.WOODEN_SWORD);
         ItemMeta meta = item.getItemMeta();
         ArrayList<String> lore = new ArrayList<String>();
-        lore.add(convertLegacyToSection(this.getConfig().getString("KatanaDescription.line1")));
-        lore.add(convertLegacyToSection(this.getConfig().getString("KatanaDescription.line2")));
-        lore.add(convertLegacyToSection(this.getConfig().getString("KatanaDescription.line3")));
-        lore.add(convertLegacyToSection(this.getConfig().getString("KatanaDescription.line4")));
-        lore.add(convertLegacyToSection(this.getConfig().getString("KatanaDescription.line5")));
-        lore.add(convertLegacyToSection(this.getConfig().getString("KatanaDescription.line6")));
-        lore.add(convertLegacyToSection(this.getConfig().getString("KatanaDescription.line7")));
-        lore.add(convertLegacyToSection(this.getConfig().getString("KatanaDescription.line8")));
-        lore.add(convertLegacyToSection(this.getConfig().getString("KatanaDescription.line9")));
-        lore.add(convertLegacyToSection(this.getConfig().getString("KatanaDescription.line10")));
-        lore.add(convertLegacyToSection(this.getConfig().getString("KatanaDescription.line11")));
-        lore.add(convertLegacyToSection(this.getConfig().getString("dWoodenKatana.line12")));
-        lore.add(convertLegacyToSection(this.getConfig().getString("dWoodenKatana.line13")));
-        lore.add(convertLegacyToSection(this.getConfig().getString("dWoodenKatana.line14")));
+        lore.add(convertLegacyToSection(this.config.getString("KatanaDescription.line1")));
+        lore.add(convertLegacyToSection(this.config.getString("KatanaDescription.line2")));
+        lore.add(convertLegacyToSection(this.config.getString("KatanaDescription.line3")));
+        lore.add(convertLegacyToSection(this.config.getString("KatanaDescription.line4")));
+        lore.add(convertLegacyToSection(this.config.getString("KatanaDescription.line5")));
+        lore.add(convertLegacyToSection(this.config.getString("KatanaDescription.line6")));
+        lore.add(convertLegacyToSection(this.config.getString("KatanaDescription.line7")));
+        lore.add(convertLegacyToSection(this.config.getString("KatanaDescription.line8")));
+        lore.add(convertLegacyToSection(this.config.getString("KatanaDescription.line9")));
+        lore.add(convertLegacyToSection(this.config.getString("KatanaDescription.line10")));
+        lore.add(convertLegacyToSection(this.config.getString("KatanaDescription.line11")));
+        lore.add(convertLegacyToSection(this.config.getString("dWoodenKatana.line12")));
+        lore.add(convertLegacyToSection(this.config.getString("dWoodenKatana.line13")));
+        lore.add(convertLegacyToSection(this.config.getString("dWoodenKatana.line14")));
         meta.setLore(lore);
         meta.addItemFlags(new ItemFlag[]{ItemFlag.HIDE_ATTRIBUTES});
         double dmg = 2.5;
         double spd = -2.3;
         double mspd = 0.02;
-        if (this.getConfig().getBoolean("UseCustomValues")) {
-            dmg = this.getConfig().getDouble("aWoodenKatana.damage") - 1.0;
-            spd = this.getConfig().getDouble("aWoodenKatana.speed") - 4.0;
-            mspd = this.getConfig().getDouble("aWoodenKatana.moveSpeed");
+        if (this.config.getBoolean("UseCustomValues")) {
+            dmg = this.config.getDouble("aWoodenKatana.damage") - 1.0;
+            spd = this.config.getDouble("aWoodenKatana.speed") - 4.0;
+            mspd = this.config.getDouble("aWoodenKatana.moveSpeed");
         }
         AttributeModifier modifier = new AttributeModifier(UUID.randomUUID(), "Attack Speed", spd, AttributeModifier.Operation.ADD_NUMBER, EquipmentSlot.HAND);
         meta.addAttributeModifier(Attribute.ATTACK_SPEED, modifier);
@@ -2240,7 +2256,7 @@ public class CombatWeaponryPlus extends JavaPlugin {
         meta.addAttributeModifier(Attribute.ATTACK_DAMAGE, modifier2);
         AttributeModifier modifier3 = new AttributeModifier(UUID.randomUUID(), "Move SPeed", mspd, AttributeModifier.Operation.ADD_NUMBER, EquipmentSlot.HAND);
         meta.addAttributeModifier(Attribute.MOVEMENT_SPEED, modifier3);
-        meta.setDisplayName(convertLegacyToSection(this.getConfig().getString("dWoodenKatana.name")));
+        meta.setDisplayName(convertLegacyToSection(this.config.getString("dWoodenKatana.name")));
         meta.setCustomModelData(1000002);
         item.setItemMeta(meta);
         NamespacedKey key = new NamespacedKey((Plugin)this, "wooden_katana");
@@ -2255,29 +2271,29 @@ public class CombatWeaponryPlus extends JavaPlugin {
         ItemStack item = new ItemStack(Material.GOLDEN_SWORD);
         ItemMeta meta = item.getItemMeta();
         ArrayList<String> lore = new ArrayList<String>();
-        lore.add(convertLegacyToSection(this.getConfig().getString("KatanaDescription.line1")));
-        lore.add(convertLegacyToSection(this.getConfig().getString("KatanaDescription.line2")));
-        lore.add(convertLegacyToSection(this.getConfig().getString("KatanaDescription.line3")));
-        lore.add(convertLegacyToSection(this.getConfig().getString("KatanaDescription.line4")));
-        lore.add(convertLegacyToSection(this.getConfig().getString("KatanaDescription.line5")));
-        lore.add(convertLegacyToSection(this.getConfig().getString("KatanaDescription.line6")));
-        lore.add(convertLegacyToSection(this.getConfig().getString("KatanaDescription.line7")));
-        lore.add(convertLegacyToSection(this.getConfig().getString("KatanaDescription.line8")));
-        lore.add(convertLegacyToSection(this.getConfig().getString("KatanaDescription.line9")));
-        lore.add(convertLegacyToSection(this.getConfig().getString("KatanaDescription.line10")));
-        lore.add(convertLegacyToSection(this.getConfig().getString("KatanaDescription.line11")));
-        lore.add(convertLegacyToSection(this.getConfig().getString("dGoldenKatana.line12")));
-        lore.add(convertLegacyToSection(this.getConfig().getString("dGoldenKatana.line13")));
-        lore.add(convertLegacyToSection(this.getConfig().getString("dGoldenKatana.line14")));
+        lore.add(convertLegacyToSection(this.config.getString("KatanaDescription.line1")));
+        lore.add(convertLegacyToSection(this.config.getString("KatanaDescription.line2")));
+        lore.add(convertLegacyToSection(this.config.getString("KatanaDescription.line3")));
+        lore.add(convertLegacyToSection(this.config.getString("KatanaDescription.line4")));
+        lore.add(convertLegacyToSection(this.config.getString("KatanaDescription.line5")));
+        lore.add(convertLegacyToSection(this.config.getString("KatanaDescription.line6")));
+        lore.add(convertLegacyToSection(this.config.getString("KatanaDescription.line7")));
+        lore.add(convertLegacyToSection(this.config.getString("KatanaDescription.line8")));
+        lore.add(convertLegacyToSection(this.config.getString("KatanaDescription.line9")));
+        lore.add(convertLegacyToSection(this.config.getString("KatanaDescription.line10")));
+        lore.add(convertLegacyToSection(this.config.getString("KatanaDescription.line11")));
+        lore.add(convertLegacyToSection(this.config.getString("dGoldenKatana.line12")));
+        lore.add(convertLegacyToSection(this.config.getString("dGoldenKatana.line13")));
+        lore.add(convertLegacyToSection(this.config.getString("dGoldenKatana.line14")));
         meta.setLore(lore);
         meta.addItemFlags(new ItemFlag[]{ItemFlag.HIDE_ATTRIBUTES});
         double dmg = 2.5;
         double spd = -2.0;
         double mspd = 0.02;
-        if (this.getConfig().getBoolean("UseCustomValues")) {
-            dmg = this.getConfig().getDouble("aGoldenKatana.damage") - 1.0;
-            spd = this.getConfig().getDouble("aGoldenKatana.speed") - 4.0;
-            mspd = this.getConfig().getDouble("aGoldenKatana.moveSpeed");
+        if (this.config.getBoolean("UseCustomValues")) {
+            dmg = this.config.getDouble("aGoldenKatana.damage") - 1.0;
+            spd = this.config.getDouble("aGoldenKatana.speed") - 4.0;
+            mspd = this.config.getDouble("aGoldenKatana.moveSpeed");
         }
         AttributeModifier modifier = new AttributeModifier(UUID.randomUUID(), "Attack Speed", spd, AttributeModifier.Operation.ADD_NUMBER, EquipmentSlot.HAND);
         meta.addAttributeModifier(Attribute.ATTACK_SPEED, modifier);
@@ -2285,7 +2301,7 @@ public class CombatWeaponryPlus extends JavaPlugin {
         meta.addAttributeModifier(Attribute.ATTACK_DAMAGE, modifier2);
         AttributeModifier modifier3 = new AttributeModifier(UUID.randomUUID(), "Move SPeed", mspd, AttributeModifier.Operation.ADD_NUMBER, EquipmentSlot.HAND);
         meta.addAttributeModifier(Attribute.MOVEMENT_SPEED, modifier3);
-        meta.setDisplayName(convertLegacyToSection(this.getConfig().getString("dGoldenKatana.name")));
+        meta.setDisplayName(convertLegacyToSection(this.config.getString("dGoldenKatana.name")));
         meta.setCustomModelData(1000002);
         item.setItemMeta(meta);
         NamespacedKey key = new NamespacedKey((Plugin)this, "golden_katana");
@@ -2301,29 +2317,29 @@ public class CombatWeaponryPlus extends JavaPlugin {
         ItemStack item = new ItemStack(Material.STONE_SWORD);
         ItemMeta meta = item.getItemMeta();
         ArrayList<String> lore = new ArrayList<String>();
-        lore.add(convertLegacyToSection(this.getConfig().getString("KatanaDescription.line1")));
-        lore.add(convertLegacyToSection(this.getConfig().getString("KatanaDescription.line2")));
-        lore.add(convertLegacyToSection(this.getConfig().getString("KatanaDescription.line3")));
-        lore.add(convertLegacyToSection(this.getConfig().getString("KatanaDescription.line4")));
-        lore.add(convertLegacyToSection(this.getConfig().getString("KatanaDescription.line5")));
-        lore.add(convertLegacyToSection(this.getConfig().getString("KatanaDescription.line6")));
-        lore.add(convertLegacyToSection(this.getConfig().getString("KatanaDescription.line7")));
-        lore.add(convertLegacyToSection(this.getConfig().getString("KatanaDescription.line8")));
-        lore.add(convertLegacyToSection(this.getConfig().getString("KatanaDescription.line9")));
-        lore.add(convertLegacyToSection(this.getConfig().getString("KatanaDescription.line10")));
-        lore.add(convertLegacyToSection(this.getConfig().getString("KatanaDescription.line11")));
-        lore.add(convertLegacyToSection(this.getConfig().getString("dStoneKatana.line12")));
-        lore.add(convertLegacyToSection(this.getConfig().getString("dStoneKatana.line13")));
-        lore.add(convertLegacyToSection(this.getConfig().getString("dStoneKatana.line14")));
+        lore.add(convertLegacyToSection(this.config.getString("KatanaDescription.line1")));
+        lore.add(convertLegacyToSection(this.config.getString("KatanaDescription.line2")));
+        lore.add(convertLegacyToSection(this.config.getString("KatanaDescription.line3")));
+        lore.add(convertLegacyToSection(this.config.getString("KatanaDescription.line4")));
+        lore.add(convertLegacyToSection(this.config.getString("KatanaDescription.line5")));
+        lore.add(convertLegacyToSection(this.config.getString("KatanaDescription.line6")));
+        lore.add(convertLegacyToSection(this.config.getString("KatanaDescription.line7")));
+        lore.add(convertLegacyToSection(this.config.getString("KatanaDescription.line8")));
+        lore.add(convertLegacyToSection(this.config.getString("KatanaDescription.line9")));
+        lore.add(convertLegacyToSection(this.config.getString("KatanaDescription.line10")));
+        lore.add(convertLegacyToSection(this.config.getString("KatanaDescription.line11")));
+        lore.add(convertLegacyToSection(this.config.getString("dStoneKatana.line12")));
+        lore.add(convertLegacyToSection(this.config.getString("dStoneKatana.line13")));
+        lore.add(convertLegacyToSection(this.config.getString("dStoneKatana.line14")));
         meta.setLore(lore);
         meta.addItemFlags(new ItemFlag[]{ItemFlag.HIDE_ATTRIBUTES});
         double dmg = 3.0;
         double spd = -2.3;
         double mspd = 0.02;
-        if (this.getConfig().getBoolean("UseCustomValues")) {
-            dmg = this.getConfig().getDouble("aStoneKatana.damage") - 1.0;
-            spd = this.getConfig().getDouble("aStoneKatana.speed") - 4.0;
-            mspd = this.getConfig().getDouble("aStoneKatana.moveSpeed");
+        if (this.config.getBoolean("UseCustomValues")) {
+            dmg = this.config.getDouble("aStoneKatana.damage") - 1.0;
+            spd = this.config.getDouble("aStoneKatana.speed") - 4.0;
+            mspd = this.config.getDouble("aStoneKatana.moveSpeed");
         }
         AttributeModifier modifier = new AttributeModifier(UUID.randomUUID(), "Attack Speed", spd, AttributeModifier.Operation.ADD_NUMBER, EquipmentSlot.HAND);
         meta.addAttributeModifier(Attribute.ATTACK_SPEED, modifier);
@@ -2331,7 +2347,7 @@ public class CombatWeaponryPlus extends JavaPlugin {
         meta.addAttributeModifier(Attribute.ATTACK_DAMAGE, modifier2);
         AttributeModifier modifier3 = new AttributeModifier(UUID.randomUUID(), "Move SPeed", mspd, AttributeModifier.Operation.ADD_NUMBER, EquipmentSlot.HAND);
         meta.addAttributeModifier(Attribute.MOVEMENT_SPEED, modifier3);
-        meta.setDisplayName(convertLegacyToSection(this.getConfig().getString("dStoneKatana.name")));
+        meta.setDisplayName(convertLegacyToSection(this.config.getString("dStoneKatana.name")));
         meta.setCustomModelData(1000002);
         item.setItemMeta(meta);
         NamespacedKey key = new NamespacedKey((Plugin)this, "stone_katana");
@@ -2347,29 +2363,29 @@ public class CombatWeaponryPlus extends JavaPlugin {
         ItemStack item = new ItemStack(Material.IRON_SWORD);
         ItemMeta meta = item.getItemMeta();
         ArrayList<String> lore = new ArrayList<String>();
-        lore.add(convertLegacyToSection(this.getConfig().getString("KatanaDescription.line1")));
-        lore.add(convertLegacyToSection(this.getConfig().getString("KatanaDescription.line2")));
-        lore.add(convertLegacyToSection(this.getConfig().getString("KatanaDescription.line3")));
-        lore.add(convertLegacyToSection(this.getConfig().getString("KatanaDescription.line4")));
-        lore.add(convertLegacyToSection(this.getConfig().getString("KatanaDescription.line5")));
-        lore.add(convertLegacyToSection(this.getConfig().getString("KatanaDescription.line6")));
-        lore.add(convertLegacyToSection(this.getConfig().getString("KatanaDescription.line7")));
-        lore.add(convertLegacyToSection(this.getConfig().getString("KatanaDescription.line8")));
-        lore.add(convertLegacyToSection(this.getConfig().getString("KatanaDescription.line9")));
-        lore.add(convertLegacyToSection(this.getConfig().getString("KatanaDescription.line10")));
-        lore.add(convertLegacyToSection(this.getConfig().getString("KatanaDescription.line11")));
-        lore.add(convertLegacyToSection(this.getConfig().getString("dIronKatana.line12")));
-        lore.add(convertLegacyToSection(this.getConfig().getString("dIronKatana.line13")));
-        lore.add(convertLegacyToSection(this.getConfig().getString("dIronKatana.line14")));
+        lore.add(convertLegacyToSection(this.config.getString("KatanaDescription.line1")));
+        lore.add(convertLegacyToSection(this.config.getString("KatanaDescription.line2")));
+        lore.add(convertLegacyToSection(this.config.getString("KatanaDescription.line3")));
+        lore.add(convertLegacyToSection(this.config.getString("KatanaDescription.line4")));
+        lore.add(convertLegacyToSection(this.config.getString("KatanaDescription.line5")));
+        lore.add(convertLegacyToSection(this.config.getString("KatanaDescription.line6")));
+        lore.add(convertLegacyToSection(this.config.getString("KatanaDescription.line7")));
+        lore.add(convertLegacyToSection(this.config.getString("KatanaDescription.line8")));
+        lore.add(convertLegacyToSection(this.config.getString("KatanaDescription.line9")));
+        lore.add(convertLegacyToSection(this.config.getString("KatanaDescription.line10")));
+        lore.add(convertLegacyToSection(this.config.getString("KatanaDescription.line11")));
+        lore.add(convertLegacyToSection(this.config.getString("dIronKatana.line12")));
+        lore.add(convertLegacyToSection(this.config.getString("dIronKatana.line13")));
+        lore.add(convertLegacyToSection(this.config.getString("dIronKatana.line14")));
         meta.setLore(lore);
         meta.addItemFlags(new ItemFlag[]{ItemFlag.HIDE_ATTRIBUTES});
         double dmg = 4.0;
         double spd = -2.3;
         double mspd = 0.02;
-        if (this.getConfig().getBoolean("UseCustomValues")) {
-            dmg = this.getConfig().getDouble("aIronKatana.damage") - 1.0;
-            spd = this.getConfig().getDouble("aIronKatana.speed") - 4.0;
-            mspd = this.getConfig().getDouble("aIronKatana.moveSpeed");
+        if (this.config.getBoolean("UseCustomValues")) {
+            dmg = this.config.getDouble("aIronKatana.damage") - 1.0;
+            spd = this.config.getDouble("aIronKatana.speed") - 4.0;
+            mspd = this.config.getDouble("aIronKatana.moveSpeed");
         }
         AttributeModifier modifier = new AttributeModifier(UUID.randomUUID(), "Attack Speed", spd, AttributeModifier.Operation.ADD_NUMBER, EquipmentSlot.HAND);
         meta.addAttributeModifier(Attribute.ATTACK_SPEED, modifier);
@@ -2377,7 +2393,7 @@ public class CombatWeaponryPlus extends JavaPlugin {
         meta.addAttributeModifier(Attribute.ATTACK_DAMAGE, modifier2);
         AttributeModifier modifier3 = new AttributeModifier(UUID.randomUUID(), "Move SPeed", mspd, AttributeModifier.Operation.ADD_NUMBER, EquipmentSlot.HAND);
         meta.addAttributeModifier(Attribute.MOVEMENT_SPEED, modifier3);
-        meta.setDisplayName(convertLegacyToSection(this.getConfig().getString("dIronKatana.name")));
+        meta.setDisplayName(convertLegacyToSection(this.config.getString("dIronKatana.name")));
         meta.setCustomModelData(1000002);
         item.setItemMeta(meta);
         NamespacedKey key = new NamespacedKey((Plugin)this, "iron_katana");
@@ -2393,29 +2409,29 @@ public class CombatWeaponryPlus extends JavaPlugin {
         ItemStack item = new ItemStack(Material.GOLDEN_SWORD);
         ItemMeta meta = item.getItemMeta();
         ArrayList<String> lore = new ArrayList<String>();
-        lore.add(convertLegacyToSection(this.getConfig().getString("KatanaDescription.line1")));
-        lore.add(convertLegacyToSection(this.getConfig().getString("KatanaDescription.line2")));
-        lore.add(convertLegacyToSection(this.getConfig().getString("KatanaDescription.line3")));
-        lore.add(convertLegacyToSection(this.getConfig().getString("KatanaDescription.line4")));
-        lore.add(convertLegacyToSection(this.getConfig().getString("KatanaDescription.line5")));
-        lore.add(convertLegacyToSection(this.getConfig().getString("KatanaDescription.line6")));
-        lore.add(convertLegacyToSection(this.getConfig().getString("KatanaDescription.line7")));
-        lore.add(convertLegacyToSection(this.getConfig().getString("KatanaDescription.line8")));
-        lore.add(convertLegacyToSection(this.getConfig().getString("KatanaDescription.line9")));
-        lore.add(convertLegacyToSection(this.getConfig().getString("KatanaDescription.line10")));
-        lore.add(convertLegacyToSection(this.getConfig().getString("KatanaDescription.line11")));
-        lore.add(convertLegacyToSection(this.getConfig().getString("dEmeraldKatana.line12")));
-        lore.add(convertLegacyToSection(this.getConfig().getString("dEmeraldKatana.line13")));
-        lore.add(convertLegacyToSection(this.getConfig().getString("dEmeraldKatana.line14")));
+        lore.add(convertLegacyToSection(this.config.getString("KatanaDescription.line1")));
+        lore.add(convertLegacyToSection(this.config.getString("KatanaDescription.line2")));
+        lore.add(convertLegacyToSection(this.config.getString("KatanaDescription.line3")));
+        lore.add(convertLegacyToSection(this.config.getString("KatanaDescription.line4")));
+        lore.add(convertLegacyToSection(this.config.getString("KatanaDescription.line5")));
+        lore.add(convertLegacyToSection(this.config.getString("KatanaDescription.line6")));
+        lore.add(convertLegacyToSection(this.config.getString("KatanaDescription.line7")));
+        lore.add(convertLegacyToSection(this.config.getString("KatanaDescription.line8")));
+        lore.add(convertLegacyToSection(this.config.getString("KatanaDescription.line9")));
+        lore.add(convertLegacyToSection(this.config.getString("KatanaDescription.line10")));
+        lore.add(convertLegacyToSection(this.config.getString("KatanaDescription.line11")));
+        lore.add(convertLegacyToSection(this.config.getString("dEmeraldKatana.line12")));
+        lore.add(convertLegacyToSection(this.config.getString("dEmeraldKatana.line13")));
+        lore.add(convertLegacyToSection(this.config.getString("dEmeraldKatana.line14")));
         meta.setLore(lore);
         meta.addItemFlags(new ItemFlag[]{ItemFlag.HIDE_ATTRIBUTES});
         double dmg = 4.0;
         double spd = -2.0;
         double mspd = 0.02;
-        if (this.getConfig().getBoolean("UseCustomValues")) {
-            dmg = this.getConfig().getDouble("aEmeraldKatana.damage") - 1.0;
-            spd = this.getConfig().getDouble("aEmeraldKatana.speed") - 4.0;
-            mspd = this.getConfig().getDouble("aEmeraldKatana.moveSpeed");
+        if (this.config.getBoolean("UseCustomValues")) {
+            dmg = this.config.getDouble("aEmeraldKatana.damage") - 1.0;
+            spd = this.config.getDouble("aEmeraldKatana.speed") - 4.0;
+            mspd = this.config.getDouble("aEmeraldKatana.moveSpeed");
         }
         AttributeModifier modifier = new AttributeModifier(UUID.randomUUID(), "Attack Speed", spd, AttributeModifier.Operation.ADD_NUMBER, EquipmentSlot.HAND);
         meta.addAttributeModifier(Attribute.ATTACK_SPEED, modifier);
@@ -2423,11 +2439,11 @@ public class CombatWeaponryPlus extends JavaPlugin {
         meta.addAttributeModifier(Attribute.ATTACK_DAMAGE, modifier2);
         AttributeModifier modifier3 = new AttributeModifier(UUID.randomUUID(), "Move SPeed", mspd, AttributeModifier.Operation.ADD_NUMBER, EquipmentSlot.HAND);
         meta.addAttributeModifier(Attribute.MOVEMENT_SPEED, modifier3);
-        meta.setDisplayName(convertLegacyToSection(this.getConfig().getString("dEmeraldKatana.name")));
+        meta.setDisplayName(convertLegacyToSection(this.config.getString("dEmeraldKatana.name")));
         meta.setCustomModelData(1000012);
-        if (this.getConfig().getBoolean("EnchantsOnEmeraldGear")) {
-            int num = this.getConfig().getInt("EmeraldGearEnchantLevels.Unbreaking");
-            int num2 = this.getConfig().getInt("EmeraldGearEnchantLevels.Mending");
+        if (this.config.getBoolean("EnchantsOnEmeraldGear")) {
+            int num = this.config.getInt("EmeraldGearEnchantLevels.Unbreaking");
+            int num2 = this.config.getInt("EmeraldGearEnchantLevels.Mending");
             meta.addEnchant(Enchantment.UNBREAKING, num, true);
             meta.addEnchant(Enchantment.MENDING, num2, true);
         }
@@ -2445,29 +2461,29 @@ public class CombatWeaponryPlus extends JavaPlugin {
         ItemStack item = new ItemStack(Material.DIAMOND_SWORD);
         ItemMeta meta = item.getItemMeta();
         ArrayList<String> lore = new ArrayList<String>();
-        lore.add(convertLegacyToSection(this.getConfig().getString("KatanaDescription.line1")));
-        lore.add(convertLegacyToSection(this.getConfig().getString("KatanaDescription.line2")));
-        lore.add(convertLegacyToSection(this.getConfig().getString("KatanaDescription.line3")));
-        lore.add(convertLegacyToSection(this.getConfig().getString("KatanaDescription.line4")));
-        lore.add(convertLegacyToSection(this.getConfig().getString("KatanaDescription.line5")));
-        lore.add(convertLegacyToSection(this.getConfig().getString("KatanaDescription.line6")));
-        lore.add(convertLegacyToSection(this.getConfig().getString("KatanaDescription.line7")));
-        lore.add(convertLegacyToSection(this.getConfig().getString("KatanaDescription.line8")));
-        lore.add(convertLegacyToSection(this.getConfig().getString("KatanaDescription.line9")));
-        lore.add(convertLegacyToSection(this.getConfig().getString("KatanaDescription.line10")));
-        lore.add(convertLegacyToSection(this.getConfig().getString("KatanaDescription.line11")));
-        lore.add(convertLegacyToSection(this.getConfig().getString("dDiamondKatana.line12")));
-        lore.add(convertLegacyToSection(this.getConfig().getString("dDiamondKatana.line13")));
-        lore.add(convertLegacyToSection(this.getConfig().getString("dDiamondKatana.line14")));
+        lore.add(convertLegacyToSection(this.config.getString("KatanaDescription.line1")));
+        lore.add(convertLegacyToSection(this.config.getString("KatanaDescription.line2")));
+        lore.add(convertLegacyToSection(this.config.getString("KatanaDescription.line3")));
+        lore.add(convertLegacyToSection(this.config.getString("KatanaDescription.line4")));
+        lore.add(convertLegacyToSection(this.config.getString("KatanaDescription.line5")));
+        lore.add(convertLegacyToSection(this.config.getString("KatanaDescription.line6")));
+        lore.add(convertLegacyToSection(this.config.getString("KatanaDescription.line7")));
+        lore.add(convertLegacyToSection(this.config.getString("KatanaDescription.line8")));
+        lore.add(convertLegacyToSection(this.config.getString("KatanaDescription.line9")));
+        lore.add(convertLegacyToSection(this.config.getString("KatanaDescription.line10")));
+        lore.add(convertLegacyToSection(this.config.getString("KatanaDescription.line11")));
+        lore.add(convertLegacyToSection(this.config.getString("dDiamondKatana.line12")));
+        lore.add(convertLegacyToSection(this.config.getString("dDiamondKatana.line13")));
+        lore.add(convertLegacyToSection(this.config.getString("dDiamondKatana.line14")));
         meta.setLore(lore);
         meta.addItemFlags(new ItemFlag[]{ItemFlag.HIDE_ATTRIBUTES});
         double dmg = 5.0;
         double spd = -2.3;
         double mspd = 0.02;
-        if (this.getConfig().getBoolean("UseCustomValues")) {
-            dmg = this.getConfig().getDouble("aDiamondKatana.damage") - 1.0;
-            spd = this.getConfig().getDouble("aDiamondKatana.speed") - 4.0;
-            mspd = this.getConfig().getDouble("aDiamondKatana.moveSpeed");
+        if (this.config.getBoolean("UseCustomValues")) {
+            dmg = this.config.getDouble("aDiamondKatana.damage") - 1.0;
+            spd = this.config.getDouble("aDiamondKatana.speed") - 4.0;
+            mspd = this.config.getDouble("aDiamondKatana.moveSpeed");
         }
         AttributeModifier modifier = new AttributeModifier(UUID.randomUUID(), "Attack Speed", spd, AttributeModifier.Operation.ADD_NUMBER, EquipmentSlot.HAND);
         meta.addAttributeModifier(Attribute.ATTACK_SPEED, modifier);
@@ -2475,7 +2491,7 @@ public class CombatWeaponryPlus extends JavaPlugin {
         meta.addAttributeModifier(Attribute.ATTACK_DAMAGE, modifier2);
         AttributeModifier modifier3 = new AttributeModifier(UUID.randomUUID(), "Move SPeed", mspd, AttributeModifier.Operation.ADD_NUMBER, EquipmentSlot.HAND);
         meta.addAttributeModifier(Attribute.MOVEMENT_SPEED, modifier3);
-        meta.setDisplayName(convertLegacyToSection(this.getConfig().getString("dDiamondKatana.name")));
+        meta.setDisplayName(convertLegacyToSection(this.config.getString("dDiamondKatana.name")));
         meta.setCustomModelData(1000002);
         item.setItemMeta(meta);
         NamespacedKey key = new NamespacedKey((Plugin)this, "diamond_katana");
@@ -2491,29 +2507,29 @@ public class CombatWeaponryPlus extends JavaPlugin {
         ItemStack item = new ItemStack(Material.NETHERITE_SWORD);
         ItemMeta meta = item.getItemMeta();
         ArrayList<String> lore = new ArrayList<String>();
-        lore.add(convertLegacyToSection(this.getConfig().getString("KatanaDescription.line1")));
-        lore.add(convertLegacyToSection(this.getConfig().getString("KatanaDescription.line2")));
-        lore.add(convertLegacyToSection(this.getConfig().getString("KatanaDescription.line3")));
-        lore.add(convertLegacyToSection(this.getConfig().getString("KatanaDescription.line4")));
-        lore.add(convertLegacyToSection(this.getConfig().getString("KatanaDescription.line5")));
-        lore.add(convertLegacyToSection(this.getConfig().getString("KatanaDescription.line6")));
-        lore.add(convertLegacyToSection(this.getConfig().getString("KatanaDescription.line7")));
-        lore.add(convertLegacyToSection(this.getConfig().getString("KatanaDescription.line8")));
-        lore.add(convertLegacyToSection(this.getConfig().getString("KatanaDescription.line9")));
-        lore.add(convertLegacyToSection(this.getConfig().getString("KatanaDescription.line10")));
-        lore.add(convertLegacyToSection(this.getConfig().getString("KatanaDescription.line11")));
-        lore.add(convertLegacyToSection(this.getConfig().getString("dNetheriteKatana.line12")));
-        lore.add(convertLegacyToSection(this.getConfig().getString("dNetheriteKatana.line13")));
-        lore.add(convertLegacyToSection(this.getConfig().getString("dNetheriteKatana.line14")));
+        lore.add(convertLegacyToSection(this.config.getString("KatanaDescription.line1")));
+        lore.add(convertLegacyToSection(this.config.getString("KatanaDescription.line2")));
+        lore.add(convertLegacyToSection(this.config.getString("KatanaDescription.line3")));
+        lore.add(convertLegacyToSection(this.config.getString("KatanaDescription.line4")));
+        lore.add(convertLegacyToSection(this.config.getString("KatanaDescription.line5")));
+        lore.add(convertLegacyToSection(this.config.getString("KatanaDescription.line6")));
+        lore.add(convertLegacyToSection(this.config.getString("KatanaDescription.line7")));
+        lore.add(convertLegacyToSection(this.config.getString("KatanaDescription.line8")));
+        lore.add(convertLegacyToSection(this.config.getString("KatanaDescription.line9")));
+        lore.add(convertLegacyToSection(this.config.getString("KatanaDescription.line10")));
+        lore.add(convertLegacyToSection(this.config.getString("KatanaDescription.line11")));
+        lore.add(convertLegacyToSection(this.config.getString("dNetheriteKatana.line12")));
+        lore.add(convertLegacyToSection(this.config.getString("dNetheriteKatana.line13")));
+        lore.add(convertLegacyToSection(this.config.getString("dNetheriteKatana.line14")));
         meta.setLore(lore);
         meta.addItemFlags(new ItemFlag[]{ItemFlag.HIDE_ATTRIBUTES});
         double dmg = 6.0;
         double spd = -2.3;
         double mspd = 0.02;
-        if (this.getConfig().getBoolean("UseCustomValues")) {
-            dmg = this.getConfig().getDouble("aNetheriteKatana.damage") - 1.0;
-            spd = this.getConfig().getDouble("aNetheriteKatana.speed") - 4.0;
-            mspd = this.getConfig().getDouble("aNetheriteKatana.moveSpeed");
+        if (this.config.getBoolean("UseCustomValues")) {
+            dmg = this.config.getDouble("aNetheriteKatana.damage") - 1.0;
+            spd = this.config.getDouble("aNetheriteKatana.speed") - 4.0;
+            mspd = this.config.getDouble("aNetheriteKatana.moveSpeed");
         }
         AttributeModifier modifier = new AttributeModifier(UUID.randomUUID(), "Attack Speed", spd, AttributeModifier.Operation.ADD_NUMBER, EquipmentSlot.HAND);
         meta.addAttributeModifier(Attribute.ATTACK_SPEED, modifier);
@@ -2521,14 +2537,14 @@ public class CombatWeaponryPlus extends JavaPlugin {
         meta.addAttributeModifier(Attribute.ATTACK_DAMAGE, modifier2);
         AttributeModifier modifier3 = new AttributeModifier(UUID.randomUUID(), "Move SPeed", mspd, AttributeModifier.Operation.ADD_NUMBER, EquipmentSlot.HAND);
         meta.addAttributeModifier(Attribute.MOVEMENT_SPEED, modifier3);
-        meta.setDisplayName(convertLegacyToSection(this.getConfig().getString("dNetheriteKatana.name")));
+        meta.setDisplayName(convertLegacyToSection(this.config.getString("dNetheriteKatana.name")));
         meta.setCustomModelData(1000002);
         item.setItemMeta(meta);
         NamespacedKey key = new NamespacedKey((Plugin)this, "netherite_katana");
         this.keys.add(key);
         ShapedRecipe recipe = new ShapedRecipe(key, item);
         recipe.shape(new String[]{"  M", " M ", "S  "});
-        var n = this.getConfig().getBoolean("NetheriteIngots");
+        var n = this.config.getBoolean("NetheriteIngots");
         if (n) {
             recipe.setIngredient('M', Material.NETHERITE_INGOT);
         } else {
@@ -2542,10 +2558,10 @@ public class CombatWeaponryPlus extends JavaPlugin {
         ItemStack item = new ItemStack(Material.FEATHER);
         ItemMeta meta = item.getItemMeta();
         ArrayList<String> lore = new ArrayList<String>();
-        lore.add(convertLegacyToSection(this.getConfig().getString("dFeatherCharm.line1")));
-        lore.add(convertLegacyToSection(this.getConfig().getString("dFeatherCharm.line2")));
+        lore.add(convertLegacyToSection(this.config.getString("dFeatherCharm.line1")));
+        lore.add(convertLegacyToSection(this.config.getString("dFeatherCharm.line2")));
         meta.setLore(lore);
-        meta.setDisplayName(convertLegacyToSection(this.getConfig().getString("dFeatherCharm.name")));
+        meta.setDisplayName(convertLegacyToSection(this.config.getString("dFeatherCharm.name")));
         meta.addEnchant(Enchantment.UNBREAKING, 5, true);
         meta.addItemFlags(new ItemFlag[]{ItemFlag.HIDE_ENCHANTS});
         meta.addItemFlags(new ItemFlag[]{ItemFlag.HIDE_ATTRIBUTES});
@@ -2565,9 +2581,9 @@ public class CombatWeaponryPlus extends JavaPlugin {
         ItemMeta meta = item.getItemMeta();
         double hp = 4.0;
         double def = -2.0;
-        if (this.getConfig().getBoolean("UseCustomValues")) {
-            hp = this.getConfig().getDouble("aEmeraldCharm.BonusHealth");
-            def = this.getConfig().getDouble("aEmeraldCharm.BonusArmor");
+        if (this.config.getBoolean("UseCustomValues")) {
+            hp = this.config.getDouble("aEmeraldCharm.BonusHealth");
+            def = this.config.getDouble("aEmeraldCharm.BonusArmor");
         }
         AttributeModifier modifier = new AttributeModifier(k, hp, AttributeModifier.Operation.ADD_NUMBER, EquipmentSlotGroup.OFFHAND);
         meta.addAttributeModifier(Attribute.MAX_HEALTH, modifier);
@@ -2576,11 +2592,11 @@ public class CombatWeaponryPlus extends JavaPlugin {
         meta.addAttributeModifier(Attribute.ARMOR, modifier2);
 
         ArrayList<String> lore = new ArrayList<String>();
-        lore.add(convertLegacyToSection(this.getConfig().getString("dEmeraldCharm.line1")));
-        lore.add(convertLegacyToSection(this.getConfig().getString("dEmeraldCharm.line2")));
-        lore.add(convertLegacyToSection(this.getConfig().getString("dEmeraldCharm.line3")));
+        lore.add(convertLegacyToSection(this.config.getString("dEmeraldCharm.line1")));
+        lore.add(convertLegacyToSection(this.config.getString("dEmeraldCharm.line2")));
+        lore.add(convertLegacyToSection(this.config.getString("dEmeraldCharm.line3")));
         meta.setLore(lore);
-        meta.setDisplayName(convertLegacyToSection(this.getConfig().getString("dEmeraldCharm.name")));
+        meta.setDisplayName(convertLegacyToSection(this.config.getString("dEmeraldCharm.name")));
         meta.addEnchant(Enchantment.UNBREAKING, 5, true);
         meta.addItemFlags(new ItemFlag[]{ItemFlag.HIDE_ENCHANTS});
         item.setItemMeta(meta);
@@ -2599,20 +2615,20 @@ public class CombatWeaponryPlus extends JavaPlugin {
         ItemMeta meta = item.getItemMeta();
         double dmg = 4.0;
         double hp = -2.0;
-        if (this.getConfig().getBoolean("UseCustomValues")) {
-            dmg = this.getConfig().getDouble("aBlazeCharm.BonusDamage");
-            hp = this.getConfig().getDouble("aBlazeCharm.BonusHealth");
+        if (this.config.getBoolean("UseCustomValues")) {
+            dmg = this.config.getDouble("aBlazeCharm.BonusDamage");
+            hp = this.config.getDouble("aBlazeCharm.BonusHealth");
         }
         AttributeModifier modifier = new AttributeModifier(UUID.randomUUID(), "Damage", dmg, AttributeModifier.Operation.ADD_NUMBER, EquipmentSlot.OFF_HAND);
         meta.addAttributeModifier(Attribute.ATTACK_DAMAGE, modifier);
         AttributeModifier modifier2 = new AttributeModifier(UUID.randomUUID(), "Health", hp, AttributeModifier.Operation.ADD_NUMBER, EquipmentSlot.OFF_HAND);
         meta.addAttributeModifier(Attribute.MAX_HEALTH, modifier2);
         ArrayList<String> lore = new ArrayList<String>();
-        lore.add(convertLegacyToSection(this.getConfig().getString("dBlazeCharm.line1")));
-        lore.add(convertLegacyToSection(this.getConfig().getString("dBlazeCharm.line2")));
-        lore.add(convertLegacyToSection(this.getConfig().getString("dBlazeCharm.line3")));
+        lore.add(convertLegacyToSection(this.config.getString("dBlazeCharm.line1")));
+        lore.add(convertLegacyToSection(this.config.getString("dBlazeCharm.line2")));
+        lore.add(convertLegacyToSection(this.config.getString("dBlazeCharm.line3")));
         meta.setLore(lore);
-        meta.setDisplayName(convertLegacyToSection(this.getConfig().getString("dBlazeCharm.name")));
+        meta.setDisplayName(convertLegacyToSection(this.config.getString("dBlazeCharm.name")));
         meta.addEnchant(Enchantment.UNBREAKING, 5, true);
         meta.addItemFlags(new ItemFlag[]{ItemFlag.HIDE_ENCHANTS});
         item.setItemMeta(meta);
@@ -2631,20 +2647,20 @@ public class CombatWeaponryPlus extends JavaPlugin {
         ItemMeta meta = item.getItemMeta();
         double atkspd = 0.3;
         double mvspd = -0.15;
-        if (this.getConfig().getBoolean("UseCustomValues")) {
-            atkspd = this.getConfig().getDouble("aGoldCharm.BonusAttackSpeedPercent") / 100.0;
-            mvspd = this.getConfig().getDouble("aGoldCharm.BonusMoveSpeedPercent") / 100.0;
+        if (this.config.getBoolean("UseCustomValues")) {
+            atkspd = this.config.getDouble("aGoldCharm.BonusAttackSpeedPercent") / 100.0;
+            mvspd = this.config.getDouble("aGoldCharm.BonusMoveSpeedPercent") / 100.0;
         }
         AttributeModifier modifier = new AttributeModifier(UUID.randomUUID(), "Attack Speed", atkspd, AttributeModifier.Operation.MULTIPLY_SCALAR_1, EquipmentSlot.OFF_HAND);
         meta.addAttributeModifier(Attribute.ATTACK_SPEED, modifier);
         AttributeModifier modifier2 = new AttributeModifier(UUID.randomUUID(), "Move Speed", mvspd, AttributeModifier.Operation.MULTIPLY_SCALAR_1, EquipmentSlot.OFF_HAND);
         meta.addAttributeModifier(Attribute.MOVEMENT_SPEED, modifier2);
         ArrayList<String> lore = new ArrayList<String>();
-        lore.add(convertLegacyToSection(this.getConfig().getString("dGoldCharm.line1")));
-        lore.add(convertLegacyToSection(this.getConfig().getString("dGoldCharm.line2")));
-        lore.add(convertLegacyToSection(this.getConfig().getString("dGoldCharm.line3")));
+        lore.add(convertLegacyToSection(this.config.getString("dGoldCharm.line1")));
+        lore.add(convertLegacyToSection(this.config.getString("dGoldCharm.line2")));
+        lore.add(convertLegacyToSection(this.config.getString("dGoldCharm.line3")));
         meta.setLore(lore);
-        meta.setDisplayName(convertLegacyToSection(this.getConfig().getString("dGoldCharm.name")));
+        meta.setDisplayName(convertLegacyToSection(this.config.getString("dGoldCharm.name")));
         meta.addEnchant(Enchantment.UNBREAKING, 5, true);
         meta.addItemFlags(new ItemFlag[]{ItemFlag.HIDE_ENCHANTS});
         item.setItemMeta(meta);
@@ -2721,13 +2737,13 @@ public class CombatWeaponryPlus extends JavaPlugin {
         ItemMeta meta = item.getItemMeta();
         meta.setCustomModelData(9999901);
         ArrayList<String> lore = new ArrayList<String>();
-        lore.add(convertLegacyToSection(this.getConfig().getString("dPrismarineAlloy.line1")));
-        lore.add(convertLegacyToSection(this.getConfig().getString("dPrismarineAlloy.line2")));
-        lore.add(convertLegacyToSection(this.getConfig().getString("dPrismarineAlloy.line3")));
-        lore.add(convertLegacyToSection(this.getConfig().getString("dPrismarineAlloy.line4")));
-        lore.add(convertLegacyToSection(this.getConfig().getString("dPrismarineAlloy.line5")));
+        lore.add(convertLegacyToSection(this.config.getString("dPrismarineAlloy.line1")));
+        lore.add(convertLegacyToSection(this.config.getString("dPrismarineAlloy.line2")));
+        lore.add(convertLegacyToSection(this.config.getString("dPrismarineAlloy.line3")));
+        lore.add(convertLegacyToSection(this.config.getString("dPrismarineAlloy.line4")));
+        lore.add(convertLegacyToSection(this.config.getString("dPrismarineAlloy.line5")));
         meta.setLore(lore);
-        meta.setDisplayName(convertLegacyToSection(this.getConfig().getString("dPrismarineAlloy.name")));
+        meta.setDisplayName(convertLegacyToSection(this.config.getString("dPrismarineAlloy.name")));
         meta.addEnchant(Enchantment.UNBREAKING, 5, true);
         meta.addItemFlags(new ItemFlag[]{ItemFlag.HIDE_ENCHANTS});
         meta.addItemFlags(new ItemFlag[]{ItemFlag.HIDE_ATTRIBUTES});
@@ -2750,12 +2766,12 @@ public class CombatWeaponryPlus extends JavaPlugin {
         ItemStack item = new ItemStack(Material.BOW);
         ItemMeta meta = item.getItemMeta();
         ArrayList<String> lore = new ArrayList<String>();
-        lore.add(convertLegacyToSection(this.getConfig().getString("dLongBow.line1")));
-        lore.add(convertLegacyToSection(this.getConfig().getString("dLongBow.line2")));
-        lore.add(convertLegacyToSection(this.getConfig().getString("dLongBow.line3")));
-        lore.add(convertLegacyToSection(this.getConfig().getString("dLongBow.line4")));
+        lore.add(convertLegacyToSection(this.config.getString("dLongBow.line1")));
+        lore.add(convertLegacyToSection(this.config.getString("dLongBow.line2")));
+        lore.add(convertLegacyToSection(this.config.getString("dLongBow.line3")));
+        lore.add(convertLegacyToSection(this.config.getString("dLongBow.line4")));
         meta.setLore(lore);
-        meta.setDisplayName(convertLegacyToSection(this.getConfig().getString("dLongBow.name")));
+        meta.setDisplayName(convertLegacyToSection(this.config.getString("dLongBow.name")));
         meta.setCustomModelData(3330001);
         AttributeModifier modifier3 = new AttributeModifier(UUID.randomUUID(), "Speed", -0.01, AttributeModifier.Operation.ADD_NUMBER, EquipmentSlot.HAND);
         meta.addAttributeModifier(Attribute.MOVEMENT_SPEED, modifier3);
@@ -2774,14 +2790,14 @@ public class CombatWeaponryPlus extends JavaPlugin {
         ItemStack item = new ItemStack(Material.BOW);
         ItemMeta meta = item.getItemMeta();
         ArrayList<String> lore = new ArrayList<String>();
-        lore.add(convertLegacyToSection(this.getConfig().getString("dRecurveBow.line1")));
-        lore.add(convertLegacyToSection(this.getConfig().getString("dRecurveBow.line2")));
-        lore.add(convertLegacyToSection(this.getConfig().getString("dRecurveBow.line3")));
-        lore.add(convertLegacyToSection(this.getConfig().getString("dRecurveBow.line4")));
+        lore.add(convertLegacyToSection(this.config.getString("dRecurveBow.line1")));
+        lore.add(convertLegacyToSection(this.config.getString("dRecurveBow.line2")));
+        lore.add(convertLegacyToSection(this.config.getString("dRecurveBow.line3")));
+        lore.add(convertLegacyToSection(this.config.getString("dRecurveBow.line4")));
         meta.setLore(lore);
         AttributeModifier modifier3 = new AttributeModifier(UUID.randomUUID(), "Speed", -0.02, AttributeModifier.Operation.ADD_NUMBER, EquipmentSlot.HAND);
         meta.addAttributeModifier(Attribute.MOVEMENT_SPEED, modifier3);
-        meta.setDisplayName(convertLegacyToSection(this.getConfig().getString("dRecurveBow.name")));
+        meta.setDisplayName(convertLegacyToSection(this.config.getString("dRecurveBow.name")));
         meta.setCustomModelData(3330002);
         item.setItemMeta(meta);
         NamespacedKey key = new NamespacedKey((Plugin)this, "recurvebow");
@@ -2799,12 +2815,12 @@ public class CombatWeaponryPlus extends JavaPlugin {
         ItemStack item = new ItemStack(Material.BOW);
         ItemMeta meta = item.getItemMeta();
         ArrayList<String> lore = new ArrayList<String>();
-        lore.add(convertLegacyToSection(this.getConfig().getString("dCompoundBow.line1")));
-        lore.add(convertLegacyToSection(this.getConfig().getString("dCompoundBow.line2")));
-        lore.add(convertLegacyToSection(this.getConfig().getString("dCompoundBow.line3")));
-        lore.add(convertLegacyToSection(this.getConfig().getString("dCompoundBow.line4")));
+        lore.add(convertLegacyToSection(this.config.getString("dCompoundBow.line1")));
+        lore.add(convertLegacyToSection(this.config.getString("dCompoundBow.line2")));
+        lore.add(convertLegacyToSection(this.config.getString("dCompoundBow.line3")));
+        lore.add(convertLegacyToSection(this.config.getString("dCompoundBow.line4")));
         meta.setLore(lore);
-        meta.setDisplayName(convertLegacyToSection(this.getConfig().getString("dCompoundBow.name")));
+        meta.setDisplayName(convertLegacyToSection(this.config.getString("dCompoundBow.name")));
         meta.setCustomModelData(3330003);
         AttributeModifier modifier3 = new AttributeModifier(UUID.randomUUID(), "Speed", -0.03, AttributeModifier.Operation.ADD_NUMBER, EquipmentSlot.HAND);
         meta.addAttributeModifier(Attribute.MOVEMENT_SPEED, modifier3);
@@ -2918,16 +2934,16 @@ public class CombatWeaponryPlus extends JavaPlugin {
         ItemStack item = new ItemStack(Material.NETHERITE_HOE);
         ItemMeta meta = item.getItemMeta();
         ArrayList<String> lore = new ArrayList<String>();
-        lore.add(convertLegacyToSection(this.getConfig().getString("dReallyGoodSword.line1")));
-        lore.add(convertLegacyToSection(this.getConfig().getString("dReallyGoodSword.line2")));
-        lore.add(convertLegacyToSection(this.getConfig().getString("dReallyGoodSword.line3")));
-        lore.add(convertLegacyToSection(this.getConfig().getString("dReallyGoodSword.line4")));
-        lore.add(convertLegacyToSection(this.getConfig().getString("dReallyGoodSword.line5")));
-        lore.add(convertLegacyToSection(this.getConfig().getString("dReallyGoodSword.line6")));
+        lore.add(convertLegacyToSection(this.config.getString("dReallyGoodSword.line1")));
+        lore.add(convertLegacyToSection(this.config.getString("dReallyGoodSword.line2")));
+        lore.add(convertLegacyToSection(this.config.getString("dReallyGoodSword.line3")));
+        lore.add(convertLegacyToSection(this.config.getString("dReallyGoodSword.line4")));
+        lore.add(convertLegacyToSection(this.config.getString("dReallyGoodSword.line5")));
+        lore.add(convertLegacyToSection(this.config.getString("dReallyGoodSword.line6")));
         meta.setLore(lore);
         meta.addItemFlags(new ItemFlag[]{ItemFlag.HIDE_ATTRIBUTES});
         meta.setLore(lore);
-        meta.setDisplayName(convertLegacyToSection(this.getConfig().getString("dReallyGoodSword.name")));
+        meta.setDisplayName(convertLegacyToSection(this.config.getString("dReallyGoodSword.name")));
         meta.setCustomModelData(1234567);
         item.setItemMeta(meta);
         NamespacedKey key = new NamespacedKey((Plugin)this, "reallygoodsword");
@@ -2945,13 +2961,13 @@ public class CombatWeaponryPlus extends JavaPlugin {
         ItemStack item = new ItemStack(Material.CROSSBOW);
         ItemMeta meta = item.getItemMeta();
         ArrayList<String> lore = new ArrayList<String>();
-        lore.add(convertLegacyToSection(this.getConfig().getString("dRepeatingCrossbow.line1")));
-        lore.add(convertLegacyToSection(this.getConfig().getString("dRepeatingCrossbow.line2")));
-        lore.add(convertLegacyToSection(this.getConfig().getString("dRepeatingCrossbow.line3")));
-        lore.add(convertLegacyToSection(this.getConfig().getString("dRepeatingCrossbow.line4")));
-        lore.add(convertLegacyToSection(this.getConfig().getString("dRepeatingCrossbow.line5")));
+        lore.add(convertLegacyToSection(this.config.getString("dRepeatingCrossbow.line1")));
+        lore.add(convertLegacyToSection(this.config.getString("dRepeatingCrossbow.line2")));
+        lore.add(convertLegacyToSection(this.config.getString("dRepeatingCrossbow.line3")));
+        lore.add(convertLegacyToSection(this.config.getString("dRepeatingCrossbow.line4")));
+        lore.add(convertLegacyToSection(this.config.getString("dRepeatingCrossbow.line5")));
         meta.setLore(lore);
-        meta.setDisplayName(convertLegacyToSection(this.getConfig().getString("dRepeatingCrossbow.name")));
+        meta.setDisplayName(convertLegacyToSection(this.config.getString("dRepeatingCrossbow.name")));
         meta.setCustomModelData(5552001);
         item.setItemMeta(meta);
         NamespacedKey key = new NamespacedKey((Plugin)this, "repeater_crossbow");
@@ -2970,13 +2986,13 @@ public class CombatWeaponryPlus extends JavaPlugin {
         ItemStack item = new ItemStack(Material.CROSSBOW);
         ItemMeta meta = item.getItemMeta();
         ArrayList<String> lore = new ArrayList<String>();
-        lore.add(convertLegacyToSection(this.getConfig().getString("dBurstCrossbow.line1")));
-        lore.add(convertLegacyToSection(this.getConfig().getString("dBurstCrossbow.line2")));
-        lore.add(convertLegacyToSection(this.getConfig().getString("dBurstCrossbow.line3")));
-        lore.add(convertLegacyToSection(this.getConfig().getString("dBurstCrossbow.line4")));
-        lore.add(convertLegacyToSection(this.getConfig().getString("dBurstCrossbow.line5")));
+        lore.add(convertLegacyToSection(this.config.getString("dBurstCrossbow.line1")));
+        lore.add(convertLegacyToSection(this.config.getString("dBurstCrossbow.line2")));
+        lore.add(convertLegacyToSection(this.config.getString("dBurstCrossbow.line3")));
+        lore.add(convertLegacyToSection(this.config.getString("dBurstCrossbow.line4")));
+        lore.add(convertLegacyToSection(this.config.getString("dBurstCrossbow.line5")));
         meta.setLore(lore);
-        meta.setDisplayName(convertLegacyToSection(this.getConfig().getString("dBurstCrossbow.name")));
+        meta.setDisplayName(convertLegacyToSection(this.config.getString("dBurstCrossbow.name")));
         meta.setCustomModelData(5552002);
         item.setItemMeta(meta);
         NamespacedKey key = new NamespacedKey((Plugin)this, "burst_crossbow");
@@ -2995,14 +3011,14 @@ public class CombatWeaponryPlus extends JavaPlugin {
         ItemStack item = new ItemStack(Material.BOW);
         ItemMeta meta = item.getItemMeta();
         ArrayList<String> lore = new ArrayList<String>();
-        lore.add(convertLegacyToSection(this.getConfig().getString("dRedstoneBow.line1")));
-        lore.add(convertLegacyToSection(this.getConfig().getString("dRedstoneBow.line2")));
-        lore.add(convertLegacyToSection(this.getConfig().getString("dRedstoneBow.line3")));
-        lore.add(convertLegacyToSection(this.getConfig().getString("dRedstoneBow.line4")));
-        lore.add(convertLegacyToSection(this.getConfig().getString("dRedstoneBow.line5")));
-        lore.add(convertLegacyToSection(this.getConfig().getString("dRedstoneBow.line6")));
+        lore.add(convertLegacyToSection(this.config.getString("dRedstoneBow.line1")));
+        lore.add(convertLegacyToSection(this.config.getString("dRedstoneBow.line2")));
+        lore.add(convertLegacyToSection(this.config.getString("dRedstoneBow.line3")));
+        lore.add(convertLegacyToSection(this.config.getString("dRedstoneBow.line4")));
+        lore.add(convertLegacyToSection(this.config.getString("dRedstoneBow.line5")));
+        lore.add(convertLegacyToSection(this.config.getString("dRedstoneBow.line6")));
         meta.setLore(lore);
-        meta.setDisplayName(convertLegacyToSection(this.getConfig().getString("dRedstoneBow.name")));
+        meta.setDisplayName(convertLegacyToSection(this.config.getString("dRedstoneBow.name")));
         meta.setCustomModelData(3330005);
         item.setItemMeta(meta);
         NamespacedKey key = new NamespacedKey((Plugin)this, "redstone_bow");
@@ -3020,8 +3036,8 @@ public class CombatWeaponryPlus extends JavaPlugin {
     public ShapedRecipe getDiaShieldRecipe() {
         ItemStack item = new ItemStack(Material.SHIELD);
         ItemMeta meta = item.getItemMeta();
-        if (this.getConfig().getBoolean("EnchantsDiamondShield")) {
-            int num = this.getConfig().getInt("DShieldEnchantLevels.Unbreaking");
+        if (this.config.getBoolean("EnchantsDiamondShield")) {
+            int num = this.config.getInt("DShieldEnchantLevels.Unbreaking");
             meta.addEnchant(Enchantment.UNBREAKING, num, true);
         }
         meta.setDisplayName("Diamond Shield");
@@ -3039,8 +3055,8 @@ public class CombatWeaponryPlus extends JavaPlugin {
     public ShapedRecipe getNethShieldRecipe() {
         ItemStack item = new ItemStack(Material.SHIELD);
         ItemMeta meta = item.getItemMeta();
-        if (this.getConfig().getBoolean("EnchantsNetheriteShield")) {
-            int num = this.getConfig().getInt("NShieldEnchantLevels.Unbreaking");
+        if (this.config.getBoolean("EnchantsNetheriteShield")) {
+            int num = this.config.getInt("NShieldEnchantLevels.Unbreaking");
             meta.addEnchant(Enchantment.UNBREAKING, num, true);
         }
         meta.setDisplayName("Netherite Shield");
@@ -3066,10 +3082,10 @@ public class CombatWeaponryPlus extends JavaPlugin {
         ItemStack item = new ItemStack(Material.NETHER_STAR);
         ItemMeta meta = item.getItemMeta();
         ArrayList<String> lore = new ArrayList<String>();
-        lore.add(convertLegacyToSection(this.getConfig().getString("dStarCharm.line1")));
-        lore.add(convertLegacyToSection(this.getConfig().getString("dStarCharm.line2")));
+        lore.add(convertLegacyToSection(this.config.getString("dStarCharm.line1")));
+        lore.add(convertLegacyToSection(this.config.getString("dStarCharm.line2")));
         meta.setLore(lore);
-        meta.setDisplayName(convertLegacyToSection(this.getConfig().getString("dStarCharm.name")));
+        meta.setDisplayName(convertLegacyToSection(this.config.getString("dStarCharm.name")));
         meta.setCustomModelData(4920001);
         item.setItemMeta(meta);
         NamespacedKey key = new NamespacedKey((Plugin)this, "star_charm");
@@ -3086,26 +3102,26 @@ public class CombatWeaponryPlus extends JavaPlugin {
         ItemStack item = new ItemStack(Material.WOODEN_SWORD);
         ItemMeta meta = item.getItemMeta();
         ArrayList<String> lore = new ArrayList<String>();
-        lore.add(convertLegacyToSection(this.getConfig().getString("SaberDescription.line1")));
-        lore.add(convertLegacyToSection(this.getConfig().getString("SaberDescription.line2")));
-        lore.add(convertLegacyToSection(this.getConfig().getString("SaberDescription.line3")));
-        lore.add(convertLegacyToSection(this.getConfig().getString("SaberDescription.line4")));
-        lore.add(convertLegacyToSection(this.getConfig().getString("dWoodenSaber.line5")));
-        lore.add(convertLegacyToSection(this.getConfig().getString("dWoodenSaber.line6")));
-        lore.add(convertLegacyToSection(this.getConfig().getString("dWoodenSaber.line7")));
+        lore.add(convertLegacyToSection(this.config.getString("SaberDescription.line1")));
+        lore.add(convertLegacyToSection(this.config.getString("SaberDescription.line2")));
+        lore.add(convertLegacyToSection(this.config.getString("SaberDescription.line3")));
+        lore.add(convertLegacyToSection(this.config.getString("SaberDescription.line4")));
+        lore.add(convertLegacyToSection(this.config.getString("dWoodenSaber.line5")));
+        lore.add(convertLegacyToSection(this.config.getString("dWoodenSaber.line6")));
+        lore.add(convertLegacyToSection(this.config.getString("dWoodenSaber.line7")));
         meta.setLore(lore);
         meta.addItemFlags(new ItemFlag[]{ItemFlag.HIDE_ATTRIBUTES});
         double dmg = 3.0;
         double spd = -2.4;
-        if (this.getConfig().getBoolean("UseCustomValues")) {
-            dmg = this.getConfig().getDouble("aWoodenSaber.damage") - 1.0;
-            spd = this.getConfig().getDouble("aWoodenSaber.speed") - 4.0;
+        if (this.config.getBoolean("UseCustomValues")) {
+            dmg = this.config.getDouble("aWoodenSaber.damage") - 1.0;
+            spd = this.config.getDouble("aWoodenSaber.speed") - 4.0;
         }
         AttributeModifier modifier = new AttributeModifier(UUID.randomUUID(), "Attack Speed", spd, AttributeModifier.Operation.ADD_NUMBER, EquipmentSlot.HAND);
         meta.addAttributeModifier(Attribute.ATTACK_SPEED, modifier);
         AttributeModifier modifier2 = new AttributeModifier(UUID.randomUUID(), "Attack Damage", dmg, AttributeModifier.Operation.ADD_NUMBER, EquipmentSlot.HAND);
         meta.addAttributeModifier(Attribute.ATTACK_DAMAGE, modifier2);
-        meta.setDisplayName(convertLegacyToSection(this.getConfig().getString("dWoodenSaber.name")));
+        meta.setDisplayName(convertLegacyToSection(this.config.getString("dWoodenSaber.name")));
         meta.setCustomModelData(1000010);
         item.setItemMeta(meta);
         NamespacedKey key = new NamespacedKey((Plugin)this, "wooden_saber");
@@ -3120,26 +3136,26 @@ public class CombatWeaponryPlus extends JavaPlugin {
         ItemStack item = new ItemStack(Material.GOLDEN_SWORD);
         ItemMeta meta = item.getItemMeta();
         ArrayList<String> lore = new ArrayList<String>();
-        lore.add(convertLegacyToSection(this.getConfig().getString("SaberDescription.line1")));
-        lore.add(convertLegacyToSection(this.getConfig().getString("SaberDescription.line2")));
-        lore.add(convertLegacyToSection(this.getConfig().getString("SaberDescription.line3")));
-        lore.add(convertLegacyToSection(this.getConfig().getString("SaberDescription.line4")));
-        lore.add(convertLegacyToSection(this.getConfig().getString("dGoldenSaber.line5")));
-        lore.add(convertLegacyToSection(this.getConfig().getString("dGoldenSaber.line6")));
-        lore.add(convertLegacyToSection(this.getConfig().getString("dGoldenSaber.line7")));
+        lore.add(convertLegacyToSection(this.config.getString("SaberDescription.line1")));
+        lore.add(convertLegacyToSection(this.config.getString("SaberDescription.line2")));
+        lore.add(convertLegacyToSection(this.config.getString("SaberDescription.line3")));
+        lore.add(convertLegacyToSection(this.config.getString("SaberDescription.line4")));
+        lore.add(convertLegacyToSection(this.config.getString("dGoldenSaber.line5")));
+        lore.add(convertLegacyToSection(this.config.getString("dGoldenSaber.line6")));
+        lore.add(convertLegacyToSection(this.config.getString("dGoldenSaber.line7")));
         meta.setLore(lore);
         meta.addItemFlags(new ItemFlag[]{ItemFlag.HIDE_ATTRIBUTES});
         double dmg = 3.0;
         double spd = -2.4;
-        if (this.getConfig().getBoolean("UseCustomValues")) {
-            dmg = this.getConfig().getDouble("aGoldenSaber.damage") - 1.0;
-            spd = this.getConfig().getDouble("aGoldenSaber.speed") - 4.0;
+        if (this.config.getBoolean("UseCustomValues")) {
+            dmg = this.config.getDouble("aGoldenSaber.damage") - 1.0;
+            spd = this.config.getDouble("aGoldenSaber.speed") - 4.0;
         }
         AttributeModifier modifier = new AttributeModifier(UUID.randomUUID(), "Attack Speed", spd, AttributeModifier.Operation.ADD_NUMBER, EquipmentSlot.HAND);
         meta.addAttributeModifier(Attribute.ATTACK_SPEED, modifier);
         AttributeModifier modifier2 = new AttributeModifier(UUID.randomUUID(), "Attack Damage", dmg, AttributeModifier.Operation.ADD_NUMBER, EquipmentSlot.HAND);
         meta.addAttributeModifier(Attribute.ATTACK_DAMAGE, modifier2);
-        meta.setDisplayName(convertLegacyToSection(this.getConfig().getString("dGoldenSaber.name")));
+        meta.setDisplayName(convertLegacyToSection(this.config.getString("dGoldenSaber.name")));
         meta.setCustomModelData(1000010);
         item.setItemMeta(meta);
         NamespacedKey key = new NamespacedKey((Plugin)this, "golden_saber");
@@ -3155,26 +3171,26 @@ public class CombatWeaponryPlus extends JavaPlugin {
         ItemStack item = new ItemStack(Material.STONE_SWORD);
         ItemMeta meta = item.getItemMeta();
         ArrayList<String> lore = new ArrayList<String>();
-        lore.add(convertLegacyToSection(this.getConfig().getString("SaberDescription.line1")));
-        lore.add(convertLegacyToSection(this.getConfig().getString("SaberDescription.line2")));
-        lore.add(convertLegacyToSection(this.getConfig().getString("SaberDescription.line3")));
-        lore.add(convertLegacyToSection(this.getConfig().getString("SaberDescription.line4")));
-        lore.add(convertLegacyToSection(this.getConfig().getString("dStoneSaber.line5")));
-        lore.add(convertLegacyToSection(this.getConfig().getString("dStoneSaber.line6")));
-        lore.add(convertLegacyToSection(this.getConfig().getString("dStoneSaber.line7")));
+        lore.add(convertLegacyToSection(this.config.getString("SaberDescription.line1")));
+        lore.add(convertLegacyToSection(this.config.getString("SaberDescription.line2")));
+        lore.add(convertLegacyToSection(this.config.getString("SaberDescription.line3")));
+        lore.add(convertLegacyToSection(this.config.getString("SaberDescription.line4")));
+        lore.add(convertLegacyToSection(this.config.getString("dStoneSaber.line5")));
+        lore.add(convertLegacyToSection(this.config.getString("dStoneSaber.line6")));
+        lore.add(convertLegacyToSection(this.config.getString("dStoneSaber.line7")));
         meta.setLore(lore);
         meta.addItemFlags(new ItemFlag[]{ItemFlag.HIDE_ATTRIBUTES});
         double dmg = 4.0;
         double spd = -2.4;
-        if (this.getConfig().getBoolean("UseCustomValues")) {
-            dmg = this.getConfig().getDouble("aStoneSaber.damage") - 1.0;
-            spd = this.getConfig().getDouble("aStoneSaber.speed") - 4.0;
+        if (this.config.getBoolean("UseCustomValues")) {
+            dmg = this.config.getDouble("aStoneSaber.damage") - 1.0;
+            spd = this.config.getDouble("aStoneSaber.speed") - 4.0;
         }
         AttributeModifier modifier = new AttributeModifier(UUID.randomUUID(), "Attack Speed", spd, AttributeModifier.Operation.ADD_NUMBER, EquipmentSlot.HAND);
         meta.addAttributeModifier(Attribute.ATTACK_SPEED, modifier);
         AttributeModifier modifier2 = new AttributeModifier(UUID.randomUUID(), "Attack Damage", dmg, AttributeModifier.Operation.ADD_NUMBER, EquipmentSlot.HAND);
         meta.addAttributeModifier(Attribute.ATTACK_DAMAGE, modifier2);
-        meta.setDisplayName(convertLegacyToSection(this.getConfig().getString("dStoneSaber.name")));
+        meta.setDisplayName(convertLegacyToSection(this.config.getString("dStoneSaber.name")));
         meta.setCustomModelData(1000010);
         item.setItemMeta(meta);
         NamespacedKey key = new NamespacedKey((Plugin)this, "stone_saber");
@@ -3190,26 +3206,26 @@ public class CombatWeaponryPlus extends JavaPlugin {
         ItemStack item = new ItemStack(Material.IRON_SWORD);
         ItemMeta meta = item.getItemMeta();
         ArrayList<String> lore = new ArrayList<String>();
-        lore.add(convertLegacyToSection(this.getConfig().getString("SaberDescription.line1")));
-        lore.add(convertLegacyToSection(this.getConfig().getString("SaberDescription.line2")));
-        lore.add(convertLegacyToSection(this.getConfig().getString("SaberDescription.line3")));
-        lore.add(convertLegacyToSection(this.getConfig().getString("SaberDescription.line4")));
-        lore.add(convertLegacyToSection(this.getConfig().getString("dIronSaber.line5")));
-        lore.add(convertLegacyToSection(this.getConfig().getString("dIronSaber.line6")));
-        lore.add(convertLegacyToSection(this.getConfig().getString("dIronSaber.line7")));
+        lore.add(convertLegacyToSection(this.config.getString("SaberDescription.line1")));
+        lore.add(convertLegacyToSection(this.config.getString("SaberDescription.line2")));
+        lore.add(convertLegacyToSection(this.config.getString("SaberDescription.line3")));
+        lore.add(convertLegacyToSection(this.config.getString("SaberDescription.line4")));
+        lore.add(convertLegacyToSection(this.config.getString("dIronSaber.line5")));
+        lore.add(convertLegacyToSection(this.config.getString("dIronSaber.line6")));
+        lore.add(convertLegacyToSection(this.config.getString("dIronSaber.line7")));
         meta.setLore(lore);
         meta.addItemFlags(new ItemFlag[]{ItemFlag.HIDE_ATTRIBUTES});
         double dmg = 5.0;
         double spd = -2.4;
-        if (this.getConfig().getBoolean("UseCustomValues")) {
-            dmg = this.getConfig().getDouble("aIronSaber.damage") - 1.0;
-            spd = this.getConfig().getDouble("aIronSaber.speed") - 4.0;
+        if (this.config.getBoolean("UseCustomValues")) {
+            dmg = this.config.getDouble("aIronSaber.damage") - 1.0;
+            spd = this.config.getDouble("aIronSaber.speed") - 4.0;
         }
         AttributeModifier modifier = new AttributeModifier(UUID.randomUUID(), "Attack Speed", spd, AttributeModifier.Operation.ADD_NUMBER, EquipmentSlot.HAND);
         meta.addAttributeModifier(Attribute.ATTACK_SPEED, modifier);
         AttributeModifier modifier2 = new AttributeModifier(UUID.randomUUID(), "Attack Damage", dmg, AttributeModifier.Operation.ADD_NUMBER, EquipmentSlot.HAND);
         meta.addAttributeModifier(Attribute.ATTACK_DAMAGE, modifier2);
-        meta.setDisplayName(convertLegacyToSection(this.getConfig().getString("dIronSaber.name")));
+        meta.setDisplayName(convertLegacyToSection(this.config.getString("dIronSaber.name")));
         meta.setCustomModelData(1000010);
         item.setItemMeta(meta);
         NamespacedKey key = new NamespacedKey((Plugin)this, "iron_saber");
@@ -3225,30 +3241,30 @@ public class CombatWeaponryPlus extends JavaPlugin {
         ItemStack item = new ItemStack(Material.GOLDEN_SWORD);
         ItemMeta meta = item.getItemMeta();
         ArrayList<String> lore = new ArrayList<String>();
-        lore.add(convertLegacyToSection(this.getConfig().getString("SaberDescription.line1")));
-        lore.add(convertLegacyToSection(this.getConfig().getString("SaberDescription.line2")));
-        lore.add(convertLegacyToSection(this.getConfig().getString("SaberDescription.line3")));
-        lore.add(convertLegacyToSection(this.getConfig().getString("SaberDescription.line4")));
-        lore.add(convertLegacyToSection(this.getConfig().getString("dEmeraldSaber.line5")));
-        lore.add(convertLegacyToSection(this.getConfig().getString("dEmeraldSaber.line6")));
-        lore.add(convertLegacyToSection(this.getConfig().getString("dEmeraldSaber.line7")));
+        lore.add(convertLegacyToSection(this.config.getString("SaberDescription.line1")));
+        lore.add(convertLegacyToSection(this.config.getString("SaberDescription.line2")));
+        lore.add(convertLegacyToSection(this.config.getString("SaberDescription.line3")));
+        lore.add(convertLegacyToSection(this.config.getString("SaberDescription.line4")));
+        lore.add(convertLegacyToSection(this.config.getString("dEmeraldSaber.line5")));
+        lore.add(convertLegacyToSection(this.config.getString("dEmeraldSaber.line6")));
+        lore.add(convertLegacyToSection(this.config.getString("dEmeraldSaber.line7")));
         meta.setLore(lore);
         meta.addItemFlags(new ItemFlag[]{ItemFlag.HIDE_ATTRIBUTES});
         double dmg = 5.0;
         double spd = -2.4;
-        if (this.getConfig().getBoolean("UseCustomValues")) {
-            dmg = this.getConfig().getDouble("aEmeraldSaber.damage") - 1.0;
-            spd = this.getConfig().getDouble("aEmeraldSaber.speed") - 4.0;
+        if (this.config.getBoolean("UseCustomValues")) {
+            dmg = this.config.getDouble("aEmeraldSaber.damage") - 1.0;
+            spd = this.config.getDouble("aEmeraldSaber.speed") - 4.0;
         }
         AttributeModifier modifier = new AttributeModifier(UUID.randomUUID(), "Attack Speed", spd, AttributeModifier.Operation.ADD_NUMBER, EquipmentSlot.HAND);
         meta.addAttributeModifier(Attribute.ATTACK_SPEED, modifier);
         AttributeModifier modifier2 = new AttributeModifier(UUID.randomUUID(), "Attack Damage", dmg, AttributeModifier.Operation.ADD_NUMBER, EquipmentSlot.HAND);
         meta.addAttributeModifier(Attribute.ATTACK_DAMAGE, modifier2);
-        meta.setDisplayName(convertLegacyToSection(this.getConfig().getString("dEmeraldSaber.name")));
+        meta.setDisplayName(convertLegacyToSection(this.config.getString("dEmeraldSaber.name")));
         meta.setCustomModelData(1000030);
-        if (this.getConfig().getBoolean("EnchantsOnEmeraldGear")) {
-            int num = this.getConfig().getInt("EmeraldGearEnchantLevels.Unbreaking");
-            int num2 = this.getConfig().getInt("EmeraldGearEnchantLevels.Mending");
+        if (this.config.getBoolean("EnchantsOnEmeraldGear")) {
+            int num = this.config.getInt("EmeraldGearEnchantLevels.Unbreaking");
+            int num2 = this.config.getInt("EmeraldGearEnchantLevels.Mending");
             meta.addEnchant(Enchantment.UNBREAKING, num, true);
             meta.addEnchant(Enchantment.MENDING, num2, true);
         }
@@ -3266,26 +3282,26 @@ public class CombatWeaponryPlus extends JavaPlugin {
         ItemStack item = new ItemStack(Material.DIAMOND_SWORD);
         ItemMeta meta = item.getItemMeta();
         ArrayList<String> lore = new ArrayList<String>();
-        lore.add(convertLegacyToSection(this.getConfig().getString("SaberDescription.line1")));
-        lore.add(convertLegacyToSection(this.getConfig().getString("SaberDescription.line2")));
-        lore.add(convertLegacyToSection(this.getConfig().getString("SaberDescription.line3")));
-        lore.add(convertLegacyToSection(this.getConfig().getString("SaberDescription.line4")));
-        lore.add(convertLegacyToSection(this.getConfig().getString("dDiamondSaber.line5")));
-        lore.add(convertLegacyToSection(this.getConfig().getString("dDiamondSaber.line6")));
-        lore.add(convertLegacyToSection(this.getConfig().getString("dDiamondSaber.line7")));
+        lore.add(convertLegacyToSection(this.config.getString("SaberDescription.line1")));
+        lore.add(convertLegacyToSection(this.config.getString("SaberDescription.line2")));
+        lore.add(convertLegacyToSection(this.config.getString("SaberDescription.line3")));
+        lore.add(convertLegacyToSection(this.config.getString("SaberDescription.line4")));
+        lore.add(convertLegacyToSection(this.config.getString("dDiamondSaber.line5")));
+        lore.add(convertLegacyToSection(this.config.getString("dDiamondSaber.line6")));
+        lore.add(convertLegacyToSection(this.config.getString("dDiamondSaber.line7")));
         meta.setLore(lore);
         meta.addItemFlags(new ItemFlag[]{ItemFlag.HIDE_ATTRIBUTES});
         double dmg = 6.0;
         double spd = -2.4;
-        if (this.getConfig().getBoolean("UseCustomValues")) {
-            dmg = this.getConfig().getDouble("aDiamondSaber.damage") - 1.0;
-            spd = this.getConfig().getDouble("aDiamondSaber.speed") - 4.0;
+        if (this.config.getBoolean("UseCustomValues")) {
+            dmg = this.config.getDouble("aDiamondSaber.damage") - 1.0;
+            spd = this.config.getDouble("aDiamondSaber.speed") - 4.0;
         }
         AttributeModifier modifier = new AttributeModifier(UUID.randomUUID(), "Attack Speed", spd, AttributeModifier.Operation.ADD_NUMBER, EquipmentSlot.HAND);
         meta.addAttributeModifier(Attribute.ATTACK_SPEED, modifier);
         AttributeModifier modifier2 = new AttributeModifier(UUID.randomUUID(), "Attack Damage", dmg, AttributeModifier.Operation.ADD_NUMBER, EquipmentSlot.HAND);
         meta.addAttributeModifier(Attribute.ATTACK_DAMAGE, modifier2);
-        meta.setDisplayName(convertLegacyToSection(this.getConfig().getString("dDiamondSaber.name")));
+        meta.setDisplayName(convertLegacyToSection(this.config.getString("dDiamondSaber.name")));
         meta.setCustomModelData(1000010);
         item.setItemMeta(meta);
         NamespacedKey key = new NamespacedKey((Plugin)this, "diamond_saber");
@@ -3301,26 +3317,26 @@ public class CombatWeaponryPlus extends JavaPlugin {
         ItemStack item = new ItemStack(Material.NETHERITE_SWORD);
         ItemMeta meta = item.getItemMeta();
         ArrayList<String> lore = new ArrayList<String>();
-        lore.add(convertLegacyToSection(this.getConfig().getString("SaberDescription.line1")));
-        lore.add(convertLegacyToSection(this.getConfig().getString("SaberDescription.line2")));
-        lore.add(convertLegacyToSection(this.getConfig().getString("SaberDescription.line3")));
-        lore.add(convertLegacyToSection(this.getConfig().getString("SaberDescription.line4")));
-        lore.add(convertLegacyToSection(this.getConfig().getString("dNetheriteSaber.line5")));
-        lore.add(convertLegacyToSection(this.getConfig().getString("dNetheriteSaber.line6")));
-        lore.add(convertLegacyToSection(this.getConfig().getString("dNetheriteSaber.line7")));
+        lore.add(convertLegacyToSection(this.config.getString("SaberDescription.line1")));
+        lore.add(convertLegacyToSection(this.config.getString("SaberDescription.line2")));
+        lore.add(convertLegacyToSection(this.config.getString("SaberDescription.line3")));
+        lore.add(convertLegacyToSection(this.config.getString("SaberDescription.line4")));
+        lore.add(convertLegacyToSection(this.config.getString("dNetheriteSaber.line5")));
+        lore.add(convertLegacyToSection(this.config.getString("dNetheriteSaber.line6")));
+        lore.add(convertLegacyToSection(this.config.getString("dNetheriteSaber.line7")));
         meta.setLore(lore);
         meta.addItemFlags(new ItemFlag[]{ItemFlag.HIDE_ATTRIBUTES});
         double dmg = 7.0;
         double spd = -2.4;
-        if (this.getConfig().getBoolean("UseCustomValues")) {
-            dmg = this.getConfig().getDouble("aNetheriteSaber.damage") - 1.0;
-            spd = this.getConfig().getDouble("aNetheriteSaber.speed") - 4.0;
+        if (this.config.getBoolean("UseCustomValues")) {
+            dmg = this.config.getDouble("aNetheriteSaber.damage") - 1.0;
+            spd = this.config.getDouble("aNetheriteSaber.speed") - 4.0;
         }
         AttributeModifier modifier = new AttributeModifier(UUID.randomUUID(), "Attack Speed", spd, AttributeModifier.Operation.ADD_NUMBER, EquipmentSlot.HAND);
         meta.addAttributeModifier(Attribute.ATTACK_SPEED, modifier);
         AttributeModifier modifier2 = new AttributeModifier(UUID.randomUUID(), "Attack Damage", dmg, AttributeModifier.Operation.ADD_NUMBER, EquipmentSlot.HAND);
         meta.addAttributeModifier(Attribute.ATTACK_DAMAGE, modifier2);
-        meta.setDisplayName(convertLegacyToSection(this.getConfig().getString("dNetheriteSaber.name")));
+        meta.setDisplayName(convertLegacyToSection(this.config.getString("dNetheriteSaber.name")));
         meta.setCustomModelData(1000010);
         item.setItemMeta(meta);
         NamespacedKey key = new NamespacedKey((Plugin)this, "netherite_saber");
@@ -3336,21 +3352,21 @@ public class CombatWeaponryPlus extends JavaPlugin {
         ItemStack item = new ItemStack(Material.IRON_CHESTPLATE);
         ItemMeta meta = item.getItemMeta();
         ArrayList<String> lore = new ArrayList<String>();
-        lore.add(convertLegacyToSection(this.getConfig().getString("dRedstoneCore.line1")));
-        lore.add(convertLegacyToSection(this.getConfig().getString("dRedstoneCore.line2")));
-        lore.add(convertLegacyToSection(this.getConfig().getString("dRedstoneCore.line3")));
-        lore.add(convertLegacyToSection(this.getConfig().getString("dRedstoneCore.line4")));
-        lore.add(convertLegacyToSection(this.getConfig().getString("dRedstoneCore.line5")));
+        lore.add(convertLegacyToSection(this.config.getString("dRedstoneCore.line1")));
+        lore.add(convertLegacyToSection(this.config.getString("dRedstoneCore.line2")));
+        lore.add(convertLegacyToSection(this.config.getString("dRedstoneCore.line3")));
+        lore.add(convertLegacyToSection(this.config.getString("dRedstoneCore.line4")));
+        lore.add(convertLegacyToSection(this.config.getString("dRedstoneCore.line5")));
         meta.setLore(lore);
         meta.setUnbreakable(true);
         meta.addItemFlags(new ItemFlag[]{ItemFlag.HIDE_UNBREAKABLE});
         double arm = 2.0;
-        if (this.getConfig().getBoolean("UseCustomValues")) {
-            arm = this.getConfig().getDouble("aRedstoneCore.Armor");
+        if (this.config.getBoolean("UseCustomValues")) {
+            arm = this.config.getDouble("aRedstoneCore.Armor");
         }
         AttributeModifier modifier = new AttributeModifier(UUID.randomUUID(), "Armor", arm, AttributeModifier.Operation.ADD_NUMBER, EquipmentSlot.CHEST);
         meta.addAttributeModifier(Attribute.ARMOR, modifier);
-        meta.setDisplayName(convertLegacyToSection(this.getConfig().getString("dRedstoneCore.name")));
+        meta.setDisplayName(convertLegacyToSection(this.config.getString("dRedstoneCore.name")));
         meta.setCustomModelData(1231234);
         item.setItemMeta(meta);
         NamespacedKey key = new NamespacedKey((Plugin)this, "redstone_core");
@@ -3369,26 +3385,26 @@ public class CombatWeaponryPlus extends JavaPlugin {
         ItemStack item = new ItemStack(Material.BOW);
         ItemMeta meta = item.getItemMeta();
         ArrayList<String> lore = new ArrayList<String>();
-        lore.add(convertLegacyToSection(this.getConfig().getString("dLongswordBow.line1")));
-        lore.add(convertLegacyToSection(this.getConfig().getString("dLongswordBow.line2")));
-        lore.add(convertLegacyToSection(this.getConfig().getString("dLongswordBow.line3")));
-        lore.add(convertLegacyToSection(this.getConfig().getString("dLongswordBow.line4")));
-        lore.add(convertLegacyToSection(this.getConfig().getString("dLongswordBow.line5")));
-        lore.add(convertLegacyToSection(this.getConfig().getString("dLongswordBow.line6")));
-        lore.add(convertLegacyToSection(this.getConfig().getString("dLongswordBow.line7")));
+        lore.add(convertLegacyToSection(this.config.getString("dLongswordBow.line1")));
+        lore.add(convertLegacyToSection(this.config.getString("dLongswordBow.line2")));
+        lore.add(convertLegacyToSection(this.config.getString("dLongswordBow.line3")));
+        lore.add(convertLegacyToSection(this.config.getString("dLongswordBow.line4")));
+        lore.add(convertLegacyToSection(this.config.getString("dLongswordBow.line5")));
+        lore.add(convertLegacyToSection(this.config.getString("dLongswordBow.line6")));
+        lore.add(convertLegacyToSection(this.config.getString("dLongswordBow.line7")));
         meta.setLore(lore);
         meta.addItemFlags(new ItemFlag[]{ItemFlag.HIDE_ATTRIBUTES});
         double dmg = 7.0;
         double spd = -2.6;
-        if (this.getConfig().getBoolean("UseCustomValues")) {
-            dmg = this.getConfig().getDouble("aLongswordBow.damage") - 1.0;
-            spd = this.getConfig().getDouble("aLongswordBow.speed") - 4.0;
+        if (this.config.getBoolean("UseCustomValues")) {
+            dmg = this.config.getDouble("aLongswordBow.damage") - 1.0;
+            spd = this.config.getDouble("aLongswordBow.speed") - 4.0;
         }
         AttributeModifier modifier = new AttributeModifier(UUID.randomUUID(), "Damage", dmg, AttributeModifier.Operation.ADD_NUMBER, EquipmentSlot.HAND);
         meta.addAttributeModifier(Attribute.ATTACK_DAMAGE, modifier);
         AttributeModifier modifier2 = new AttributeModifier(UUID.randomUUID(), "Attack Speed", spd, AttributeModifier.Operation.ADD_NUMBER, EquipmentSlot.HAND);
         meta.addAttributeModifier(Attribute.ATTACK_SPEED, modifier2);
-        meta.setDisplayName(convertLegacyToSection(this.getConfig().getString("dLongswordBow.name")));
+        meta.setDisplayName(convertLegacyToSection(this.config.getString("dLongswordBow.name")));
         meta.setCustomModelData(3330004);
         item.setItemMeta(meta);
         NamespacedKey key = new NamespacedKey((Plugin)this, "longsword_bow");
@@ -3426,25 +3442,22 @@ public class CombatWeaponryPlus extends JavaPlugin {
         ItemMeta meta = item.getItemMeta();
         double kbr = 0.2;
         double hp = 5.0;
-        if (this.getConfig().getBoolean("UseCustomValues")) {
-            kbr = this.getConfig().getDouble("aWitherChestplate.KBResist") / 10.0;
-            hp = this.getConfig().getDouble("aWitherChestplate.BonusHealth");
+        if (this.config.getBoolean("UseCustomValues")) {
+            kbr = this.config.getDouble("aWitherChestplate.KBResist") / 10.0;
+            hp = this.config.getDouble("aWitherChestplate.BonusHealth");
         }
         AttributeModifier modifier = new AttributeModifier(UUID.randomUUID(), "Health", hp, AttributeModifier.Operation.ADD_NUMBER, EquipmentSlot.CHEST);
         meta.addAttributeModifier(Attribute.MAX_HEALTH, modifier);
         AttributeModifier modifier2 = new AttributeModifier(UUID.randomUUID(), "KnockbackResistance", kbr, AttributeModifier.Operation.ADD_NUMBER, EquipmentSlot.CHEST);
         meta.addAttributeModifier(Attribute.KNOCKBACK_RESISTANCE, modifier2);
-        meta.setDisplayName(convertLegacyToSection(this.getConfig().getString("dWitheringChestplate.name")));
+        meta.setDisplayName(convertLegacyToSection(this.config.getString("dWitheringChestplate.name")));
         meta.setCustomModelData(5553332);
         ArrayList<String> lore = new ArrayList<String>();
-        lore.add(convertLegacyToSection(this.getConfig().getString("dWitheringArmorSet.line1")));
-        lore.add(convertLegacyToSection(this.getConfig().getString("dWitheringArmorSet.line2")));
-        lore.add(convertLegacyToSection(this.getConfig().getString("dWitheringArmorSet.line3")));
-        lore.add(convertLegacyToSection(this.getConfig().getString("dWitheringArmorSet.line4")));
-        lore.add(convertLegacyToSection(this.getConfig().getString("dWitheringArmorSet.line5")));
-        lore.add(convertLegacyToSection(this.getConfig().getString("dWitheringArmorSet.line6")));
-        lore.add(convertLegacyToSection(this.getConfig().getString("dWitheringArmorSet.line7")));
-        lore.add(convertLegacyToSection(this.getConfig().getString("dWitheringArmorSet.line8")));
+
+        for (int i = 1; i < 9; ++i) {
+            lore.add(convertLegacyToSection(this.config.getString("dWitheringChestplate.line" + i)));
+        }
+
         meta.setLore(lore);
         item.setItemMeta(meta);
         NamespacedKey key = new NamespacedKey((Plugin)this, "wither_bone_chestplate");
@@ -3454,7 +3467,7 @@ public class CombatWeaponryPlus extends JavaPlugin {
         meta2.setDisplayName(ChatColor.YELLOW + "Wither Bone");
         meta2.setCustomModelData(2222222);
         wbone.setItemMeta(meta2);
-        RecipeChoice.ExactChoice wibone = new RecipeChoice.ExactChoice(Items.witherBone(this.getConfig()));
+        RecipeChoice.ExactChoice wibone = new RecipeChoice.ExactChoice(Items.witherBone(this.config));
         ShapedRecipe recipe = new ShapedRecipe(key, item);
         recipe.shape(new String[]{"N N", "B B", "BBB"});
         recipe.setIngredient('N', Material.NETHERITE_INGOT);
@@ -3467,17 +3480,17 @@ public class CombatWeaponryPlus extends JavaPlugin {
         ItemMeta meta = item.getItemMeta();
         double kbr = 0.2;
         double hp = 5.0;
-        if (this.getConfig().getBoolean("UseCustomValues")) {
-            kbr = this.getConfig().getDouble("aWitherLeggings.KBResist") / 10.0;
-            hp = this.getConfig().getDouble("aWitherLeggings.BonusHealth");
+        if (this.config.getBoolean("UseCustomValues")) {
+            kbr = this.config.getDouble("aWitherLeggings.KBResist") / 10.0;
+            hp = this.config.getDouble("aWitherLeggings.BonusHealth");
         }
         AttributeModifier modifier = new AttributeModifier(UUID.randomUUID(), "Health", hp, AttributeModifier.Operation.ADD_NUMBER, EquipmentSlot.LEGS);
         meta.addAttributeModifier(Attribute.MAX_HEALTH, modifier);
         AttributeModifier modifier2 = new AttributeModifier(UUID.randomUUID(), "KnockbackResistance", kbr, AttributeModifier.Operation.ADD_NUMBER, EquipmentSlot.LEGS);
         meta.addAttributeModifier(Attribute.KNOCKBACK_RESISTANCE, modifier2);
-        meta.setDisplayName(convertLegacyToSection(this.getConfig().getString("dWitheringLeggings.name")));
+        meta.setDisplayName(convertLegacyToSection(this.config.getString("dWitheringLeggings.name")));
         meta.setCustomModelData(5553333);
-        List<String> loreList = this.getConfig().getString("dWitheringArmorSet");
+        List<String> loreList = this.config.getStringList("dWitheringArmorSet");
         meta.setLore(loreList);
         item.setItemMeta(meta);
         NamespacedKey key = new NamespacedKey((Plugin)this, "wither_bone_leggings");
@@ -3487,7 +3500,7 @@ public class CombatWeaponryPlus extends JavaPlugin {
         meta2.setDisplayName(ChatColor.YELLOW + "Wither Bone");
         meta2.setCustomModelData(2222222);
         wbone.setItemMeta(meta2);
-        RecipeChoice.ExactChoice wibone = new RecipeChoice.ExactChoice(Items.witherBone(this.getConfig()));
+        RecipeChoice.ExactChoice wibone = new RecipeChoice.ExactChoice(Items.witherBone(this.config));
         ShapedRecipe recipe = new ShapedRecipe(key, item);
         recipe.shape(new String[]{"BNB", "B B", "B B"});
         recipe.setIngredient('N', Material.NETHERITE_INGOT);
@@ -3500,25 +3513,25 @@ public class CombatWeaponryPlus extends JavaPlugin {
         ItemMeta meta = item.getItemMeta();
         double kbr = 0.2;
         double hp = 5.0;
-        if (this.getConfig().getBoolean("UseCustomValues")) {
-            kbr = this.getConfig().getDouble("aWitherBoots.KBResist") / 10.0;
-            hp = this.getConfig().getDouble("aWitherBoots.BonusHealth");
+        if (this.config.getBoolean("UseCustomValues")) {
+            kbr = this.config.getDouble("aWitherBoots.KBResist") / 10.0;
+            hp = this.config.getDouble("aWitherBoots.BonusHealth");
         }
         AttributeModifier modifier = new AttributeModifier(UUID.randomUUID(), "Health", hp, AttributeModifier.Operation.ADD_NUMBER, EquipmentSlot.FEET);
         meta.addAttributeModifier(Attribute.MAX_HEALTH, modifier);
         AttributeModifier modifier2 = new AttributeModifier(UUID.randomUUID(), "KnockbackResistance", kbr, AttributeModifier.Operation.ADD_NUMBER, EquipmentSlot.FEET);
         meta.addAttributeModifier(Attribute.KNOCKBACK_RESISTANCE, modifier2);
-        meta.setDisplayName(convertLegacyToSection(this.getConfig().getString("dWitheringBoots.name")));
+        meta.setDisplayName(convertLegacyToSection(this.config.getString("dWitheringBoots.name")));
         meta.setCustomModelData(5553334);
         ArrayList<String> lore = new ArrayList<String>();
-        lore.add(convertLegacyToSection(this.getConfig().getString("dWitheringArmorSet.line1")));
-        lore.add(convertLegacyToSection(this.getConfig().getString("dWitheringArmorSet.line2")));
-        lore.add(convertLegacyToSection(this.getConfig().getString("dWitheringArmorSet.line3")));
-        lore.add(convertLegacyToSection(this.getConfig().getString("dWitheringArmorSet.line4")));
-        lore.add(convertLegacyToSection(this.getConfig().getString("dWitheringArmorSet.line5")));
-        lore.add(convertLegacyToSection(this.getConfig().getString("dWitheringArmorSet.line6")));
-        lore.add(convertLegacyToSection(this.getConfig().getString("dWitheringArmorSet.line7")));
-        lore.add(convertLegacyToSection(this.getConfig().getString("dWitheringArmorSet.line8")));
+        lore.add(convertLegacyToSection(this.config.getString("dWitheringArmorSet.line1")));
+        lore.add(convertLegacyToSection(this.config.getString("dWitheringArmorSet.line2")));
+        lore.add(convertLegacyToSection(this.config.getString("dWitheringArmorSet.line3")));
+        lore.add(convertLegacyToSection(this.config.getString("dWitheringArmorSet.line4")));
+        lore.add(convertLegacyToSection(this.config.getString("dWitheringArmorSet.line5")));
+        lore.add(convertLegacyToSection(this.config.getString("dWitheringArmorSet.line6")));
+        lore.add(convertLegacyToSection(this.config.getString("dWitheringArmorSet.line7")));
+        lore.add(convertLegacyToSection(this.config.getString("dWitheringArmorSet.line8")));
         meta.setLore(lore);
         item.setItemMeta(meta);
         NamespacedKey key = new NamespacedKey((Plugin)this, "wither_bone_boots");
@@ -3528,7 +3541,7 @@ public class CombatWeaponryPlus extends JavaPlugin {
         meta2.setDisplayName(ChatColor.YELLOW + "Wither Bone");
         meta2.setCustomModelData(2222222);
         wbone.setItemMeta(meta2);
-        RecipeChoice.ExactChoice wibone = new RecipeChoice.ExactChoice(Items.witherBone(this.getConfig()));
+        RecipeChoice.ExactChoice wibone = new RecipeChoice.ExactChoice(Items.witherBone(this.config));
         ShapedRecipe recipe = new ShapedRecipe(key, item);
         recipe.shape(new String[]{"   ", "BIB", "N N"});
         recipe.setIngredient('N', Material.NETHERITE_INGOT);
@@ -3562,31 +3575,31 @@ public class CombatWeaponryPlus extends JavaPlugin {
         ItemStack item = new ItemStack(Material.WOODEN_SWORD);
         ItemMeta meta = item.getItemMeta();
         ArrayList<String> lore = new ArrayList<String>();
-        lore.add(convertLegacyToSection(this.getConfig().getString("CleaverDescription.line1")));
-        lore.add(convertLegacyToSection(this.getConfig().getString("CleaverDescription.line2")));
-        lore.add(convertLegacyToSection(this.getConfig().getString("CleaverDescription.line3")));
-        lore.add(convertLegacyToSection(this.getConfig().getString("CleaverDescription.line4")));
-        lore.add(convertLegacyToSection(this.getConfig().getString("CleaverDescription.line5")));
-        lore.add(convertLegacyToSection(this.getConfig().getString("CleaverDescription.line6")));
-        lore.add(convertLegacyToSection(this.getConfig().getString("CleaverDescription.line7")));
-        lore.add(convertLegacyToSection(this.getConfig().getString("CleaverDescription.line8")));
-        lore.add(convertLegacyToSection(this.getConfig().getString("CleaverDescription.line9")));
-        lore.add(convertLegacyToSection(this.getConfig().getString("dWoodenCleaver.line10")));
-        lore.add(convertLegacyToSection(this.getConfig().getString("dWoodenCleaver.line11")));
-        lore.add(convertLegacyToSection(this.getConfig().getString("dWoodenCleaver.line12")));
+        lore.add(convertLegacyToSection(this.config.getString("CleaverDescription.line1")));
+        lore.add(convertLegacyToSection(this.config.getString("CleaverDescription.line2")));
+        lore.add(convertLegacyToSection(this.config.getString("CleaverDescription.line3")));
+        lore.add(convertLegacyToSection(this.config.getString("CleaverDescription.line4")));
+        lore.add(convertLegacyToSection(this.config.getString("CleaverDescription.line5")));
+        lore.add(convertLegacyToSection(this.config.getString("CleaverDescription.line6")));
+        lore.add(convertLegacyToSection(this.config.getString("CleaverDescription.line7")));
+        lore.add(convertLegacyToSection(this.config.getString("CleaverDescription.line8")));
+        lore.add(convertLegacyToSection(this.config.getString("CleaverDescription.line9")));
+        lore.add(convertLegacyToSection(this.config.getString("dWoodenCleaver.line10")));
+        lore.add(convertLegacyToSection(this.config.getString("dWoodenCleaver.line11")));
+        lore.add(convertLegacyToSection(this.config.getString("dWoodenCleaver.line12")));
         meta.setLore(lore);
         meta.addItemFlags(new ItemFlag[]{ItemFlag.HIDE_ATTRIBUTES});
         double dmg = 8.0;
         double spd = -3.6;
-        if (this.getConfig().getBoolean("UseCustomValues")) {
-            dmg = this.getConfig().getDouble("aWoodenCleaver.damage") - 1.0;
-            spd = this.getConfig().getDouble("aWoodenCleaver.speed") - 4.0;
+        if (this.config.getBoolean("UseCustomValues")) {
+            dmg = this.config.getDouble("aWoodenCleaver.damage") - 1.0;
+            spd = this.config.getDouble("aWoodenCleaver.speed") - 4.0;
         }
         AttributeModifier modifier = new AttributeModifier(UUID.randomUUID(), "Attack Speed", spd, AttributeModifier.Operation.ADD_NUMBER, EquipmentSlot.HAND);
         meta.addAttributeModifier(Attribute.ATTACK_SPEED, modifier);
         AttributeModifier modifier2 = new AttributeModifier(UUID.randomUUID(), "Attack Damage", dmg, AttributeModifier.Operation.ADD_NUMBER, EquipmentSlot.HAND);
         meta.addAttributeModifier(Attribute.ATTACK_DAMAGE, modifier2);
-        meta.setDisplayName(convertLegacyToSection(this.getConfig().getString("dWoodenCleaver.name")));
+        meta.setDisplayName(convertLegacyToSection(this.config.getString("dWoodenCleaver.name")));
         meta.setCustomModelData(1000021);
         item.setItemMeta(meta);
         NamespacedKey key = new NamespacedKey((Plugin)this, "wooden_cleaver");
@@ -3601,31 +3614,31 @@ public class CombatWeaponryPlus extends JavaPlugin {
         ItemStack item = new ItemStack(Material.GOLDEN_SWORD);
         ItemMeta meta = item.getItemMeta();
         ArrayList<String> lore = new ArrayList<String>();
-        lore.add(convertLegacyToSection(this.getConfig().getString("CleaverDescription.line1")));
-        lore.add(convertLegacyToSection(this.getConfig().getString("CleaverDescription.line2")));
-        lore.add(convertLegacyToSection(this.getConfig().getString("CleaverDescription.line3")));
-        lore.add(convertLegacyToSection(this.getConfig().getString("CleaverDescription.line4")));
-        lore.add(convertLegacyToSection(this.getConfig().getString("CleaverDescription.line5")));
-        lore.add(convertLegacyToSection(this.getConfig().getString("CleaverDescription.line6")));
-        lore.add(convertLegacyToSection(this.getConfig().getString("CleaverDescription.line7")));
-        lore.add(convertLegacyToSection(this.getConfig().getString("CleaverDescription.line8")));
-        lore.add(convertLegacyToSection(this.getConfig().getString("CleaverDescription.line9")));
-        lore.add(convertLegacyToSection(this.getConfig().getString("dGoldenCleaver.line10")));
-        lore.add(convertLegacyToSection(this.getConfig().getString("dGoldenCleaver.line11")));
-        lore.add(convertLegacyToSection(this.getConfig().getString("dGoldenCleaver.line12")));
+        lore.add(convertLegacyToSection(this.config.getString("CleaverDescription.line1")));
+        lore.add(convertLegacyToSection(this.config.getString("CleaverDescription.line2")));
+        lore.add(convertLegacyToSection(this.config.getString("CleaverDescription.line3")));
+        lore.add(convertLegacyToSection(this.config.getString("CleaverDescription.line4")));
+        lore.add(convertLegacyToSection(this.config.getString("CleaverDescription.line5")));
+        lore.add(convertLegacyToSection(this.config.getString("CleaverDescription.line6")));
+        lore.add(convertLegacyToSection(this.config.getString("CleaverDescription.line7")));
+        lore.add(convertLegacyToSection(this.config.getString("CleaverDescription.line8")));
+        lore.add(convertLegacyToSection(this.config.getString("CleaverDescription.line9")));
+        lore.add(convertLegacyToSection(this.config.getString("dGoldenCleaver.line10")));
+        lore.add(convertLegacyToSection(this.config.getString("dGoldenCleaver.line11")));
+        lore.add(convertLegacyToSection(this.config.getString("dGoldenCleaver.line12")));
         meta.setLore(lore);
         meta.addItemFlags(new ItemFlag[]{ItemFlag.HIDE_ATTRIBUTES});
         double dmg = 8.0;
         double spd = -3.6;
-        if (this.getConfig().getBoolean("UseCustomValues")) {
-            dmg = this.getConfig().getDouble("aGoldenCleaver.damage") - 1.0;
-            spd = this.getConfig().getDouble("aGoldenCleaver.speed") - 4.0;
+        if (this.config.getBoolean("UseCustomValues")) {
+            dmg = this.config.getDouble("aGoldenCleaver.damage") - 1.0;
+            spd = this.config.getDouble("aGoldenCleaver.speed") - 4.0;
         }
         AttributeModifier modifier = new AttributeModifier(UUID.randomUUID(), "Attack Speed", spd, AttributeModifier.Operation.ADD_NUMBER, EquipmentSlot.HAND);
         meta.addAttributeModifier(Attribute.ATTACK_SPEED, modifier);
         AttributeModifier modifier2 = new AttributeModifier(UUID.randomUUID(), "Attack Damage", dmg, AttributeModifier.Operation.ADD_NUMBER, EquipmentSlot.HAND);
         meta.addAttributeModifier(Attribute.ATTACK_DAMAGE, modifier2);
-        meta.setDisplayName(convertLegacyToSection(this.getConfig().getString("dGoldenCleaver.name")));
+        meta.setDisplayName(convertLegacyToSection(this.config.getString("dGoldenCleaver.name")));
         meta.setCustomModelData(1000021);
         item.setItemMeta(meta);
         NamespacedKey key = new NamespacedKey((Plugin)this, "golden_cleaver");
@@ -3641,31 +3654,31 @@ public class CombatWeaponryPlus extends JavaPlugin {
         ItemStack item = new ItemStack(Material.STONE_SWORD);
         ItemMeta meta = item.getItemMeta();
         ArrayList<String> lore = new ArrayList<String>();
-        lore.add(convertLegacyToSection(this.getConfig().getString("CleaverDescription.line1")));
-        lore.add(convertLegacyToSection(this.getConfig().getString("CleaverDescription.line2")));
-        lore.add(convertLegacyToSection(this.getConfig().getString("CleaverDescription.line3")));
-        lore.add(convertLegacyToSection(this.getConfig().getString("CleaverDescription.line4")));
-        lore.add(convertLegacyToSection(this.getConfig().getString("CleaverDescription.line5")));
-        lore.add(convertLegacyToSection(this.getConfig().getString("CleaverDescription.line6")));
-        lore.add(convertLegacyToSection(this.getConfig().getString("CleaverDescription.line7")));
-        lore.add(convertLegacyToSection(this.getConfig().getString("CleaverDescription.line8")));
-        lore.add(convertLegacyToSection(this.getConfig().getString("CleaverDescription.line9")));
-        lore.add(convertLegacyToSection(this.getConfig().getString("dStoneCleaver.line10")));
-        lore.add(convertLegacyToSection(this.getConfig().getString("dStoneCleaver.line11")));
-        lore.add(convertLegacyToSection(this.getConfig().getString("dStoneCleaver.line12")));
+        lore.add(convertLegacyToSection(this.config.getString("CleaverDescription.line1")));
+        lore.add(convertLegacyToSection(this.config.getString("CleaverDescription.line2")));
+        lore.add(convertLegacyToSection(this.config.getString("CleaverDescription.line3")));
+        lore.add(convertLegacyToSection(this.config.getString("CleaverDescription.line4")));
+        lore.add(convertLegacyToSection(this.config.getString("CleaverDescription.line5")));
+        lore.add(convertLegacyToSection(this.config.getString("CleaverDescription.line6")));
+        lore.add(convertLegacyToSection(this.config.getString("CleaverDescription.line7")));
+        lore.add(convertLegacyToSection(this.config.getString("CleaverDescription.line8")));
+        lore.add(convertLegacyToSection(this.config.getString("CleaverDescription.line9")));
+        lore.add(convertLegacyToSection(this.config.getString("dStoneCleaver.line10")));
+        lore.add(convertLegacyToSection(this.config.getString("dStoneCleaver.line11")));
+        lore.add(convertLegacyToSection(this.config.getString("dStoneCleaver.line12")));
         meta.setLore(lore);
         meta.addItemFlags(new ItemFlag[]{ItemFlag.HIDE_ATTRIBUTES});
         double dmg = 9.0;
         double spd = -3.6;
-        if (this.getConfig().getBoolean("UseCustomValues")) {
-            dmg = this.getConfig().getDouble("aStoneCleaver.damage") - 1.0;
-            spd = this.getConfig().getDouble("aStoneCleaver.speed") - 4.0;
+        if (this.config.getBoolean("UseCustomValues")) {
+            dmg = this.config.getDouble("aStoneCleaver.damage") - 1.0;
+            spd = this.config.getDouble("aStoneCleaver.speed") - 4.0;
         }
         AttributeModifier modifier = new AttributeModifier(UUID.randomUUID(), "Attack Speed", spd, AttributeModifier.Operation.ADD_NUMBER, EquipmentSlot.HAND);
         meta.addAttributeModifier(Attribute.ATTACK_SPEED, modifier);
         AttributeModifier modifier2 = new AttributeModifier(UUID.randomUUID(), "Attack Damage", dmg, AttributeModifier.Operation.ADD_NUMBER, EquipmentSlot.HAND);
         meta.addAttributeModifier(Attribute.ATTACK_DAMAGE, modifier2);
-        meta.setDisplayName(convertLegacyToSection(this.getConfig().getString("dStoneCleaver.name")));
+        meta.setDisplayName(convertLegacyToSection(this.config.getString("dStoneCleaver.name")));
         meta.setCustomModelData(1000021);
         item.setItemMeta(meta);
         NamespacedKey key = new NamespacedKey((Plugin)this, "stone_cleaver");
@@ -3681,31 +3694,31 @@ public class CombatWeaponryPlus extends JavaPlugin {
         ItemStack item = new ItemStack(Material.IRON_SWORD);
         ItemMeta meta = item.getItemMeta();
         ArrayList<String> lore = new ArrayList<String>();
-        lore.add(convertLegacyToSection(this.getConfig().getString("CleaverDescription.line1")));
-        lore.add(convertLegacyToSection(this.getConfig().getString("CleaverDescription.line2")));
-        lore.add(convertLegacyToSection(this.getConfig().getString("CleaverDescription.line3")));
-        lore.add(convertLegacyToSection(this.getConfig().getString("CleaverDescription.line4")));
-        lore.add(convertLegacyToSection(this.getConfig().getString("CleaverDescription.line5")));
-        lore.add(convertLegacyToSection(this.getConfig().getString("CleaverDescription.line6")));
-        lore.add(convertLegacyToSection(this.getConfig().getString("CleaverDescription.line7")));
-        lore.add(convertLegacyToSection(this.getConfig().getString("CleaverDescription.line8")));
-        lore.add(convertLegacyToSection(this.getConfig().getString("CleaverDescription.line9")));
-        lore.add(convertLegacyToSection(this.getConfig().getString("dIronCleaver.line10")));
-        lore.add(convertLegacyToSection(this.getConfig().getString("dIronCleaver.line11")));
-        lore.add(convertLegacyToSection(this.getConfig().getString("dIronCleaver.line12")));
+        lore.add(convertLegacyToSection(this.config.getString("CleaverDescription.line1")));
+        lore.add(convertLegacyToSection(this.config.getString("CleaverDescription.line2")));
+        lore.add(convertLegacyToSection(this.config.getString("CleaverDescription.line3")));
+        lore.add(convertLegacyToSection(this.config.getString("CleaverDescription.line4")));
+        lore.add(convertLegacyToSection(this.config.getString("CleaverDescription.line5")));
+        lore.add(convertLegacyToSection(this.config.getString("CleaverDescription.line6")));
+        lore.add(convertLegacyToSection(this.config.getString("CleaverDescription.line7")));
+        lore.add(convertLegacyToSection(this.config.getString("CleaverDescription.line8")));
+        lore.add(convertLegacyToSection(this.config.getString("CleaverDescription.line9")));
+        lore.add(convertLegacyToSection(this.config.getString("dIronCleaver.line10")));
+        lore.add(convertLegacyToSection(this.config.getString("dIronCleaver.line11")));
+        lore.add(convertLegacyToSection(this.config.getString("dIronCleaver.line12")));
         meta.setLore(lore);
         meta.addItemFlags(new ItemFlag[]{ItemFlag.HIDE_ATTRIBUTES});
         double dmg = 10.0;
         double spd = -3.6;
-        if (this.getConfig().getBoolean("UseCustomValues")) {
-            dmg = this.getConfig().getDouble("aIronCleaver.damage") - 1.0;
-            spd = this.getConfig().getDouble("aIronCleaver.speed") - 4.0;
+        if (this.config.getBoolean("UseCustomValues")) {
+            dmg = this.config.getDouble("aIronCleaver.damage") - 1.0;
+            spd = this.config.getDouble("aIronCleaver.speed") - 4.0;
         }
         AttributeModifier modifier = new AttributeModifier(UUID.randomUUID(), "Attack Speed", spd, AttributeModifier.Operation.ADD_NUMBER, EquipmentSlot.HAND);
         meta.addAttributeModifier(Attribute.ATTACK_SPEED, modifier);
         AttributeModifier modifier2 = new AttributeModifier(UUID.randomUUID(), "Attack Damage", dmg, AttributeModifier.Operation.ADD_NUMBER, EquipmentSlot.HAND);
         meta.addAttributeModifier(Attribute.ATTACK_DAMAGE, modifier2);
-        meta.setDisplayName(convertLegacyToSection(this.getConfig().getString("dIronCleaver.name")));
+        meta.setDisplayName(convertLegacyToSection(this.config.getString("dIronCleaver.name")));
         meta.setCustomModelData(1000021);
         item.setItemMeta(meta);
         NamespacedKey key = new NamespacedKey((Plugin)this, "iron_cleaver");
@@ -3721,35 +3734,35 @@ public class CombatWeaponryPlus extends JavaPlugin {
         ItemStack item = new ItemStack(Material.GOLDEN_SWORD);
         ItemMeta meta = item.getItemMeta();
         ArrayList<String> lore = new ArrayList<String>();
-        lore.add(convertLegacyToSection(this.getConfig().getString("CleaverDescription.line1")));
-        lore.add(convertLegacyToSection(this.getConfig().getString("CleaverDescription.line2")));
-        lore.add(convertLegacyToSection(this.getConfig().getString("CleaverDescription.line3")));
-        lore.add(convertLegacyToSection(this.getConfig().getString("CleaverDescription.line4")));
-        lore.add(convertLegacyToSection(this.getConfig().getString("CleaverDescription.line5")));
-        lore.add(convertLegacyToSection(this.getConfig().getString("CleaverDescription.line6")));
-        lore.add(convertLegacyToSection(this.getConfig().getString("CleaverDescription.line7")));
-        lore.add(convertLegacyToSection(this.getConfig().getString("CleaverDescription.line8")));
-        lore.add(convertLegacyToSection(this.getConfig().getString("CleaverDescription.line9")));
-        lore.add(convertLegacyToSection(this.getConfig().getString("dEmeraldCleaver.line10")));
-        lore.add(convertLegacyToSection(this.getConfig().getString("dEmeraldCleaver.line11")));
-        lore.add(convertLegacyToSection(this.getConfig().getString("dEmeraldCleaver.line12")));
+        lore.add(convertLegacyToSection(this.config.getString("CleaverDescription.line1")));
+        lore.add(convertLegacyToSection(this.config.getString("CleaverDescription.line2")));
+        lore.add(convertLegacyToSection(this.config.getString("CleaverDescription.line3")));
+        lore.add(convertLegacyToSection(this.config.getString("CleaverDescription.line4")));
+        lore.add(convertLegacyToSection(this.config.getString("CleaverDescription.line5")));
+        lore.add(convertLegacyToSection(this.config.getString("CleaverDescription.line6")));
+        lore.add(convertLegacyToSection(this.config.getString("CleaverDescription.line7")));
+        lore.add(convertLegacyToSection(this.config.getString("CleaverDescription.line8")));
+        lore.add(convertLegacyToSection(this.config.getString("CleaverDescription.line9")));
+        lore.add(convertLegacyToSection(this.config.getString("dEmeraldCleaver.line10")));
+        lore.add(convertLegacyToSection(this.config.getString("dEmeraldCleaver.line11")));
+        lore.add(convertLegacyToSection(this.config.getString("dEmeraldCleaver.line12")));
         meta.setLore(lore);
         meta.addItemFlags(new ItemFlag[]{ItemFlag.HIDE_ATTRIBUTES});
         double dmg = 10.0;
         double spd = -3.6;
-        if (this.getConfig().getBoolean("UseCustomValues")) {
-            dmg = this.getConfig().getDouble("aEmeraldCleaver.damage") - 1.0;
-            spd = this.getConfig().getDouble("aEmeraldCleaver.speed") - 4.0;
+        if (this.config.getBoolean("UseCustomValues")) {
+            dmg = this.config.getDouble("aEmeraldCleaver.damage") - 1.0;
+            spd = this.config.getDouble("aEmeraldCleaver.speed") - 4.0;
         }
         AttributeModifier modifier = new AttributeModifier(UUID.randomUUID(), "Attack Speed", spd, AttributeModifier.Operation.ADD_NUMBER, EquipmentSlot.HAND);
         meta.addAttributeModifier(Attribute.ATTACK_SPEED, modifier);
         AttributeModifier modifier2 = new AttributeModifier(UUID.randomUUID(), "Attack Damage", dmg, AttributeModifier.Operation.ADD_NUMBER, EquipmentSlot.HAND);
         meta.addAttributeModifier(Attribute.ATTACK_DAMAGE, modifier2);
-        meta.setDisplayName(convertLegacyToSection(this.getConfig().getString("dEmeraldCleaver.name")));
+        meta.setDisplayName(convertLegacyToSection(this.config.getString("dEmeraldCleaver.name")));
         meta.setCustomModelData(1000031);
-        if (this.getConfig().getBoolean("EnchantsOnEmeraldGear")) {
-            int num = this.getConfig().getInt("EmeraldGearEnchantLevels.Unbreaking");
-            int num2 = this.getConfig().getInt("EmeraldGearEnchantLevels.Mending");
+        if (this.config.getBoolean("EnchantsOnEmeraldGear")) {
+            int num = this.config.getInt("EmeraldGearEnchantLevels.Unbreaking");
+            int num2 = this.config.getInt("EmeraldGearEnchantLevels.Mending");
             meta.addEnchant(Enchantment.UNBREAKING, num, true);
             meta.addEnchant(Enchantment.MENDING, num2, true);
         }
@@ -3767,31 +3780,31 @@ public class CombatWeaponryPlus extends JavaPlugin {
         ItemStack item = new ItemStack(Material.DIAMOND_SWORD);
         ItemMeta meta = item.getItemMeta();
         ArrayList<String> lore = new ArrayList<String>();
-        lore.add(convertLegacyToSection(this.getConfig().getString("CleaverDescription.line1")));
-        lore.add(convertLegacyToSection(this.getConfig().getString("CleaverDescription.line2")));
-        lore.add(convertLegacyToSection(this.getConfig().getString("CleaverDescription.line3")));
-        lore.add(convertLegacyToSection(this.getConfig().getString("CleaverDescription.line4")));
-        lore.add(convertLegacyToSection(this.getConfig().getString("CleaverDescription.line5")));
-        lore.add(convertLegacyToSection(this.getConfig().getString("CleaverDescription.line6")));
-        lore.add(convertLegacyToSection(this.getConfig().getString("CleaverDescription.line7")));
-        lore.add(convertLegacyToSection(this.getConfig().getString("CleaverDescription.line8")));
-        lore.add(convertLegacyToSection(this.getConfig().getString("CleaverDescription.line9")));
-        lore.add(convertLegacyToSection(this.getConfig().getString("dDiamondCleaver.line10")));
-        lore.add(convertLegacyToSection(this.getConfig().getString("dDiamondCleaver.line11")));
-        lore.add(convertLegacyToSection(this.getConfig().getString("dDiamondCleaver.line12")));
+        lore.add(convertLegacyToSection(this.config.getString("CleaverDescription.line1")));
+        lore.add(convertLegacyToSection(this.config.getString("CleaverDescription.line2")));
+        lore.add(convertLegacyToSection(this.config.getString("CleaverDescription.line3")));
+        lore.add(convertLegacyToSection(this.config.getString("CleaverDescription.line4")));
+        lore.add(convertLegacyToSection(this.config.getString("CleaverDescription.line5")));
+        lore.add(convertLegacyToSection(this.config.getString("CleaverDescription.line6")));
+        lore.add(convertLegacyToSection(this.config.getString("CleaverDescription.line7")));
+        lore.add(convertLegacyToSection(this.config.getString("CleaverDescription.line8")));
+        lore.add(convertLegacyToSection(this.config.getString("CleaverDescription.line9")));
+        lore.add(convertLegacyToSection(this.config.getString("dDiamondCleaver.line10")));
+        lore.add(convertLegacyToSection(this.config.getString("dDiamondCleaver.line11")));
+        lore.add(convertLegacyToSection(this.config.getString("dDiamondCleaver.line12")));
         meta.setLore(lore);
         meta.addItemFlags(new ItemFlag[]{ItemFlag.HIDE_ATTRIBUTES});
         double dmg = 11.0;
         double spd = -3.6;
-        if (this.getConfig().getBoolean("UseCustomValues")) {
-            dmg = this.getConfig().getDouble("aDiamondCleaver.damage") - 1.0;
-            spd = this.getConfig().getDouble("aDiamondCleaver.speed") - 4.0;
+        if (this.config.getBoolean("UseCustomValues")) {
+            dmg = this.config.getDouble("aDiamondCleaver.damage") - 1.0;
+            spd = this.config.getDouble("aDiamondCleaver.speed") - 4.0;
         }
         AttributeModifier modifier = new AttributeModifier(UUID.randomUUID(), "Attack Speed", spd, AttributeModifier.Operation.ADD_NUMBER, EquipmentSlot.HAND);
         meta.addAttributeModifier(Attribute.ATTACK_SPEED, modifier);
         AttributeModifier modifier2 = new AttributeModifier(UUID.randomUUID(), "Attack Damage", dmg, AttributeModifier.Operation.ADD_NUMBER, EquipmentSlot.HAND);
         meta.addAttributeModifier(Attribute.ATTACK_DAMAGE, modifier2);
-        meta.setDisplayName(convertLegacyToSection(this.getConfig().getString("dDiamondCleaver.name")));
+        meta.setDisplayName(convertLegacyToSection(this.config.getString("dDiamondCleaver.name")));
         meta.setCustomModelData(1000021);
         item.setItemMeta(meta);
         NamespacedKey key = new NamespacedKey((Plugin)this, "diamond_cleaver");
@@ -3807,31 +3820,31 @@ public class CombatWeaponryPlus extends JavaPlugin {
         ItemStack item = new ItemStack(Material.NETHERITE_SWORD);
         ItemMeta meta = item.getItemMeta();
         ArrayList<String> lore = new ArrayList<String>();
-        lore.add(convertLegacyToSection(this.getConfig().getString("CleaverDescription.line1")));
-        lore.add(convertLegacyToSection(this.getConfig().getString("CleaverDescription.line2")));
-        lore.add(convertLegacyToSection(this.getConfig().getString("CleaverDescription.line3")));
-        lore.add(convertLegacyToSection(this.getConfig().getString("CleaverDescription.line4")));
-        lore.add(convertLegacyToSection(this.getConfig().getString("CleaverDescription.line5")));
-        lore.add(convertLegacyToSection(this.getConfig().getString("CleaverDescription.line6")));
-        lore.add(convertLegacyToSection(this.getConfig().getString("CleaverDescription.line7")));
-        lore.add(convertLegacyToSection(this.getConfig().getString("CleaverDescription.line8")));
-        lore.add(convertLegacyToSection(this.getConfig().getString("CleaverDescription.line9")));
-        lore.add(convertLegacyToSection(this.getConfig().getString("dNetheriteCleaver.line10")));
-        lore.add(convertLegacyToSection(this.getConfig().getString("dNetheriteCleaver.line11")));
-        lore.add(convertLegacyToSection(this.getConfig().getString("dNetheriteCleaver.line12")));
+        lore.add(convertLegacyToSection(this.config.getString("CleaverDescription.line1")));
+        lore.add(convertLegacyToSection(this.config.getString("CleaverDescription.line2")));
+        lore.add(convertLegacyToSection(this.config.getString("CleaverDescription.line3")));
+        lore.add(convertLegacyToSection(this.config.getString("CleaverDescription.line4")));
+        lore.add(convertLegacyToSection(this.config.getString("CleaverDescription.line5")));
+        lore.add(convertLegacyToSection(this.config.getString("CleaverDescription.line6")));
+        lore.add(convertLegacyToSection(this.config.getString("CleaverDescription.line7")));
+        lore.add(convertLegacyToSection(this.config.getString("CleaverDescription.line8")));
+        lore.add(convertLegacyToSection(this.config.getString("CleaverDescription.line9")));
+        lore.add(convertLegacyToSection(this.config.getString("dNetheriteCleaver.line10")));
+        lore.add(convertLegacyToSection(this.config.getString("dNetheriteCleaver.line11")));
+        lore.add(convertLegacyToSection(this.config.getString("dNetheriteCleaver.line12")));
         meta.setLore(lore);
         meta.addItemFlags(new ItemFlag[]{ItemFlag.HIDE_ATTRIBUTES});
         double dmg = 12.0;
         double spd = -3.6;
-        if (this.getConfig().getBoolean("UseCustomValues")) {
-            dmg = this.getConfig().getDouble("aNetheriteCleaver.damage") - 1.0;
-            spd = this.getConfig().getDouble("aNetheriteCleaver.speed") - 4.0;
+        if (this.config.getBoolean("UseCustomValues")) {
+            dmg = this.config.getDouble("aNetheriteCleaver.damage") - 1.0;
+            spd = this.config.getDouble("aNetheriteCleaver.speed") - 4.0;
         }
         AttributeModifier modifier = new AttributeModifier(UUID.randomUUID(), "Attack Speed", spd, AttributeModifier.Operation.ADD_NUMBER, EquipmentSlot.HAND);
         meta.addAttributeModifier(Attribute.ATTACK_SPEED, modifier);
         AttributeModifier modifier2 = new AttributeModifier(UUID.randomUUID(), "Attack Damage", dmg, AttributeModifier.Operation.ADD_NUMBER, EquipmentSlot.HAND);
         meta.addAttributeModifier(Attribute.ATTACK_DAMAGE, modifier2);
-        meta.setDisplayName(convertLegacyToSection(this.getConfig().getString("dNetheriteCleaver.name")));
+        meta.setDisplayName(convertLegacyToSection(this.config.getString("dNetheriteCleaver.name")));
         meta.setCustomModelData(1000021);
         item.setItemMeta(meta);
         NamespacedKey key = new NamespacedKey((Plugin)this, "netherite_cleaver");
@@ -3977,13 +3990,13 @@ public class CombatWeaponryPlus extends JavaPlugin {
         ItemStack item = new ItemStack(Material.WOODEN_SWORD);
         ItemMeta meta = item.getItemMeta();
         ArrayList<String> lore = new ArrayList<String>();
-        lore.add(convertLegacyToSection(this.getConfig().getString("dFrostCharm.line1")));
-        lore.add(convertLegacyToSection(this.getConfig().getString("dFrostCharm.line2")));
-        lore.add(convertLegacyToSection(this.getConfig().getString("dFrostCharm.line3")));
-        lore.add(convertLegacyToSection(this.getConfig().getString("dFrostCharm.line4")));
+        lore.add(convertLegacyToSection(this.config.getString("dFrostCharm.line1")));
+        lore.add(convertLegacyToSection(this.config.getString("dFrostCharm.line2")));
+        lore.add(convertLegacyToSection(this.config.getString("dFrostCharm.line3")));
+        lore.add(convertLegacyToSection(this.config.getString("dFrostCharm.line4")));
         meta.setLore(lore);
         meta.setCustomModelData(45);
-        meta.setDisplayName(convertLegacyToSection(this.getConfig().getString("dFrostCharm.name")));
+        meta.setDisplayName(convertLegacyToSection(this.config.getString("dFrostCharm.name")));
         meta.addEnchant(Enchantment.UNBREAKING, 5, true);
         meta.addItemFlags(new ItemFlag[]{ItemFlag.HIDE_ENCHANTS});
         meta.addItemFlags(new ItemFlag[]{ItemFlag.HIDE_ATTRIBUTES});
@@ -4008,30 +4021,30 @@ public class CombatWeaponryPlus extends JavaPlugin {
         ItemStack item = new ItemStack(Material.NETHERITE_SWORD);
         ItemMeta meta = item.getItemMeta();
         ArrayList<String> lore = new ArrayList<String>();
-        lore.add(convertLegacyToSection(this.getConfig().getString("dVolcanicBlade.line1")));
-        lore.add(convertLegacyToSection(this.getConfig().getString("dVolcanicBlade.line2")));
-        lore.add(convertLegacyToSection(this.getConfig().getString("dVolcanicBlade.line3")));
-        lore.add(convertLegacyToSection(this.getConfig().getString("dVolcanicBlade.line4")));
-        lore.add(convertLegacyToSection(this.getConfig().getString("dVolcanicBlade.line5")));
-        lore.add(convertLegacyToSection(this.getConfig().getString("dVolcanicBlade.line6")));
-        lore.add(convertLegacyToSection(this.getConfig().getString("dVolcanicBlade.line7")));
-        lore.add(convertLegacyToSection(this.getConfig().getString("dVolcanicBlade.line8")));
-        lore.add(convertLegacyToSection(this.getConfig().getString("dVolcanicBlade.line9")));
-        lore.add(convertLegacyToSection(this.getConfig().getString("dVolcanicBlade.line10")));
-        lore.add(convertLegacyToSection(this.getConfig().getString("dVolcanicBlade.line11")));
+        lore.add(convertLegacyToSection(this.config.getString("dVolcanicBlade.line1")));
+        lore.add(convertLegacyToSection(this.config.getString("dVolcanicBlade.line2")));
+        lore.add(convertLegacyToSection(this.config.getString("dVolcanicBlade.line3")));
+        lore.add(convertLegacyToSection(this.config.getString("dVolcanicBlade.line4")));
+        lore.add(convertLegacyToSection(this.config.getString("dVolcanicBlade.line5")));
+        lore.add(convertLegacyToSection(this.config.getString("dVolcanicBlade.line6")));
+        lore.add(convertLegacyToSection(this.config.getString("dVolcanicBlade.line7")));
+        lore.add(convertLegacyToSection(this.config.getString("dVolcanicBlade.line8")));
+        lore.add(convertLegacyToSection(this.config.getString("dVolcanicBlade.line9")));
+        lore.add(convertLegacyToSection(this.config.getString("dVolcanicBlade.line10")));
+        lore.add(convertLegacyToSection(this.config.getString("dVolcanicBlade.line11")));
         meta.setLore(lore);
         meta.addItemFlags(new ItemFlag[]{ItemFlag.HIDE_ATTRIBUTES});
         double dmg = 7.0;
         double spd = -2.4;
-        if (this.getConfig().getBoolean("UseCustomValues")) {
-            dmg = this.getConfig().getDouble("aVolcanicBlade.damage") - 1.0;
-            spd = this.getConfig().getDouble("aVolcanicBlade.speed") - 4.0;
+        if (this.config.getBoolean("UseCustomValues")) {
+            dmg = this.config.getDouble("aVolcanicBlade.damage") - 1.0;
+            spd = this.config.getDouble("aVolcanicBlade.speed") - 4.0;
         }
         AttributeModifier modifier = new AttributeModifier(UUID.randomUUID(), "Attack Speed", spd, AttributeModifier.Operation.ADD_NUMBER, EquipmentSlot.HAND);
         meta.addAttributeModifier(Attribute.ATTACK_SPEED, modifier);
         AttributeModifier modifier2 = new AttributeModifier(UUID.randomUUID(), "Attack Damage", dmg, AttributeModifier.Operation.ADD_NUMBER, EquipmentSlot.HAND);
         meta.addAttributeModifier(Attribute.ATTACK_DAMAGE, modifier2);
-        meta.setDisplayName(convertLegacyToSection(this.getConfig().getString("dVolcanicBlade.name")));
+        meta.setDisplayName(convertLegacyToSection(this.config.getString("dVolcanicBlade.name")));
         meta.setCustomModelData(5000);
         item.setItemMeta(meta);
         NamespacedKey key = new NamespacedKey((Plugin)this, "fire_sword");
@@ -4047,30 +4060,30 @@ public class CombatWeaponryPlus extends JavaPlugin {
         ItemStack item = new ItemStack(Material.NETHERITE_SWORD);
         ItemMeta meta = item.getItemMeta();
         ArrayList<String> lore = new ArrayList<String>();
-        lore.add(convertLegacyToSection(this.getConfig().getString("dVolcanicSpear.line1")));
-        lore.add(convertLegacyToSection(this.getConfig().getString("dVolcanicSpear.line2")));
-        lore.add(convertLegacyToSection(this.getConfig().getString("dVolcanicSpear.line3")));
-        lore.add(convertLegacyToSection(this.getConfig().getString("dVolcanicSpear.line4")));
-        lore.add(convertLegacyToSection(this.getConfig().getString("dVolcanicSpear.line5")));
-        lore.add(convertLegacyToSection(this.getConfig().getString("dVolcanicSpear.line6")));
-        lore.add(convertLegacyToSection(this.getConfig().getString("dVolcanicSpear.line7")));
-        lore.add(convertLegacyToSection(this.getConfig().getString("dVolcanicSpear.line8")));
-        lore.add(convertLegacyToSection(this.getConfig().getString("dVolcanicSpear.line9")));
-        lore.add(convertLegacyToSection(this.getConfig().getString("dVolcanicSpear.line10")));
-        lore.add(convertLegacyToSection(this.getConfig().getString("dVolcanicSpear.line11")));
+        lore.add(convertLegacyToSection(this.config.getString("dVolcanicSpear.line1")));
+        lore.add(convertLegacyToSection(this.config.getString("dVolcanicSpear.line2")));
+        lore.add(convertLegacyToSection(this.config.getString("dVolcanicSpear.line3")));
+        lore.add(convertLegacyToSection(this.config.getString("dVolcanicSpear.line4")));
+        lore.add(convertLegacyToSection(this.config.getString("dVolcanicSpear.line5")));
+        lore.add(convertLegacyToSection(this.config.getString("dVolcanicSpear.line6")));
+        lore.add(convertLegacyToSection(this.config.getString("dVolcanicSpear.line7")));
+        lore.add(convertLegacyToSection(this.config.getString("dVolcanicSpear.line8")));
+        lore.add(convertLegacyToSection(this.config.getString("dVolcanicSpear.line9")));
+        lore.add(convertLegacyToSection(this.config.getString("dVolcanicSpear.line10")));
+        lore.add(convertLegacyToSection(this.config.getString("dVolcanicSpear.line11")));
         meta.setLore(lore);
         meta.addItemFlags(new ItemFlag[]{ItemFlag.HIDE_ATTRIBUTES});
         double dmg = 4.0;
         double spd = -1.5;
-        if (this.getConfig().getBoolean("UseCustomValues")) {
-            dmg = this.getConfig().getDouble("aVolcanicSpear.damage") - 1.0;
-            spd = this.getConfig().getDouble("aVolcanicSpear.speed") - 4.0;
+        if (this.config.getBoolean("UseCustomValues")) {
+            dmg = this.config.getDouble("aVolcanicSpear.damage") - 1.0;
+            spd = this.config.getDouble("aVolcanicSpear.speed") - 4.0;
         }
         AttributeModifier modifier = new AttributeModifier(UUID.randomUUID(), "Attack Speed", spd, AttributeModifier.Operation.ADD_NUMBER, EquipmentSlot.HAND);
         meta.addAttributeModifier(Attribute.ATTACK_SPEED, modifier);
         AttributeModifier modifier2 = new AttributeModifier(UUID.randomUUID(), "Attack Damage", dmg, AttributeModifier.Operation.ADD_NUMBER, EquipmentSlot.HAND);
         meta.addAttributeModifier(Attribute.ATTACK_DAMAGE, modifier2);
-        meta.setDisplayName(convertLegacyToSection(this.getConfig().getString("dVolcanicSpear.name")));
+        meta.setDisplayName(convertLegacyToSection(this.config.getString("dVolcanicSpear.name")));
         meta.setCustomModelData(5001);
         item.setItemMeta(meta);
         NamespacedKey key = new NamespacedKey((Plugin)this, "fire_spear");
@@ -4087,30 +4100,30 @@ public class CombatWeaponryPlus extends JavaPlugin {
         ItemStack item = new ItemStack(Material.NETHERITE_SWORD);
         ItemMeta meta = item.getItemMeta();
         ArrayList<String> lore = new ArrayList<String>();
-        lore.add(convertLegacyToSection(this.getConfig().getString("dVolcanicAxe.line1")));
-        lore.add(convertLegacyToSection(this.getConfig().getString("dVolcanicAxe.line2")));
-        lore.add(convertLegacyToSection(this.getConfig().getString("dVolcanicAxe.line3")));
-        lore.add(convertLegacyToSection(this.getConfig().getString("dVolcanicAxe.line4")));
-        lore.add(convertLegacyToSection(this.getConfig().getString("dVolcanicAxe.line5")));
-        lore.add(convertLegacyToSection(this.getConfig().getString("dVolcanicAxe.line6")));
-        lore.add(convertLegacyToSection(this.getConfig().getString("dVolcanicAxe.line7")));
-        lore.add(convertLegacyToSection(this.getConfig().getString("dVolcanicAxe.line8")));
-        lore.add(convertLegacyToSection(this.getConfig().getString("dVolcanicAxe.line9")));
-        lore.add(convertLegacyToSection(this.getConfig().getString("dVolcanicAxe.line10")));
-        lore.add(convertLegacyToSection(this.getConfig().getString("dVolcanicAxe.line11")));
+        lore.add(convertLegacyToSection(this.config.getString("dVolcanicAxe.line1")));
+        lore.add(convertLegacyToSection(this.config.getString("dVolcanicAxe.line2")));
+        lore.add(convertLegacyToSection(this.config.getString("dVolcanicAxe.line3")));
+        lore.add(convertLegacyToSection(this.config.getString("dVolcanicAxe.line4")));
+        lore.add(convertLegacyToSection(this.config.getString("dVolcanicAxe.line5")));
+        lore.add(convertLegacyToSection(this.config.getString("dVolcanicAxe.line6")));
+        lore.add(convertLegacyToSection(this.config.getString("dVolcanicAxe.line7")));
+        lore.add(convertLegacyToSection(this.config.getString("dVolcanicAxe.line8")));
+        lore.add(convertLegacyToSection(this.config.getString("dVolcanicAxe.line9")));
+        lore.add(convertLegacyToSection(this.config.getString("dVolcanicAxe.line10")));
+        lore.add(convertLegacyToSection(this.config.getString("dVolcanicAxe.line11")));
         meta.setLore(lore);
         meta.addItemFlags(new ItemFlag[]{ItemFlag.HIDE_ATTRIBUTES});
         double dmg = 9.0;
         double spd = -3.0;
-        if (this.getConfig().getBoolean("UseCustomValues")) {
-            dmg = this.getConfig().getDouble("aVolcanicAxe.damage") - 1.0;
-            spd = this.getConfig().getDouble("aVolcanicAxe.speed") - 4.0;
+        if (this.config.getBoolean("UseCustomValues")) {
+            dmg = this.config.getDouble("aVolcanicAxe.damage") - 1.0;
+            spd = this.config.getDouble("aVolcanicAxe.speed") - 4.0;
         }
         AttributeModifier modifier = new AttributeModifier(UUID.randomUUID(), "Attack Speed", spd, AttributeModifier.Operation.ADD_NUMBER, EquipmentSlot.HAND);
         meta.addAttributeModifier(Attribute.ATTACK_SPEED, modifier);
         AttributeModifier modifier2 = new AttributeModifier(UUID.randomUUID(), "Attack Damage", dmg, AttributeModifier.Operation.ADD_NUMBER, EquipmentSlot.HAND);
         meta.addAttributeModifier(Attribute.ATTACK_DAMAGE, modifier2);
-        meta.setDisplayName(convertLegacyToSection(this.getConfig().getString("dVolcanicAxe.name")));
+        meta.setDisplayName(convertLegacyToSection(this.config.getString("dVolcanicAxe.name")));
         meta.setCustomModelData(5002);
         item.setItemMeta(meta);
         NamespacedKey key = new NamespacedKey((Plugin)this, "fire_axe");
@@ -4133,28 +4146,28 @@ public class CombatWeaponryPlus extends JavaPlugin {
 
         ArrayList<String> lore = new ArrayList<String>();
 
-        lore.add(convertLegacyToSection(this.getConfig().getString("dVolcanicCleaver.line1")));
-        lore.add(convertLegacyToSection(this.getConfig().getString("dVolcanicCleaver.line2")));
-        lore.add(convertLegacyToSection(this.getConfig().getString("dVolcanicCleaver.line3")));
-        lore.add(convertLegacyToSection(this.getConfig().getString("dVolcanicCleaver.line4")));
-        lore.add(convertLegacyToSection(this.getConfig().getString("dVolcanicCleaver.line5")));
-        lore.add(convertLegacyToSection(this.getConfig().getString("dVolcanicCleaver.line6")));
-        lore.add(convertLegacyToSection(this.getConfig().getString("dVolcanicCleaver.line7")));
-        lore.add(convertLegacyToSection(this.getConfig().getString("dVolcanicCleaver.line8")));
-        lore.add(convertLegacyToSection(this.getConfig().getString("dVolcanicCleaver.line9")));
-        lore.add(convertLegacyToSection(this.getConfig().getString("dVolcanicCleaver.line10")));
-        lore.add(convertLegacyToSection(this.getConfig().getString("dVolcanicCleaver.line11")));
+        lore.add(convertLegacyToSection(this.config.getString("dVolcanicCleaver.line1")));
+        lore.add(convertLegacyToSection(this.config.getString("dVolcanicCleaver.line2")));
+        lore.add(convertLegacyToSection(this.config.getString("dVolcanicCleaver.line3")));
+        lore.add(convertLegacyToSection(this.config.getString("dVolcanicCleaver.line4")));
+        lore.add(convertLegacyToSection(this.config.getString("dVolcanicCleaver.line5")));
+        lore.add(convertLegacyToSection(this.config.getString("dVolcanicCleaver.line6")));
+        lore.add(convertLegacyToSection(this.config.getString("dVolcanicCleaver.line7")));
+        lore.add(convertLegacyToSection(this.config.getString("dVolcanicCleaver.line8")));
+        lore.add(convertLegacyToSection(this.config.getString("dVolcanicCleaver.line9")));
+        lore.add(convertLegacyToSection(this.config.getString("dVolcanicCleaver.line10")));
+        lore.add(convertLegacyToSection(this.config.getString("dVolcanicCleaver.line11")));
         meta.setLore(lore);
         meta.addItemFlags(new ItemFlag[]{ItemFlag.HIDE_ATTRIBUTES});
-        if (this.getConfig().getBoolean("UseCustomValues")) {
-            dmg = this.getConfig().getDouble("aVolcanicCleaver.damage") - 1.0;
-            spd = this.getConfig().getDouble("aVolcanicCleaver.speed") - 4.0;
+        if (this.config.getBoolean("UseCustomValues")) {
+            dmg = this.config.getDouble("aVolcanicCleaver.damage") - 1.0;
+            spd = this.config.getDouble("aVolcanicCleaver.speed") - 4.0;
         }
         AttributeModifier modifier = new AttributeModifier(UUID.randomUUID(), "Attack Speed", spd, AttributeModifier.Operation.ADD_NUMBER, EquipmentSlot.HAND);
         meta.addAttributeModifier(Attribute.ATTACK_SPEED, modifier);
         AttributeModifier modifier2 = new AttributeModifier(UUID.randomUUID(), "Attack Damage", dmg, AttributeModifier.Operation.ADD_NUMBER, EquipmentSlot.HAND);
         meta.addAttributeModifier(Attribute.ATTACK_DAMAGE, modifier2);
-        meta.setDisplayName(convertLegacyToSection(this.getConfig().getString("dVolcanicCleaver.name")));
+        meta.setDisplayName(convertLegacyToSection(this.config.getString("dVolcanicCleaver.name")));
         meta.setCustomModelData(5003);
         item.setItemMeta(meta);
         this.keys.add(key);
@@ -4244,15 +4257,20 @@ public class CombatWeaponryPlus extends JavaPlugin {
         return ChatColor.translateAlternateColorCodes('&', s);
     }
 
+    private String convertLegacyToSectionWithConfig(String s, String key, FileConfiguration config) {
+        var configKey = config.getString(key);
+        return ChatColor.translateAlternateColorCodes('&', configKey);
+    }
+    
+    private Component convertLegacyToComponent(String s) {
+        var miniMessageConverted = rh.convertToMiniMessage(s, '&');
+        return this.mm.deserialize(s);
+    }
+
     private ShapedRecipe makeRecipe(Material item, double dmg, double spd, NamespacedKey key, String configString) {
         var itemStack = new ItemStack(item);
         var meta = itemStack.getItemMeta();
         
-    }
-    
-    private Component convertLegacyToComponent(String s) {
-        LegacyComponentSerializer serializer = LegacyComponentSerializer.legacySection();
-        return serializer.deserialize(s);
     }
 
     private List<AttributeModifier> makeModifiers(List<NamespacedKey> keys, List<Double> values, List<EquipmentSlotGroup> groups) {
