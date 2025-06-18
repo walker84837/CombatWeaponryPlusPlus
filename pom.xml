@@ -73,9 +73,9 @@
         <url>https://repo.papermc.io/repository/maven-public/</url>
       </repository>
       <repository>
-	      	<id>codecove-repo</id>
-	      	<url>https://winlogon.ddns.net/api/packages/winlogon/maven</url>
-	    </repository>
+        <id>winlogon-repo</id>
+        <url>https://maven.winlogon.org/releases</url>
+      </repository>
     </repositories>
 
     <dependencies>
@@ -92,4 +92,3 @@
         </dependency>
     </dependencies>
 </project>
-
