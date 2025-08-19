@@ -66,7 +66,8 @@ import org.bukkit.util.RayTraceResult;
 import org.bukkit.util.Vector;
 
 public class CombatWeaponryPlus extends JavaPlugin {
-    NamespacedKey k = new NamespacedKey(this, "");
+    private static CombatWeaponryPlus plugin;
+    
     public List<NamespacedKey> keys = new ArrayList<NamespacedKey>();
     Random ran = new Random();
     FileConfiguration config;
@@ -80,7 +81,7 @@ public class CombatWeaponryPlus extends JavaPlugin {
     }
 
     public void onEnable() {
-        this.config = getConfig();
+        plugin = this;
 
         Cooldown.setupCooldown();
 
