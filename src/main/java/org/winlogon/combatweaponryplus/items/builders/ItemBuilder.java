@@ -1,6 +1,7 @@
 package org.winlogon.combatweaponryplus.items.builders;
 
 import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.serializer.legacy.LegacyComponentSerializer;
 import org.bukkit.Material;
 import org.bukkit.inventory.ItemFlag;
 import org.bukkit.inventory.ItemStack;
@@ -61,10 +62,10 @@ public class ItemBuilder {
         ItemMeta meta = item.getItemMeta();
 
         if (name != null) {
-            meta.displayName(Component.text(name));
+            meta.displayName(LegacyComponentSerializer.legacyAmpersand().deserialize(name));
         }
         if (lore != null) {
-            meta.lore(lore.stream().map(Component::text).collect(Collectors.toList()));
+            meta.lore(lore.stream().map(line -> LegacyComponentSerializer.legacyAmpersand().deserialize(line)).collect(Collectors.toList()));
         }
         if (customModelData != 0) {
             CustomModelDataComponent customModelDataComponent = meta.getCustomModelDataComponent();
