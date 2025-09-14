@@ -1,47 +1,34 @@
 package org.winlogon.combatweaponryplus;
 
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.Set;
 import java.util.List;
-import java.util.Optional;
 import java.util.Random;
 import java.util.UUID;
 
-import org.winlogon.combatweaponryplus.Cooldown;
-import org.winlogon.combatweaponryplus.Items;
+import org.winlogon.combatweaponryplus.util.ConfigHelper;
+import org.winlogon.combatweaponryplus.util.ItemModelData;
 import org.winlogon.retrohue.RetroHue;
 
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
 import net.kyori.adventure.text.format.TextDecoration;
 import net.kyori.adventure.text.minimessage.MiniMessage;
-import net.kyori.adventure.text.serializer.legacy.LegacyComponentSerializer;
 import net.md_5.bungee.api.ChatColor;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.NamespacedKey;
 import org.bukkit.Particle;
-import org.bukkit.Sound;
-import org.bukkit.World;
 import org.bukkit.attribute.Attribute;
 import org.bukkit.attribute.AttributeModifier;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.enchantments.Enchantment;
-import org.bukkit.entity.AbstractArrow;
-import org.bukkit.entity.ArmorStand;
 import org.bukkit.entity.Arrow;
-import org.bukkit.entity.EnderPearl;
 import org.bukkit.entity.Entity;
-import org.bukkit.entity.EntityCategory;
-import org.bukkit.entity.EntityType;
-import org.bukkit.entity.ExperienceOrb;
-import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
-import org.bukkit.entity.Trident;
 import org.bukkit.inventory.EquipmentSlot;
 import org.bukkit.inventory.EquipmentSlotGroup;
 import org.bukkit.inventory.ItemFlag;
@@ -49,20 +36,11 @@ import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.Recipe;
 import org.bukkit.inventory.RecipeChoice;
 import org.bukkit.inventory.ShapedRecipe;
-import org.bukkit.inventory.SmithingInventory;
 import org.bukkit.inventory.SmithingRecipe;
 import org.bukkit.inventory.SmithingTransformRecipe;
-import org.bukkit.inventory.meta.CrossbowMeta;
-import org.bukkit.inventory.meta.Damageable;
 import org.bukkit.inventory.meta.ItemMeta;
-import org.bukkit.metadata.FixedMetadataValue;
-import org.bukkit.metadata.MetadataValue;
-import org.bukkit.plugin.Plugin;
 import org.bukkit.plugin.java.JavaPlugin;
-import org.bukkit.potion.PotionEffect;
-import org.bukkit.potion.PotionEffectType;
 import org.bukkit.scheduler.BukkitRunnable;
-import org.bukkit.util.RayTraceResult;
 import org.bukkit.util.Vector;
 
 public class CombatWeaponryPlus extends JavaPlugin {
@@ -80,13 +58,21 @@ public class CombatWeaponryPlus extends JavaPlugin {
         return ran.nextInt(max);
     }
 
+    private static CombatWeaponryPlus instance;
+
+    public static CombatWeaponryPlus getInstance() {
+        return instance;
+    }
+
     @Override
     public void onEnable() {
-        // plugin = this;
+        instance = this;
 
-        new Cooldown();
+        var cooldown = new Cooldown();
 
-        var serverListeners = new Listeners(config, keys);
+        var configHelper = new ConfigHelper(getConfig());
+        var serverListeners = new Listeners(this, configHelper, cooldown);
+
         getServer().getPluginManager().registerEvents(serverListeners, this);
         saveDefaultConfig();
 
@@ -328,40 +314,47 @@ public class CombatWeaponryPlus extends JavaPlugin {
     }
 
     public ShapedRecipe getRecipe() {
-        NamespacedKey key = new NamespacedKey(this, "emerald_helmet");
+        var key = new NamespacedKey(this, "emerald_helmet");
         this.keys.add(key);
-        ShapedRecipe recipe = new ShapedRecipe(key, null);
+        var recipe = new ShapedRecipe(key, null);
         recipe.shape(new String[]{"EEE", "E E", "   "});
         recipe.setIngredient('E', Material.EMERALD);
         return recipe;
     }
 
     public ShapedRecipe getChestplateRecipe() {
-        ItemStack item = new ItemStack(Material.GOLDEN_CHESTPLATE);
-        ItemMeta meta = item.getItemMeta();
-        double hp = 1.0;
-        double def = 6.0;
-        if (config.getBoolean("UseCustomValues")) {
-            hp = config.getDouble("aEmeraldChestplate.BonusHealth");
-            def = config.getDouble("aEmeraldChestplate.Armor");
-        }
-        var k = new NamespacedKey("", "");
-        var modifier = new AttributeModifier(k, hp, AttributeModifier.Operation.ADD_NUMBER, EquipmentSlotGroup.CHEST);
-        meta.addAttributeModifier(Attribute.MAX_HEALTH, modifier);
-        var modifier2 = new AttributeModifier(k, def, AttributeModifier.Operation.ADD_NUMBER, EquipmentSlotGroup.CHEST);
-        meta.addAttributeModifier(Attribute.ARMOR, modifier2);
-        meta.displayName(Component.text("Emerald Chestplate", NamedTextColor.DARK_GREEN));
-        if (config.getBoolean("EnchantmentsOnEmeraldArmor")) {
-            int num = config.getInt("EmeraldArmorEnchantLevels.Unbreaking");
-            int num2 = config.getInt("EmeraldArmorEnchantLevels.Mending");
-            meta.addEnchant(Enchantment.UNBREAKING, num, true);
-            meta.addEnchant(Enchantment.MENDING, num2, true);
-        }
-        meta.setCustomModelData(1000001);
-        item.setItemMeta(meta);
-        NamespacedKey key = new NamespacedKey(this, "emerald_chestplate");
+        var item = new ItemStack(Material.GOLDEN_CHESTPLATE);
+
+        item.editMeta(meta -> {
+            double hp = 1.0;
+            double def = 6.0;
+            if (config.getBoolean("UseCustomValues")) {
+                hp = config.getDouble("aEmeraldChestplate.BonusHealth");
+                def = config.getDouble("aEmeraldChestplate.Armor");
+            }
+            var k = new NamespacedKey("", "");
+
+            meta.addAttributeModifier(Attribute.MAX_HEALTH, new AttributeModifier(
+                k, hp, AttributeModifier.Operation.ADD_NUMBER, EquipmentSlotGroup.CHEST
+            ));
+            meta.addAttributeModifier(Attribute.ARMOR, new AttributeModifier(
+                k, def, AttributeModifier.Operation.ADD_NUMBER, EquipmentSlotGroup.CHEST
+            ));
+            meta.displayName(Component.text("Emerald Chestplate", NamedTextColor.DARK_GREEN));
+
+            if (config.getBoolean("EnchantmentsOnEmeraldArmor")) {
+                int num = config.getInt("EmeraldArmorEnchantLevels.Unbreaking");
+                int num2 = config.getInt("EmeraldArmorEnchantLevels.Mending");
+                meta.addEnchant(Enchantment.UNBREAKING, num, true);
+                meta.addEnchant(Enchantment.MENDING, num2, true);
+            }
+
+            ItemModelData.set(meta, 1000001);
+        });
+
+        var key = new NamespacedKey(this, "emerald_chestplate");
         this.keys.add(key);
-        ShapedRecipe recipe = new ShapedRecipe(key, item);
+        var recipe = new ShapedRecipe(key, item);
         recipe.shape(new String[]{"E E", "EEE", "EEE"});
         recipe.setIngredient('E', Material.EMERALD);
         return recipe;
@@ -980,7 +973,6 @@ public class CombatWeaponryPlus extends JavaPlugin {
         if (config.getBoolean("EnchantsOnEmeraldGear")) {
             int num = config.getInt("EmeraldGearEnchantLevels.Unbreaking");
             int num2 = config.getInt("EmeraldGearEnchantLevels.Mending");
-            // TODO: change this using https://jd.papermc.io/paper/1.21.5/org/bukkit/entity/Damageable.html
             meta.addEnchant(Enchantment.UNBREAKING, num, true);
             meta.addEnchant(Enchantment.MENDING, num2, true);
         }
@@ -1117,8 +1109,10 @@ public class CombatWeaponryPlus extends JavaPlugin {
         ShapedRecipe recipe = new ShapedRecipe(key, item);
         recipe.shape(new String[]{"NNN", "  S", "  S"});
         recipe.setIngredient('S', Material.STICK);
-        String n = config.getString("NetheriteIngots");
-        if (n) {
+
+        var useNetheriteIngots = config.getBoolean("NetheriteIngots");
+
+        if (useNetheriteIngots) {
             recipe.setIngredient('N', Material.NETHERITE_INGOT);
         } else {
             recipe.setIngredient('N', Material.NETHERITE_SCRAP);
@@ -3485,11 +3479,11 @@ public class CombatWeaponryPlus extends JavaPlugin {
         meta2.setDisplayName(ChatColor.YELLOW + "Wither Bone");
         meta2.setCustomModelData(2222222);
         wbone.setItemMeta(meta2);
-        RecipeChoice.ExactChoice wibone = new RecipeChoice.ExactChoice(Items.witherBone(config));
+        // RecipeChoice.ExactChoice wibone = new RecipeChoice.ExactChoice(Items.witherBone(config));
         ShapedRecipe recipe = new ShapedRecipe(key, item);
         recipe.shape(new String[]{"N N", "B B", "BBB"});
         recipe.setIngredient('N', Material.NETHERITE_INGOT);
-        recipe.setIngredient('B', (RecipeChoice)wibone);
+        // recipe.setIngredient('B', (RecipeChoice)wibone);
         return recipe;
     }
 
@@ -3518,11 +3512,11 @@ public class CombatWeaponryPlus extends JavaPlugin {
         meta2.setDisplayName(ChatColor.YELLOW + "Wither Bone");
         meta2.setCustomModelData(2222222);
         wbone.setItemMeta(meta2);
-        RecipeChoice.ExactChoice wibone = new RecipeChoice.ExactChoice(Items.witherBone(config));
+        // RecipeChoice.ExactChoice wibone = new RecipeChoice.ExactChoice(Items.witherBone(config));
         ShapedRecipe recipe = new ShapedRecipe(key, item);
         recipe.shape(new String[]{"BNB", "B B", "B B"});
         recipe.setIngredient('N', Material.NETHERITE_INGOT);
-        recipe.setIngredient('B', (RecipeChoice)wibone);
+        // recipe.setIngredient('B', (RecipeChoice)wibone);
         return recipe;
     }
 
@@ -3559,11 +3553,11 @@ public class CombatWeaponryPlus extends JavaPlugin {
         meta2.setDisplayName(ChatColor.YELLOW + "Wither Bone");
         meta2.setCustomModelData(2222222);
         wbone.setItemMeta(meta2);
-        RecipeChoice.ExactChoice wibone = new RecipeChoice.ExactChoice(Items.witherBone(config));
+        // RecipeChoice.ExactChoice wibone = new RecipeChoice.ExactChoice(Items.witherBone(config));
         ShapedRecipe recipe = new ShapedRecipe(key, item);
         recipe.shape(new String[]{"   ", "BIB", "N N"});
         recipe.setIngredient('N', Material.NETHERITE_INGOT);
-        recipe.setIngredient('B', (RecipeChoice)wibone);
+        // recipe.setIngredient('B', (RecipeChoice)wibone);
         return recipe;
     }
 

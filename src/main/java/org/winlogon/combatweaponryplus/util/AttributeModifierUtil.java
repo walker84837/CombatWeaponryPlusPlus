@@ -11,7 +11,7 @@ import java.util.UUID;
 public class AttributeModifierUtil {
 
     private static NamespacedKey createNamespacedKey(String key) {
-        return new NamespacedKey(CombatWeaponryPlus.getPlugin(), key);
+        return new NamespacedKey(CombatWeaponryPlus.getInstance(), key);
     }
 
     public static AttributeModifier createAttributeModifier(Attribute attribute, double amount, AttributeModifier.Operation operation, EquipmentSlotGroup slotGroup) {

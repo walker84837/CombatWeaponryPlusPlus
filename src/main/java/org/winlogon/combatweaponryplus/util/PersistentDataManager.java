@@ -10,7 +10,7 @@ import org.winlogon.combatweaponryplus.CombatWeaponryPlus;
 public class PersistentDataManager {
 
     private static NamespacedKey createNamespacedKey(String key) {
-        return new NamespacedKey(CombatWeaponryPlus.getPlugin(), key);
+        return new NamespacedKey(CombatWeaponryPlus.getInstance(), key);
     }
 
     public static ItemStack addPersistentData(ItemStack item, String key, String value) {

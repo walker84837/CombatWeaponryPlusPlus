@@ -1,22 +1,33 @@
 package org.winlogon.combatweaponryplus;
 
-import java.util.HashMap;
-import java.util.UUID;
-import java.util.Optional;
 import org.bukkit.entity.Player;
 
+import java.util.Optional;
+import java.util.UUID;
+import java.util.concurrent.ConcurrentHashMap;
+
 public class Cooldown {
-    private HashMap<UUID, Double> cooldowns;
+    private ConcurrentHashMap<UUID, Double> cooldowns;
 
     public Cooldown() {
-        this.cooldowns = new HashMap<UUID, Double>();
+        this.cooldowns = new ConcurrentHashMap<UUID, Double>();
     }
 
+    /**
+     * Sets the cooldown of the player
+     * @param player The player to set the cooldown of
+     * @param seconds The amount of seconds to set the cooldown to
+     */
     public void setCooldown(Player player, int seconds) {
         double delay = System.currentTimeMillis() + (long)seconds * 1000L;
         cooldowns.put(player.getUniqueId(), delay);
     }
 
+    /**
+     * Gets the cooldown of the player, if they have one
+     * @param player The player to get the cooldown of
+     * @return The cooldown of the player, if there is one
+     */
     public Optional<Integer> getCooldown(Player player) {
         var uuid = player.getUniqueId();
         if (!cooldowns.containsKey(uuid)) {
@@ -32,6 +43,12 @@ public class Cooldown {
         }
     }
 
+    /**
+     * Checks if the player has a cooldown, based on the current time.
+     *
+     * @param player The player to check.
+     * @return true if the player has a cooldown, false otherwise.
+     */
     public boolean checkCooldown(Player player) {
         return !cooldowns.containsKey(player.getUniqueId()) || cooldowns.get(player.getUniqueId()) <= (double)System.currentTimeMillis();
     }
