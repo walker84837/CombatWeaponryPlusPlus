@@ -6,7 +6,6 @@ import org.bukkit.attribute.AttributeModifier;
 import org.bukkit.inventory.EquipmentSlotGroup;
 
 public class WeaponBuilder extends ItemBuilder {
-
     public WeaponBuilder(Material material) {
         super(material);
     }

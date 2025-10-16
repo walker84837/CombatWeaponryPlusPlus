@@ -2,7 +2,7 @@ package org.winlogon.combatweaponryplus.util;
 
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.minimessage.MiniMessage;
-import net.md_5.bungee.api.ChatColor;
+import org.bukkit.ChatColor;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.winlogon.retrohue.RetroHue;
 
@@ -21,6 +21,7 @@ public class TextUtil {
 
     public static String convertLegacyToSection(String s) {
         if (s == null) return null;
+        // TODO: find better alternative and optimized alernative
         return ChatColor.translateAlternateColorCodes('&', s);
     }
 

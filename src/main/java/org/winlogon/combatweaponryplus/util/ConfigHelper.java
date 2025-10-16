@@ -15,7 +15,7 @@ public class ConfigHelper {
     }
 
     public boolean areEnabled(String... paths) {
-        for (String path : paths) {
+        for (var path : paths) {
             if (!config.getBoolean(path, false)) {
                 return false;
             }

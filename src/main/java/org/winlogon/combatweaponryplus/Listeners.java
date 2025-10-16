@@ -633,8 +633,7 @@ class Listeners implements Listener {
 
     @EventHandler
     public void onCustomElytraDamage(EntityDamageEvent event) {
-        if (!(event.getEntity() instanceof Player)) return;
-        Player player = (Player) event.getEntity();
+        if (!(event.getEntity() instanceof Player player)) return;
         if (player.isDead()) return;
 
         ItemStack chestplate = player.getInventory().getChestplate();
