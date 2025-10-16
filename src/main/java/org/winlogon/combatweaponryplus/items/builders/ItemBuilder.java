@@ -9,6 +9,10 @@ import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 import org.winlogon.combatweaponryplus.util.AttributeModifierUtil;
 
+import net.kyori.adventure.text.Component;
+
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 public class ItemBuilder {
@@ -21,17 +25,26 @@ public class ItemBuilder {
     }
 
     public ItemBuilder name(String name) {
-        meta.setDisplayName(name);
+        meta.displayName(Component.text(name));
         return this;
+    }
+
+    public static List<Component> convertLoreToComponents(Iterable<String> lore) {
+        List<Component> loreList = new ArrayList<>();
+        for (var line : lore) {
+            loreList.add(Component.text(line));
+        }
+        return loreList;
     }
 
     public ItemBuilder lore(String... lore) {
-        meta.setLore(List.of(lore));
+        meta.lore(convertLoreToComponents(Arrays.asList(lore)));
         return this;
     }
 
+
     public ItemBuilder lore(List<String> lore) {
-        meta.setLore(lore);
+        meta.lore(convertLoreToComponents(lore));
         return this;
     }
 
