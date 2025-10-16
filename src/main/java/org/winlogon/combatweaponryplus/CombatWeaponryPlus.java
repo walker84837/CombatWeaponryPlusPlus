@@ -10,6 +10,7 @@ import java.util.UUID;
 
 import org.winlogon.combatweaponryplus.util.ConfigHelper;
 import org.winlogon.combatweaponryplus.util.ItemModelData;
+import org.winlogon.combatweaponryplus.util.AttributeModifierUtil;
 import org.winlogon.retrohue.RetroHue;
 
 import net.kyori.adventure.text.Component;
@@ -44,18 +45,16 @@ import org.bukkit.scheduler.BukkitRunnable;
 import org.bukkit.util.Vector;
 
 public class CombatWeaponryPlus extends JavaPlugin {
-    private NamespacedKey k = new NamespacedKey("", "");
-    
     public List<NamespacedKey> keys = new ArrayList<NamespacedKey>();
-    Random ran = new Random();
-    FileConfiguration config;
+    private Random rand = new Random();
+    private FileConfiguration config;
     
-    MiniMessage mm = MiniMessage.miniMessage();
+    private MiniMessage mm = MiniMessage.miniMessage();
     private RetroHue rh = new RetroHue(mm);
-    Set<Recipe> recipes = new HashSet<Recipe>();
+    private Set<Recipe> recipes = new HashSet<Recipe>();
 
     public int getRandomInt(int max) {
-        return ran.nextInt(max);
+        return rand.nextInt(max);
     }
 
     private static CombatWeaponryPlus instance;
@@ -332,13 +331,11 @@ public class CombatWeaponryPlus extends JavaPlugin {
                 hp = config.getDouble("aEmeraldChestplate.BonusHealth");
                 def = config.getDouble("aEmeraldChestplate.Armor");
             }
-            var k = new NamespacedKey("", "");
-
-            meta.addAttributeModifier(Attribute.MAX_HEALTH, new AttributeModifier(
-                k, hp, AttributeModifier.Operation.ADD_NUMBER, EquipmentSlotGroup.CHEST
+            meta.addAttributeModifier(Attribute.MAX_HEALTH, AttributeModifierUtil.createAttributeModifier(
+                Attribute.MAX_HEALTH, hp, AttributeModifier.Operation.ADD_NUMBER, EquipmentSlotGroup.CHEST
             ));
-            meta.addAttributeModifier(Attribute.ARMOR, new AttributeModifier(
-                k, def, AttributeModifier.Operation.ADD_NUMBER, EquipmentSlotGroup.CHEST
+            meta.addAttributeModifier(Attribute.ARMOR, AttributeModifierUtil.createAttributeModifier(
+                Attribute.ARMOR, def, AttributeModifier.Operation.ADD_NUMBER, EquipmentSlotGroup.CHEST
             ));
             meta.displayName(Component.text("Emerald Chestplate", NamedTextColor.DARK_GREEN));
 
@@ -361,7 +358,7 @@ public class CombatWeaponryPlus extends JavaPlugin {
     }
 
     public ShapedRecipe getLeggingsRecipe() {
-        ItemStack item = new ItemStack(Material.GOLDEN_LEGGINGS);
+        var item = new ItemStack(Material.GOLDEN_LEGGINGS);
         ItemMeta meta = item.getItemMeta();
         double hp = 1.0;
         double def = 5.0;
@@ -369,9 +366,9 @@ public class CombatWeaponryPlus extends JavaPlugin {
             hp = config.getDouble("aEmeraldLeggings.BonusHealth");
             def = config.getDouble("aEmeraldLeggings.Armor");
         }
-        AttributeModifier modifier = new AttributeModifier(k, hp, AttributeModifier.Operation.ADD_NUMBER, EquipmentSlotGroup.LEGS);
+        var modifier = AttributeModifierUtil.createAttributeModifier(Attribute.MAX_HEALTH, hp, AttributeModifier.Operation.ADD_NUMBER, EquipmentSlotGroup.LEGS);
         meta.addAttributeModifier(Attribute.MAX_HEALTH, modifier);
-        AttributeModifier modifier2 = new AttributeModifier(k, def, AttributeModifier.Operation.ADD_NUMBER, EquipmentSlotGroup.LEGS);
+        var modifier2 = AttributeModifierUtil.createAttributeModifier(Attribute.ARMOR, def, AttributeModifier.Operation.ADD_NUMBER, EquipmentSlotGroup.LEGS);
         meta.addAttributeModifier(Attribute.ARMOR, modifier2);
         meta.displayName(Component.text("Emerald Leggings", NamedTextColor.DARK_GREEN));
         if (config.getBoolean("EnchantmentsOnEmeraldArmor")) {
@@ -399,9 +396,9 @@ public class CombatWeaponryPlus extends JavaPlugin {
             hp = config.getDouble("aEmeraldBoots.BonusHealth");
             def = config.getDouble("aEmeraldBoots.Armor");
         }
-        AttributeModifier modifier = new AttributeModifier(k, hp, AttributeModifier.Operation.ADD_NUMBER, EquipmentSlotGroup.FEET);
+        AttributeModifier modifier = AttributeModifierUtil.createAttributeModifier(Attribute.MAX_HEALTH, hp, AttributeModifier.Operation.ADD_NUMBER, EquipmentSlotGroup.FEET);
         meta.addAttributeModifier(Attribute.MAX_HEALTH, modifier);
-        AttributeModifier modifier2 = new AttributeModifier(k, def, AttributeModifier.Operation.ADD_NUMBER, EquipmentSlotGroup.FEET);
+        AttributeModifier modifier2 = AttributeModifierUtil.createAttributeModifier(Attribute.ARMOR, def, AttributeModifier.Operation.ADD_NUMBER, EquipmentSlotGroup.FEET);
         meta.addAttributeModifier(Attribute.ARMOR, modifier2);
         meta.displayName(convertLegacyToComponent(ChatColor.DARK_GREEN + "Emerald Boots"));
         if (config.getBoolean("EnchantmentsOnEmeraldArmor")) {
@@ -450,11 +447,9 @@ public class CombatWeaponryPlus extends JavaPlugin {
             dmg = config.getDouble("aEmeraldSword.damage") - 1.0;
             spd = config.getDouble("aEmeraldSword.speed") - 4.0;
         }
-        var k = new NamespacedKey("", "");
-        // attack damage
-        AttributeModifier modifier = new AttributeModifier(k, spd, AttributeModifier.Operation.ADD_NUMBER, EquipmentSlotGroup.HAND);
+        AttributeModifier modifier = AttributeModifierUtil.createAttributeModifier(Attribute.ATTACK_SPEED, spd, AttributeModifier.Operation.ADD_NUMBER, EquipmentSlotGroup.HAND);
         meta.addAttributeModifier(Attribute.ATTACK_SPEED, modifier);
-        AttributeModifier modifier2 = new AttributeModifier(k, dmg, AttributeModifier.Operation.ADD_NUMBER, EquipmentSlotGroup.HAND);
+        AttributeModifier modifier2 = AttributeModifierUtil.createAttributeModifier(Attribute.ATTACK_DAMAGE, dmg, AttributeModifier.Operation.ADD_NUMBER, EquipmentSlotGroup.HAND);
         meta.addAttributeModifier(Attribute.ATTACK_DAMAGE, modifier2);
         ArrayList<String> lore = new ArrayList<String>();
         lore.add("");
@@ -4259,18 +4254,9 @@ public class CombatWeaponryPlus extends JavaPlugin {
     //     return recipe;
     // }
 
-    private String convertLegacyToSection(String s) {
-        return ChatColor.translateAlternateColorCodes('&', s);
-    }
-
-    private String convertLegacyToSectionWithConfig(String key, FileConfiguration config) {
-        var configKey = config.getString(key);
-        return ChatColor.translateAlternateColorCodes('&', configKey);
-    }
-    
     private Component convertLegacyToComponent(String s) {
         var miniMessageConverted = rh.convertToMiniMessage(s, '&');
-        return this.mm.deserialize(s);
+        return this.mm.deserialize(miniMessageConverted);
     }
 
     private ShapedRecipe makeRecipe(Material item, double dmg, double spd, NamespacedKey key, String configString) {

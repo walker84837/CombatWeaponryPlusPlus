@@ -14,6 +14,10 @@ public class AttributeModifierUtil {
         return new NamespacedKey(CombatWeaponryPlus.getInstance(), key);
     }
 
+    public static NamespacedKey nilKey() {
+        return new NamespacedKey(CombatWeaponryPlus.getInstance(), "");
+    }
+
     public static AttributeModifier createAttributeModifier(Attribute attribute, double amount, AttributeModifier.Operation operation, EquipmentSlotGroup slotGroup) {
         return new AttributeModifier(createNamespacedKey(attribute.name().toLowerCase() + "_" + UUID.randomUUID().toString()), amount, operation, slotGroup);
     }
