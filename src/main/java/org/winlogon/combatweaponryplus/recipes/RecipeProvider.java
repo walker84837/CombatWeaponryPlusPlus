@@ -215,8 +215,8 @@ public class RecipeProvider {
         ItemStack item = new ItemBuilder(Material.GOLDEN_HELMET)
                 .name("Emerald Helmet")
                 .customModelData(1000001)
-                .attribute(Attribute.GENERIC_MAX_HEALTH, hp, AttributeModifier.Operation.ADD_NUMBER, EquipmentSlotGroup.HEAD)
-                .attribute(Attribute.GENERIC_ARMOR, def, AttributeModifier.Operation.ADD_NUMBER, EquipmentSlotGroup.HEAD)
+                .attribute(Attribute.MAX_HEALTH, hp, AttributeModifier.Operation.ADD_NUMBER, EquipmentSlotGroup.HEAD)
+                .attribute(Attribute.ARMOR, def, AttributeModifier.Operation.ADD_NUMBER, EquipmentSlotGroup.HEAD)
                 .build();
         return createShapedRecipe("emerald_helmet", item, new String[]{"EEE", "E E", "   "}, 'E', Material.EMERALD);
     }
@@ -228,8 +228,8 @@ public class RecipeProvider {
         ItemBuilder builder = new ItemBuilder(Material.GOLDEN_CHESTPLATE)
                 .name("Emerald Chestplate")
                 .customModelData(1000001)
-                .attribute(Attribute.GENERIC_MAX_HEALTH, hp, AttributeModifier.Operation.ADD_NUMBER, EquipmentSlotGroup.CHEST)
-                .attribute(Attribute.GENERIC_ARMOR, def, AttributeModifier.Operation.ADD_NUMBER, EquipmentSlotGroup.CHEST);
+                .attribute(Attribute.MAX_HEALTH, hp, AttributeModifier.Operation.ADD_NUMBER, EquipmentSlotGroup.CHEST)
+                .attribute(Attribute.ARMOR, def, AttributeModifier.Operation.ADD_NUMBER, EquipmentSlotGroup.CHEST);
 
         if (config.isEnabled("EnchantmentsOnEmeraldArmor")) {
             int unbreaking = config.getInt("EmeraldArmorEnchantLevels.Unbreaking", 0);
@@ -247,8 +247,8 @@ public class RecipeProvider {
         ItemBuilder builder = new ItemBuilder(Material.GOLDEN_LEGGINGS)
                 .name("Emerald Leggings")
                 .customModelData(1000001)
-                .attribute(Attribute.GENERIC_MAX_HEALTH, hp, AttributeModifier.Operation.ADD_NUMBER, EquipmentSlotGroup.LEGS)
-                .attribute(Attribute.GENERIC_ARMOR, def, AttributeModifier.Operation.ADD_NUMBER, EquipmentSlotGroup.LEGS);
+                .attribute(Attribute.MAX_HEALTH, hp, AttributeModifier.Operation.ADD_NUMBER, EquipmentSlotGroup.LEGS)
+                .attribute(Attribute.ARMOR, def, AttributeModifier.Operation.ADD_NUMBER, EquipmentSlotGroup.LEGS);
 
         if (config.isEnabled("EnchantmentsOnEmeraldArmor")) {
             int unbreaking = config.getInt("EmeraldArmorEnchantLevels.Unbreaking", 0);
@@ -266,8 +266,8 @@ public class RecipeProvider {
         ItemBuilder builder = new ItemBuilder(Material.GOLDEN_BOOTS)
                 .name("Emerald Boots")
                 .customModelData(1000001)
-                .attribute(Attribute.GENERIC_MAX_HEALTH, hp, AttributeModifier.Operation.ADD_NUMBER, EquipmentSlotGroup.FEET)
-                .attribute(Attribute.GENERIC_ARMOR, def, AttributeModifier.Operation.ADD_NUMBER, EquipmentSlotGroup.FEET);
+                .attribute(Attribute.MAX_HEALTH, hp, AttributeModifier.Operation.ADD_NUMBER, EquipmentSlotGroup.FEET)
+                .attribute(Attribute.ARMOR, def, AttributeModifier.Operation.ADD_NUMBER, EquipmentSlotGroup.FEET);
 
         if (config.isEnabled("EnchantmentsOnEmeraldArmor")) {
             int unbreaking = config.getInt("EmeraldArmorEnchantLevels.Unbreaking", 0);
@@ -448,10 +448,10 @@ public class RecipeProvider {
                 .name(config.getString("dHeavySwordBow.name", "Heavy Sword Bow"))
                 .lore(lore)
                 .customModelData(1000002)
-                .attribute(Attribute.GENERIC_MOVEMENT_SPEED, mspd, AttributeModifier.Operation.ADD_NUMBER, EquipmentSlotGroup.HAND)
-                .attribute(Attribute.GENERIC_MOVEMENT_SPEED, omspd, AttributeModifier.Operation.ADD_NUMBER, EquipmentSlotGroup.OFFHAND)
-                .attribute(Attribute.GENERIC_KNOCKBACK_RESISTANCE, kbr, AttributeModifier.Operation.ADD_NUMBER, EquipmentSlotGroup.HAND)
-                .attribute(Attribute.GENERIC_KNOCKBACK_RESISTANCE, okbr, AttributeModifier.Operation.ADD_NUMBER, EquipmentSlotGroup.OFFHAND);
+                .attribute(Attribute.MOVEMENT_SPEED, mspd, AttributeModifier.Operation.ADD_NUMBER, EquipmentSlotGroup.HAND)
+                .attribute(Attribute.MOVEMENT_SPEED, omspd, AttributeModifier.Operation.ADD_NUMBER, EquipmentSlotGroup.OFFHAND)
+                .attribute(Attribute.KNOCKBACK_RESISTANCE, kbr, AttributeModifier.Operation.ADD_NUMBER, EquipmentSlotGroup.HAND)
+                .attribute(Attribute.KNOCKBACK_RESISTANCE, okbr, AttributeModifier.Operation.ADD_NUMBER, EquipmentSlotGroup.OFFHAND);
 
         if (config.isEnabled("EnchantsHeavySwordBow")) {
             int power = config.getInt("HSbowEnchantLevels.Power", 0);
@@ -497,7 +497,7 @@ public class RecipeProvider {
         ItemBuilder builder = new ItemBuilder(Material.IRON_HELMET)
                 .name("Plated Chainmail Helmet")
                 .unbreakable(true)
-                .attribute(Attribute.GENERIC_ARMOR, def, AttributeModifier.Operation.ADD_NUMBER, EquipmentSlotGroup.HEAD);
+                .attribute(Attribute.ARMOR, def, AttributeModifier.Operation.ADD_NUMBER, EquipmentSlotGroup.HEAD);
 
         if (config.isEnabled("EnchantsPlatedChainmail")) {
             int unbreaking = config.getInt("PChainEnchantLevels.Unbreaking", 0);
@@ -511,7 +511,7 @@ public class RecipeProvider {
         ItemBuilder builder = new ItemBuilder(Material.IRON_CHESTPLATE)
                 .name("Plated Chainmail Chestplate")
                 .unbreakable(true)
-                .attribute(Attribute.GENERIC_ARMOR, def, AttributeModifier.Operation.ADD_NUMBER, EquipmentSlotGroup.CHEST);
+                .attribute(Attribute.ARMOR, def, AttributeModifier.Operation.ADD_NUMBER, EquipmentSlotGroup.CHEST);
 
         if (config.isEnabled("EnchantsPlatedChainmail")) {
             int unbreaking = config.getInt("PChainEnchantLevels.Unbreaking", 0);
@@ -525,7 +525,7 @@ public class RecipeProvider {
         ItemBuilder builder = new ItemBuilder(Material.IRON_LEGGINGS)
                 .name("Plated Chainmail Leggings")
                 .unbreakable(true)
-                .attribute(Attribute.GENERIC_ARMOR, def, AttributeModifier.Operation.ADD_NUMBER, EquipmentSlotGroup.LEGS);
+                .attribute(Attribute.ARMOR, def, AttributeModifier.Operation.ADD_NUMBER, EquipmentSlotGroup.LEGS);
 
         if (config.isEnabled("EnchantsPlatedChainmail")) {
             int unbreaking = config.getInt("PChainEnchantLevels.Unbreaking", 0);
@@ -539,7 +539,7 @@ public class RecipeProvider {
         ItemBuilder builder = new ItemBuilder(Material.IRON_BOOTS)
                 .name("Plated Chainmail Boots")
                 .unbreakable(true)
-                .attribute(Attribute.GENERIC_ARMOR, def, AttributeModifier.Operation.ADD_NUMBER, EquipmentSlotGroup.FEET);
+                .attribute(Attribute.ARMOR, def, AttributeModifier.Operation.ADD_NUMBER, EquipmentSlotGroup.FEET);
 
         if (config.isEnabled("EnchantsPlatedChainmail")) {
             int unbreaking = config.getInt("PChainEnchantLevels.Unbreaking", 0);
@@ -566,8 +566,8 @@ public class RecipeProvider {
                 .name("Emerald Charm")
                 .lore("Grants Luck")
                 .customModelData(1000001)
-                .attribute(Attribute.GENERIC_MAX_HEALTH, health, AttributeModifier.Operation.ADD_NUMBER, EquipmentSlotGroup.OFFHAND)
-                .attribute(Attribute.GENERIC_ARMOR, armor, AttributeModifier.Operation.ADD_NUMBER, EquipmentSlotGroup.OFFHAND)
+                .attribute(Attribute.MAX_HEALTH, health, AttributeModifier.Operation.ADD_NUMBER, EquipmentSlotGroup.OFFHAND)
+                .attribute(Attribute.ARMOR, armor, AttributeModifier.Operation.ADD_NUMBER, EquipmentSlotGroup.OFFHAND)
                 .build();
         return createShapedRecipe("emerald_charm", item, new String[]{"EEE", "E E", "EEE"}, 'E', Material.EMERALD);
     }
@@ -580,8 +580,8 @@ public class RecipeProvider {
                 .name("Blaze Charm")
                 .lore("Grants Fire Resistance")
                 .customModelData(1000001)
-                .attribute(Attribute.GENERIC_ATTACK_DAMAGE, damage, AttributeModifier.Operation.ADD_NUMBER, EquipmentSlotGroup.OFFHAND)
-                .attribute(Attribute.GENERIC_MAX_HEALTH, health, AttributeModifier.Operation.ADD_NUMBER, EquipmentSlotGroup.OFFHAND)
+                .attribute(Attribute.ATTACK_DAMAGE, damage, AttributeModifier.Operation.ADD_NUMBER, EquipmentSlotGroup.OFFHAND)
+                .attribute(Attribute.MAX_HEALTH, health, AttributeModifier.Operation.ADD_NUMBER, EquipmentSlotGroup.OFFHAND)
                 .build();
         return createShapedRecipe("blaze_charm", item, new String[]{"BBB", "B B", "BBB"}, 'B', Material.BLAZE_ROD);
     }
@@ -594,8 +594,8 @@ public class RecipeProvider {
                 .name("Gold Charm")
                 .lore("Grants Haste")
                 .customModelData(1000001)
-                .attribute(Attribute.GENERIC_ATTACK_SPEED, attackSpeed, AttributeModifier.Operation.MULTIPLY_SCALAR_1, EquipmentSlotGroup.OFFHAND)
-                .attribute(Attribute.GENERIC_MOVEMENT_SPEED, moveSpeed, AttributeModifier.Operation.MULTIPLY_SCALAR_1, EquipmentSlotGroup.OFFHAND)
+                .attribute(Attribute.ATTACK_SPEED, attackSpeed, AttributeModifier.Operation.MULTIPLY_SCALAR_1, EquipmentSlotGroup.OFFHAND)
+                .attribute(Attribute.MOVEMENT_SPEED, moveSpeed, AttributeModifier.Operation.MULTIPLY_SCALAR_1, EquipmentSlotGroup.OFFHAND)
                 .build();
         return createShapedRecipe("gold_charm", item, new String[]{"GGG", "G G", "GGG"}, 'G', Material.GOLD_INGOT);
     }
@@ -1608,10 +1608,10 @@ public class RecipeProvider {
         ItemStack item = new ItemBuilder(Material.NETHERITE_HELMET)
                 .name("Prismarine Helmet")
                 .customModelData(1220001)
-                .attribute(Attribute.GENERIC_ARMOR, arm, AttributeModifier.Operation.ADD_NUMBER, EquipmentSlotGroup.HEAD)
-                .attribute(Attribute.GENERIC_ARMOR_TOUGHNESS, armt, AttributeModifier.Operation.ADD_NUMBER, EquipmentSlotGroup.HEAD)
-                .attribute(Attribute.GENERIC_KNOCKBACK_RESISTANCE, kbr, AttributeModifier.Operation.ADD_NUMBER, EquipmentSlotGroup.HEAD)
-                .attribute(Attribute.GENERIC_MAX_HEALTH, hp, AttributeModifier.Operation.ADD_NUMBER, EquipmentSlotGroup.HEAD)
+                .attribute(Attribute.ARMOR, arm, AttributeModifier.Operation.ADD_NUMBER, EquipmentSlotGroup.HEAD)
+                .attribute(Attribute.ARMOR_TOUGHNESS, armt, AttributeModifier.Operation.ADD_NUMBER, EquipmentSlotGroup.HEAD)
+                .attribute(Attribute.KNOCKBACK_RESISTANCE, kbr, AttributeModifier.Operation.ADD_NUMBER, EquipmentSlotGroup.HEAD)
+                .attribute(Attribute.MAX_HEALTH, hp, AttributeModifier.Operation.ADD_NUMBER, EquipmentSlotGroup.HEAD)
                 .build();
         return createShapedRecipe("prismarine_helmet", item, new String[]{"PPP", "P P", "   "}, 'P', Material.PRISMARINE_SHARD);
     }
@@ -1625,10 +1625,10 @@ public class RecipeProvider {
         ItemStack item = new ItemBuilder(Material.NETHERITE_CHESTPLATE)
                 .name("Prismarine Chestplate")
                 .customModelData(1220002)
-                .attribute(Attribute.GENERIC_ARMOR, arm, AttributeModifier.Operation.ADD_NUMBER, EquipmentSlotGroup.CHEST)
-                .attribute(Attribute.GENERIC_ARMOR_TOUGHNESS, armt, AttributeModifier.Operation.ADD_NUMBER, EquipmentSlotGroup.CHEST)
-                .attribute(Attribute.GENERIC_KNOCKBACK_RESISTANCE, kbr, AttributeModifier.Operation.ADD_NUMBER, EquipmentSlotGroup.CHEST)
-                .attribute(Attribute.GENERIC_MAX_HEALTH, hp, AttributeModifier.Operation.ADD_NUMBER, EquipmentSlotGroup.CHEST)
+                .attribute(Attribute.ARMOR, arm, AttributeModifier.Operation.ADD_NUMBER, EquipmentSlotGroup.CHEST)
+                .attribute(Attribute.ARMOR_TOUGHNESS, armt, AttributeModifier.Operation.ADD_NUMBER, EquipmentSlotGroup.CHEST)
+                .attribute(Attribute.KNOCKBACK_RESISTANCE, kbr, AttributeModifier.Operation.ADD_NUMBER, EquipmentSlotGroup.CHEST)
+                .attribute(Attribute.MAX_HEALTH, hp, AttributeModifier.Operation.ADD_NUMBER, EquipmentSlotGroup.CHEST)
                 .build();
         return createShapedRecipe("prismarine_chestplate", item, new String[]{"P P", "PPP", "PPP"}, 'P', Material.PRISMARINE_SHARD);
     }
@@ -1642,10 +1642,10 @@ public class RecipeProvider {
         ItemStack item = new ItemBuilder(Material.NETHERITE_LEGGINGS)
                 .name("Prismarine Leggings")
                 .customModelData(1220003)
-                .attribute(Attribute.GENERIC_ARMOR, arm, AttributeModifier.Operation.ADD_NUMBER, EquipmentSlotGroup.LEGS)
-                .attribute(Attribute.GENERIC_ARMOR_TOUGHNESS, armt, AttributeModifier.Operation.ADD_NUMBER, EquipmentSlotGroup.LEGS)
-                .attribute(Attribute.GENERIC_KNOCKBACK_RESISTANCE, kbr, AttributeModifier.Operation.ADD_NUMBER, EquipmentSlotGroup.LEGS)
-                .attribute(Attribute.GENERIC_MAX_HEALTH, hp, AttributeModifier.Operation.ADD_NUMBER, EquipmentSlotGroup.LEGS)
+                .attribute(Attribute.ARMOR, arm, AttributeModifier.Operation.ADD_NUMBER, EquipmentSlotGroup.LEGS)
+                .attribute(Attribute.ARMOR_TOUGHNESS, armt, AttributeModifier.Operation.ADD_NUMBER, EquipmentSlotGroup.LEGS)
+                .attribute(Attribute.KNOCKBACK_RESISTANCE, kbr, AttributeModifier.Operation.ADD_NUMBER, EquipmentSlotGroup.LEGS)
+                .attribute(Attribute.MAX_HEALTH, hp, AttributeModifier.Operation.ADD_NUMBER, EquipmentSlotGroup.LEGS)
                 .build();
         return createShapedRecipe("prismarine_leggings", item, new String[]{"PPP", "P P", "P P"}, 'P', Material.PRISMARINE_SHARD);
     }
@@ -1659,10 +1659,10 @@ public class RecipeProvider {
         ItemStack item = new ItemBuilder(Material.NETHERITE_BOOTS)
                 .name("Prismarine Boots")
                 .customModelData(1220004)
-                .attribute(Attribute.GENERIC_ARMOR, arm, AttributeModifier.Operation.ADD_NUMBER, EquipmentSlotGroup.FEET)
-                .attribute(Attribute.GENERIC_ARMOR_TOUGHNESS, armt, AttributeModifier.Operation.ADD_NUMBER, EquipmentSlotGroup.FEET)
-                .attribute(Attribute.GENERIC_KNOCKBACK_RESISTANCE, kbr, AttributeModifier.Operation.ADD_NUMBER, EquipmentSlotGroup.FEET)
-                .attribute(Attribute.GENERIC_MAX_HEALTH, hp, AttributeModifier.Operation.ADD_NUMBER, EquipmentSlotGroup.FEET)
+                .attribute(Attribute.ARMOR, arm, AttributeModifier.Operation.ADD_NUMBER, EquipmentSlotGroup.FEET)
+                .attribute(Attribute.ARMOR_TOUGHNESS, armt, AttributeModifier.Operation.ADD_NUMBER, EquipmentSlotGroup.FEET)
+                .attribute(Attribute.KNOCKBACK_RESISTANCE, kbr, AttributeModifier.Operation.ADD_NUMBER, EquipmentSlotGroup.FEET)
+                .attribute(Attribute.MAX_HEALTH, hp, AttributeModifier.Operation.ADD_NUMBER, EquipmentSlotGroup.FEET)
                 .build();
         return createShapedRecipe("prismarine_boots", item, new String[]{"   ", "P P", "P P"}, 'P', Material.PRISMARINE_SHARD);
     }
@@ -1970,8 +1970,8 @@ public class RecipeProvider {
         ItemStack item = new ItemBuilder(Material.NETHERITE_CHESTPLATE)
                 .name("Wither Chestplate")
                 .customModelData(1222224)
-                .attribute(Attribute.GENERIC_KNOCKBACK_RESISTANCE, kbr, AttributeModifier.Operation.ADD_NUMBER, EquipmentSlotGroup.CHEST)
-                .attribute(Attribute.GENERIC_MAX_HEALTH, hp, AttributeModifier.Operation.ADD_NUMBER, EquipmentSlotGroup.CHEST)
+                .attribute(Attribute.KNOCKBACK_RESISTANCE, kbr, AttributeModifier.Operation.ADD_NUMBER, EquipmentSlotGroup.CHEST)
+                .attribute(Attribute.MAX_HEALTH, hp, AttributeModifier.Operation.ADD_NUMBER, EquipmentSlotGroup.CHEST)
                 .build();
         return createShapedRecipe("wither_chestplate", item, new String[]{"WWW", "WCW", "WWW"}, 'W', Material.WITHER_SKELETON_SKULL, 'C', Material.NETHERITE_CHESTPLATE);
     }
@@ -1983,8 +1983,8 @@ public class RecipeProvider {
         ItemStack item = new ItemBuilder(Material.NETHERITE_LEGGINGS)
                 .name("Wither Leggings")
                 .customModelData(1222225)
-                .attribute(Attribute.GENERIC_KNOCKBACK_RESISTANCE, kbr, AttributeModifier.Operation.ADD_NUMBER, EquipmentSlotGroup.LEGS)
-                .attribute(Attribute.GENERIC_MAX_HEALTH, hp, AttributeModifier.Operation.ADD_NUMBER, EquipmentSlotGroup.LEGS)
+                .attribute(Attribute.KNOCKBACK_RESISTANCE, kbr, AttributeModifier.Operation.ADD_NUMBER, EquipmentSlotGroup.LEGS)
+                .attribute(Attribute.MAX_HEALTH, hp, AttributeModifier.Operation.ADD_NUMBER, EquipmentSlotGroup.LEGS)
                 .build();
         return createShapedRecipe("wither_leggings", item, new String[]{"WWW", "WLW", "WWW"}, 'W', Material.WITHER_SKELETON_SKULL, 'L', Material.NETHERITE_LEGGINGS);
     }
@@ -1996,8 +1996,8 @@ public class RecipeProvider {
         ItemStack item = new ItemBuilder(Material.NETHERITE_BOOTS)
                 .name("Wither Boots")
                 .customModelData(1222226)
-                .attribute(Attribute.GENERIC_KNOCKBACK_RESISTANCE, kbr, AttributeModifier.Operation.ADD_NUMBER, EquipmentSlotGroup.FEET)
-                .attribute(Attribute.GENERIC_MAX_HEALTH, hp, AttributeModifier.Operation.ADD_NUMBER, EquipmentSlotGroup.FEET)
+                .attribute(Attribute.KNOCKBACK_RESISTANCE, kbr, AttributeModifier.Operation.ADD_NUMBER, EquipmentSlotGroup.FEET)
+                .attribute(Attribute.MAX_HEALTH, hp, AttributeModifier.Operation.ADD_NUMBER, EquipmentSlotGroup.FEET)
                 .build();
         return createShapedRecipe("wither_boots", item, new String[]{"WWW", "WBW", "WWW"}, 'W', Material.WITHER_SKELETON_SKULL, 'B', Material.NETHERITE_BOOTS);
     }

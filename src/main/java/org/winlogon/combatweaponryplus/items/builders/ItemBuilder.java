@@ -8,10 +8,10 @@ import org.bukkit.inventory.ItemFlag;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 import org.winlogon.combatweaponryplus.util.AttributeModifierUtil;
+import org.winlogon.combatweaponryplus.util.TextUtil;
 
 import net.kyori.adventure.text.Component;
 
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
@@ -29,26 +29,19 @@ public class ItemBuilder {
         return this;
     }
 
-    public static List<Component> convertLoreToComponents(Iterable<String> lore) {
-        List<Component> loreList = new ArrayList<>();
-        for (var line : lore) {
-            loreList.add(Component.text(line));
-        }
-        return loreList;
-    }
-
     public ItemBuilder lore(String... lore) {
-        meta.lore(convertLoreToComponents(Arrays.asList(lore)));
+        meta.lore(TextUtil.convertLegacyLoreToComponents(Arrays.asList(lore)));
         return this;
     }
 
 
     public ItemBuilder lore(List<String> lore) {
-        meta.lore(convertLoreToComponents(lore));
+        meta.lore(TextUtil.convertLegacyLoreToComponents(lore));
         return this;
     }
 
     public ItemBuilder customModelData(int customModelData) {
+        // TODO: use ItemModelData to set custom model data instead
         meta.setCustomModelData(customModelData);
         return this;
     }
