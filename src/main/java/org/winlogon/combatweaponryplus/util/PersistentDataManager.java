@@ -7,7 +7,9 @@ import org.bukkit.persistence.PersistentDataContainer;
 import org.bukkit.persistence.PersistentDataType;
 import org.winlogon.combatweaponryplus.CombatWeaponryPlus;
 
-public class PersistentDataManager {
+public final class PersistentDataManager {
+    private PersistentDataManager() {}
+
     private static NamespacedKey createNamespacedKey(String key) {
         return new NamespacedKey(CombatWeaponryPlus.getInstance(), key);
     }
