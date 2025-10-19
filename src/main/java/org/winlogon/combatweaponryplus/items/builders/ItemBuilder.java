@@ -14,6 +14,7 @@ import org.winlogon.combatweaponryplus.util.TextUtil;
 
 import net.kyori.adventure.text.Component;
 
+import java.util.Objects;
 import java.util.Arrays;
 import java.util.List;
 
@@ -22,6 +23,8 @@ public class ItemBuilder {
     protected final ItemMeta meta;
 
     public ItemBuilder(@NotNull Material material) {
+        Objects.requireNonNull(material, "Material cannot be null");
+
         this.item = new ItemStack(material);
         this.meta = item.getItemMeta();
     }
@@ -48,8 +51,7 @@ public class ItemBuilder {
     }
 
     public @NotNull ItemBuilder customModelData(int customModelData) {
-        // TODO: use ItemModelData to set custom model data instead
-        meta.setCustomModelData(customModelData);
+        ItemModelData.set(meta, customModelData);
         return this;
     }
 

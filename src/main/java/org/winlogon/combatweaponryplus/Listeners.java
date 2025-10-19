@@ -45,6 +45,7 @@ import org.winlogon.combatweaponryplus.util.ItemModelData;
 import org.winlogon.combatweaponryplus.util.TextUtil;
 
 import net.kyori.adventure.text.serializer.plain.PlainTextComponentSerializer;
+import org.winlogon.combatweaponryplus.recipes.SmithingRecipeBuilder;
 
 class Listeners implements Listener {
     private final CombatWeaponryPlus plugin;
@@ -74,64 +75,7 @@ class Listeners implements Listener {
         return armor;
     }
 
-    private void handleSmithingEvent(PrepareSmithingEvent event,
-                                     Material toolType,
-                                     Material modifierType,
-                                     int requiredModelData,
-                                     int resultModelData,
-                                     String nameKey,
-                                     String configKey,
-                                     int amountOfLines,
-                                     double damageAddedConfigPath,
-                                     String damageAddedKey) {
 
-        if (!config.isEnabled(configKey)) return;
-
-
-        SmithingInventory inv = event.getInventory();
-        ItemStack template = inv.getItem(0);
-        ItemStack tool = inv.getItem(1);
-        ItemStack modifier = inv.getItem(2);
-
-        if (template == null || template.getType() != Material.LAPIS_LAZULI) return;
-        if (tool == null || modifier == null) return;
-        if (tool.getType() != toolType || modifier.getType() != modifierType) return;
-
-        var resultNameConfigPath = configKey + ".name";
-        List<String> loreConfigPaths = new ArrayList<>();
-
-        if (amountOfLines != 0) {
-            for (int i = 0; i < amountOfLines; i++) {
-                loreConfigPaths.add(configKey + ".line" + i);
-            }
-        }
-
-        ItemMeta toolMeta = tool.getItemMeta();
-        if (ItemModelData.get(toolMeta) != requiredModelData) return;
-
-        var result = tool.clone();
-        result.editMeta(meta -> {
-            ItemModelData.set(meta, resultModelData);
-            meta.displayName(TextUtil.convertLegacyToComponent(config.getString(resultNameConfigPath, "")));
-
-            List<String> lore = new ArrayList<>();
-
-            if (amountOfLines != 0) {
-                for (String path : loreConfigPaths) {
-                    lore.add(config.getString(path, ""));
-                }
-
-                meta.lore(lore.stream().map(TextUtil::convertLegacyToComponent).collect(Collectors.toList()));
-            }
-
-            // TODO: Add attribute modifiers dynamically based on config
-            double dmg = config.getDouble("", 1.0);
-            meta.addAttributeModifier(Attribute.ATTACK_DAMAGE, new AttributeModifier(new NamespacedKey("", ""), dmg, AttributeModifier.Operation.ADD_NUMBER, EquipmentSlotGroup.HAND));
-
-            meta.addItemFlags(ItemFlag.HIDE_ATTRIBUTES);
-        });
-        event.setResult(result);
-    }
 
     private boolean isValidItem(Player player, Material material, int modelData) {
         var item = player.getInventory().getItemInMainHand();
@@ -414,39 +358,198 @@ class Listeners implements Listener {
 
     @EventHandler
     void onSmithingTableEvent(PrepareSmithingEvent event) {
-        handleSmithingEvent(
-            event,
-            Material.NETHERITE_SWORD,
-            Material.PRISMARINE_SHARD,
-            1000001,
-            1210001,
-            "Prismarine",
-            "dPrismarineSword",
-            4,
-            1.0,
-            "Damage"
-        );
+        new SmithingRecipeBuilder(plugin, config)
+            .toolType(Material.NETHERITE_SWORD)
+            .modifierType(Material.PRISMARINE_SHARD)
+            .requiredModelData(1000001)
+            .resultModelData(1210001)
+            .nameKey("Prismarine")
+            .configKey("dPrismarineSword")
+            .amountOfLines(4)
+            .damageAddedConfigPath(1.0)
+            .damageAddedKey("Damage")
+            .build(event);
 
-        handleSmithingEvent(event, Material.NETHERITE_PICKAXE, Material.PRISMARINE_SHARD, 0, 1210002, "Prismarine", "dPrismarinePickaxe", 4, 1.0, "Damage");
-        handleSmithingEvent(event, Material.NETHERITE_AXE, Material.PRISMARINE_SHARD, 0, 1220001, "Prismarine", "dPrismarineAxe", 4, 1.0, "Damage");
-        handleSmithingEvent(event, Material.NETHERITE_SHOVEL, Material.PRISMARINE_SHARD, 0, 1210004, "Prismarine", "dPrismarineShovel", 4, 1.0, "Damage");
-        handleSmithingEvent(event, Material.NETHERITE_HOE, Material.PRISMARINE_SHARD, 0, 1210005, "Prismarine", "dPrismarineHoe", 4, 1.0, "Damage");
+        new SmithingRecipeBuilder(plugin, config)
+            .toolType(Material.NETHERITE_PICKAXE)
+            .modifierType(Material.PRISMARINE_SHARD)
+            .requiredModelData(0)
+            .resultModelData(1210002)
+            .nameKey("Prismarine")
+            .configKey("dPrismarinePickaxe")
+            .amountOfLines(4)
+            .damageAddedConfigPath(1.0)
+            .damageAddedKey("Damage")
+            .build(event);
+        new SmithingRecipeBuilder(plugin, config)
+            .toolType(Material.NETHERITE_AXE)
+            .modifierType(Material.PRISMARINE_SHARD)
+            .requiredModelData(0)
+            .resultModelData(1220001)
+            .nameKey("Prismarine")
+            .configKey("dPrismarineAxe")
+            .amountOfLines(4)
+            .damageAddedConfigPath(1.0)
+            .damageAddedKey("Damage")
+            .build(event);
+        new SmithingRecipeBuilder(plugin, config)
+            .toolType(Material.NETHERITE_SHOVEL)
+            .modifierType(Material.PRISMARINE_SHARD)
+            .requiredModelData(0)
+            .resultModelData(1210004)
+            .nameKey("Prismarine")
+            .configKey("dPrismarineShovel")
+            .amountOfLines(4)
+            .damageAddedConfigPath(1.0)
+            .damageAddedKey("Damage")
+            .build(event);
+        new SmithingRecipeBuilder(plugin, config)
+            .toolType(Material.NETHERITE_HOE)
+            .modifierType(Material.PRISMARINE_SHARD)
+            .requiredModelData(0)
+            .resultModelData(1210005)
+            .nameKey("Prismarine")
+            .configKey("dPrismarineHoe")
+            .amountOfLines(4)
+            .damageAddedConfigPath(1.0)
+            .damageAddedKey("Damage")
+            .build(event);
 
         // Prismarine Armor
-        handleSmithingEvent(event, Material.NETHERITE_HELMET, Material.PRISMARINE_SHARD, 0, 1220001, "Prismarine", "dPrismarineHelmet", 0, 1.0, "Armor");
-        handleSmithingEvent(event, Material.NETHERITE_CHESTPLATE, Material.PRISMARINE_SHARD, 0, 1220002, "Prismarine", "dPrismarineChestplate", 0, 1.0, "Armor");
-        handleSmithingEvent(event, Material.NETHERITE_LEGGINGS, Material.PRISMARINE_SHARD, 0, 1220003, "Prismarine", "dPrismarineLeggings", 0, 1.0, "Armor");
-        handleSmithingEvent(event, Material.NETHERITE_BOOTS, Material.PRISMARINE_SHARD, 0, 1220004, "Prismarine", "dPrismarineBoots", 0, 1.0, "Armor");
+        new SmithingRecipeBuilder(plugin, config)
+            .toolType(Material.NETHERITE_HELMET)
+            .modifierType(Material.PRISMARINE_SHARD)
+            .requiredModelData(0)
+            .resultModelData(1220001)
+            .nameKey("Prismarine")
+            .configKey("dPrismarineHelmet")
+            .amountOfLines(0)
+            .damageAddedConfigPath(1.0)
+            .damageAddedKey("Armor")
+            .build(event);
+        new SmithingRecipeBuilder(plugin, config)
+            .toolType(Material.NETHERITE_CHESTPLATE)
+            .modifierType(Material.PRISMARINE_SHARD)
+            .requiredModelData(0)
+            .resultModelData(1220002)
+            .nameKey("Prismarine")
+            .configKey("dPrismarineChestplate")
+            .amountOfLines(0)
+            .damageAddedConfigPath(1.0)
+            .damageAddedKey("Armor")
+            .build(event);
+        new SmithingRecipeBuilder(plugin, config)
+            .toolType(Material.NETHERITE_LEGGINGS)
+            .modifierType(Material.PRISMARINE_SHARD)
+            .requiredModelData(0)
+            .resultModelData(1220003)
+            .nameKey("Prismarine")
+            .configKey("dPrismarineLeggings")
+            .amountOfLines(0)
+            .damageAddedConfigPath(1.0)
+            .damageAddedKey("Armor")
+            .build(event);
+        new SmithingRecipeBuilder(plugin, config)
+            .toolType(Material.NETHERITE_BOOTS)
+            .modifierType(Material.PRISMARINE_SHARD)
+            .requiredModelData(0)
+            .resultModelData(1220004)
+            .nameKey("Prismarine")
+            .configKey("dPrismarineBoots")
+            .amountOfLines(0)
+            .damageAddedConfigPath(1.0)
+            .damageAddedKey("Armor")
+            .build(event);
 
         // Prismarine Custom Weapons
-        handleSmithingEvent(event, Material.NETHERITE_SWORD, Material.PRISMARINE_SHARD, 1000001, 1200001, "Prismarine", "dPrismarineLongsword", 8, 1.0, "Damage");
-        handleSmithingEvent(event, Material.NETHERITE_SWORD, Material.PRISMARINE_SHARD, 1000003, 1200003, "Prismarine", "dPrismarineScythe", 10, 1.0, "Damage");
-        handleSmithingEvent(event, Material.NETHERITE_SWORD, Material.PRISMARINE_SHARD, 1000005, 1200005, "Prismarine", "dPrismarineRapier", 10, 1.0, "Damage");
-        handleSmithingEvent(event, Material.NETHERITE_SWORD, Material.PRISMARINE_SHARD, 1000004, 1200004, "Prismarine", "dPrismarineSpear", 12, 1.0, "Damage");
-        handleSmithingEvent(event, Material.NETHERITE_SWORD, Material.PRISMARINE_SHARD, 1000002, 1200002, "Prismarine", "dPrismarineKatana", 14, 1.0, "Damage");
-        handleSmithingEvent(event, Material.NETHERITE_SWORD, Material.PRISMARINE_SHARD, 1000006, 1200006, "Prismarine", "dPrismarineKnife", 9, 1.0, "Damage");
-        handleSmithingEvent(event, Material.NETHERITE_SWORD, Material.PRISMARINE_SHARD, 1000010, 1200010, "Prismarine", "dPrismarineSaber", 7, 1.0, "Damage");
-        handleSmithingEvent(event, Material.NETHERITE_SWORD, Material.PRISMARINE_SHARD, 1000021, 1200021, "Prismarine", "dPrismarineCleaver", 12, 1.0, "Damage");
+        new SmithingRecipeBuilder(plugin, config)
+            .toolType(Material.NETHERITE_SWORD)
+            .modifierType(Material.PRISMARINE_SHARD)
+            .requiredModelData(1000001)
+            .resultModelData(1200001)
+            .nameKey("Prismarine")
+            .configKey("dPrismarineLongsword")
+            .amountOfLines(8)
+            .damageAddedConfigPath(1.0)
+            .damageAddedKey("Damage")
+            .build(event);
+        new SmithingRecipeBuilder(plugin, config)
+            .toolType(Material.NETHERITE_SWORD)
+            .modifierType(Material.PRISMARINE_SHARD)
+            .requiredModelData(1000003)
+            .resultModelData(1200003)
+            .nameKey("Prismarine")
+            .configKey("dPrismarineScythe")
+            .amountOfLines(10)
+            .damageAddedConfigPath(1.0)
+            .damageAddedKey("Damage")
+            .build(event);
+        new SmithingRecipeBuilder(plugin, config)
+            .toolType(Material.NETHERITE_SWORD)
+            .modifierType(Material.PRISMARINE_SHARD)
+            .requiredModelData(1000005)
+            .resultModelData(1200005)
+            .nameKey("Prismarine")
+            .configKey("dPrismarineRapier")
+            .amountOfLines(10)
+            .damageAddedConfigPath(1.0)
+            .damageAddedKey("Damage")
+            .build(event);
+        new SmithingRecipeBuilder(plugin, config)
+            .toolType(Material.NETHERITE_SWORD)
+            .modifierType(Material.PRISMARINE_SHARD)
+            .requiredModelData(1000004)
+            .resultModelData(1200004)
+            .nameKey("Prismarine")
+            .configKey("dPrismarineSpear")
+            .amountOfLines(12)
+            .damageAddedConfigPath(1.0)
+            .damageAddedKey("Damage")
+            .build(event);
+        new SmithingRecipeBuilder(plugin, config)
+            .toolType(Material.NETHERITE_SWORD)
+            .modifierType(Material.PRISMARINE_SHARD)
+            .requiredModelData(1000002)
+            .resultModelData(1200002)
+            .nameKey("Prismarine")
+            .configKey("dPrismarineKatana")
+            .amountOfLines(14)
+            .damageAddedConfigPath(1.0)
+            .damageAddedKey("Damage")
+            .build(event);
+        new SmithingRecipeBuilder(plugin, config)
+            .toolType(Material.NETHERITE_SWORD)
+            .modifierType(Material.PRISMARINE_SHARD)
+            .requiredModelData(1000006)
+            .resultModelData(1200006)
+            .nameKey("Prismarine")
+            .configKey("dPrismarineKnife")
+            .amountOfLines(9)
+            .damageAddedConfigPath(1.0)
+            .damageAddedKey("Damage")
+            .build(event);
+        new SmithingRecipeBuilder(plugin, config)
+            .toolType(Material.NETHERITE_SWORD)
+            .modifierType(Material.PRISMARINE_SHARD)
+            .requiredModelData(1000010)
+            .resultModelData(1200010)
+            .nameKey("Prismarine")
+            .configKey("dPrismarineSaber")
+            .amountOfLines(7)
+            .damageAddedConfigPath(1.0)
+            .damageAddedKey("Damage")
+            .build(event);
+        new SmithingRecipeBuilder(plugin, config)
+            .toolType(Material.NETHERITE_SWORD)
+            .modifierType(Material.PRISMARINE_SHARD)
+            .requiredModelData(1000021)
+            .resultModelData(1200021)
+            .nameKey("Prismarine")
+            .configKey("dPrismarineCleaver")
+            .amountOfLines(12)
+            .damageAddedConfigPath(1.0)
+            .damageAddedKey("Damage")
+            .build(event);
     }
 
     @EventHandler

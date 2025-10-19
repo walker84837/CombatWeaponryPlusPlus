@@ -16,6 +16,7 @@ import org.winlogon.combatweaponryplus.util.TextUtil;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 public class RecipeProvider {
     private final CombatWeaponryPlus plugin;
@@ -23,8 +24,8 @@ public class RecipeProvider {
     private final RecipeRegistrar recipeRegistrar;
 
     public RecipeProvider(CombatWeaponryPlus plugin, ConfigHelper config) {
-        this.plugin = plugin;
-        this.config = config;
+        this.plugin = Objects.requireNonNull(plugin, "Plugin cannot be null");
+        this.config = Objects.requireNonNull(config, "ConfigHelper cannot be null");
         this.recipeRegistrar = new RecipeRegistrar(config);
     }
 
@@ -196,7 +197,11 @@ public class RecipeProvider {
         return new NamespacedKey(plugin, key);
     }
 
-    private ShapedRecipe createShapedRecipe(String keyName, ItemStack result, String[] shape, Object... ingredients) {
+    private ShapedRecipe createShapedRecipe(@NotNull String keyName, @NotNull ItemStack result, @NotNull String[] shape, Object... ingredients) {
+        Objects.requireNonNull(keyName, "Recipe keyName cannot be null");
+        Objects.requireNonNull(result, "Recipe result ItemStack cannot be null");
+        Objects.requireNonNull(shape, "Recipe shape cannot be null");
+
         NamespacedKey key = createNamespacedKey(keyName);
         plugin.keys.add(key);
         ShapedRecipe recipe = new ShapedRecipe(key, result);
@@ -231,13 +236,15 @@ public class RecipeProvider {
                 .attribute(Attribute.MAX_HEALTH, hp, AttributeModifier.Operation.ADD_NUMBER, EquipmentSlotGroup.CHEST)
                 .attribute(Attribute.ARMOR, def, AttributeModifier.Operation.ADD_NUMBER, EquipmentSlotGroup.CHEST);
 
+        ItemStack item = builder.build(); // Build the item once
+
         if (config.isEnabled("EnchantmentsOnEmeraldArmor")) {
             int unbreaking = config.getInt("EmeraldArmorEnchantLevels.Unbreaking", 0);
             int mending = config.getInt("EmeraldArmorEnchantLevels.Mending", 0);
-            builder.build().addUnsafeEnchantment(Enchantment.UNBREAKING, unbreaking);
-            builder.build().addUnsafeEnchantment(Enchantment.MENDING, mending);
+            item.addUnsafeEnchantment(Enchantment.UNBREAKING, unbreaking); // Apply enchantments to the built item
+            item.addUnsafeEnchantment(Enchantment.MENDING, mending);
         }
-        return createShapedRecipe("emerald_chestplate", builder.build(), new String[]{"E E", "EEE", "EEE"}, 'E', Material.EMERALD);
+        return createShapedRecipe("emerald_chestplate", item, new String[]{"E E", "EEE", "EEE"}, 'E', Material.EMERALD);
     }
 
     private ShapedRecipe getEmeraldLeggingsRecipe() {
@@ -250,13 +257,15 @@ public class RecipeProvider {
                 .attribute(Attribute.MAX_HEALTH, hp, AttributeModifier.Operation.ADD_NUMBER, EquipmentSlotGroup.LEGS)
                 .attribute(Attribute.ARMOR, def, AttributeModifier.Operation.ADD_NUMBER, EquipmentSlotGroup.LEGS);
 
+        ItemStack item = builder.build(); // Build the item once
+
         if (config.isEnabled("EnchantmentsOnEmeraldArmor")) {
             int unbreaking = config.getInt("EmeraldArmorEnchantLevels.Unbreaking", 0);
             int mending = config.getInt("EmeraldArmorEnchantLevels.Mending", 0);
-            builder.build().addUnsafeEnchantment(Enchantment.UNBREAKING, unbreaking);
-            builder.build().addUnsafeEnchantment(Enchantment.MENDING, mending);
+            item.addUnsafeEnchantment(Enchantment.UNBREAKING, unbreaking); // Apply enchantments to the built item
+            item.addUnsafeEnchantment(Enchantment.MENDING, mending);
         }
-        return createShapedRecipe("emerald_leggings", builder.build(), new String[]{"EEE", "E E", "E E"}, 'E', Material.EMERALD);
+        return createShapedRecipe("emerald_leggings", item, new String[]{"EEE", "E E", "E E"}, 'E', Material.EMERALD);
     }
 
     private ShapedRecipe getEmeraldBootsRecipe() {
@@ -269,13 +278,15 @@ public class RecipeProvider {
                 .attribute(Attribute.MAX_HEALTH, hp, AttributeModifier.Operation.ADD_NUMBER, EquipmentSlotGroup.FEET)
                 .attribute(Attribute.ARMOR, def, AttributeModifier.Operation.ADD_NUMBER, EquipmentSlotGroup.FEET);
 
+        ItemStack item = builder.build(); // Build the item once
+
         if (config.isEnabled("EnchantmentsOnEmeraldArmor")) {
             int unbreaking = config.getInt("EmeraldArmorEnchantLevels.Unbreaking", 0);
             int mending = config.getInt("EmeraldArmorEnchantLevels.Mending", 0);
-            builder.build().addUnsafeEnchantment(Enchantment.UNBREAKING, unbreaking);
-            builder.build().addUnsafeEnchantment(Enchantment.MENDING, mending);
+            item.addUnsafeEnchantment(Enchantment.UNBREAKING, unbreaking); // Apply enchantments to the built item
+            item.addUnsafeEnchantment(Enchantment.MENDING, mending);
         }
-        return createShapedRecipe("emerald_boots", builder.build(), new String[]{"   ", "E E", "E E"}, 'E', Material.EMERALD);
+        return createShapedRecipe("emerald_boots", item, new String[]{"   ", "E E", "E E"}, 'E', Material.EMERALD);
     }
 
     // Emerald Gear
@@ -453,17 +464,19 @@ public class RecipeProvider {
                 .attribute(Attribute.KNOCKBACK_RESISTANCE, kbr, AttributeModifier.Operation.ADD_NUMBER, EquipmentSlotGroup.HAND)
                 .attribute(Attribute.KNOCKBACK_RESISTANCE, okbr, AttributeModifier.Operation.ADD_NUMBER, EquipmentSlotGroup.OFFHAND);
 
+        ItemStack item = builder.build(); // Build the item once
+
         if (config.isEnabled("EnchantsHeavySwordBow")) {
             int power = config.getInt("HSbowEnchantLevels.Power", 0);
             int unbreaking = config.getInt("HSbowEnchantLevels.Unbreaking", 0);
             int smite = config.getInt("HSbowEnchantLevels.Smite", 0);
             int mending = config.getInt("HSbowEnchantLevels.Mending", 0);
-            builder.build().addUnsafeEnchantment(Enchantment.POWER, power);
-            builder.build().addUnsafeEnchantment(Enchantment.UNBREAKING, unbreaking);
-            builder.build().addUnsafeEnchantment(Enchantment.SMITE, smite);
-            builder.build().addUnsafeEnchantment(Enchantment.MENDING, mending);
+            item.addUnsafeEnchantment(Enchantment.POWER, power);
+            item.addUnsafeEnchantment(Enchantment.UNBREAKING, unbreaking);
+            item.addUnsafeEnchantment(Enchantment.SMITE, smite);
+            item.addUnsafeEnchantment(Enchantment.MENDING, mending);
         }
-        return createShapedRecipe("heavy_sword_bow", builder.build(), new String[]{"ISs", "SCs", "ISs"},
+        return createShapedRecipe("heavy_sword_bow", item, new String[]{"ISs", "SCs", "ISs"},
                 'S', Material.STICK,
                 's', Material.CHAIN,
                 'I', Material.NETHERITE_SCRAP,
@@ -499,11 +512,13 @@ public class RecipeProvider {
                 .unbreakable(true)
                 .attribute(Attribute.ARMOR, def, AttributeModifier.Operation.ADD_NUMBER, EquipmentSlotGroup.HEAD);
 
+        ItemStack item = builder.build(); // Build the item once
+
         if (config.isEnabled("EnchantsPlatedChainmail")) {
             int unbreaking = config.getInt("PChainEnchantLevels.Unbreaking", 0);
-            builder.build().addUnsafeEnchantment(Enchantment.UNBREAKING, unbreaking);
+            item.addUnsafeEnchantment(Enchantment.UNBREAKING, unbreaking);
         }
-        return createShapedRecipe("plated_chainmail_helmet", builder.build(), new String[]{"III", "IHI", "III"}, 'H', Material.CHAINMAIL_HELMET, 'I', Material.IRON_NUGGET);
+        return createShapedRecipe("plated_chainmail_helmet", item, new String[]{"III", "IHI", "III"}, 'H', Material.CHAINMAIL_HELMET, 'I', Material.IRON_NUGGET);
     }
 
     private ShapedRecipe getPlatedChainmailChestplateRecipe() {
@@ -513,11 +528,13 @@ public class RecipeProvider {
                 .unbreakable(true)
                 .attribute(Attribute.ARMOR, def, AttributeModifier.Operation.ADD_NUMBER, EquipmentSlotGroup.CHEST);
 
+        ItemStack item = builder.build(); // Build the item once
+
         if (config.isEnabled("EnchantsPlatedChainmail")) {
             int unbreaking = config.getInt("PChainEnchantLevels.Unbreaking", 0);
-            builder.build().addUnsafeEnchantment(Enchantment.UNBREAKING, unbreaking);
+            item.addUnsafeEnchantment(Enchantment.UNBREAKING, unbreaking);
         }
-        return createShapedRecipe("plated_chainmail_chestplate", builder.build(), new String[]{"III", "ICI", "III"}, 'C', Material.CHAINMAIL_CHESTPLATE, 'I', Material.IRON_NUGGET);
+        return createShapedRecipe("plated_chainmail_chestplate", item, new String[]{"III", "ICI", "III"}, 'C', Material.CHAINMAIL_CHESTPLATE, 'I', Material.IRON_NUGGET);
     }
 
     private ShapedRecipe getPlatedChainmailLeggingsRecipe() {
@@ -527,11 +544,13 @@ public class RecipeProvider {
                 .unbreakable(true)
                 .attribute(Attribute.ARMOR, def, AttributeModifier.Operation.ADD_NUMBER, EquipmentSlotGroup.LEGS);
 
+        ItemStack item = builder.build(); // Build the item once
+
         if (config.isEnabled("EnchantsPlatedChainmail")) {
             int unbreaking = config.getInt("PChainEnchantLevels.Unbreaking", 0);
-            builder.build().addUnsafeEnchantment(Enchantment.UNBREAKING, unbreaking);
+            item.addUnsafeEnchantment(Enchantment.UNBREAKING, unbreaking);
         }
-        return createShapedRecipe("plated_chainmail_leggings", builder.build(), new String[]{"III", "ILI", "III"}, 'L', Material.CHAINMAIL_LEGGINGS, 'I', Material.IRON_NUGGET);
+        return createShapedRecipe("plated_chainmail_leggings", item, new String[]{"III", "ILI", "III"}, 'L', Material.CHAINMAIL_LEGGINGS, 'I', Material.IRON_NUGGET);
     }
 
     private ShapedRecipe getPlatedChainmailBootsRecipe() {
@@ -541,11 +560,13 @@ public class RecipeProvider {
                 .unbreakable(true)
                 .attribute(Attribute.ARMOR, def, AttributeModifier.Operation.ADD_NUMBER, EquipmentSlotGroup.FEET);
 
+        ItemStack item = builder.build(); // Build the item once
+
         if (config.isEnabled("EnchantsPlatedChainmail")) {
             int unbreaking = config.getInt("PChainEnchantLevels.Unbreaking", 0);
-            builder.build().addUnsafeEnchantment(Enchantment.UNBREAKING, unbreaking);
+            item.addUnsafeEnchantment(Enchantment.UNBREAKING, unbreaking);
         }
-        return createShapedRecipe("plated_chainmail_boots", builder.build(), new String[]{"III", "IBI", "III"}, 'B', Material.CHAINMAIL_BOOTS, 'I', Material.IRON_NUGGET);
+        return createShapedRecipe("plated_chainmail_boots", item, new String[]{"III", "IBI", "III"}, 'B', Material.CHAINMAIL_BOOTS, 'I', Material.IRON_NUGGET);
     }
 
     // Charms
