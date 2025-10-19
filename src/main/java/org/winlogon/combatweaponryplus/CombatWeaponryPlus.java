@@ -49,8 +49,10 @@ public class CombatWeaponryPlus extends JavaPlugin {
     public List<NamespacedKey> keys = new ArrayList<NamespacedKey>();
     private Random rand = new Random();
     private FileConfiguration config;
-    
+
     private MiniMessage mm = MiniMessage.miniMessage();
+    // TODO: make this dynamic later on, the code should just compile for now
+    private NamespacedKey k = null;
     private RetroHue rh = new RetroHue(mm);
     private Set<Recipe> recipes = new HashSet<Recipe>();
 
@@ -543,14 +545,16 @@ public class CombatWeaponryPlus extends JavaPlugin {
     public ShapedRecipe getSworddRecipe() {
         var item = new ItemStack(Material.IRON_SWORD);
         var meta = item.getItemMeta();
-        meta.setDisplayName(TextUtil.convertLegacyToSectionWithConfig("dChorusBlade.name", config));
+
+        TextUtil.convertLegacyToSectionWithConfig("dChorusBlade.name", config).ifPresent(meta::setDisplayName);
+
         if (config.getBoolean("EnchantsChorusBlade")) {
             int num = config.getInt("ChorusEnchantLevels.Unbreaking");
             int num2 = config.getInt("ChorusEnchantLevels.Knockback");
             meta.addEnchant(Enchantment.UNBREAKING, num, true);
             meta.addEnchant(Enchantment.KNOCKBACK, num2, true);
         }
-        ArrayList<Component> lore = new ArrayList<Component>();
+        List<Component> lore = new ArrayList<Component>();
 
         for (int i = 1; i <= 9; i++) {
             lore.add(convertLegacyToComponent(config.getString("dChorusBlade.line" + i)));
@@ -661,7 +665,7 @@ public class CombatWeaponryPlus extends JavaPlugin {
         }
 
         AttributeModifier[] modifiers = {
-            new AttributeModifier(k, spd, AttributeModifier.Operation.ADD_NUMBER, EquipmentSlotGroup.HAND), 
+            new AttributeModifier(k, spd, AttributeModifier.Operation.ADD_NUMBER, EquipmentSlotGroup.HAND),
             new AttributeModifier(k, dmg, AttributeModifier.Operation.ADD_NUMBER, EquipmentSlotGroup.HAND),
             new AttributeModifier(k, mspd, AttributeModifier.Operation.ADD_NUMBER, EquipmentSlotGroup.HAND),
             new AttributeModifier(k, omspd, AttributeModifier.Operation.ADD_NUMBER, EquipmentSlotGroup.OFFHAND),
@@ -2712,28 +2716,28 @@ public class CombatWeaponryPlus extends JavaPlugin {
         return recipe;
     }
 
-    
+
 
     public SmithingRecipe getprishelmetrecipe() {
         SmithingTransformRecipe recipe = new SmithingTransformRecipe(new NamespacedKey(this, "pris_helmet"), new ItemStack(Material.AIR), (RecipeChoice)new RecipeChoice.MaterialChoice(Material.LAPIS_LAZULI), (RecipeChoice)new RecipeChoice.MaterialChoice(Material.NETHERITE_HELMET), (RecipeChoice)new RecipeChoice.MaterialChoice(Material.PRISMARINE_SHARD));
         return recipe;
     }
 
-    
+
 
     public SmithingRecipe getprischestrecipe() {
         SmithingTransformRecipe recipe = new SmithingTransformRecipe(new NamespacedKey(this, "pris_chest"), new ItemStack(Material.AIR), (RecipeChoice)new RecipeChoice.MaterialChoice(Material.LAPIS_LAZULI), (RecipeChoice)new RecipeChoice.MaterialChoice(Material.NETHERITE_CHESTPLATE), (RecipeChoice)new RecipeChoice.MaterialChoice(Material.PRISMARINE_SHARD));
         return recipe;
     }
 
-    
+
 
     public SmithingRecipe getprislegrecipe() {
         SmithingTransformRecipe recipe = new SmithingTransformRecipe(new NamespacedKey(this, "pris_leg"), new ItemStack(Material.AIR), (RecipeChoice)new RecipeChoice.MaterialChoice(Material.LAPIS_LAZULI), (RecipeChoice)new RecipeChoice.MaterialChoice(Material.NETHERITE_LEGGINGS), (RecipeChoice)new RecipeChoice.MaterialChoice(Material.PRISMARINE_SHARD));
         return recipe;
     }
 
-    
+
 
     public SmithingRecipe getprisbootsrecipe() {
         SmithingTransformRecipe recipe = new SmithingTransformRecipe(new NamespacedKey(this, "pris_boots"), new ItemStack(Material.AIR), (RecipeChoice)new RecipeChoice.MaterialChoice(Material.LAPIS_LAZULI), (RecipeChoice)new RecipeChoice.MaterialChoice(Material.NETHERITE_BOOTS), (RecipeChoice)new RecipeChoice.MaterialChoice(Material.PRISMARINE_SHARD));
@@ -2768,7 +2772,7 @@ public class CombatWeaponryPlus extends JavaPlugin {
         return recipe;
     }
 
-    
+
 
     public ShapedRecipe getLongBowRecipe() {
         ItemStack item = new ItemStack(Material.BOW);
@@ -3084,7 +3088,7 @@ public class CombatWeaponryPlus extends JavaPlugin {
         return recipe;
     }
 
-    
+
 
     public ShapedRecipe getERecipe() {
         ItemStack item = new ItemStack(Material.NETHER_STAR);
@@ -4175,8 +4179,6 @@ public class CombatWeaponryPlus extends JavaPlugin {
         return recipe;
     }
 
-    
-
     private void spawnParticlesAlongPath(Player player, Vector start, double distance, Particle particle, int particleCount, double particleSpacing) {
         Vector direction = player.getLocation().getDirection().normalize();
         Vector end = start.clone().add(direction.multiply(distance));
@@ -4196,7 +4198,7 @@ public class CombatWeaponryPlus extends JavaPlugin {
         Bukkit.getLogger().info("End Position: " + end);
     }
 
-        private void shootArrow(Player player) {
+    private void shootArrow(Player player) {
         final Arrow arrow = (Arrow)player.launchProjectile(Arrow.class);
         Vector velocity = player.getLocation().getDirection().multiply(0.4);
         velocity.setY(0.4);
@@ -4257,7 +4259,7 @@ public class CombatWeaponryPlus extends JavaPlugin {
     private ShapedRecipe makeRecipe(Material item, double dmg, double spd, NamespacedKey key, String configString) {
         var itemStack = new ItemStack(item);
         var meta = itemStack.getItemMeta();
-        
+
         return null;
     }
 
@@ -4266,7 +4268,7 @@ public class CombatWeaponryPlus extends JavaPlugin {
         assert (keys.size() == values.size() && keys.size() == groups.size());
 
         var attributes = new ArrayList<AttributeModifier>();
-          
+
         for (int i = 0; i < keys.size(); i++) {
             attributes.add(new AttributeModifier(keys.get(i), values.get(i), AttributeModifier.Operation.ADD_NUMBER, groups.get(i)));
         }
@@ -4280,4 +4282,3 @@ public class CombatWeaponryPlus extends JavaPlugin {
         }
     }
 }
-

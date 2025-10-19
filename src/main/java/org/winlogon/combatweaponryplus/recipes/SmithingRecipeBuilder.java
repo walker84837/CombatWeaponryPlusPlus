@@ -16,7 +16,6 @@ import org.winlogon.combatweaponryplus.CombatWeaponryPlus;
 import org.winlogon.combatweaponryplus.util.ConfigHelper;
 import org.winlogon.combatweaponryplus.util.ItemModelData;
 import org.winlogon.combatweaponryplus.util.TextUtil;
-import org.winlogon.combatweaponryplus.items.builders.ItemBuilder;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -93,11 +92,11 @@ public class SmithingRecipeBuilder {
         SmithingInventory inv = event.getInventory();
         ItemStack template = inv.getItem(0);
         ItemStack tool = inv.getItem(1);
-        ItemStack modifier = inv.getItem(2);
+        ItemStack itemModifier = inv.getItem(2);
 
         if (template == null || template.getType() != Material.LAPIS_LAZULI) return;
-        if (tool == null || modifier == null) return;
-        if (tool.getType() != toolType || modifier.getType() != modifierType) return;
+        if (tool == null || itemModifier == null) return;
+        if (tool.getType() != toolType || itemModifier.getType() != modifierType) return;
 
         ItemMeta toolMeta = tool.getItemMeta();
         if (ItemModelData.get(toolMeta) != requiredModelData) return;
@@ -133,7 +132,7 @@ public class SmithingRecipeBuilder {
             if ("Damage".equals(damageAddedKey)) {
                 attribute = Attribute.ATTACK_DAMAGE;
             } else if ("Armor".equals(damageAddedKey)) {
-                attribute = Attribute.GENERIC_ARMOR;
+                attribute = Attribute.ARMOR;
             }
             // Add more attribute mappings as needed
 
@@ -145,7 +144,7 @@ public class SmithingRecipeBuilder {
                 if ("Armor".equals(damageAddedKey)) {
                     slot = EquipmentSlotGroup.CHEST;
                 }
-                AttributeModifier modifier = new AttributeModifier(attributeKey, value, AttributeModifier.Operation.ADD_NUMBER, slot);
+                var modifier = new AttributeModifier(attributeKey, value, AttributeModifier.Operation.ADD_NUMBER, slot);
                 resultMeta.addAttributeModifier(attribute, modifier);
             }
         }
