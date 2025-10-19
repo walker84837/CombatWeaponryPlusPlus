@@ -8,7 +8,7 @@ import org.winlogon.combatweaponryplus.CombatWeaponryPlus;
 public final class PersistentDataManager {
     private PersistentDataManager() {}
 
-    private static NamespacedKey createNamespacedKey(String key) {
+    public static NamespacedKey createNamespacedKey(String key) {
         return new NamespacedKey(CombatWeaponryPlus.getInstance(), key);
     }
 

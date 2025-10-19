@@ -1,24 +1,11 @@
 package org.winlogon.combatweaponryplus;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.HashSet;
-import java.util.Set;
-import java.util.List;
-import java.util.Random;
-import java.util.UUID;
-
-import org.winlogon.combatweaponryplus.util.AttributeModifierUtil;
-import org.winlogon.combatweaponryplus.util.ConfigHelper;
-import org.winlogon.combatweaponryplus.util.ItemModelData;
-import org.winlogon.combatweaponryplus.util.TextUtil;
-import org.winlogon.retrohue.RetroHue;
-
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
 import net.kyori.adventure.text.format.TextDecoration;
 import net.kyori.adventure.text.minimessage.MiniMessage;
 import net.md_5.bungee.api.ChatColor;
+
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.Material;
@@ -44,15 +31,30 @@ import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.scheduler.BukkitRunnable;
 import org.bukkit.util.Vector;
+import org.winlogon.combatweaponryplus.items.builders.WeaponBuilder;
+import org.winlogon.combatweaponryplus.util.AttributeModifierUtil;
+import org.winlogon.combatweaponryplus.util.ConfigHelper;
+import org.winlogon.combatweaponryplus.util.ConfigValueOperation;
+import org.winlogon.combatweaponryplus.util.ItemModelData;
+import org.winlogon.combatweaponryplus.util.TextUtil;
+import org.winlogon.retrohue.RetroHue;
+
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.HashSet;
+import java.util.Set;
+import java.util.List;
+import java.util.Random;
+import java.util.UUID;
 
 public class CombatWeaponryPlus extends JavaPlugin {
     public List<NamespacedKey> keys = new ArrayList<NamespacedKey>();
     private Random rand = new Random();
     private FileConfiguration config;
+    private ConfigHelper configHelper;
 
     private MiniMessage mm = MiniMessage.miniMessage();
-    // TODO: make this dynamic later on, the code should just compile for now
-    private NamespacedKey k = null;
+
     private RetroHue rh = new RetroHue(mm);
     private Set<Recipe> recipes = new HashSet<Recipe>();
 
@@ -72,14 +74,14 @@ public class CombatWeaponryPlus extends JavaPlugin {
 
         var cooldown = new Cooldown();
 
-        var configHelper = new ConfigHelper(getConfig());
+        this.configHelper = new ConfigHelper(getConfig());
         var serverListeners = new Listeners(this, configHelper, cooldown);
+
+        TextUtil.initialize(mm, rh);
 
         getServer().getPluginManager().registerEvents(serverListeners, this);
         saveDefaultConfig();
 
-        // recipes.addIfEnabled(String, Recipe[]); ?
-        // recipes.addIfEnabled(String[], Recipe[]); ?
         var ee = config.getBoolean("Emerald");
         if (ee) {
             Bukkit.addRecipe(this.getRecipe());
@@ -403,7 +405,7 @@ public class CombatWeaponryPlus extends JavaPlugin {
         meta.addAttributeModifier(Attribute.MAX_HEALTH, modifier);
         AttributeModifier modifier2 = AttributeModifierUtil.createAttributeModifier(Attribute.ARMOR, def, AttributeModifier.Operation.ADD_NUMBER, EquipmentSlotGroup.FEET);
         meta.addAttributeModifier(Attribute.ARMOR, modifier2);
-        meta.displayName(convertLegacyToComponent(ChatColor.DARK_GREEN + "Emerald Boots"));
+        meta.displayName(TextUtil.convertLegacyToComponent(ChatColor.DARK_GREEN + "Emerald Boots"));
         if (config.getBoolean("EnchantmentsOnEmeraldArmor")) {
             int num = config.getInt("EmeraldArmorEnchantLevels.Unbreaking");
             int num2 = config.getInt("EmeraldArmorEnchantLevels.Mending");
@@ -569,10 +571,10 @@ public class CombatWeaponryPlus extends JavaPlugin {
             spd = config.getDouble("aChorusBlade.speed") - 4.0;
         }
 
-        var attackSpeedModifier = new AttributeModifier(k, spd, AttributeModifier.Operation.ADD_NUMBER, EquipmentSlotGroup.HAND);
+        var attackSpeedModifier = AttributeModifierUtil.createAttributeModifier(Attribute.ATTACK_SPEED, spd, AttributeModifier.Operation.ADD_NUMBER, EquipmentSlotGroup.HAND);
         meta.addAttributeModifier(Attribute.ATTACK_SPEED, attackSpeedModifier);
 
-        var attackDamageModifier = new AttributeModifier(k, dmg, AttributeModifier.Operation.ADD_NUMBER, EquipmentSlotGroup.HAND);
+        var attackDamageModifier = AttributeModifierUtil.createAttributeModifier(Attribute.ATTACK_DAMAGE, dmg, AttributeModifier.Operation.ADD_NUMBER, EquipmentSlotGroup.HAND);
         meta.addAttributeModifier(Attribute.ATTACK_DAMAGE, attackDamageModifier);
 
         meta.addItemFlags(new ItemFlag[]{ItemFlag.HIDE_ATTRIBUTES});
@@ -613,9 +615,9 @@ public class CombatWeaponryPlus extends JavaPlugin {
             dmg = config.getDouble("aSwordBow.damage") - 1.0;
             spd = config.getDouble("aSwordBow.speed") - 4.0;
         }
-        AttributeModifier modifier = new AttributeModifier(k, spd, AttributeModifier.Operation.ADD_NUMBER, EquipmentSlotGroup.HAND);
+        AttributeModifier modifier = AttributeModifierUtil.createAttributeModifier(Attribute.ATTACK_SPEED, spd, AttributeModifier.Operation.ADD_NUMBER, EquipmentSlotGroup.HAND);
         meta.addAttributeModifier(Attribute.ATTACK_SPEED, modifier);
-        AttributeModifier modifier2 = new AttributeModifier(k, dmg, AttributeModifier.Operation.ADD_NUMBER, EquipmentSlotGroup.HAND);
+        AttributeModifier modifier2 = AttributeModifierUtil.createAttributeModifier(Attribute.ATTACK_DAMAGE, dmg, AttributeModifier.Operation.ADD_NUMBER, EquipmentSlotGroup.HAND);
         meta.addAttributeModifier(Attribute.ATTACK_DAMAGE, modifier2);
         meta.setCustomModelData(1000001);
         item.setItemMeta(meta);
@@ -665,12 +667,12 @@ public class CombatWeaponryPlus extends JavaPlugin {
         }
 
         AttributeModifier[] modifiers = {
-            new AttributeModifier(k, spd, AttributeModifier.Operation.ADD_NUMBER, EquipmentSlotGroup.HAND),
-            new AttributeModifier(k, dmg, AttributeModifier.Operation.ADD_NUMBER, EquipmentSlotGroup.HAND),
-            new AttributeModifier(k, mspd, AttributeModifier.Operation.ADD_NUMBER, EquipmentSlotGroup.HAND),
-            new AttributeModifier(k, omspd, AttributeModifier.Operation.ADD_NUMBER, EquipmentSlotGroup.OFFHAND),
-            new AttributeModifier(k, kbr, AttributeModifier.Operation.ADD_NUMBER, EquipmentSlotGroup.HAND),
-            new AttributeModifier(k, okbr, AttributeModifier.Operation.ADD_NUMBER, EquipmentSlotGroup.OFFHAND),
+            AttributeModifierUtil.createAttributeModifier(Attribute.ATTACK_SPEED, spd, AttributeModifier.Operation.ADD_NUMBER, EquipmentSlotGroup.HAND),
+            AttributeModifierUtil.createAttributeModifier(Attribute.ATTACK_DAMAGE, dmg, AttributeModifier.Operation.ADD_NUMBER, EquipmentSlotGroup.HAND),
+            AttributeModifierUtil.createAttributeModifier(Attribute.MOVEMENT_SPEED, mspd, AttributeModifier.Operation.ADD_NUMBER, EquipmentSlotGroup.HAND),
+            AttributeModifierUtil.createAttributeModifier(Attribute.MOVEMENT_SPEED, omspd, AttributeModifier.Operation.ADD_NUMBER, EquipmentSlotGroup.OFFHAND),
+            AttributeModifierUtil.createAttributeModifier(Attribute.KNOCKBACK_RESISTANCE, kbr, AttributeModifier.Operation.ADD_NUMBER, EquipmentSlotGroup.HAND),
+            AttributeModifierUtil.createAttributeModifier(Attribute.KNOCKBACK_RESISTANCE, okbr, AttributeModifier.Operation.ADD_NUMBER, EquipmentSlotGroup.OFFHAND),
         };
 
         Attribute[] attributes =  {
@@ -748,7 +750,7 @@ public class CombatWeaponryPlus extends JavaPlugin {
         if (config.getBoolean("UseCustomValues")) {
             def = config.getDouble("aPlateChainHelmet.Armor");
         }
-        AttributeModifier modifier = new AttributeModifier(k, def, AttributeModifier.Operation.ADD_NUMBER, EquipmentSlotGroup.HEAD);
+        AttributeModifier modifier = AttributeModifierUtil.createAttributeModifier(Attribute.ARMOR, def, AttributeModifier.Operation.ADD_NUMBER, EquipmentSlotGroup.HEAD);
         meta.addAttributeModifier(Attribute.ARMOR, modifier);
         meta.displayName(Component.text("Plated Chainmail Helmet").decorate(TextDecoration.BOLD));
         if (config.getBoolean("EnchantsPlatedChainmail")) {
@@ -772,7 +774,7 @@ public class CombatWeaponryPlus extends JavaPlugin {
         if (config.getBoolean("UseCustomValues")) {
             def = config.getDouble("aPlateChainChestplate.Armor");
         }
-        AttributeModifier modifier = new AttributeModifier(k, def, AttributeModifier.Operation.ADD_NUMBER, EquipmentSlotGroup.CHEST);
+        AttributeModifier modifier = AttributeModifierUtil.createAttributeModifier(Attribute.ARMOR, def, AttributeModifier.Operation.ADD_NUMBER, EquipmentSlotGroup.CHEST);
         meta.addAttributeModifier(Attribute.ARMOR, modifier);
         meta.setDisplayName(ChatColor.BOLD + "Plated Chainmail Chestplate");
         if (config.getBoolean("EnchantsPlatedChainmail")) {
@@ -796,7 +798,7 @@ public class CombatWeaponryPlus extends JavaPlugin {
         if (config.getBoolean("UseCustomValues")) {
             def = config.getDouble("aPlateChainLeggings.Armor");
         }
-        AttributeModifier modifier = new AttributeModifier(k, def, AttributeModifier.Operation.ADD_NUMBER, EquipmentSlotGroup.LEGS);
+        AttributeModifier modifier = AttributeModifierUtil.createAttributeModifier(Attribute.ARMOR, def, AttributeModifier.Operation.ADD_NUMBER, EquipmentSlotGroup.LEGS);
         meta.addAttributeModifier(Attribute.ARMOR, modifier);
         meta.setDisplayName(ChatColor.BOLD + "Plated Chainmail Leggings");
         if (config.getBoolean("EnchantsPlatedChainmail")) {
@@ -820,7 +822,7 @@ public class CombatWeaponryPlus extends JavaPlugin {
         if (config.getBoolean("UseCustomValues")) {
             def = config.getDouble("aPlateChainBoots.Armor");
         }
-        AttributeModifier modifier = new AttributeModifier(k, def, AttributeModifier.Operation.ADD_NUMBER, EquipmentSlotGroup.FEET);
+        AttributeModifier modifier = AttributeModifierUtil.createAttributeModifier(Attribute.ARMOR, def, AttributeModifier.Operation.ADD_NUMBER, EquipmentSlotGroup.FEET);
         meta.addAttributeModifier(Attribute.ARMOR, modifier);
         meta.setDisplayName(ChatColor.BOLD + "Plated Chainmail Boots");
         if (config.getBoolean("EnchantsPlatedChainmail")) {
@@ -859,9 +861,9 @@ public class CombatWeaponryPlus extends JavaPlugin {
             dmg = config.getDouble("aWoodenScythe.damage") - 1.0;
             spd = config.getDouble("aWoodenScythe.speed") - 4.0;
         }
-        AttributeModifier modifier = new AttributeModifier(k, spd, AttributeModifier.Operation.ADD_NUMBER, EquipmentSlotGroup.HAND);
+        AttributeModifier modifier = AttributeModifierUtil.createAttributeModifier(Attribute.ATTACK_SPEED, spd, AttributeModifier.Operation.ADD_NUMBER, EquipmentSlotGroup.HAND);
         meta.addAttributeModifier(Attribute.ATTACK_SPEED, modifier);
-        AttributeModifier modifier2 = new AttributeModifier(k, dmg, AttributeModifier.Operation.ADD_NUMBER, EquipmentSlotGroup.HAND);
+        AttributeModifier modifier2 = AttributeModifierUtil.createAttributeModifier(Attribute.ATTACK_DAMAGE, dmg, AttributeModifier.Operation.ADD_NUMBER, EquipmentSlotGroup.HAND);
         meta.addAttributeModifier(Attribute.ATTACK_DAMAGE, modifier2);
         meta.setDisplayName(TextUtil.convertLegacyToSection(config.getString("dWoodenScythe.name")));
         meta.setCustomModelData(1000003);
@@ -896,9 +898,9 @@ public class CombatWeaponryPlus extends JavaPlugin {
             dmg = config.getDouble("aStoneScythe.damage") - 1.0;
             spd = config.getDouble("aStoneScythe.speed") - 4.0;
         }
-        AttributeModifier modifier = new AttributeModifier(k, spd, AttributeModifier.Operation.ADD_NUMBER, EquipmentSlotGroup.HAND);
+        AttributeModifier modifier = AttributeModifierUtil.createAttributeModifier(Attribute.ATTACK_SPEED, spd, AttributeModifier.Operation.ADD_NUMBER, EquipmentSlotGroup.HAND);
         meta.addAttributeModifier(Attribute.ATTACK_SPEED, modifier);
-        AttributeModifier modifier2 = new AttributeModifier(k, dmg, AttributeModifier.Operation.ADD_NUMBER, EquipmentSlotGroup.HAND);
+        AttributeModifier modifier2 = AttributeModifierUtil.createAttributeModifier(Attribute.ATTACK_DAMAGE, dmg, AttributeModifier.Operation.ADD_NUMBER, EquipmentSlotGroup.HAND);
         meta.addAttributeModifier(Attribute.ATTACK_DAMAGE, modifier2);
         meta.setDisplayName(TextUtil.convertLegacyToSection(config.getString("dStoneScythe.name")));
         meta.setCustomModelData(1000003);
@@ -930,13 +932,9 @@ public class CombatWeaponryPlus extends JavaPlugin {
         meta.addItemFlags(new ItemFlag[]{ItemFlag.HIDE_ATTRIBUTES});
         double dmg = 6.0;
         double spd = -2.8;
-        if (config.getBoolean("UseCustomValues")) {
-            dmg = config.getDouble("aGoldenScythe.damage") - 1.0;
-            spd = config.getDouble("aGoldenScythe.speed") - 4.0;
-        }
-        AttributeModifier modifier = new AttributeModifier(UUID.randomUUID(), "Attack Speed", spd, AttributeModifier.Operation.ADD_NUMBER, EquipmentSlot.HAND);
+        AttributeModifier modifier = AttributeModifierUtil.createAttributeModifier(Attribute.ATTACK_SPEED, spd, AttributeModifier.Operation.ADD_NUMBER, EquipmentSlotGroup.HAND);
         meta.addAttributeModifier(Attribute.ATTACK_SPEED, modifier);
-        AttributeModifier modifier2 = new AttributeModifier(UUID.randomUUID(), "Attack Damage", dmg, AttributeModifier.Operation.ADD_NUMBER, EquipmentSlot.HAND);
+        AttributeModifier modifier2 = AttributeModifierUtil.createAttributeModifier(Attribute.ATTACK_DAMAGE, dmg, AttributeModifier.Operation.ADD_NUMBER, EquipmentSlotGroup.HAND);
         meta.addAttributeModifier(Attribute.ATTACK_DAMAGE, modifier2);
         meta.setDisplayName(TextUtil.convertLegacyToSection(config.getString("dGoldenScythe.name")));
         meta.setCustomModelData(1000003);
@@ -982,10 +980,9 @@ public class CombatWeaponryPlus extends JavaPlugin {
             dmg = config.getDouble("aEmeraldScythe.damage") - 1.0;
             spd = config.getDouble("aEmeraldScythe.speed") - 4.0;
         }
-        // TODO: find an alternative to this (https://jd.papermc.io/paper/1.21.5/org/bukkit/attribute/AttributeModifier.html)
-        AttributeModifier modifier = new AttributeModifier(UUID.randomUUID(), "Attack Speed", spd, AttributeModifier.Operation.ADD_NUMBER, EquipmentSlot.HAND);
+        AttributeModifier modifier = AttributeModifierUtil.createAttributeModifier(Attribute.ATTACK_SPEED, spd, AttributeModifier.Operation.ADD_NUMBER, EquipmentSlotGroup.HAND);
         meta.addAttributeModifier(Attribute.ATTACK_SPEED, modifier);
-        AttributeModifier modifier2 = new AttributeModifier(UUID.randomUUID(), "Attack Damage", dmg, AttributeModifier.Operation.ADD_NUMBER, EquipmentSlot.HAND);
+        AttributeModifier modifier2 = AttributeModifierUtil.createAttributeModifier(Attribute.ATTACK_DAMAGE, dmg, AttributeModifier.Operation.ADD_NUMBER, EquipmentSlotGroup.HAND);
         meta.addAttributeModifier(Attribute.ATTACK_DAMAGE, modifier2);
         meta.setDisplayName(TextUtil.convertLegacyToSection(config.getString("dEmeraldScythe.name")));
         meta.setCustomModelData(1000013);
@@ -1021,9 +1018,9 @@ public class CombatWeaponryPlus extends JavaPlugin {
             dmg = config.getDouble("aIronScythe.damage") - 1.0;
             spd = config.getDouble("aIronScythe.speed") - 4.0;
         }
-        AttributeModifier modifier = new AttributeModifier(UUID.randomUUID(), "Attack Speed", spd, AttributeModifier.Operation.ADD_NUMBER, EquipmentSlot.HAND);
+        AttributeModifier modifier = AttributeModifierUtil.createAttributeModifier(Attribute.ATTACK_SPEED, spd, AttributeModifier.Operation.ADD_NUMBER, EquipmentSlotGroup.HAND);
         meta.addAttributeModifier(Attribute.ATTACK_SPEED, modifier);
-        AttributeModifier modifier2 = new AttributeModifier(UUID.randomUUID(), "Attack Damage", dmg, AttributeModifier.Operation.ADD_NUMBER, EquipmentSlot.HAND);
+        AttributeModifier modifier2 = AttributeModifierUtil.createAttributeModifier(Attribute.ATTACK_DAMAGE, dmg, AttributeModifier.Operation.ADD_NUMBER, EquipmentSlotGroup.HAND);
         meta.addAttributeModifier(Attribute.ATTACK_DAMAGE, modifier2);
         meta.setDisplayName(TextUtil.convertLegacyToSection(config.getString("dIronScythe.name")));
         meta.setCustomModelData(1000003);
@@ -1059,9 +1056,9 @@ public class CombatWeaponryPlus extends JavaPlugin {
             dmg = config.getDouble("aDiamondScythe.damage") - 1.0;
             spd = config.getDouble("aDiamondScythe.speed") - 4.0;
         }
-        AttributeModifier modifier = new AttributeModifier(UUID.randomUUID(), "Attack Speed", spd, AttributeModifier.Operation.ADD_NUMBER, EquipmentSlot.HAND);
+        AttributeModifier modifier = AttributeModifierUtil.createAttributeModifier(Attribute.ATTACK_SPEED, spd, AttributeModifier.Operation.ADD_NUMBER, EquipmentSlotGroup.HAND);
         meta.addAttributeModifier(Attribute.ATTACK_SPEED, modifier);
-        AttributeModifier modifier2 = new AttributeModifier(UUID.randomUUID(), "Attack Damage", dmg, AttributeModifier.Operation.ADD_NUMBER, EquipmentSlot.HAND);
+        AttributeModifier modifier2 = AttributeModifierUtil.createAttributeModifier(Attribute.ATTACK_DAMAGE, dmg, AttributeModifier.Operation.ADD_NUMBER, EquipmentSlotGroup.HAND);
         meta.addAttributeModifier(Attribute.ATTACK_DAMAGE, modifier2);
         meta.setDisplayName(TextUtil.convertLegacyToSection(config.getString("dDiamondScythe.name")));
         meta.setCustomModelData(1000003);
@@ -1097,9 +1094,9 @@ public class CombatWeaponryPlus extends JavaPlugin {
             dmg = config.getDouble("aNetheriteScythe.damage") - 1.0;
             spd = config.getDouble("aNetheriteScythe.speed") - 4.0;
         }
-        AttributeModifier modifier = new AttributeModifier(UUID.randomUUID(), "Attack Speed", spd, AttributeModifier.Operation.ADD_NUMBER, EquipmentSlot.HAND);
+        AttributeModifier modifier = AttributeModifierUtil.createAttributeModifier(Attribute.ATTACK_SPEED, spd, AttributeModifier.Operation.ADD_NUMBER, EquipmentSlotGroup.HAND);
         meta.addAttributeModifier(Attribute.ATTACK_SPEED, modifier);
-        AttributeModifier modifier2 = new AttributeModifier(UUID.randomUUID(), "Attack Damage", dmg, AttributeModifier.Operation.ADD_NUMBER, EquipmentSlot.HAND);
+        AttributeModifier modifier2 = AttributeModifierUtil.createAttributeModifier(Attribute.ATTACK_DAMAGE, dmg, AttributeModifier.Operation.ADD_NUMBER, EquipmentSlotGroup.HAND);
         meta.addAttributeModifier(Attribute.ATTACK_DAMAGE, modifier2);
         meta.setDisplayName(TextUtil.convertLegacyToSection(config.getString("dNetheriteScythe.name")));
         meta.setCustomModelData(1000003);
@@ -1167,9 +1164,10 @@ public class CombatWeaponryPlus extends JavaPlugin {
             dmg = config.getDouble("aWoodenRapier.damage") - 1.0;
             spd = config.getDouble("aWoodenRapier.speed") - 4.0;
         }
-        AttributeModifier modifier = new AttributeModifier(UUID.randomUUID(), "Attack Speed", spd, AttributeModifier.Operation.ADD_NUMBER, EquipmentSlot.HAND);
+
+        AttributeModifier modifier = AttributeModifierUtil.createAttributeModifier(Attribute.ATTACK_SPEED, spd, AttributeModifier.Operation.ADD_NUMBER, EquipmentSlotGroup.HAND);
         meta.addAttributeModifier(Attribute.ATTACK_SPEED, modifier);
-        AttributeModifier modifier2 = new AttributeModifier(UUID.randomUUID(), "Attack Damage", dmg, AttributeModifier.Operation.ADD_NUMBER, EquipmentSlot.HAND);
+        AttributeModifier modifier2 = AttributeModifierUtil.createAttributeModifier(Attribute.ATTACK_DAMAGE, dmg, AttributeModifier.Operation.ADD_NUMBER, EquipmentSlotGroup.HAND);
         meta.addAttributeModifier(Attribute.ATTACK_DAMAGE, modifier2);
         meta.setDisplayName(TextUtil.convertLegacyToSection(config.getString("dWoodenRapier.name")));
         meta.setCustomModelData(1000005);
@@ -1186,6 +1184,10 @@ public class CombatWeaponryPlus extends JavaPlugin {
         ItemStack item = new ItemStack(Material.STONE_SWORD);
         ItemMeta meta = item.getItemMeta();
         ArrayList<String> lore = new ArrayList<String>();
+
+        double dmg = 2.5;
+        double spd = -2.1;
+
         lore.add(TextUtil.convertLegacyToSection(config.getString("RapierDescription.line1")));
         lore.add(TextUtil.convertLegacyToSection(config.getString("RapierDescription.line2")));
         lore.add(TextUtil.convertLegacyToSection(config.getString("RapierDescription.line3")));
@@ -1197,16 +1199,12 @@ public class CombatWeaponryPlus extends JavaPlugin {
         lore.add(TextUtil.convertLegacyToSection(config.getString("dStoneRapier.line9")));
         lore.add(TextUtil.convertLegacyToSection(config.getString("dStoneRapier.line10")));
         meta.setLore(lore);
+
+
         meta.addItemFlags(new ItemFlag[]{ItemFlag.HIDE_ATTRIBUTES});
-        double dmg = 2.5;
-        double spd = -2.1;
-        if (config.getBoolean("UseCustomValues")) {
-            dmg = config.getDouble("aStoneRapier.damage") - 1.0;
-            spd = config.getDouble("aStoneRapier.speed") - 4.0;
-        }
-        AttributeModifier modifier = new AttributeModifier(UUID.randomUUID(), "Attack Speed", spd, AttributeModifier.Operation.ADD_NUMBER, EquipmentSlot.HAND);
+        AttributeModifier modifier = AttributeModifierUtil.createAttributeModifier(Attribute.ATTACK_SPEED, spd, AttributeModifier.Operation.ADD_NUMBER, EquipmentSlotGroup.HAND);
         meta.addAttributeModifier(Attribute.ATTACK_SPEED, modifier);
-        AttributeModifier modifier2 = new AttributeModifier(UUID.randomUUID(), "Attack Damage", dmg, AttributeModifier.Operation.ADD_NUMBER, EquipmentSlot.HAND);
+        AttributeModifier modifier2 = AttributeModifierUtil.createAttributeModifier(Attribute.ATTACK_DAMAGE, dmg, AttributeModifier.Operation.ADD_NUMBER, EquipmentSlotGroup.HAND);
         meta.addAttributeModifier(Attribute.ATTACK_DAMAGE, modifier2);
         meta.setDisplayName(TextUtil.convertLegacyToSection(config.getString("dStoneRapier.name")));
         meta.setCustomModelData(1000005);
@@ -1242,9 +1240,9 @@ public class CombatWeaponryPlus extends JavaPlugin {
             dmg = config.getDouble("aGoldenRapier.damage") - 1.0;
             spd = config.getDouble("aGoldenRapier.speed") - 4.0;
         }
-        AttributeModifier modifier = new AttributeModifier(UUID.randomUUID(), "Attack Speed", spd, AttributeModifier.Operation.ADD_NUMBER, EquipmentSlot.HAND);
+        AttributeModifier modifier = AttributeModifierUtil.createAttributeModifier(Attribute.ATTACK_SPEED, spd, AttributeModifier.Operation.ADD_NUMBER, EquipmentSlotGroup.HAND);
         meta.addAttributeModifier(Attribute.ATTACK_SPEED, modifier);
-        AttributeModifier modifier2 = new AttributeModifier(UUID.randomUUID(), "Attack Damage", dmg, AttributeModifier.Operation.ADD_NUMBER, EquipmentSlot.HAND);
+        AttributeModifier modifier2 = AttributeModifierUtil.createAttributeModifier(Attribute.ATTACK_DAMAGE, dmg, AttributeModifier.Operation.ADD_NUMBER, EquipmentSlotGroup.HAND);
         meta.addAttributeModifier(Attribute.ATTACK_DAMAGE, modifier2);
         meta.setDisplayName(TextUtil.convertLegacyToSection(config.getString("dGoldenRapier.name")));
         meta.setCustomModelData(1000005);
@@ -1273,16 +1271,14 @@ public class CombatWeaponryPlus extends JavaPlugin {
         lore.add(TextUtil.convertLegacyToSection(config.getString("dIronRapier.line9")));
         lore.add(TextUtil.convertLegacyToSection(config.getString("dIronRapier.line10")));
         meta.setLore(lore);
-        meta.addItemFlags(new ItemFlag[]{ItemFlag.HIDE_ATTRIBUTES});
+
         double dmg = 3.0;
         double spd = -2.1;
-        if (config.getBoolean("UseCustomValues")) {
-            dmg = config.getDouble("aIronRapier.damage") - 1.0;
-            spd = config.getDouble("aIronRapier.speed") - 4.0;
-        }
-        AttributeModifier modifier = new AttributeModifier(UUID.randomUUID(), "Attack Speed", spd, AttributeModifier.Operation.ADD_NUMBER, EquipmentSlot.HAND);
+
+        meta.addItemFlags(new ItemFlag[]{ItemFlag.HIDE_ATTRIBUTES});
+        AttributeModifier modifier = AttributeModifierUtil.createAttributeModifier(Attribute.ATTACK_SPEED, spd, AttributeModifier.Operation.ADD_NUMBER, EquipmentSlotGroup.HAND);
         meta.addAttributeModifier(Attribute.ATTACK_SPEED, modifier);
-        AttributeModifier modifier2 = new AttributeModifier(UUID.randomUUID(), "Attack Damage", dmg, AttributeModifier.Operation.ADD_NUMBER, EquipmentSlot.HAND);
+        AttributeModifier modifier2 = AttributeModifierUtil.createAttributeModifier(Attribute.ATTACK_DAMAGE, dmg, AttributeModifier.Operation.ADD_NUMBER, EquipmentSlotGroup.HAND);
         meta.addAttributeModifier(Attribute.ATTACK_DAMAGE, modifier2);
         meta.setDisplayName(TextUtil.convertLegacyToSection(config.getString("dIronRapier.name")));
         meta.setCustomModelData(1000005);
@@ -1318,9 +1314,9 @@ public class CombatWeaponryPlus extends JavaPlugin {
             dmg = config.getDouble("aEmeraldRapier.damage") - 1.0;
             spd = config.getDouble("aEmeraldRapier.speed") - 4.0;
         }
-        AttributeModifier modifier = new AttributeModifier(UUID.randomUUID(), "Attack Speed", spd, AttributeModifier.Operation.ADD_NUMBER, EquipmentSlot.HAND);
+        AttributeModifier modifier = AttributeModifierUtil.createAttributeModifier(Attribute.ATTACK_SPEED, spd, AttributeModifier.Operation.ADD_NUMBER, EquipmentSlotGroup.HAND);
         meta.addAttributeModifier(Attribute.ATTACK_SPEED, modifier);
-        AttributeModifier modifier2 = new AttributeModifier(UUID.randomUUID(), "Attack Damage", dmg, AttributeModifier.Operation.ADD_NUMBER, EquipmentSlot.HAND);
+        AttributeModifier modifier2 = AttributeModifierUtil.createAttributeModifier(Attribute.ATTACK_DAMAGE, dmg, AttributeModifier.Operation.ADD_NUMBER, EquipmentSlotGroup.HAND);
         meta.addAttributeModifier(Attribute.ATTACK_DAMAGE, modifier2);
         meta.setDisplayName(TextUtil.convertLegacyToSection(config.getString("dEmeraldRapier.name")));
         meta.setCustomModelData(1000015);
@@ -1362,9 +1358,9 @@ public class CombatWeaponryPlus extends JavaPlugin {
             dmg = config.getDouble("aDiamondRapier.damage") - 1.0;
             spd = config.getDouble("aDiamondRapier.speed") - 4.0;
         }
-        AttributeModifier modifier = new AttributeModifier(UUID.randomUUID(), "Attack Speed", spd, AttributeModifier.Operation.ADD_NUMBER, EquipmentSlot.HAND);
+        AttributeModifier modifier = AttributeModifierUtil.createAttributeModifier(Attribute.ATTACK_SPEED, spd, AttributeModifier.Operation.ADD_NUMBER, EquipmentSlotGroup.HAND);
         meta.addAttributeModifier(Attribute.ATTACK_SPEED, modifier);
-        AttributeModifier modifier2 = new AttributeModifier(UUID.randomUUID(), "Attack Damage", dmg, AttributeModifier.Operation.ADD_NUMBER, EquipmentSlot.HAND);
+        AttributeModifier modifier2 = AttributeModifierUtil.createAttributeModifier(Attribute.ATTACK_DAMAGE, dmg, AttributeModifier.Operation.ADD_NUMBER, EquipmentSlotGroup.HAND);
         meta.addAttributeModifier(Attribute.ATTACK_DAMAGE, modifier2);
         meta.setDisplayName(TextUtil.convertLegacyToSection(config.getString("dDiamondRapier.name")));
         meta.setCustomModelData(1000005);
@@ -1400,9 +1396,9 @@ public class CombatWeaponryPlus extends JavaPlugin {
             dmg = config.getDouble("aNetheriteRapier.damage") - 1.0;
             spd = config.getDouble("aNetheriteRapier.speed") - 4.0;
         }
-        AttributeModifier modifier = new AttributeModifier(UUID.randomUUID(), "Attack Speed", spd, AttributeModifier.Operation.ADD_NUMBER, EquipmentSlot.HAND);
+        AttributeModifier modifier = AttributeModifierUtil.createAttributeModifier(Attribute.ATTACK_SPEED, spd, AttributeModifier.Operation.ADD_NUMBER, EquipmentSlotGroup.HAND);
         meta.addAttributeModifier(Attribute.ATTACK_SPEED, modifier);
-        AttributeModifier modifier2 = new AttributeModifier(UUID.randomUUID(), "Attack Damage", dmg, AttributeModifier.Operation.ADD_NUMBER, EquipmentSlot.HAND);
+        AttributeModifier modifier2 = AttributeModifierUtil.createAttributeModifier(Attribute.ATTACK_DAMAGE, dmg, AttributeModifier.Operation.ADD_NUMBER, EquipmentSlotGroup.HAND);
         meta.addAttributeModifier(Attribute.ATTACK_DAMAGE, modifier2);
         meta.setDisplayName(TextUtil.convertLegacyToSection(config.getString("dNetheriteRapier.name")));
         meta.setCustomModelData(1000005);
@@ -1439,9 +1435,9 @@ public class CombatWeaponryPlus extends JavaPlugin {
             dmg = config.getDouble("aWoodenLongsword.damage") - 1.0;
             spd = config.getDouble("aWoodenLongsword.speed") - 4.0;
         }
-        AttributeModifier modifier = new AttributeModifier(UUID.randomUUID(), "Attack Speed", spd, AttributeModifier.Operation.ADD_NUMBER, EquipmentSlot.HAND);
+        AttributeModifier modifier = AttributeModifierUtil.createAttributeModifier(Attribute.ATTACK_SPEED, spd, AttributeModifier.Operation.ADD_NUMBER, EquipmentSlotGroup.HAND);
         meta.addAttributeModifier(Attribute.ATTACK_SPEED, modifier);
-        AttributeModifier modifier2 = new AttributeModifier(UUID.randomUUID(), "Attack Damage", dmg, AttributeModifier.Operation.ADD_NUMBER, EquipmentSlot.HAND);
+        AttributeModifier modifier2 = AttributeModifierUtil.createAttributeModifier(Attribute.ATTACK_DAMAGE, dmg, AttributeModifier.Operation.ADD_NUMBER, EquipmentSlotGroup.HAND);
         meta.addAttributeModifier(Attribute.ATTACK_DAMAGE, modifier2);
         meta.setDisplayName(TextUtil.convertLegacyToSection(config.getString("dWoodenLongsword.name")));
         meta.setCustomModelData(1000001);
@@ -1474,9 +1470,9 @@ public class CombatWeaponryPlus extends JavaPlugin {
             dmg = config.getDouble("aStoneLongsword.damage") - 1.0;
             spd = config.getDouble("aStoneLongsword.speed") - 4.0;
         }
-        AttributeModifier modifier = new AttributeModifier(UUID.randomUUID(), "Attack Speed", spd, AttributeModifier.Operation.ADD_NUMBER, EquipmentSlot.HAND);
+        AttributeModifier modifier = AttributeModifierUtil.createAttributeModifier(Attribute.ATTACK_SPEED, spd, AttributeModifier.Operation.ADD_NUMBER, EquipmentSlotGroup.HAND);
         meta.addAttributeModifier(Attribute.ATTACK_SPEED, modifier);
-        AttributeModifier modifier2 = new AttributeModifier(UUID.randomUUID(), "Attack Damage", dmg, AttributeModifier.Operation.ADD_NUMBER, EquipmentSlot.HAND);
+        AttributeModifier modifier2 = AttributeModifierUtil.createAttributeModifier(Attribute.ATTACK_DAMAGE, dmg, AttributeModifier.Operation.ADD_NUMBER, EquipmentSlotGroup.HAND);
         meta.addAttributeModifier(Attribute.ATTACK_DAMAGE, modifier2);
         meta.setDisplayName(TextUtil.convertLegacyToSection(config.getString("dStoneLongsword.name")));
         meta.setCustomModelData(1000001);
@@ -1510,9 +1506,9 @@ public class CombatWeaponryPlus extends JavaPlugin {
             dmg = config.getDouble("aGoldenLongsword.damage") - 1.0;
             spd = config.getDouble("aGoldenLongsword.speed") - 4.0;
         }
-        AttributeModifier modifier = new AttributeModifier(UUID.randomUUID(), "Attack Speed", spd, AttributeModifier.Operation.ADD_NUMBER, EquipmentSlot.HAND);
+        AttributeModifier modifier = AttributeModifierUtil.createAttributeModifier(Attribute.ATTACK_SPEED, spd, AttributeModifier.Operation.ADD_NUMBER, EquipmentSlotGroup.HAND);
         meta.addAttributeModifier(Attribute.ATTACK_SPEED, modifier);
-        AttributeModifier modifier2 = new AttributeModifier(UUID.randomUUID(), "Attack Damage", dmg, AttributeModifier.Operation.ADD_NUMBER, EquipmentSlot.HAND);
+        AttributeModifier modifier2 = AttributeModifierUtil.createAttributeModifier(Attribute.ATTACK_DAMAGE, dmg, AttributeModifier.Operation.ADD_NUMBER, EquipmentSlotGroup.HAND);
         meta.addAttributeModifier(Attribute.ATTACK_DAMAGE, modifier2);
         meta.setDisplayName(TextUtil.convertLegacyToSection(config.getString("dGoldenLongsword.name")));
         meta.setCustomModelData(1000001);
@@ -1546,9 +1542,9 @@ public class CombatWeaponryPlus extends JavaPlugin {
             dmg = config.getDouble("aIronLongsword.damage") - 1.0;
             spd = config.getDouble("aIronLongsword.speed") - 4.0;
         }
-        AttributeModifier modifier = new AttributeModifier(UUID.randomUUID(), "Attack Speed", spd, AttributeModifier.Operation.ADD_NUMBER, EquipmentSlot.HAND);
+        AttributeModifier modifier = AttributeModifierUtil.createAttributeModifier(Attribute.ATTACK_SPEED, spd, AttributeModifier.Operation.ADD_NUMBER, EquipmentSlotGroup.HAND);
         meta.addAttributeModifier(Attribute.ATTACK_SPEED, modifier);
-        AttributeModifier modifier2 = new AttributeModifier(UUID.randomUUID(), "Attack Damage", dmg, AttributeModifier.Operation.ADD_NUMBER, EquipmentSlot.HAND);
+        AttributeModifier modifier2 = AttributeModifierUtil.createAttributeModifier(Attribute.ATTACK_DAMAGE, dmg, AttributeModifier.Operation.ADD_NUMBER, EquipmentSlotGroup.HAND);
         meta.addAttributeModifier(Attribute.ATTACK_DAMAGE, modifier2);
         meta.setDisplayName(TextUtil.convertLegacyToSection(config.getString("dIronLongsword.name")));
         meta.setCustomModelData(1000001);
@@ -1578,13 +1574,9 @@ public class CombatWeaponryPlus extends JavaPlugin {
         meta.addItemFlags(new ItemFlag[]{ItemFlag.HIDE_ATTRIBUTES});
         double dmg = 6.0;
         double spd = -2.6;
-        if (config.getBoolean("UseCustomValues")) {
-            dmg = config.getDouble("aEmeraldLongsword.damage") - 1.0;
-            spd = config.getDouble("aEmeraldLongsword.speed") - 4.0;
-        }
-        AttributeModifier modifier = new AttributeModifier(UUID.randomUUID(), "Attack Speed", spd, AttributeModifier.Operation.ADD_NUMBER, EquipmentSlot.HAND);
+        AttributeModifier modifier = AttributeModifierUtil.createAttributeModifier(Attribute.ATTACK_SPEED, spd, AttributeModifier.Operation.ADD_NUMBER, EquipmentSlotGroup.HAND);
         meta.addAttributeModifier(Attribute.ATTACK_SPEED, modifier);
-        AttributeModifier modifier2 = new AttributeModifier(UUID.randomUUID(), "Attack Damage", dmg, AttributeModifier.Operation.ADD_NUMBER, EquipmentSlot.HAND);
+        AttributeModifier modifier2 = AttributeModifierUtil.createAttributeModifier(Attribute.ATTACK_DAMAGE, dmg, AttributeModifier.Operation.ADD_NUMBER, EquipmentSlotGroup.HAND);
         meta.addAttributeModifier(Attribute.ATTACK_DAMAGE, modifier2);
         meta.setDisplayName(TextUtil.convertLegacyToSection(config.getString("dEmeraldLongsword.name")));
         meta.setCustomModelData(1000011);
@@ -1617,16 +1609,13 @@ public class CombatWeaponryPlus extends JavaPlugin {
         lore.add(TextUtil.convertLegacyToSection(config.getString("dDiamondLongsword.line7")));
         lore.add(TextUtil.convertLegacyToSection(config.getString("dDiamondLongsword.line8")));
         meta.setLore(lore);
+        double spd = 7.0;
+        double dmg = -2.8;
+
         meta.addItemFlags(new ItemFlag[]{ItemFlag.HIDE_ATTRIBUTES});
-        double dmg = 7.0;
-        double spd = -2.8;
-        if (config.getBoolean("UseCustomValues")) {
-            dmg = config.getDouble("aDiamondLongsword.damage") - 1.0;
-            spd = config.getDouble("aDiamondLongsword.speed") - 4.0;
-        }
-        AttributeModifier modifier = new AttributeModifier(UUID.randomUUID(), "Attack Speed", spd, AttributeModifier.Operation.ADD_NUMBER, EquipmentSlot.HAND);
+        AttributeModifier modifier = AttributeModifierUtil.createAttributeModifier(Attribute.ATTACK_SPEED, spd, AttributeModifier.Operation.ADD_NUMBER, EquipmentSlotGroup.HAND);
         meta.addAttributeModifier(Attribute.ATTACK_SPEED, modifier);
-        AttributeModifier modifier2 = new AttributeModifier(UUID.randomUUID(), "Attack Damage", dmg, AttributeModifier.Operation.ADD_NUMBER, EquipmentSlot.HAND);
+        AttributeModifier modifier2 = AttributeModifierUtil.createAttributeModifier(Attribute.ATTACK_DAMAGE, dmg, AttributeModifier.Operation.ADD_NUMBER, EquipmentSlotGroup.HAND);
         meta.addAttributeModifier(Attribute.ATTACK_DAMAGE, modifier2);
         meta.setDisplayName(TextUtil.convertLegacyToSection(config.getString("dDiamondLongsword.name")));
         meta.setCustomModelData(1000001);
@@ -1660,9 +1649,9 @@ public class CombatWeaponryPlus extends JavaPlugin {
             dmg = config.getDouble("aNetheriteLongsword.damage") - 1.0;
             spd = config.getDouble("aNetheriteLongsword.speed") - 4.0;
         }
-        AttributeModifier modifier = new AttributeModifier(UUID.randomUUID(), "Attack Speed", spd, AttributeModifier.Operation.ADD_NUMBER, EquipmentSlot.HAND);
+        AttributeModifier modifier = AttributeModifierUtil.createAttributeModifier(Attribute.ATTACK_SPEED, spd, AttributeModifier.Operation.ADD_NUMBER, EquipmentSlotGroup.HAND);
         meta.addAttributeModifier(Attribute.ATTACK_SPEED, modifier);
-        AttributeModifier modifier2 = new AttributeModifier(UUID.randomUUID(), "Attack Damage", dmg, AttributeModifier.Operation.ADD_NUMBER, EquipmentSlot.HAND);
+        AttributeModifier modifier2 = AttributeModifierUtil.createAttributeModifier(Attribute.ATTACK_DAMAGE, dmg, AttributeModifier.Operation.ADD_NUMBER, EquipmentSlotGroup.HAND);
         meta.addAttributeModifier(Attribute.ATTACK_DAMAGE, modifier2);
         meta.setDisplayName(TextUtil.convertLegacyToSection(config.getString("dNetheriteLongsword.name")));
         meta.setCustomModelData(1000001);
@@ -1738,9 +1727,9 @@ public class CombatWeaponryPlus extends JavaPlugin {
             dmg = config.getDouble("aStoneKnife.damage") - 1.0;
             spd = config.getDouble("aStoneKnife.speed") - 4.0;
         }
-        AttributeModifier modifier = new AttributeModifier(UUID.randomUUID(), "Attack Speed", spd, AttributeModifier.Operation.ADD_NUMBER, EquipmentSlot.HAND);
+        AttributeModifier modifier = AttributeModifierUtil.createAttributeModifier(Attribute.ATTACK_SPEED, spd, AttributeModifier.Operation.ADD_NUMBER, EquipmentSlotGroup.HAND);
         meta.addAttributeModifier(Attribute.ATTACK_SPEED, modifier);
-        AttributeModifier modifier2 = new AttributeModifier(UUID.randomUUID(), "Attack Damage", dmg, AttributeModifier.Operation.ADD_NUMBER, EquipmentSlot.HAND);
+        AttributeModifier modifier2 = AttributeModifierUtil.createAttributeModifier(Attribute.ATTACK_DAMAGE, dmg, AttributeModifier.Operation.ADD_NUMBER, EquipmentSlotGroup.HAND);
         meta.addAttributeModifier(Attribute.ATTACK_DAMAGE, modifier2);
         meta.setDisplayName(TextUtil.convertLegacyToSection(config.getString("dStoneKnife.name")));
         meta.setCustomModelData(1000006);
@@ -1775,9 +1764,9 @@ public class CombatWeaponryPlus extends JavaPlugin {
             dmg = config.getDouble("aGoldenKnife.damage") - 1.0;
             spd = config.getDouble("aGoldenKnife.speed") - 4.0;
         }
-        AttributeModifier modifier = new AttributeModifier(UUID.randomUUID(), "Attack Speed", spd, AttributeModifier.Operation.ADD_NUMBER, EquipmentSlot.HAND);
+        AttributeModifier modifier = AttributeModifierUtil.createAttributeModifier(Attribute.ATTACK_SPEED, spd, AttributeModifier.Operation.ADD_NUMBER, EquipmentSlotGroup.HAND);
         meta.addAttributeModifier(Attribute.ATTACK_SPEED, modifier);
-        AttributeModifier modifier2 = new AttributeModifier(UUID.randomUUID(), "Attack Damage", dmg, AttributeModifier.Operation.ADD_NUMBER, EquipmentSlot.HAND);
+        AttributeModifier modifier2 = AttributeModifierUtil.createAttributeModifier(Attribute.ATTACK_DAMAGE, dmg, AttributeModifier.Operation.ADD_NUMBER, EquipmentSlotGroup.HAND);
         meta.addAttributeModifier(Attribute.ATTACK_DAMAGE, modifier2);
         meta.setDisplayName(TextUtil.convertLegacyToSection(config.getString("dGoldenKnife.name")));
         meta.setCustomModelData(1000006);
@@ -1808,13 +1797,9 @@ public class CombatWeaponryPlus extends JavaPlugin {
         meta.addItemFlags(new ItemFlag[]{ItemFlag.HIDE_ATTRIBUTES});
         double dmg = 2.0;
         double spd = -1.0;
-        if (config.getBoolean("UseCustomValues")) {
-            dmg = config.getDouble("aIronKnife.damage") - 1.0;
-            spd = config.getDouble("aIronKnife.speed") - 4.0;
-        }
-        AttributeModifier modifier = new AttributeModifier(UUID.randomUUID(), "Attack Speed", spd, AttributeModifier.Operation.ADD_NUMBER, EquipmentSlot.HAND);
+        AttributeModifier modifier = AttributeModifierUtil.createAttributeModifier(Attribute.ATTACK_SPEED, spd, AttributeModifier.Operation.ADD_NUMBER, EquipmentSlotGroup.HAND);
         meta.addAttributeModifier(Attribute.ATTACK_SPEED, modifier);
-        AttributeModifier modifier2 = new AttributeModifier(UUID.randomUUID(), "Attack Damage", dmg, AttributeModifier.Operation.ADD_NUMBER, EquipmentSlot.HAND);
+        AttributeModifier modifier2 = AttributeModifierUtil.createAttributeModifier(Attribute.ATTACK_DAMAGE, dmg, AttributeModifier.Operation.ADD_NUMBER, EquipmentSlotGroup.HAND);
         meta.addAttributeModifier(Attribute.ATTACK_DAMAGE, modifier2);
         meta.setDisplayName(TextUtil.convertLegacyToSection(config.getString("dIronKnife.name")));
         meta.setCustomModelData(1000006);
@@ -1849,9 +1834,9 @@ public class CombatWeaponryPlus extends JavaPlugin {
             dmg = config.getDouble("aEmeraldKnife.damage") - 1.0;
             spd = config.getDouble("aEmeraldKnife.speed") - 4.0;
         }
-        AttributeModifier modifier = new AttributeModifier(UUID.randomUUID(), "Attack Speed", spd, AttributeModifier.Operation.ADD_NUMBER, EquipmentSlot.HAND);
+        AttributeModifier modifier = AttributeModifierUtil.createAttributeModifier(Attribute.ATTACK_SPEED, spd, AttributeModifier.Operation.ADD_NUMBER, EquipmentSlotGroup.HAND);
         meta.addAttributeModifier(Attribute.ATTACK_SPEED, modifier);
-        AttributeModifier modifier2 = new AttributeModifier(UUID.randomUUID(), "Attack Damage", dmg, AttributeModifier.Operation.ADD_NUMBER, EquipmentSlot.HAND);
+        AttributeModifier modifier2 = AttributeModifierUtil.createAttributeModifier(Attribute.ATTACK_DAMAGE, dmg, AttributeModifier.Operation.ADD_NUMBER, EquipmentSlotGroup.HAND);
         meta.addAttributeModifier(Attribute.ATTACK_DAMAGE, modifier2);
         meta.setDisplayName(TextUtil.convertLegacyToSection(config.getString("dEmeraldKnife.name")));
         if (config.getBoolean("EnchantsOnEmeraldGear")) {
@@ -1872,33 +1857,25 @@ public class CombatWeaponryPlus extends JavaPlugin {
     }
 
     public ShapedRecipe getDknifeRecipe() {
-        ItemStack item = new ItemStack(Material.DIAMOND_SWORD);
-        ItemMeta meta = item.getItemMeta();
-        ArrayList<String> lore = new ArrayList<String>();
-        lore.add(TextUtil.convertLegacyToSection(config.getString("KnifeDescription.line1")));
-        lore.add(TextUtil.convertLegacyToSection(config.getString("KnifeDescription.line2")));
-        lore.add(TextUtil.convertLegacyToSection(config.getString("KnifeDescription.line3")));
-        lore.add(TextUtil.convertLegacyToSection(config.getString("KnifeDescription.line4")));
-        lore.add(TextUtil.convertLegacyToSection(config.getString("KnifeDescription.line5")));
-        lore.add(TextUtil.convertLegacyToSection(config.getString("KnifeDescription.line6")));
-        lore.add(TextUtil.convertLegacyToSection(config.getString("dDiamondKnife.line7")));
-        lore.add(TextUtil.convertLegacyToSection(config.getString("dDiamondKnife.line8")));
-        lore.add(TextUtil.convertLegacyToSection(config.getString("dDiamondKnife.line9")));
-        meta.setLore(lore);
-        meta.addItemFlags(new ItemFlag[]{ItemFlag.HIDE_ATTRIBUTES});
-        double dmg = 3.0;
-        double spd = -1.0;
-        if (config.getBoolean("UseCustomValues")) {
-            dmg = config.getDouble("aDiamondKnife.damage") - 1.0;
-            spd = config.getDouble("aDiamondKnife.speed") - 4.0;
-        }
-        AttributeModifier modifier = new AttributeModifier(UUID.randomUUID(), "Attack Speed", spd, AttributeModifier.Operation.ADD_NUMBER, EquipmentSlot.HAND);
-        meta.addAttributeModifier(Attribute.ATTACK_SPEED, modifier);
-        AttributeModifier modifier2 = new AttributeModifier(UUID.randomUUID(), "Attack Damage", dmg, AttributeModifier.Operation.ADD_NUMBER, EquipmentSlot.HAND);
-        meta.addAttributeModifier(Attribute.ATTACK_DAMAGE, modifier2);
-        meta.setDisplayName(TextUtil.convertLegacyToSection(config.getString("dDiamondKnife.name")));
-        meta.setCustomModelData(1000006);
-        item.setItemMeta(meta);
+        ItemStack item = new WeaponBuilder(Material.DIAMOND_SWORD, this.configHelper)
+                .withConfiguredDamage("aDiamondKnife.damage", 2.0, ConfigValueOperation.SUBTRACT, 1.0)
+                .withConfiguredSpeed("aDiamondKnife.speed", -1.0, ConfigValueOperation.SUBTRACT, 4.0)
+                .lore(
+                    config.getString("KnifeDescription.line1"),
+                    config.getString("KnifeDescription.line2"),
+                    config.getString("KnifeDescription.line3"),
+                    config.getString("KnifeDescription.line4"),
+                    config.getString("KnifeDescription.line5"),
+                    config.getString("KnifeDescription.line6"),
+                    config.getString("dDiamondKnife.line7"),
+                    config.getString("dDiamondKnife.line8"),
+                    config.getString("dDiamondKnife.line9")
+                )
+                .hideFlags(true)
+                .customModelData(1000006)
+                .name(config.getString("dDiamondKnife.name"))
+                .build();
+
         NamespacedKey key = new NamespacedKey(this, "diamond_knife");
         this.keys.add(key);
         ShapedRecipe recipe = new ShapedRecipe(key, item);
@@ -1925,13 +1902,9 @@ public class CombatWeaponryPlus extends JavaPlugin {
         meta.addItemFlags(new ItemFlag[]{ItemFlag.HIDE_ATTRIBUTES});
         double dmg = 4.0;
         double spd = -1.0;
-        if (config.getBoolean("UseCustomValues")) {
-            dmg = config.getDouble("aNetheriteKnife.damage") - 1.0;
-            spd = config.getDouble("aNetheriteKnife.speed") - 4.0;
-        }
-        AttributeModifier modifier = new AttributeModifier(UUID.randomUUID(), "Attack Speed", spd, AttributeModifier.Operation.ADD_NUMBER, EquipmentSlot.HAND);
+        AttributeModifier modifier = AttributeModifierUtil.createAttributeModifier(Attribute.ATTACK_SPEED, spd, AttributeModifier.Operation.ADD_NUMBER, EquipmentSlotGroup.HAND);
         meta.addAttributeModifier(Attribute.ATTACK_SPEED, modifier);
-        AttributeModifier modifier2 = new AttributeModifier(UUID.randomUUID(), "Attack Damage", dmg, AttributeModifier.Operation.ADD_NUMBER, EquipmentSlot.HAND);
+        AttributeModifier modifier2 = AttributeModifierUtil.createAttributeModifier(Attribute.ATTACK_DAMAGE, dmg, AttributeModifier.Operation.ADD_NUMBER, EquipmentSlotGroup.HAND);
         meta.addAttributeModifier(Attribute.ATTACK_DAMAGE, modifier2);
         meta.setDisplayName(TextUtil.convertLegacyToSection(config.getString("dNetheriteKnife.name")));
         meta.setCustomModelData(1000006);
@@ -1971,11 +1944,10 @@ public class CombatWeaponryPlus extends JavaPlugin {
             dmg = config.getDouble("aWoodenSpear.damage") - 1.0;
             spd = config.getDouble("aWoodenSpear.speed") - 4.0;
         }
-        AttributeModifier modifier = new AttributeModifier(UUID.randomUUID(), "Attack Speed", spd, AttributeModifier.Operation.ADD_NUMBER, EquipmentSlot.HAND);
+        AttributeModifier modifier = AttributeModifierUtil.createAttributeModifier(Attribute.ATTACK_SPEED, spd, AttributeModifier.Operation.ADD_NUMBER, EquipmentSlotGroup.HAND);
         meta.addAttributeModifier(Attribute.ATTACK_SPEED, modifier);
-        AttributeModifier modifier2 = new AttributeModifier(UUID.randomUUID(), "Attack Damage", dmg, AttributeModifier.Operation.ADD_NUMBER, EquipmentSlot.HAND);
+        AttributeModifier modifier2 = AttributeModifierUtil.createAttributeModifier(Attribute.ATTACK_DAMAGE, dmg, AttributeModifier.Operation.ADD_NUMBER, EquipmentSlotGroup.HAND);
         meta.addAttributeModifier(Attribute.ATTACK_DAMAGE, modifier2);
-        meta.setDisplayName(TextUtil.convertLegacyToSection(config.getString("dWoodenSpear.name")));
         meta.setCustomModelData(1000004);
         item.setItemMeta(meta);
         NamespacedKey key = new NamespacedKey(this, "wooden_spear");
@@ -2050,9 +2022,9 @@ public class CombatWeaponryPlus extends JavaPlugin {
             dmg = config.getDouble("aGoldenSpear.damage") - 1.0;
             spd = config.getDouble("aGoldenSpear.speed") - 4.0;
         }
-        AttributeModifier modifier = new AttributeModifier(UUID.randomUUID(), "Attack Speed", spd, AttributeModifier.Operation.ADD_NUMBER, EquipmentSlot.HAND);
+        AttributeModifier modifier = AttributeModifierUtil.createAttributeModifier(Attribute.ATTACK_SPEED, spd, AttributeModifier.Operation.ADD_NUMBER, EquipmentSlotGroup.HAND);
         meta.addAttributeModifier(Attribute.ATTACK_SPEED, modifier);
-        AttributeModifier modifier2 = new AttributeModifier(UUID.randomUUID(), "Attack Damage", dmg, AttributeModifier.Operation.ADD_NUMBER, EquipmentSlot.HAND);
+        AttributeModifier modifier2 = AttributeModifierUtil.createAttributeModifier(Attribute.ATTACK_DAMAGE, dmg, AttributeModifier.Operation.ADD_NUMBER, EquipmentSlotGroup.HAND);
         meta.addAttributeModifier(Attribute.ATTACK_DAMAGE, modifier2);
         meta.setDisplayName(TextUtil.convertLegacyToSection(config.getString("dGoldenSpear.name")));
         meta.setCustomModelData(1000004);
@@ -2090,9 +2062,9 @@ public class CombatWeaponryPlus extends JavaPlugin {
             dmg = config.getDouble("aIronSpear.damage") - 1.0;
             spd = config.getDouble("aIronSpear.speed") - 4.0;
         }
-        AttributeModifier modifier = new AttributeModifier(UUID.randomUUID(), "Attack Speed", spd, AttributeModifier.Operation.ADD_NUMBER, EquipmentSlot.HAND);
+        AttributeModifier modifier = AttributeModifierUtil.createAttributeModifier(Attribute.ATTACK_SPEED, spd, AttributeModifier.Operation.ADD_NUMBER, EquipmentSlotGroup.HAND);
         meta.addAttributeModifier(Attribute.ATTACK_SPEED, modifier);
-        AttributeModifier modifier2 = new AttributeModifier(UUID.randomUUID(), "Attack Damage", dmg, AttributeModifier.Operation.ADD_NUMBER, EquipmentSlot.HAND);
+        AttributeModifier modifier2 = AttributeModifierUtil.createAttributeModifier(Attribute.ATTACK_DAMAGE, dmg, AttributeModifier.Operation.ADD_NUMBER, EquipmentSlotGroup.HAND);
         meta.addAttributeModifier(Attribute.ATTACK_DAMAGE, modifier2);
         meta.setDisplayName(TextUtil.convertLegacyToSection(config.getString("dIronSpear.name")));
         meta.setCustomModelData(1000004);
@@ -2196,18 +2168,18 @@ public class CombatWeaponryPlus extends JavaPlugin {
         ItemStack item = new ItemStack(Material.NETHERITE_SWORD);
         ItemMeta meta = item.getItemMeta();
         ArrayList<String> lore = new ArrayList<String>();
-        lore.add(TextUtil.convertLegacyToSection(config.getString("SpearDescription.line1")));
-        lore.add(TextUtil.convertLegacyToSection(config.getString("SpearDescription.line2")));
-        lore.add(TextUtil.convertLegacyToSection(config.getString("SpearDescription.line3")));
-        lore.add(TextUtil.convertLegacyToSection(config.getString("SpearDescription.line4")));
-        lore.add(TextUtil.convertLegacyToSection(config.getString("SpearDescription.line5")));
-        lore.add(TextUtil.convertLegacyToSection(config.getString("SpearDescription.line6")));
-        lore.add(TextUtil.convertLegacyToSection(config.getString("SpearDescription.line7")));
-        lore.add(TextUtil.convertLegacyToSection(config.getString("SpearDescription.line8")));
-        lore.add(TextUtil.convertLegacyToSection(config.getString("SpearDescription.line9")));
-        lore.add(TextUtil.convertLegacyToSection(config.getString("dNetheriteSpear.line10")));
-        lore.add(TextUtil.convertLegacyToSection(config.getString("dNetheriteSpear.line11")));
-        lore.add(TextUtil.convertLegacyToSection(config.getString("dNetheriteSpear.line12")));
+        lore.add(TextUtil.convertLegacyToSectionWithConfig("SpearDescription.line1", config).get());
+        lore.add(TextUtil.convertLegacyToSectionWithConfig("SpearDescription.line2", config).get());
+        lore.add(TextUtil.convertLegacyToSectionWithConfig("SpearDescription.line3", config).get());
+        lore.add(TextUtil.convertLegacyToSectionWithConfig("SpearDescription.line4", config).get());
+        lore.add(TextUtil.convertLegacyToSectionWithConfig("SpearDescription.line5", config).get());
+        lore.add(TextUtil.convertLegacyToSectionWithConfig("SpearDescription.line6", config).get());
+        lore.add(TextUtil.convertLegacyToSectionWithConfig("SpearDescription.line7", config).get());
+        lore.add(TextUtil.convertLegacyToSectionWithConfig("SpearDescription.line8", config).get());
+        lore.add(TextUtil.convertLegacyToSectionWithConfig("SpearDescription.line9", config).get());
+        lore.add(TextUtil.convertLegacyToSectionWithConfig("dNetheriteSpear.line10", config).get());
+        lore.add(TextUtil.convertLegacyToSectionWithConfig("dNetheriteSpear.line11", config).get());
+        lore.add(TextUtil.convertLegacyToSectionWithConfig("dNetheriteSpear.line12", config).get());
         meta.setLore(lore);
         meta.addItemFlags(new ItemFlag[]{ItemFlag.HIDE_ATTRIBUTES});
         double dmg = 4.0;
@@ -2237,21 +2209,21 @@ public class CombatWeaponryPlus extends JavaPlugin {
     public ShapedRecipe getwkatRecipe() {
         ItemStack item = new ItemStack(Material.WOODEN_SWORD);
         ItemMeta meta = item.getItemMeta();
-        ArrayList<String> lore = new ArrayList<String>();
-        lore.add(TextUtil.convertLegacyToSection(config.getString("KatanaDescription.line1")));
-        lore.add(TextUtil.convertLegacyToSection(config.getString("KatanaDescription.line2")));
-        lore.add(TextUtil.convertLegacyToSection(config.getString("KatanaDescription.line3")));
-        lore.add(TextUtil.convertLegacyToSection(config.getString("KatanaDescription.line4")));
-        lore.add(TextUtil.convertLegacyToSection(config.getString("KatanaDescription.line5")));
-        lore.add(TextUtil.convertLegacyToSection(config.getString("KatanaDescription.line6")));
-        lore.add(TextUtil.convertLegacyToSection(config.getString("KatanaDescription.line7")));
-        lore.add(TextUtil.convertLegacyToSection(config.getString("KatanaDescription.line8")));
-        lore.add(TextUtil.convertLegacyToSection(config.getString("KatanaDescription.line9")));
-        lore.add(TextUtil.convertLegacyToSection(config.getString("KatanaDescription.line10")));
-        lore.add(TextUtil.convertLegacyToSection(config.getString("KatanaDescription.line11")));
-        lore.add(TextUtil.convertLegacyToSection(config.getString("dWoodenKatana.line12")));
-        lore.add(TextUtil.convertLegacyToSection(config.getString("dWoodenKatana.line13")));
-        lore.add(TextUtil.convertLegacyToSection(config.getString("dWoodenKatana.line14")));
+        List<String> lore = new ArrayList<String>();
+        lore.add(TextUtil.convertLegacyToSectionWithConfig("KatanaDescription.line1", config).get());
+        lore.add(TextUtil.convertLegacyToSectionWithConfig("KatanaDescription.line2", config).get());
+        lore.add(TextUtil.convertLegacyToSectionWithConfig("KatanaDescription.line3", config).get());
+        lore.add(TextUtil.convertLegacyToSectionWithConfig("KatanaDescription.line4", config).get());
+        lore.add(TextUtil.convertLegacyToSectionWithConfig("KatanaDescription.line5", config).get());
+        lore.add(TextUtil.convertLegacyToSectionWithConfig("KatanaDescription.line6", config).get());
+        lore.add(TextUtil.convertLegacyToSectionWithConfig("KatanaDescription.line7", config).get());
+        lore.add(TextUtil.convertLegacyToSectionWithConfig("KatanaDescription.line8", config).get());
+        lore.add(TextUtil.convertLegacyToSectionWithConfig("KatanaDescription.line9", config).get());
+        lore.add(TextUtil.convertLegacyToSectionWithConfig("KatanaDescription.line10", config).get());
+        lore.add(TextUtil.convertLegacyToSectionWithConfig("KatanaDescription.line11", config).get());
+        lore.add(TextUtil.convertLegacyToSectionWithConfig("dWoodenKatana.line12", config).get());
+        lore.add(TextUtil.convertLegacyToSectionWithConfig("dWoodenKatana.line13", config).get());
+        lore.add(TextUtil.convertLegacyToSectionWithConfig("dWoodenKatana.line14", config).get());
         meta.setLore(lore);
         meta.addItemFlags(new ItemFlag[]{ItemFlag.HIDE_ATTRIBUTES});
         double dmg = 2.5;
@@ -2597,13 +2569,12 @@ public class CombatWeaponryPlus extends JavaPlugin {
             hp = config.getDouble("aEmeraldCharm.BonusHealth");
             def = config.getDouble("aEmeraldCharm.BonusArmor");
         }
-        AttributeModifier modifier = new AttributeModifier(k, hp, AttributeModifier.Operation.ADD_NUMBER, EquipmentSlotGroup.OFFHAND);
-        meta.addAttributeModifier(Attribute.MAX_HEALTH, modifier);
 
-        AttributeModifier modifier2 = new AttributeModifier(k, def, AttributeModifier.Operation.ADD_NUMBER, EquipmentSlotGroup.OFFHAND);
-        meta.addAttributeModifier(Attribute.ARMOR, modifier2);
+        var modifier = AttributeModifierUtil.createAttributeModifier(Attribute.MAX_HEALTH, hp, AttributeModifier.Operation.ADD_NUMBER, EquipmentSlotGroup.OFFHAND);
 
-        ArrayList<String> lore = new ArrayList<String>();
+        var modifier2 = AttributeModifierUtil.createAttributeModifier(Attribute.ARMOR, def, AttributeModifier.Operation.ADD_NUMBER, EquipmentSlotGroup.OFFHAND);
+
+        List<String> lore = new ArrayList<String>();
         lore.add(TextUtil.convertLegacyToSection(config.getString("dEmeraldCharm.line1")));
         lore.add(TextUtil.convertLegacyToSection(config.getString("dEmeraldCharm.line2")));
         lore.add(TextUtil.convertLegacyToSection(config.getString("dEmeraldCharm.line3")));
@@ -4256,29 +4227,29 @@ public class CombatWeaponryPlus extends JavaPlugin {
         return this.mm.deserialize(miniMessageConverted);
     }
 
-    private ShapedRecipe makeRecipe(Material item, double dmg, double spd, NamespacedKey key, String configString) {
-        var itemStack = new ItemStack(item);
-        var meta = itemStack.getItemMeta();
+    // private ShapedRecipe makeRecipe(Material item, double dmg, double spd, NamespacedKey key, String configString) {
+    //     var itemStack = new ItemStack(item);
+    //     var meta = itemStack.getItemMeta();
 
-        return null;
-    }
+    //     return null;
+    // }
 
     // All lists must be the same size -> same number of elements
-    private List<AttributeModifier> makeModifiers(List<NamespacedKey> keys, List<Double> values, List<EquipmentSlotGroup> groups) {
-        assert (keys.size() == values.size() && keys.size() == groups.size());
+    // private List<AttributeModifier> makeModifiers(List<NamespacedKey> keys, List<Double> values, List<EquipmentSlotGroup> groups) {
+    //     assert (keys.size() == values.size() && keys.size() == groups.size());
 
-        var attributes = new ArrayList<AttributeModifier>();
+    //     var attributes = new ArrayList<AttributeModifier>();
 
-        for (int i = 0; i < keys.size(); i++) {
-            attributes.add(new AttributeModifier(keys.get(i), values.get(i), AttributeModifier.Operation.ADD_NUMBER, groups.get(i)));
-        }
+    //     for (int i = 0; i < keys.size(); i++) {
+    //         attributes.add(new AttributeModifier(keys.get(i), values.get(i), AttributeModifier.Operation.ADD_NUMBER, groups.get(i)));
+    //     }
 
-        return attributes;
-    }
+    //     return attributes;
+    // }
 
-    private void lkjdakls(List<AttributeModifier> modifiers, List<Attribute> attributes, ItemMeta meta) {
-        for (int i = 0; i < modifiers.size(); i++) {
-            meta.addAttributeModifier(attributes.get(i), modifiers.get(i));
-        }
-    }
+    // private void lkjdakls(List<AttributeModifier> modifiers, List<Attribute> attributes, ItemMeta meta) {
+    //     for (int i = 0; i < modifiers.size(); i++) {
+    //         meta.addAttributeModifier(attributes.get(i), modifiers.get(i));
+    //     }
+    // }
 }

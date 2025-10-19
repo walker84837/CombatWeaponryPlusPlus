@@ -6,17 +6,11 @@ import org.bukkit.attribute.AttributeModifier;
 import org.bukkit.inventory.EquipmentSlotGroup;
 import org.jetbrains.annotations.NotNull;
 import org.winlogon.combatweaponryplus.CombatWeaponryPlus;
+import org.winlogon.combatweaponryplus.util.PersistentDataManager;
 
 import java.util.UUID;
 
 public class AttributeModifierUtil {
-    private static NamespacedKey createNamespacedKey(String key) {
-        return new NamespacedKey(CombatWeaponryPlus.getInstance(), key);
-    }
-
-    public static NamespacedKey nilKey() {
-        return new NamespacedKey(CombatWeaponryPlus.getInstance(), "");
-    }
 
     /**
      * Creates an AttributeModifier.
@@ -29,7 +23,7 @@ public class AttributeModifierUtil {
      * @return The {@link AttributeModifier}
      */
     public static @NotNull AttributeModifier createAttributeModifier(@NotNull Attribute attribute, double amount, @NotNull AttributeModifier.Operation operation, @NotNull EquipmentSlotGroup slotGroup) {
-        var key = createNamespacedKey(attribute.name().toLowerCase() + "_" + UUID.randomUUID().toString());
+        var key = PersistentDataManager.createNamespacedKey(attribute.name().toLowerCase() + "_" + UUID.randomUUID().toString());
         return new AttributeModifier(key, amount, operation, slotGroup);
     }
 
