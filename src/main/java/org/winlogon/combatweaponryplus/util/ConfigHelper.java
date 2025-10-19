@@ -38,4 +38,8 @@ public class ConfigHelper {
     public List<String> getStringList(String path) {
         return config.getStringList(path);
     }
+
+    public FileConfiguration raw() {
+        return config;
+    }
 }
