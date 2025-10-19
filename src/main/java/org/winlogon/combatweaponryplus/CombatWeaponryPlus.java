@@ -22,7 +22,6 @@ import org.bukkit.inventory.EquipmentSlot;
 import org.bukkit.inventory.EquipmentSlotGroup;
 import org.bukkit.inventory.ItemFlag;
 import org.bukkit.inventory.ItemStack;
-import org.bukkit.inventory.Recipe;
 import org.bukkit.inventory.RecipeChoice;
 import org.bukkit.inventory.ShapedRecipe;
 import org.bukkit.inventory.SmithingRecipe;
@@ -40,9 +39,6 @@ import org.winlogon.combatweaponryplus.util.TextUtil;
 import org.winlogon.retrohue.RetroHue;
 
 import java.util.ArrayList;
-import java.util.Collections;
-import java.util.HashSet;
-import java.util.Set;
 import java.util.List;
 import java.util.Random;
 import java.util.UUID;
@@ -56,7 +52,6 @@ public class CombatWeaponryPlus extends JavaPlugin {
     private MiniMessage mm = MiniMessage.miniMessage();
 
     private RetroHue rh = new RetroHue(mm);
-    private Set<Recipe> recipes = new HashSet<Recipe>();
 
     public int getRandomInt(int max) {
         return rand.nextInt(max);
@@ -463,7 +458,7 @@ public class CombatWeaponryPlus extends JavaPlugin {
         lore.add(TextUtil.convertLegacyToSection("&9 1.8 Attack Speed"));
         meta.setLore(lore);
         meta.addItemFlags(new ItemFlag[]{ItemFlag.HIDE_ATTRIBUTES});
-        meta.displayName(convertLegacyToComponent(ChatColor.DARK_GREEN + "Emerald Sword"));
+        meta.displayName(TextUtil.convertLegacyToComponent(ChatColor.DARK_GREEN + "Emerald Sword"));
         meta.setCustomModelData(1000017);
         if (config.getBoolean("EnchantsOnEmeraldGear")) {
             int num = config.getInt("EmeraldGearEnchantLevels.Unbreaking");
@@ -559,7 +554,7 @@ public class CombatWeaponryPlus extends JavaPlugin {
         List<Component> lore = new ArrayList<Component>();
 
         for (int i = 1; i <= 9; i++) {
-            lore.add(convertLegacyToComponent(config.getString("dChorusBlade.line" + i)));
+            lore.add(TextUtil.convertLegacyToComponent(config.getString("dChorusBlade.line" + i)));
         }
         meta.addItemFlags(new ItemFlag[]{ItemFlag.HIDE_ATTRIBUTES});
         meta.lore(lore);
@@ -964,7 +959,7 @@ public class CombatWeaponryPlus extends JavaPlugin {
 
         List<Component> finalList = new ArrayList<Component>();
         for (int i = 0; i < merged.size(); ++i) {
-            finalList.set(i, convertLegacyToComponent(merged.get(i)));
+            finalList.set(i, TextUtil.convertLegacyToComponent(merged.get(i)));
         }
         meta.lore(finalList);
         meta.addItemFlags(new ItemFlag[]{ItemFlag.HIDE_ATTRIBUTES});
@@ -4196,7 +4191,7 @@ public class CombatWeaponryPlus extends JavaPlugin {
 
         List<Component> component = new ArrayList<Component>();
         for (String s : lore) {
-            component.add(convertLegacyToComponent(s));
+            component.add(TextUtil.convertLegacyToComponent(s));
         }
         meta.lore(component);
         meta.displayName(Component.text("Explosive Staff"));
@@ -4221,11 +4216,6 @@ public class CombatWeaponryPlus extends JavaPlugin {
     //     recipe.setIngredient('A', Material.DIAMOND);
     //     return recipe;
     // }
-
-    private Component convertLegacyToComponent(String s) {
-        var miniMessageConverted = rh.convertToMiniMessage(s, '&');
-        return this.mm.deserialize(miniMessageConverted);
-    }
 
     // private ShapedRecipe makeRecipe(Material item, double dmg, double spd, NamespacedKey key, String configString) {
     //     var itemStack = new ItemStack(item);

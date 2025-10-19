@@ -13,6 +13,7 @@ import org.winlogon.combatweaponryplus.CombatWeaponryPlus;
 import org.winlogon.combatweaponryplus.items.builders.ItemBuilder;
 import org.winlogon.combatweaponryplus.items.builders.WeaponBuilder;
 import org.winlogon.combatweaponryplus.util.ConfigHelper;
+import org.winlogon.combatweaponryplus.util.ConfigValueOperation;
 import org.winlogon.combatweaponryplus.util.TextUtil;
 
 import java.util.ArrayList;
@@ -306,18 +307,15 @@ public class RecipeProvider {
     }
 
     private ShapedRecipe getEmeraldSwordRecipe() {
-        double dmg = config.getDouble("aEmeraldSword.damage", 6.0) - 1.0;
-        double spd = config.getDouble("aEmeraldSword.speed", 1.8) - 4.0;
-
         List<String> lore = new ArrayList<>();
         lore.add("");
         lore.add(TextUtil.convertLegacyToSection("&7When in Main Hand:"));
         lore.add(TextUtil.convertLegacyToSection("&9 6 Attack Damage"));
         lore.add(TextUtil.convertLegacyToSection("&9 1.8 Attack Speed"));
 
-        ItemStack item = new WeaponBuilder(Material.GOLDEN_SWORD)
-                .attackDamage(dmg)
-                .attackSpeed(spd)
+        ItemStack item = new WeaponBuilder(Material.GOLDEN_SWORD, config)
+                .withConfiguredDamage("aEmeraldSword.damage", 6.0, ConfigValueOperation.SUBTRACT, 1.0)
+                .withConfiguredSpeed("aEmeraldSword.speed", 1.8, ConfigValueOperation.SUBTRACT, 4.0)
                 .name("Emerald Sword")
                 .lore(lore)
                 .customModelData(1000017)
@@ -377,17 +375,14 @@ public class RecipeProvider {
 
     // Chorus Blade
     private ShapedRecipe getChorusBladeRecipe() {
-        double dmg = config.getDouble("aChorusBlade.damage", 4.0) - 1.0;
-        double spd = config.getDouble("aChorusBlade.speed", 10.0) - 4.0;
-
         List<String> lore = new ArrayList<>();
         for (int i = 1; i <= 9; i++) {
             lore.add(config.getString("dChorusBlade.line" + i, ""));
         }
 
-        ItemStack item = new WeaponBuilder(Material.IRON_SWORD)
-                .attackDamage(dmg)
-                .attackSpeed(spd)
+        ItemStack item = new WeaponBuilder(Material.IRON_SWORD, config)
+                .withConfiguredDamage("aChorusBlade.damage", 4.0, ConfigValueOperation.SUBTRACT, 1.0)
+                .withConfiguredSpeed("aChorusBlade.speed", 10.0, ConfigValueOperation.SUBTRACT, 4.0)
                 .name(config.getString("dChorusBlade.name", "Chorus Blade"))
                 .lore(lore)
                 .customModelData(1000007)
@@ -410,17 +405,14 @@ public class RecipeProvider {
 
     // Sword Bows
     private ShapedRecipe getSwordBowRecipe() {
-        double dmg = config.getDouble("aSwordBow.damage", 9.0) - 1.0;
-        double spd = config.getDouble("aSwordBow.speed", 1.0) - 4.0;
-
         List<String> lore = new ArrayList<>();
         lore.add(config.getString("dSwordBow.line1", ""));
         lore.add(config.getString("dSwordBow.line2", ""));
         lore.add(config.getString("dSwordBow.line3", ""));
 
-        ItemStack item = new WeaponBuilder(Material.BOW)
-                .attackDamage(dmg)
-                .attackSpeed(spd)
+        ItemStack item = new WeaponBuilder(Material.BOW, config)
+                .withConfiguredDamage("aSwordBow.damage", 9.0, ConfigValueOperation.SUBTRACT, 1.0)
+                .withConfiguredSpeed("aSwordBow.speed", 1.0, ConfigValueOperation.SUBTRACT, 4.0)
                 .name(config.getString("dSwordBow.name", "Sword Bow"))
                 .lore(lore)
                 .customModelData(1000001)
@@ -442,8 +434,6 @@ public class RecipeProvider {
     }
 
     private ShapedRecipe getHeavySwordBowRecipe() {
-        double dmg = config.getDouble("aHeavySwordBow.damage", 11.0) - 1.0;
-        double spd = config.getDouble("aHeavySwordBow.speed", 0.8) - 4.0;
         double mspd = config.getDouble("aHeavySwordBow.moveSpeed", -0.05);
         double omspd = config.getDouble("aHeavySwordBow.offhandMoveSpeed", -0.05);
         double kbr = config.getDouble("aHeavySwordBow.KBResist", 0.5) / 10.0;
@@ -454,9 +444,9 @@ public class RecipeProvider {
         lore.add(config.getString("dHeavySwordBow.line2", ""));
         lore.add(config.getString("dHeavySwordBow.line3", ""));
 
-        ItemBuilder builder = new WeaponBuilder(Material.BOW)
-                .attackDamage(dmg)
-                .attackSpeed(spd)
+        ItemBuilder builder = new WeaponBuilder(Material.BOW, config)
+                .withConfiguredDamage("aHeavySwordBow.damage", 11.0, ConfigValueOperation.SUBTRACT, 1.0)
+                .withConfiguredSpeed("aHeavySwordBow.speed", 0.8, ConfigValueOperation.SUBTRACT, 4.0)
                 .name(config.getString("dHeavySwordBow.name", "Heavy Sword Bow"))
                 .lore(lore)
                 .customModelData(1000002)
@@ -642,16 +632,13 @@ public class RecipeProvider {
 
     // Scythes
     private ShapedRecipe getWoodenScytheRecipe() {
-        double dmg = config.getDouble("aWoodenScythe.damage", 7.0) - 1.0;
-        double spd = config.getDouble("aWoodenScythe.speed", 1.0) - 4.0;
         List<String> lore = new ArrayList<>(config.getStringList("ScytheDescription"));
         lore.add(config.getString("dWoodenScythe.line8", ""));
         lore.add(config.getString("dWoodenScythe.line9", ""));
         lore.add(config.getString("dWoodenScythe.line10", ""));
-
-        ItemStack item = new WeaponBuilder(Material.WOODEN_SWORD)
-                .attackDamage(dmg)
-                .attackSpeed(spd)
+        ItemStack item = new WeaponBuilder(Material.WOODEN_SWORD, config)
+                .withConfiguredDamage("aWoodenScythe.damage", 7.0, ConfigValueOperation.SUBTRACT, 1.0)
+                .withConfiguredSpeed("aWoodenScythe.speed", 1.0, ConfigValueOperation.SUBTRACT, 4.0)
                 .name(config.getString("dWoodenScythe.name", "Wooden Scythe"))
                 .lore(lore)
                 .customModelData(1000003)
@@ -661,16 +648,14 @@ public class RecipeProvider {
     }
 
     private ShapedRecipe getStoneScytheRecipe() {
-        double dmg = config.getDouble("aStoneScythe.damage", 7.5) - 1.0;
-        double spd = config.getDouble("aStoneScythe.speed", 1.0) - 4.0;
         List<String> lore = new ArrayList<>(config.getStringList("ScytheDescription"));
         lore.add(config.getString("dStoneScythe.line8", ""));
         lore.add(config.getString("dStoneScythe.line9", ""));
         lore.add(config.getString("dStoneScythe.line10", ""));
 
-        ItemStack item = new WeaponBuilder(Material.STONE_SWORD)
-                .attackDamage(dmg)
-                .attackSpeed(spd)
+        ItemStack item = new WeaponBuilder(Material.STONE_SWORD, config)
+                .withConfiguredDamage("aStoneScythe.damage", 7.5, ConfigValueOperation.SUBTRACT, 1.0)
+                .withConfiguredSpeed("aStoneScythe.speed", 1.0, ConfigValueOperation.SUBTRACT, 4.0)
                 .name(config.getString("dStoneScythe.name", "Stone Scythe"))
                 .lore(lore)
                 .customModelData(1000003)
@@ -680,16 +665,14 @@ public class RecipeProvider {
     }
 
     private ShapedRecipe getGoldenScytheRecipe() {
-        double dmg = config.getDouble("aGoldenScythe.damage", 7.0) - 1.0;
-        double spd = config.getDouble("aGoldenScythe.speed", 1.2) - 4.0;
         List<String> lore = new ArrayList<>(config.getStringList("ScytheDescription"));
         lore.add(config.getString("dGoldenScythe.line8", ""));
         lore.add(config.getString("dGoldenScythe.line9", ""));
         lore.add(config.getString("dGoldenScythe.line10", ""));
 
-        ItemStack item = new WeaponBuilder(Material.GOLDEN_SWORD)
-                .attackDamage(dmg)
-                .attackSpeed(spd)
+        ItemStack item = new WeaponBuilder(Material.GOLDEN_SWORD, config)
+                .withConfiguredDamage("aGoldenScythe.damage", 7.0, ConfigValueOperation.SUBTRACT, 1.0)
+                .withConfiguredSpeed("aGoldenScythe.speed", 1.2, ConfigValueOperation.SUBTRACT, 4.0)
                 .name(config.getString("dGoldenScythe.name", "Golden Scythe"))
                 .lore(lore)
                 .customModelData(1000003)
@@ -699,16 +682,14 @@ public class RecipeProvider {
     }
 
     private ShapedRecipe getIronScytheRecipe() {
-        double dmg = config.getDouble("aIronScythe.damage", 8.0) - 1.0;
-        double spd = config.getDouble("aIronScythe.speed", 1.0) - 4.0;
         List<String> lore = new ArrayList<>(config.getStringList("ScytheDescription"));
         lore.add(config.getString("dIronScythe.line8", ""));
         lore.add(config.getString("dIronScythe.line9", ""));
         lore.add(config.getString("dIronScythe.line10", ""));
 
-        ItemStack item = new WeaponBuilder(Material.IRON_SWORD)
-                .attackDamage(dmg)
-                .attackSpeed(spd)
+        ItemStack item = new WeaponBuilder(Material.IRON_SWORD, config)
+                .withConfiguredDamage("aIronScythe.damage", 8.0, ConfigValueOperation.SUBTRACT, 1.0)
+                .withConfiguredSpeed("aIronScythe.speed", 1.0, ConfigValueOperation.SUBTRACT, 4.0)
                 .name(config.getString("dIronScythe.name", "Iron Scythe"))
                 .lore(lore)
                 .customModelData(1000003)
@@ -718,16 +699,14 @@ public class RecipeProvider {
     }
 
     private ShapedRecipe getDiamondScytheRecipe() {
-        double dmg = config.getDouble("aDiamondScythe.damage", 9.0) - 1.0;
-        double spd = config.getDouble("aDiamondScythe.speed", 1.0) - 4.0;
         List<String> lore = new ArrayList<>(config.getStringList("ScytheDescription"));
         lore.add(config.getString("dDiamondScythe.line8", ""));
         lore.add(config.getString("dDiamondScythe.line9", ""));
         lore.add(config.getString("dDiamondScythe.line10", ""));
 
-        ItemStack item = new WeaponBuilder(Material.DIAMOND_SWORD)
-                .attackDamage(dmg)
-                .attackSpeed(spd)
+        ItemStack item = new WeaponBuilder(Material.DIAMOND_SWORD, config)
+                .withConfiguredDamage("aDiamondScythe.damage", 9.0, ConfigValueOperation.SUBTRACT, 1.0)
+                .withConfiguredSpeed("aDiamondScythe.speed", 1.0, ConfigValueOperation.SUBTRACT, 4.0)
                 .name(config.getString("dDiamondScythe.name", "Diamond Scythe"))
                 .lore(lore)
                 .customModelData(1000003)
@@ -737,16 +716,14 @@ public class RecipeProvider {
     }
 
     private ShapedRecipe getNetheriteScytheRecipe() {
-        double dmg = config.getDouble("aNetheriteScythe.damage", 10.0) - 1.0;
-        double spd = config.getDouble("aNetheriteScythe.speed", 1.0) - 4.0;
         List<String> lore = new ArrayList<>(config.getStringList("ScytheDescription"));
         lore.add(config.getString("dNetheriteScythe.line8", ""));
         lore.add(config.getString("dNetheriteScythe.line9", ""));
         lore.add(config.getString("dNetheriteScythe.line10", ""));
 
-        ItemStack item = new WeaponBuilder(Material.NETHERITE_SWORD)
-                .attackDamage(dmg)
-                .attackSpeed(spd)
+        ItemStack item = new WeaponBuilder(Material.NETHERITE_SWORD, config)
+                .withConfiguredDamage("aNetheriteScythe.damage", 10.0, ConfigValueOperation.SUBTRACT, 1.0)
+                .withConfiguredSpeed("aNetheriteScythe.speed", 1.0, ConfigValueOperation.SUBTRACT, 4.0)
                 .name(config.getString("dNetheriteScythe.name", "Netherite Scythe"))
                 .lore(lore)
                 .customModelData(1000003)
@@ -758,15 +735,12 @@ public class RecipeProvider {
     }
 
     private ShapedRecipe getEmeraldScytheRecipe() {
-        double dmg = config.getDouble("aEmeraldScythe.damage", 8.0) - 1.0;
-        double spd = config.getDouble("aEmeraldScythe.speed", 1.2) - 4.0;
-
         List<String> lore = new ArrayList<>(config.getStringList("ScytheDescription"));
         lore.addAll(config.getStringList("dEmeraldScythe.main-hand"));
 
-        ItemStack item = new WeaponBuilder(Material.GOLDEN_SWORD)
-                .attackDamage(dmg)
-                .attackSpeed(spd)
+        ItemStack item = new WeaponBuilder(Material.GOLDEN_SWORD, config)
+                .withConfiguredDamage("aEmeraldScythe.damage", 8.0, ConfigValueOperation.SUBTRACT, 1.0)
+                .withConfiguredSpeed("aEmeraldScythe.speed", 1.2, ConfigValueOperation.SUBTRACT, 4.0)
                 .name(config.getString("dEmeraldScythe.name", "Emerald Scythe"))
                 .lore(lore)
                 .customModelData(1000013)
@@ -807,16 +781,14 @@ public class RecipeProvider {
 
     // Rapiers
     private ShapedRecipe getWoodenRapierRecipe() {
-        double dmg = config.getDouble("aWoodenRapier.damage", 3.0) - 1.0;
-        double spd = config.getDouble("aWoodenRapier.speed", 1.9) - 4.0;
         List<String> lore = new ArrayList<>(config.getStringList("RapierDescription"));
         lore.add(config.getString("dWoodenRapier.line8", ""));
         lore.add(config.getString("dWoodenRapier.line9", ""));
         lore.add(config.getString("dWoodenRapier.line10", ""));
 
-        ItemStack item = new WeaponBuilder(Material.WOODEN_SWORD)
-                .attackDamage(dmg)
-                .attackSpeed(spd)
+        ItemStack item = new WeaponBuilder(Material.WOODEN_SWORD, config)
+                .withConfiguredDamage("aWoodenRapier.damage", 3.0, ConfigValueOperation.SUBTRACT, 1.0)
+                .withConfiguredSpeed("aWoodenRapier.speed", 1.9, ConfigValueOperation.SUBTRACT, 4.0)
                 .name(config.getString("dWoodenRapier.name", "Wooden Rapier"))
                 .lore(lore)
                 .customModelData(1000005)
@@ -826,16 +798,13 @@ public class RecipeProvider {
     }
 
     private ShapedRecipe getStoneRapierRecipe() {
-        double dmg = config.getDouble("aStoneRapier.damage", 3.5) - 1.0;
-        double spd = config.getDouble("aStoneRapier.speed", 1.9) - 4.0;
         List<String> lore = new ArrayList<>(config.getStringList("RapierDescription"));
         lore.add(config.getString("dStoneRapier.line8", ""));
         lore.add(config.getString("dStoneRapier.line9", ""));
         lore.add(config.getString("dStoneRapier.line10", ""));
 
-        ItemStack item = new WeaponBuilder(Material.STONE_SWORD)
-                .attackDamage(dmg)
-                .attackSpeed(spd)
+        ItemStack item = new WeaponBuilder(Material.STONE_SWORD, config)
+                .withConfiguredSpeed("aStoneRapier.speed", 1.9, ConfigValueOperation.SUBTRACT, 4.0)
                 .name(config.getString("dStoneRapier.name", "Stone Rapier"))
                 .lore(lore)
                 .customModelData(1000005)
@@ -845,16 +814,14 @@ public class RecipeProvider {
     }
 
     private ShapedRecipe getGoldenRapierRecipe() {
-        double dmg = config.getDouble("aGoldenRapier.damage", 3.0) - 1.0;
-        double spd = config.getDouble("aGoldenRapier.speed", 2.4) - 4.0;
         List<String> lore = new ArrayList<>(config.getStringList("RapierDescription"));
         lore.add(config.getString("dGoldenRapier.line8", ""));
         lore.add(config.getString("dGoldenRapier.line9", ""));
         lore.add(config.getString("dGoldenRapier.line10", ""));
 
-        ItemStack item = new WeaponBuilder(Material.GOLDEN_SWORD)
-                .attackDamage(dmg)
-                .attackSpeed(spd)
+        ItemStack item = new WeaponBuilder(Material.GOLDEN_SWORD, config)
+                .withConfiguredDamage("aGoldenRapier.damage", 3.0, ConfigValueOperation.SUBTRACT, 1.0)
+                .withConfiguredSpeed("aGoldenRapier.speed", 2.4, ConfigValueOperation.SUBTRACT, 4.0)
                 .name(config.getString("dGoldenRapier.name", "Golden Rapier"))
                 .lore(lore)
                 .customModelData(1000005)
@@ -864,16 +831,11 @@ public class RecipeProvider {
     }
 
     private ShapedRecipe getIronRapierRecipe() {
-        double dmg = config.getDouble("aIronRapier.damage", 4.0) - 1.0;
-        double spd = config.getDouble("aIronRapier.speed", 1.9) - 4.0;
         List<String> lore = new ArrayList<>(config.getStringList("RapierDescription"));
-        lore.add(config.getString("dIronRapier.line8", ""));
-        lore.add(config.getString("dIronRapier.line9", ""));
-        lore.add(config.getString("dIronRapier.line10", ""));
 
-        ItemStack item = new WeaponBuilder(Material.IRON_SWORD)
-                .attackDamage(dmg)
-                .attackSpeed(spd)
+        ItemStack item = new WeaponBuilder(Material.IRON_SWORD, config)
+                .withConfiguredDamage("aIronRapier.damage", 4.0, ConfigValueOperation.SUBTRACT, 1.0)
+                .withConfiguredSpeed("aIronRapier.speed", 1.9, ConfigValueOperation.SUBTRACT, 4.0)
                 .name(config.getString("dIronRapier.name", "Iron Rapier"))
                 .lore(lore)
                 .customModelData(1000005)
@@ -883,16 +845,11 @@ public class RecipeProvider {
     }
 
     private ShapedRecipe getEmeraldRapierRecipe() {
-        double dmg = config.getDouble("aEmeraldRapier.damage", 4.0) - 1.0;
-        double spd = config.getDouble("aEmeraldRapier.speed", 2.4) - 4.0;
         List<String> lore = new ArrayList<>(config.getStringList("RapierDescription"));
-        lore.add(config.getString("dEmeraldRapier.line8", ""));
-        lore.add(config.getString("dEmeraldRapier.line9", ""));
-        lore.add(config.getString("dEmeraldRapier.line10", ""));
 
-        ItemStack item = new WeaponBuilder(Material.GOLDEN_SWORD)
-                .attackDamage(dmg)
-                .attackSpeed(spd)
+        ItemStack item = new WeaponBuilder(Material.GOLDEN_SWORD, config)
+                .withConfiguredDamage("aEmeraldRapier.damage", 4.0, ConfigValueOperation.SUBTRACT, 1.0)
+                .withConfiguredSpeed("aEmeraldRapier.speed", 2.4, ConfigValueOperation.SUBTRACT, 4.0)
                 .name(config.getString("dEmeraldRapier.name", "Emerald Rapier"))
                 .lore(lore)
                 .customModelData(1000015)
@@ -909,16 +866,11 @@ public class RecipeProvider {
     }
 
     private ShapedRecipe getDiamondRapierRecipe() {
-        double dmg = config.getDouble("aDiamondRapier.damage", 5.0) - 1.0;
-        double spd = config.getDouble("aDiamondRapier.speed", 1.9) - 4.0;
         List<String> lore = new ArrayList<>(config.getStringList("RapierDescription"));
-        lore.add(config.getString("dDiamondRapier.line8", ""));
-        lore.add(config.getString("dDiamondRapier.line9", ""));
-        lore.add(config.getString("dDiamondRapier.line10", ""));
 
-        ItemStack item = new WeaponBuilder(Material.DIAMOND_SWORD)
-                .attackDamage(dmg)
-                .attackSpeed(spd)
+        ItemStack item = new WeaponBuilder(Material.DIAMOND_SWORD, config)
+                .withConfiguredDamage("aDiamondRapier.damage", 5.0, ConfigValueOperation.SUBTRACT, 1.0)
+                .withConfiguredSpeed("aDiamondRapier.speed", 1.9, ConfigValueOperation.SUBTRACT, 4.0)
                 .name(config.getString("dDiamondRapier.name", "Diamond Rapier"))
                 .lore(lore)
                 .customModelData(1000005)
@@ -928,16 +880,11 @@ public class RecipeProvider {
     }
 
     private ShapedRecipe getNetheriteRapierRecipe() {
-        double dmg = config.getDouble("aNetheriteRapier.damage", 6.0) - 1.0;
-        double spd = config.getDouble("aNetheriteRapier.speed", 1.9) - 4.0;
         List<String> lore = new ArrayList<>(config.getStringList("RapierDescription"));
-        lore.add(config.getString("dNetheriteRapier.line8", ""));
-        lore.add(config.getString("dNetheriteRapier.line9", ""));
-        lore.add(config.getString("dNetheriteRapier.line10", ""));
 
-        ItemStack item = new WeaponBuilder(Material.NETHERITE_SWORD)
-                .attackDamage(dmg)
-                .attackSpeed(spd)
+        ItemStack item = new WeaponBuilder(Material.NETHERITE_SWORD, config)
+                .withConfiguredDamage("aNetheriteRapier.damage", 6.0, ConfigValueOperation.SUBTRACT, 1.0)
+                .withConfiguredSpeed("aNetheriteRapier.speed", 1.9, ConfigValueOperation.SUBTRACT, 4.0)
                 .name(config.getString("dNetheriteRapier.name", "Netherite Rapier"))
                 .lore(lore)
                 .customModelData(1000005)
@@ -950,16 +897,14 @@ public class RecipeProvider {
 
     // Longswords
     private ShapedRecipe getWoodenLongswordRecipe() {
-        double dmg = config.getDouble("aWoodenLongsword.damage", 5.0) - 1.0;
-        double spd = config.getDouble("aWoodenLongsword.speed", 1.2) - 4.0;
         List<String> lore = new ArrayList<>(config.getStringList("LongswordDescription"));
         lore.add(config.getString("dWoodenLongsword.line6", ""));
         lore.add(config.getString("dWoodenLongsword.line7", ""));
         lore.add(config.getString("dWoodenLongsword.line8", ""));
 
-        ItemStack item = new WeaponBuilder(Material.WOODEN_SWORD)
-                .attackDamage(dmg)
-                .attackSpeed(spd)
+        ItemStack item = new WeaponBuilder(Material.WOODEN_SWORD, config)
+                .withConfiguredDamage("aWoodenLongsword.damage", 5.0, ConfigValueOperation.SUBTRACT, 1.0)
+                .withConfiguredSpeed("aWoodenLongsword.speed", 1.2, ConfigValueOperation.SUBTRACT, 4.0)
                 .name(config.getString("dWoodenLongsword.name", "Wooden Longsword"))
                 .lore(lore)
                 .customModelData(1000001)
@@ -969,16 +914,14 @@ public class RecipeProvider {
     }
 
     private ShapedRecipe getStoneLongswordRecipe() {
-        double dmg = config.getDouble("aStoneLongsword.damage", 6.0) - 1.0;
-        double spd = config.getDouble("aStoneLongsword.speed", 1.2) - 4.0;
         List<String> lore = new ArrayList<>(config.getStringList("LongswordDescription"));
         lore.add(config.getString("dStoneLongsword.line6", ""));
         lore.add(config.getString("dStoneLongsword.line7", ""));
         lore.add(config.getString("dStoneLongsword.line8", ""));
 
-        ItemStack item = new WeaponBuilder(Material.STONE_SWORD)
-                .attackDamage(dmg)
-                .attackSpeed(spd)
+        ItemStack item = new WeaponBuilder(Material.STONE_SWORD, config)
+                .withConfiguredDamage("aStoneLongsword.damage", 6.0, ConfigValueOperation.SUBTRACT, 1.0)
+                .withConfiguredSpeed("aStoneLongsword.speed", 1.2, ConfigValueOperation.SUBTRACT, 4.0)
                 .name(config.getString("dStoneLongsword.name", "Stone Longsword"))
                 .lore(lore)
                 .customModelData(1000001)
@@ -988,16 +931,14 @@ public class RecipeProvider {
     }
 
     private ShapedRecipe getGoldenLongswordRecipe() {
-        double dmg = config.getDouble("aGoldenLongsword.damage", 5.0) - 1.0;
-        double spd = config.getDouble("aGoldenLongsword.speed", 1.4) - 4.0;
         List<String> lore = new ArrayList<>(config.getStringList("LongswordDescription"));
         lore.add(config.getString("dGoldenLongsword.line6", ""));
         lore.add(config.getString("dGoldenLongsword.line7", ""));
         lore.add(config.getString("dGoldenLongsword.line8", ""));
 
-        ItemStack item = new WeaponBuilder(Material.GOLDEN_SWORD)
-                .attackDamage(dmg)
-                .attackSpeed(spd)
+        ItemStack item = new WeaponBuilder(Material.GOLDEN_SWORD, config)
+                .withConfiguredDamage("aGoldenLongsword.damage", 5.0, ConfigValueOperation.SUBTRACT, 1.0)
+                .withConfiguredSpeed("aGoldenLongsword.speed", 1.4, ConfigValueOperation.SUBTRACT, 4.0)
                 .name(config.getString("dGoldenLongsword.name", "Golden Longsword"))
                 .lore(lore)
                 .customModelData(1000001)
@@ -1007,16 +948,14 @@ public class RecipeProvider {
     }
 
     private ShapedRecipe getIronLongswordRecipe() {
-        double dmg = config.getDouble("aIronLongsword.damage", 7.0) - 1.0;
-        double spd = config.getDouble("aIronLongsword.speed", 1.2) - 4.0;
         List<String> lore = new ArrayList<>(config.getStringList("LongswordDescription"));
         lore.add(config.getString("dIronLongsword.line6", ""));
         lore.add(config.getString("dIronLongsword.line7", ""));
         lore.add(config.getString("dIronLongsword.line8", ""));
 
-        ItemStack item = new WeaponBuilder(Material.IRON_SWORD)
-                .attackDamage(dmg)
-                .attackSpeed(spd)
+        ItemStack item = new WeaponBuilder(Material.IRON_SWORD, config)
+                .withConfiguredDamage("aIronLongsword.damage", 7.0, ConfigValueOperation.SUBTRACT, 1.0)
+                .withConfiguredSpeed("aIronLongsword.speed", 1.2, ConfigValueOperation.SUBTRACT, 4.0)
                 .name(config.getString("dIronLongsword.name", "Iron Longsword"))
                 .lore(lore)
                 .customModelData(1000001)
@@ -1026,16 +965,14 @@ public class RecipeProvider {
     }
 
     private ShapedRecipe getEmeraldLongswordRecipe() {
-        double dmg = config.getDouble("aEmeraldLongsword.damage", 7.0) - 1.0;
-        double spd = config.getDouble("aEmeraldLongsword.speed", 1.4) - 4.0;
         List<String> lore = new ArrayList<>(config.getStringList("LongswordDescription"));
         lore.add(config.getString("dEmeraldLongsword.line6", ""));
         lore.add(config.getString("dEmeraldLongsword.line7", ""));
         lore.add(config.getString("dEmeraldLongsword.line8", ""));
 
-        ItemStack item = new WeaponBuilder(Material.GOLDEN_SWORD)
-                .attackDamage(dmg)
-                .attackSpeed(spd)
+        ItemStack item = new WeaponBuilder(Material.GOLDEN_SWORD, config)
+                .withConfiguredDamage("aEmeraldLongsword.damage", 7.0, ConfigValueOperation.SUBTRACT, 1.0)
+                .withConfiguredSpeed("aEmeraldLongsword.speed", 1.4, ConfigValueOperation.SUBTRACT, 4.0)
                 .name(config.getString("dEmeraldLongsword.name", "Emerald Longsword"))
                 .lore(lore)
                 .customModelData(1000011)
@@ -1052,16 +989,14 @@ public class RecipeProvider {
     }
 
     private ShapedRecipe getDiamondLongswordRecipe() {
-        double dmg = config.getDouble("aDiamondLongsword.damage", 8.0) - 1.0;
-        double spd = config.getDouble("aDiamondLongsword.speed", 1.2) - 4.0;
         List<String> lore = new ArrayList<>(config.getStringList("LongswordDescription"));
         lore.add(config.getString("dDiamondLongsword.line6", ""));
         lore.add(config.getString("dDiamondLongsword.line7", ""));
         lore.add(config.getString("dDiamondLongsword.line8", ""));
 
-        ItemStack item = new WeaponBuilder(Material.DIAMOND_SWORD)
-                .attackDamage(dmg)
-                .attackSpeed(spd)
+        ItemStack item = new WeaponBuilder(Material.DIAMOND_SWORD, config)
+                .withConfiguredDamage("aDiamondLongsword.damage", 8.0, ConfigValueOperation.SUBTRACT, 1.0)
+                .withConfiguredSpeed("aDiamondLongsword.speed", 1.2, ConfigValueOperation.SUBTRACT, 4.0)
                 .name(config.getString("dDiamondLongsword.name", "Diamond Longsword"))
                 .lore(lore)
                 .customModelData(1000001)
@@ -1071,16 +1006,14 @@ public class RecipeProvider {
     }
 
     private ShapedRecipe getNetheriteLongswordRecipe() {
-        double dmg = config.getDouble("aNetheriteLongsword.damage", 9.0) - 1.0;
-        double spd = config.getDouble("aNetheriteLongsword.speed", 1.2) - 4.0;
         List<String> lore = new ArrayList<>(config.getStringList("LongswordDescription"));
         lore.add(config.getString("dNetheriteLongsword.line6", ""));
         lore.add(config.getString("dNetheriteLongsword.line7", ""));
         lore.add(config.getString("dNetheriteLongsword.line8", ""));
 
-        ItemStack item = new WeaponBuilder(Material.NETHERITE_SWORD)
-                .attackDamage(dmg)
-                .attackSpeed(spd)
+        ItemStack item = new WeaponBuilder(Material.NETHERITE_SWORD, config)
+                .withConfiguredDamage("aNetheriteLongsword.damage", 9.0, ConfigValueOperation.SUBTRACT, 1.0)
+                .withConfiguredSpeed("aNetheriteLongsword.speed", 1.2, ConfigValueOperation.SUBTRACT, 4.0)
                 .name(config.getString("dNetheriteLongsword.name", "Netherite Longsword"))
                 .lore(lore)
                 .customModelData(1000001)
@@ -1093,16 +1026,14 @@ public class RecipeProvider {
 
     // Knives
     private ShapedRecipe getWoodenKnifeRecipe() {
-        double dmg = config.getDouble("aWoodenKnife.damage", 2.0) - 1.0;
-        double spd = config.getDouble("aWoodenKnife.speed", 3.0) - 4.0;
         List<String> lore = new ArrayList<>(config.getStringList("KnifeDescription"));
         lore.add(config.getString("dWoodenKnife.line7", ""));
         lore.add(config.getString("dWoodenKnife.line8", ""));
         lore.add(config.getString("dWoodenKnife.line9", ""));
 
-        ItemStack item = new WeaponBuilder(Material.WOODEN_SWORD)
-                .attackDamage(dmg)
-                .attackSpeed(spd)
+        ItemStack item = new WeaponBuilder(Material.WOODEN_SWORD, config)
+                .withConfiguredDamage("aWoodenKnife.damage", 2.0, ConfigValueOperation.SUBTRACT, 1.0)
+                .withConfiguredSpeed("aWoodenKnife.speed", 3.0, ConfigValueOperation.SUBTRACT, 4.0)
                 .name(config.getString("dWoodenKnife.name", "Wooden Knife"))
                 .lore(lore)
                 .customModelData(1000006)
@@ -1112,16 +1043,14 @@ public class RecipeProvider {
     }
 
     private ShapedRecipe getStoneKnifeRecipe() {
-        double dmg = config.getDouble("aStoneKnife.damage", 2.5) - 1.0;
-        double spd = config.getDouble("aStoneKnife.speed", 3.0) - 4.0;
         List<String> lore = new ArrayList<>(config.getStringList("KnifeDescription"));
         lore.add(config.getString("dStoneKnife.line7", ""));
         lore.add(config.getString("dStoneKnife.line8", ""));
         lore.add(config.getString("dStoneKnife.line9", ""));
 
-        ItemStack item = new WeaponBuilder(Material.STONE_SWORD)
-                .attackDamage(dmg)
-                .attackSpeed(spd)
+        ItemStack item = new WeaponBuilder(Material.STONE_SWORD, config)
+                .withConfiguredDamage("aStoneKnife.damage", 2.5, ConfigValueOperation.SUBTRACT, 1.0)
+                .withConfiguredSpeed("aStoneKnife.speed", 3.0, ConfigValueOperation.SUBTRACT, 4.0)
                 .name(config.getString("dStoneKnife.name", "Stone Knife"))
                 .lore(lore)
                 .customModelData(1000006)
@@ -1131,16 +1060,14 @@ public class RecipeProvider {
     }
 
     private ShapedRecipe getGoldenKnifeRecipe() {
-        double dmg = config.getDouble("aGoldenKnife.damage", 2.0) - 1.0;
-        double spd = config.getDouble("aGoldenKnife.speed", 4.0) - 4.0;
         List<String> lore = new ArrayList<>(config.getStringList("KnifeDescription"));
         lore.add(config.getString("dGoldenKnife.line7", ""));
         lore.add(config.getString("dGoldenKnife.line8", ""));
         lore.add(config.getString("dGoldenKnife.line9", ""));
 
-        ItemStack item = new WeaponBuilder(Material.GOLDEN_SWORD)
-                .attackDamage(dmg)
-                .attackSpeed(spd)
+        ItemStack item = new WeaponBuilder(Material.GOLDEN_SWORD, config)
+                .withConfiguredDamage("aGoldenKnife.damage", 2.0, ConfigValueOperation.SUBTRACT, 1.0)
+                .withConfiguredSpeed("aGoldenKnife.speed", 4.0, ConfigValueOperation.SUBTRACT, 4.0)
                 .name(config.getString("dGoldenKnife.name", "Golden Knife"))
                 .lore(lore)
                 .customModelData(1000006)
@@ -1150,16 +1077,14 @@ public class RecipeProvider {
     }
 
     private ShapedRecipe getIronKnifeRecipe() {
-        double dmg = config.getDouble("aIronKnife.damage", 3.0) - 1.0;
-        double spd = config.getDouble("aIronKnife.speed", 3.0) - 4.0;
         List<String> lore = new ArrayList<>(config.getStringList("KnifeDescription"));
         lore.add(config.getString("dIronKnife.line7", ""));
         lore.add(config.getString("dIronKnife.line8", ""));
         lore.add(config.getString("dIronKnife.line9", ""));
 
-        ItemStack item = new WeaponBuilder(Material.IRON_SWORD)
-                .attackDamage(dmg)
-                .attackSpeed(spd)
+        ItemStack item = new WeaponBuilder(Material.IRON_SWORD, config)
+                .withConfiguredDamage("aIronKnife.damage", 3.0, ConfigValueOperation.SUBTRACT, 1.0)
+                .withConfiguredSpeed("aIronKnife.speed", 3.0, ConfigValueOperation.SUBTRACT, 4.0)
                 .name(config.getString("dIronKnife.name", "Iron Knife"))
                 .lore(lore)
                 .customModelData(1000006)
@@ -1169,16 +1094,14 @@ public class RecipeProvider {
     }
 
     private ShapedRecipe getEmeraldKnifeRecipe() {
-        double dmg = config.getDouble("aEmeraldKnife.damage", 3.0) - 1.0;
-        double spd = config.getDouble("aEmeraldKnife.speed", 4.0) - 4.0;
         List<String> lore = new ArrayList<>(config.getStringList("KnifeDescription"));
         lore.add(config.getString("dEmeraldKnife.line7", ""));
         lore.add(config.getString("dEmeraldKnife.line8", ""));
         lore.add(config.getString("dEmeraldKnife.line9", ""));
 
-        ItemStack item = new WeaponBuilder(Material.GOLDEN_SWORD)
-                .attackDamage(dmg)
-                .attackSpeed(spd)
+        ItemStack item = new WeaponBuilder(Material.GOLDEN_SWORD, config)
+                .withConfiguredDamage("aEmeraldKnife.damage", 3.0, ConfigValueOperation.SUBTRACT, 1.0)
+                .withConfiguredSpeed("aEmeraldKnife.speed", 4.0, ConfigValueOperation.SUBTRACT, 4.0)
                 .name(config.getString("dEmeraldKnife.name", "Emerald Knife"))
                 .lore(lore)
                 .customModelData(1000016)
@@ -1195,16 +1118,14 @@ public class RecipeProvider {
     }
 
     private ShapedRecipe getDiamondKnifeRecipe() {
-        double dmg = config.getDouble("aDiamondKnife.damage", 4.0) - 1.0;
-        double spd = config.getDouble("aDiamondKnife.speed", 3.0) - 4.0;
         List<String> lore = new ArrayList<>(config.getStringList("KnifeDescription"));
         lore.add(config.getString("dDiamondKnife.line7", ""));
         lore.add(config.getString("dDiamondKnife.line8", ""));
         lore.add(config.getString("dDiamondKnife.line9", ""));
 
-        ItemStack item = new WeaponBuilder(Material.DIAMOND_SWORD)
-                .attackDamage(dmg)
-                .attackSpeed(spd)
+        ItemStack item = new WeaponBuilder(Material.DIAMOND_SWORD, config)
+                .withConfiguredDamage("aDiamondKnife.damage", 4.0, ConfigValueOperation.SUBTRACT, 1.0)
+                .withConfiguredSpeed("aDiamondKnife.speed", 3.0, ConfigValueOperation.SUBTRACT, 4.0)
                 .name(config.getString("dDiamondKnife.name", "Diamond Knife"))
                 .lore(lore)
                 .customModelData(1000006)
@@ -1214,16 +1135,14 @@ public class RecipeProvider {
     }
 
     private ShapedRecipe getNetheriteKnifeRecipe() {
-        double dmg = config.getDouble("aNetheriteKnife.damage", 5.0) - 1.0;
-        double spd = config.getDouble("aNetheriteKnife.speed", 3.0) - 4.0;
         List<String> lore = new ArrayList<>(config.getStringList("KnifeDescription"));
         lore.add(config.getString("dNetheriteKnife.line7", ""));
         lore.add(config.getString("dNetheriteKnife.line8", ""));
         lore.add(config.getString("dNetheriteKnife.line9", ""));
 
-        ItemStack item = new WeaponBuilder(Material.NETHERITE_SWORD)
-                .attackDamage(dmg)
-                .attackSpeed(spd)
+        ItemStack item = new WeaponBuilder(Material.NETHERITE_SWORD, config)
+                .withConfiguredDamage("aNetheriteKnife.damage", 5.0, ConfigValueOperation.SUBTRACT, 1.0)
+                .withConfiguredSpeed("aNetheriteKnife.speed", 3.0, ConfigValueOperation.SUBTRACT, 4.0)
                 .name(config.getString("dNetheriteKnife.name", "Netherite Knife"))
                 .lore(lore)
                 .customModelData(1000006)
@@ -1236,16 +1155,14 @@ public class RecipeProvider {
 
     // Spears
     private ShapedRecipe getWoodenSpearRecipe() {
-        double dmg = config.getDouble("aWoodenSpear.damage", 2.0) - 1.0;
-        double spd = config.getDouble("aWoodenSpear.speed", 2.5) - 4.0;
         List<String> lore = new ArrayList<>(config.getStringList("SpearDescription"));
         lore.add(config.getString("dWoodenSpear.line10", ""));
         lore.add(config.getString("dWoodenSpear.line11", ""));
         lore.add(config.getString("dWoodenSpear.line12", ""));
 
-        ItemStack item = new WeaponBuilder(Material.WOODEN_SWORD)
-                .attackDamage(dmg)
-                .attackSpeed(spd)
+        ItemStack item = new WeaponBuilder(Material.WOODEN_SWORD, config)
+                .withConfiguredDamage("aWoodenSpear.damage", 2.0, ConfigValueOperation.SUBTRACT, 1.0)
+                .withConfiguredSpeed("aWoodenSpear.speed", 2.5, ConfigValueOperation.SUBTRACT, 4.0)
                 .name(config.getString("dWoodenSpear.name", "Wooden Spear"))
                 .lore(lore)
                 .customModelData(1000004)
@@ -1255,16 +1172,14 @@ public class RecipeProvider {
     }
 
     private ShapedRecipe getStoneSpearRecipe() {
-        double dmg = config.getDouble("aStoneSpear.damage", 2.5) - 1.0;
-        double spd = config.getDouble("aStoneSpear.speed", 2.5) - 4.0;
         List<String> lore = new ArrayList<>(config.getStringList("SpearDescription"));
         lore.add(config.getString("dStoneSpear.line10", ""));
         lore.add(config.getString("dStoneSpear.line11", ""));
         lore.add(config.getString("dStoneSpear.line12", ""));
 
-        ItemStack item = new WeaponBuilder(Material.STONE_SWORD)
-                .attackDamage(dmg)
-                .attackSpeed(spd)
+        ItemStack item = new WeaponBuilder(Material.STONE_SWORD, config)
+                .withConfiguredDamage("aStoneSpear.damage", 2.5, ConfigValueOperation.SUBTRACT, 1.0)
+                .withConfiguredSpeed("aStoneSpear.speed", 2.5, ConfigValueOperation.SUBTRACT, 4.0)
                 .name(config.getString("dStoneSpear.name", "Stone Spear"))
                 .lore(lore)
                 .customModelData(1000004)
@@ -1274,16 +1189,14 @@ public class RecipeProvider {
     }
 
     private ShapedRecipe getGoldenSpearRecipe() {
-        double dmg = config.getDouble("aGoldenSpear.damage", 2.0) - 1.0;
-        double spd = config.getDouble("aGoldenSpear.speed", 2.8) - 4.0;
         List<String> lore = new ArrayList<>(config.getStringList("SpearDescription"));
         lore.add(config.getString("dGoldenSpear.line10", ""));
         lore.add(config.getString("dGoldenSpear.line11", ""));
         lore.add(config.getString("dGoldenSpear.line12", ""));
 
-        ItemStack item = new WeaponBuilder(Material.GOLDEN_SWORD)
-                .attackDamage(dmg)
-                .attackSpeed(spd)
+        ItemStack item = new WeaponBuilder(Material.GOLDEN_SWORD, config)
+                .withConfiguredDamage("aGoldenSpear.damage", 2.0, ConfigValueOperation.SUBTRACT, 1.0)
+                .withConfiguredSpeed("aGoldenSpear.speed", 2.8, ConfigValueOperation.SUBTRACT, 4.0)
                 .name(config.getString("dGoldenSpear.name", "Golden Spear"))
                 .lore(lore)
                 .customModelData(1000004)
@@ -1293,16 +1206,14 @@ public class RecipeProvider {
     }
 
     private ShapedRecipe getIronSpearRecipe() {
-        double dmg = config.getDouble("aIronSpear.damage", 3.0) - 1.0;
-        double spd = config.getDouble("aIronSpear.speed", 2.5) - 4.0;
         List<String> lore = new ArrayList<>(config.getStringList("SpearDescription"));
         lore.add(config.getString("dIronSpear.line10", ""));
         lore.add(config.getString("dIronSpear.line11", ""));
         lore.add(config.getString("dIronSpear.line12", ""));
 
-        ItemStack item = new WeaponBuilder(Material.IRON_SWORD)
-                .attackDamage(dmg)
-                .attackSpeed(spd)
+        ItemStack item = new WeaponBuilder(Material.IRON_SWORD, config)
+                .withConfiguredDamage("aIronSpear.damage", 3.0, ConfigValueOperation.SUBTRACT, 1.0)
+                .withConfiguredSpeed("aIronSpear.speed", 2.5, ConfigValueOperation.SUBTRACT, 4.0)
                 .name(config.getString("dIronSpear.name", "Iron Spear"))
                 .lore(lore)
                 .customModelData(1000004)
@@ -1312,16 +1223,14 @@ public class RecipeProvider {
     }
 
     private ShapedRecipe getEmeraldSpearRecipe() {
-        double dmg = config.getDouble("aEmeraldSpear.damage", 3.0) - 1.0;
-        double spd = config.getDouble("aEmeraldSpear.speed", 2.8) - 4.0;
         List<String> lore = new ArrayList<>(config.getStringList("SpearDescription"));
         lore.add(config.getString("dEmeraldSpear.line10", ""));
         lore.add(config.getString("dEmeraldSpear.line11", ""));
         lore.add(config.getString("dEmeraldSpear.line12", ""));
 
-        ItemStack item = new WeaponBuilder(Material.GOLDEN_SWORD)
-                .attackDamage(dmg)
-                .attackSpeed(spd)
+        ItemStack item = new WeaponBuilder(Material.GOLDEN_SWORD, config)
+                .withConfiguredDamage("aEmeraldSpear.damage", 3.0, ConfigValueOperation.SUBTRACT, 1.0)
+                .withConfiguredSpeed("aEmeraldSpear.speed", 2.8, ConfigValueOperation.SUBTRACT, 4.0)
                 .name(config.getString("dEmeraldSpear.name", "Emerald Spear"))
                 .lore(lore)
                 .customModelData(1000014)
@@ -1338,16 +1247,14 @@ public class RecipeProvider {
     }
 
     private ShapedRecipe getDiamondSpearRecipe() {
-        double dmg = config.getDouble("aDiamondSpear.damage", 4.0) - 1.0;
-        double spd = config.getDouble("aDiamondSpear.speed", 2.5) - 4.0;
         List<String> lore = new ArrayList<>(config.getStringList("SpearDescription"));
         lore.add(config.getString("dDiamondSpear.line10", ""));
         lore.add(config.getString("dDiamondSpear.line11", ""));
         lore.add(config.getString("dDiamondSpear.line12", ""));
 
-        ItemStack item = new WeaponBuilder(Material.DIAMOND_SWORD)
-                .attackDamage(dmg)
-                .attackSpeed(spd)
+        ItemStack item = new WeaponBuilder(Material.DIAMOND_SWORD, config)
+                .withConfiguredDamage("aDiamondSpear.damage", 4.0, ConfigValueOperation.SUBTRACT, 1.0)
+                .withConfiguredSpeed("aDiamondSpear.speed", 2.5, ConfigValueOperation.SUBTRACT, 4.0)
                 .name(config.getString("dDiamondSpear.name", "Diamond Spear"))
                 .lore(lore)
                 .customModelData(1000004)
@@ -1357,16 +1264,14 @@ public class RecipeProvider {
     }
 
     private ShapedRecipe getNetheriteSpearRecipe() {
-        double dmg = config.getDouble("aNetheriteSpear.damage", 5.0) - 1.0;
-        double spd = config.getDouble("aNetheriteSpear.speed", 2.5) - 4.0;
         List<String> lore = new ArrayList<>(config.getStringList("SpearDescription"));
         lore.add(config.getString("dNetheriteSpear.line10", ""));
         lore.add(config.getString("dNetheriteSpear.line11", ""));
         lore.add(config.getString("dNetheriteSpear.line12", ""));
 
-        ItemStack item = new WeaponBuilder(Material.NETHERITE_SWORD)
-                .attackDamage(dmg)
-                .attackSpeed(spd)
+        ItemStack item = new WeaponBuilder(Material.NETHERITE_SWORD, config)
+                .withConfiguredDamage("aNetheriteSpear.damage", 5.0, ConfigValueOperation.SUBTRACT, 1.0)
+                .withConfiguredSpeed("aNetheriteSpear.speed", 2.5, ConfigValueOperation.SUBTRACT, 4.0)
                 .name(config.getString("dNetheriteSpear.name", "Netherite Spear"))
                 .lore(lore)
                 .customModelData(1000004)
@@ -1379,16 +1284,14 @@ public class RecipeProvider {
 
     // Katanas
     private ShapedRecipe getWoodenKatanaRecipe() {
-        double dmg = config.getDouble("aWoodenKatana.damage", 6.0) - 1.0;
-        double spd = config.getDouble("aWoodenKatana.speed", 1.6) - 4.0;
         List<String> lore = new ArrayList<>(config.getStringList("KatanaDescription"));
         for (int i = 12; i <= 14; i++) {
             lore.add(config.getString("dWoodenKatana.line" + i, ""));
         }
 
-        ItemStack item = new WeaponBuilder(Material.WOODEN_SWORD)
-                .attackDamage(dmg)
-                .attackSpeed(spd)
+        ItemStack item = new WeaponBuilder(Material.WOODEN_SWORD, config)
+                .withConfiguredDamage("aWoodenKatana.damage", 6.0, ConfigValueOperation.SUBTRACT, 1.0)
+                .withConfiguredSpeed("aWoodenKatana.speed", 1.6, ConfigValueOperation.SUBTRACT, 4.0)
                 .name(config.getString("dWoodenKatana.name", "Wooden Katana"))
                 .lore(lore)
                 .customModelData(1000002)
@@ -1398,16 +1301,14 @@ public class RecipeProvider {
     }
 
     private ShapedRecipe getStoneKatanaRecipe() {
-        double dmg = config.getDouble("aStoneKatana.damage", 6.5) - 1.0;
-        double spd = config.getDouble("aStoneKatana.speed", 1.6) - 4.0;
         List<String> lore = new ArrayList<>(config.getStringList("KatanaDescription"));
         for (int i = 12; i <= 14; i++) {
             lore.add(config.getString("dStoneKatana.line" + i, ""));
         }
 
-        ItemStack item = new WeaponBuilder(Material.STONE_SWORD)
-                .attackDamage(dmg)
-                .attackSpeed(spd)
+        ItemStack item = new WeaponBuilder(Material.STONE_SWORD, config)
+                .withConfiguredDamage("aStoneKatana.damage", 6.5, ConfigValueOperation.SUBTRACT, 1.0)
+                .withConfiguredSpeed("aStoneKatana.speed", 1.6, ConfigValueOperation.SUBTRACT, 4.0)
                 .name(config.getString("dStoneKatana.name", "Stone Katana"))
                 .lore(lore)
                 .customModelData(1000002)
@@ -1417,16 +1318,14 @@ public class RecipeProvider {
     }
 
     private ShapedRecipe getGoldenKatanaRecipe() {
-        double dmg = config.getDouble("aGoldenKatana.damage", 6.0) - 1.0;
-        double spd = config.getDouble("aGoldenKatana.speed", 2.0) - 4.0;
         List<String> lore = new ArrayList<>(config.getStringList("KatanaDescription"));
         for (int i = 12; i <= 14; i++) {
             lore.add(config.getString("dGoldenKatana.line" + i, ""));
         }
 
-        ItemStack item = new WeaponBuilder(Material.GOLDEN_SWORD)
-                .attackDamage(dmg)
-                .attackSpeed(spd)
+        ItemStack item = new WeaponBuilder(Material.GOLDEN_SWORD, config)
+                .withConfiguredDamage("aGoldenKatana.damage", 6.0, ConfigValueOperation.SUBTRACT, 1.0)
+                .withConfiguredSpeed("aGoldenKatana.speed", 2.0, ConfigValueOperation.SUBTRACT, 4.0)
                 .name(config.getString("dGoldenKatana.name", "Golden Katana"))
                 .lore(lore)
                 .customModelData(1000002)
@@ -1436,16 +1335,14 @@ public class RecipeProvider {
     }
 
     private ShapedRecipe getIronKatanaRecipe() {
-        double dmg = config.getDouble("aIronKatana.damage", 7.0) - 1.0;
-        double spd = config.getDouble("aIronKatana.speed", 1.6) - 4.0;
         List<String> lore = new ArrayList<>(config.getStringList("KatanaDescription"));
         for (int i = 12; i <= 14; i++) {
             lore.add(config.getString("dIronKatana.line" + i, ""));
         }
 
-        ItemStack item = new WeaponBuilder(Material.IRON_SWORD)
-                .attackDamage(dmg)
-                .attackSpeed(spd)
+        ItemStack item = new WeaponBuilder(Material.IRON_SWORD, config)
+                .withConfiguredDamage("aIronKatana.damage", 7.0, ConfigValueOperation.SUBTRACT, 1.0)
+                .withConfiguredSpeed("aIronKatana.speed", 1.6, ConfigValueOperation.SUBTRACT, 4.0)
                 .name(config.getString("dIronKatana.name", "Iron Katana"))
                 .lore(lore)
                 .customModelData(1000002)
@@ -1455,16 +1352,14 @@ public class RecipeProvider {
     }
 
     private ShapedRecipe getEmeraldKatanaRecipe() {
-        double dmg = config.getDouble("aEmeraldKatana.damage", 7.0) - 1.0;
-        double spd = config.getDouble("aEmeraldKatana.speed", 2.0) - 4.0;
         List<String> lore = new ArrayList<>(config.getStringList("KatanaDescription"));
         for (int i = 12; i <= 14; i++) {
             lore.add(config.getString("dEmeraldKatana.line" + i, ""));
         }
 
-        ItemStack item = new WeaponBuilder(Material.GOLDEN_SWORD)
-                .attackDamage(dmg)
-                .attackSpeed(spd)
+        ItemStack item = new WeaponBuilder(Material.GOLDEN_SWORD, config)
+                .withConfiguredDamage("aEmeraldKatana.damage", 7.0, ConfigValueOperation.SUBTRACT, 1.0)
+                .withConfiguredSpeed("aEmeraldKatana.speed", 2.0, ConfigValueOperation.SUBTRACT, 4.0)
                 .name(config.getString("dEmeraldKatana.name", "Emerald Katana"))
                 .lore(lore)
                 .customModelData(1000012)
@@ -1481,16 +1376,14 @@ public class RecipeProvider {
     }
 
     private ShapedRecipe getDiamondKatanaRecipe() {
-        double dmg = config.getDouble("aDiamondKatana.damage", 8.0) - 1.0;
-        double spd = config.getDouble("aDiamondKatana.speed", 1.6) - 4.0;
         List<String> lore = new ArrayList<>(config.getStringList("KatanaDescription"));
         for (int i = 12; i <= 14; i++) {
             lore.add(config.getString("dDiamondKatana.line" + i, ""));
         }
 
-        ItemStack item = new WeaponBuilder(Material.DIAMOND_SWORD)
-                .attackDamage(dmg)
-                .attackSpeed(spd)
+        ItemStack item = new WeaponBuilder(Material.DIAMOND_SWORD, config)
+                .withConfiguredDamage("aDiamondKatana.damage", 8.0, ConfigValueOperation.SUBTRACT, 1.0)
+                .withConfiguredSpeed("aDiamondKatana.speed", 1.6, ConfigValueOperation.SUBTRACT, 4.0)
                 .name(config.getString("dDiamondKatana.name", "Diamond Katana"))
                 .lore(lore)
                 .customModelData(1000002)
@@ -1500,16 +1393,14 @@ public class RecipeProvider {
     }
 
     private ShapedRecipe getNetheriteKatanaRecipe() {
-        double dmg = config.getDouble("aNetheriteKatana.damage", 9.0) - 1.0;
-        double spd = config.getDouble("aNetheriteKatana.speed", 1.6) - 4.0;
         List<String> lore = new ArrayList<>(config.getStringList("KatanaDescription"));
         for (int i = 12; i <= 14; i++) {
             lore.add(config.getString("dNetheriteKatana.line" + i, ""));
         }
 
-        ItemStack item = new WeaponBuilder(Material.NETHERITE_SWORD)
-                .attackDamage(dmg)
-                .attackSpeed(spd)
+        ItemStack item = new WeaponBuilder(Material.NETHERITE_SWORD, config)
+                .withConfiguredDamage("aNetheriteKatana.damage", 9.0, ConfigValueOperation.SUBTRACT, 1.0)
+                .withConfiguredSpeed("aNetheriteKatana.speed", 1.6, ConfigValueOperation.SUBTRACT, 4.0)
                 .name(config.getString("dNetheriteKatana.name", "Netherite Katana"))
                 .lore(lore)
                 .customModelData(1000002)
@@ -1522,17 +1413,15 @@ public class RecipeProvider {
 
     // Prismarine
     private ShapedRecipe getPrismarineSwordRecipe() {
-        double dmg = config.getDouble("aPrismarineSword.damage", 9.0) - 1.0;
-        double spd = config.getDouble("aPrismarineSword.speed", 1.6) - 4.0;
         List<String> lore = new ArrayList<>();
         lore.add(config.getString("dPrismarineSword.line1", ""));
         lore.add(config.getString("dPrismarineSword.line2", ""));
         lore.add(config.getString("dPrismarineSword.line3", ""));
         lore.add(config.getString("dPrismarineSword.line4", ""));
 
-        ItemStack item = new WeaponBuilder(Material.NETHERITE_SWORD)
-                .attackDamage(dmg)
-                .attackSpeed(spd)
+        ItemStack item = new WeaponBuilder(Material.NETHERITE_SWORD, config)
+                .withConfiguredDamage("aPrismarineSword.damage", 9.0, ConfigValueOperation.SUBTRACT, 1.0)
+                .withConfiguredSpeed("aPrismarineSword.speed", 1.6, ConfigValueOperation.SUBTRACT, 4.0)
                 .name(config.getString("dPrismarineSword.name", "Prismarine Sword"))
                 .lore(lore)
                 .customModelData(1210001)
@@ -1542,17 +1431,15 @@ public class RecipeProvider {
     }
 
     private ShapedRecipe getPrismarinePickaxeRecipe() {
-        double dmg = config.getDouble("aPrismarinePickaxe.damage", 7.0) - 1.0;
-        double spd = config.getDouble("aPrismarinePickaxe.speed", 1.2) - 4.0;
         List<String> lore = new ArrayList<>();
         lore.add(config.getString("dPrismarinePickaxe.line1", ""));
         lore.add(config.getString("dPrismarinePickaxe.line2", ""));
         lore.add(config.getString("dPrismarinePickaxe.line3", ""));
         lore.add(config.getString("dPrismarinePickaxe.line4", ""));
 
-        ItemStack item = new WeaponBuilder(Material.NETHERITE_PICKAXE)
-                .attackDamage(dmg)
-                .attackSpeed(spd)
+        ItemStack item = new WeaponBuilder(Material.NETHERITE_PICKAXE, config)
+                .withConfiguredDamage("aPrismarinePickaxe.damage", 7.0, ConfigValueOperation.SUBTRACT, 1.0)
+                .withConfiguredSpeed("aPrismarinePickaxe.speed", 1.2, ConfigValueOperation.SUBTRACT, 4.0)
                 .name(config.getString("dPrismarinePickaxe.name", "Prismarine Pickaxe"))
                 .lore(lore)
                 .customModelData(1210002)
@@ -1562,17 +1449,15 @@ public class RecipeProvider {
     }
 
     private ShapedRecipe getPrismarineAxeRecipe() {
-        double dmg = config.getDouble("aPrismarineAxe.damage", 11.0) - 1.0;
-        double spd = config.getDouble("aPrismarineAxe.speed", 1.0) - 4.0;
         List<String> lore = new ArrayList<>();
         lore.add(config.getString("dPrismarineAxe.line1", ""));
         lore.add(config.getString("dPrismarineAxe.line2", ""));
         lore.add(config.getString("dPrismarineAxe.line3", ""));
         lore.add(config.getString("dPrismarineAxe.line4", ""));
 
-        ItemStack item = new WeaponBuilder(Material.NETHERITE_AXE)
-                .attackDamage(dmg)
-                .attackSpeed(spd)
+        ItemStack item = new WeaponBuilder(Material.NETHERITE_AXE, config)
+                .withConfiguredDamage("aPrismarineAxe.damage", 11.0, ConfigValueOperation.SUBTRACT, 1.0)
+                .withConfiguredSpeed("aPrismarineAxe.speed", 1.0, ConfigValueOperation.SUBTRACT, 4.0)
                 .name(config.getString("dPrismarineAxe.name", "Prismarine Axe"))
                 .lore(lore)
                 .customModelData(1220001)
@@ -1582,17 +1467,15 @@ public class RecipeProvider {
     }
 
     private ShapedRecipe getPrismarineShovelRecipe() {
-        double dmg = config.getDouble("aPrismarineShovel.damage", 7.5) - 1.0;
-        double spd = config.getDouble("aPrismarineShovel.speed", 1.0) - 4.0;
         List<String> lore = new ArrayList<>();
         lore.add(config.getString("dPrismarineShovel.line1", ""));
         lore.add(config.getString("dPrismarineShovel.line2", ""));
         lore.add(config.getString("dPrismarineShovel.line3", ""));
         lore.add(config.getString("dPrismarineShovel.line4", ""));
 
-        ItemStack item = new WeaponBuilder(Material.NETHERITE_SHOVEL)
-                .attackDamage(dmg)
-                .attackSpeed(spd)
+        ItemStack item = new WeaponBuilder(Material.NETHERITE_SHOVEL, config)
+                .withConfiguredDamage("aPrismarineShovel.damage", 7.5, ConfigValueOperation.SUBTRACT, 1.0)
+                .withConfiguredSpeed("aPrismarineShovel.speed", 1.0, ConfigValueOperation.SUBTRACT, 4.0)
                 .name(config.getString("dPrismarineShovel.name", "Prismarine Shovel"))
                 .lore(lore)
                 .customModelData(1210004)
@@ -1602,17 +1485,15 @@ public class RecipeProvider {
     }
 
     private ShapedRecipe getPrismarineHoeRecipe() {
-        double dmg = config.getDouble("aPrismarineHoe.damage", 2.0) - 1.0;
-        double spd = config.getDouble("aPrismarineHoe.speed", 4.0) - 4.0;
         List<String> lore = new ArrayList<>();
         lore.add(config.getString("dPrismarineHoe.line1", ""));
         lore.add(config.getString("dPrismarineHoe.line2", ""));
         lore.add(config.getString("dPrismarineHoe.line3", ""));
         lore.add(config.getString("dPrismarineHoe.line4", ""));
 
-        ItemStack item = new WeaponBuilder(Material.NETHERITE_HOE)
-                .attackDamage(dmg)
-                .attackSpeed(spd)
+        ItemStack item = new WeaponBuilder(Material.NETHERITE_HOE, config)
+                .withConfiguredDamage("aPrismarineHoe.damage", 2.0, ConfigValueOperation.SUBTRACT, 1.0)
+                .withConfiguredSpeed("aPrismarineHoe.speed", 4.0, ConfigValueOperation.SUBTRACT, 4.0)
                 .name(config.getString("dPrismarineHoe.name", "Prismarine Hoe"))
                 .lore(lore)
                 .customModelData(1210005)
@@ -1733,9 +1614,9 @@ public class RecipeProvider {
 
     // Special Swords
     private ShapedRecipe getOPSWORDRecipe() {
-        ItemStack item = new WeaponBuilder(Material.NETHERITE_SWORD)
-                .attackDamage(config.getDouble("aOPSWORD.damage", 100.0))
-                .attackSpeed(config.getDouble("aOPSWORD.speed", 100.0))
+        ItemStack item = new WeaponBuilder(Material.NETHERITE_SWORD, config)
+                .withConfiguredDamage("aOPSWORD.damage", 100.0, ConfigValueOperation.NONE, 0.0)
+                .withConfiguredSpeed("aOPSWORD.speed", 100.0, ConfigValueOperation.NONE, 0.0)
                 .name(config.getString("dOPSWORD.name", "OP Sword"))
                 .customModelData(1000001)
                 .build();
@@ -1743,16 +1624,14 @@ public class RecipeProvider {
     }
 
     private ShapedRecipe getWoodenSaberRecipe() {
-        double dmg = config.getDouble("aWoodenSaber.damage", 6.0) - 1.0;
-        double spd = config.getDouble("aWoodenSaber.speed", 1.6) - 4.0;
         List<String> lore = new ArrayList<>(config.getStringList("SaberDescription"));
         lore.add(config.getString("dWoodenSaber.line5", ""));
         lore.add(config.getString("dWoodenSaber.line6", ""));
         lore.add(config.getString("dWoodenSaber.line7", ""));
 
-        ItemStack item = new WeaponBuilder(Material.WOODEN_SWORD)
-                .attackDamage(dmg)
-                .attackSpeed(spd)
+        ItemStack item = new WeaponBuilder(Material.WOODEN_SWORD, config)
+                .withConfiguredDamage("aWoodenSaber.damage", 6.0, ConfigValueOperation.SUBTRACT, 1.0)
+                .withConfiguredSpeed("aWoodenSaber.speed", 1.6, ConfigValueOperation.SUBTRACT, 4.0)
                 .name(config.getString("dWoodenSaber.name", "Wooden Saber"))
                 .lore(lore)
                 .customModelData(1000010)
@@ -1762,16 +1641,14 @@ public class RecipeProvider {
     }
 
     private ShapedRecipe getStoneSaberRecipe() {
-        double dmg = config.getDouble("aStoneSaber.damage", 6.5) - 1.0;
-        double spd = config.getDouble("aStoneSaber.speed", 1.6) - 4.0;
         List<String> lore = new ArrayList<>(config.getStringList("SaberDescription"));
         lore.add(config.getString("dStoneSaber.line5", ""));
         lore.add(config.getString("dStoneSaber.line6", ""));
         lore.add(config.getString("dStoneSaber.line7", ""));
 
-        ItemStack item = new WeaponBuilder(Material.STONE_SWORD)
-                .attackDamage(dmg)
-                .attackSpeed(spd)
+        ItemStack item = new WeaponBuilder(Material.STONE_SWORD, config)
+                .withConfiguredDamage("aStoneSaber.damage", 6.5, ConfigValueOperation.SUBTRACT, 1.0)
+                .withConfiguredSpeed("aStoneSaber.speed", 1.6, ConfigValueOperation.SUBTRACT, 4.0)
                 .name(config.getString("dStoneSaber.name", "Stone Saber"))
                 .lore(lore)
                 .customModelData(1000010)
@@ -1781,16 +1658,14 @@ public class RecipeProvider {
     }
 
     private ShapedRecipe getGoldenSaberRecipe() {
-        double dmg = config.getDouble("aGoldenSaber.damage", 6.0) - 1.0;
-        double spd = config.getDouble("aGoldenSaber.speed", 2.0) - 4.0;
         List<String> lore = new ArrayList<>(config.getStringList("SaberDescription"));
         lore.add(config.getString("dGoldenSaber.line5", ""));
         lore.add(config.getString("dGoldenSaber.line6", ""));
         lore.add(config.getString("dGoldenSaber.line7", ""));
 
-        ItemStack item = new WeaponBuilder(Material.GOLDEN_SWORD)
-                .attackDamage(dmg)
-                .attackSpeed(spd)
+        ItemStack item = new WeaponBuilder(Material.GOLDEN_SWORD, config)
+                .withConfiguredDamage("aGoldenSaber.damage", 6.0, ConfigValueOperation.SUBTRACT, 1.0)
+                .withConfiguredSpeed("aGoldenSaber.speed", 2.0, ConfigValueOperation.SUBTRACT, 4.0)
                 .name(config.getString("dGoldenSaber.name", "Golden Saber"))
                 .lore(lore)
                 .customModelData(1000010)
@@ -1800,16 +1675,14 @@ public class RecipeProvider {
     }
 
     private ShapedRecipe getIronSaberRecipe() {
-        double dmg = config.getDouble("aIronSaber.damage", 7.0) - 1.0;
-        double spd = config.getDouble("aIronSaber.speed", 1.6) - 4.0;
         List<String> lore = new ArrayList<>(config.getStringList("SaberDescription"));
         lore.add(config.getString("dIronSaber.line5", ""));
         lore.add(config.getString("dIronSaber.line6", ""));
         lore.add(config.getString("dIronSaber.line7", ""));
 
-        ItemStack item = new WeaponBuilder(Material.IRON_SWORD)
-                .attackDamage(dmg)
-                .attackSpeed(spd)
+        ItemStack item = new WeaponBuilder(Material.IRON_SWORD, config)
+                .withConfiguredDamage("aIronSaber.damage", 7.0, ConfigValueOperation.SUBTRACT, 1.0)
+                .withConfiguredSpeed("aIronSaber.speed", 1.6, ConfigValueOperation.SUBTRACT, 4.0)
                 .name(config.getString("dIronSaber.name", "Iron Saber"))
                 .lore(lore)
                 .customModelData(1000010)
@@ -1819,16 +1692,14 @@ public class RecipeProvider {
     }
 
     private ShapedRecipe getEmeraldSaberRecipe() {
-        double dmg = config.getDouble("aEmeraldSaber.damage", 7.0) - 1.0;
-        double spd = config.getDouble("aEmeraldSaber.speed", 2.0) - 4.0;
         List<String> lore = new ArrayList<>(config.getStringList("SaberDescription"));
         lore.add(config.getString("dEmeraldSaber.line5", ""));
         lore.add(config.getString("dEmeraldSaber.line6", ""));
         lore.add(config.getString("dEmeraldSaber.line7", ""));
 
-        ItemStack item = new WeaponBuilder(Material.GOLDEN_SWORD)
-                .attackDamage(dmg)
-                .attackSpeed(spd)
+        ItemStack item = new WeaponBuilder(Material.GOLDEN_SWORD, config)
+                .withConfiguredDamage("aEmeraldSaber.damage", 7.0, ConfigValueOperation.SUBTRACT, 1.0)
+                .withConfiguredSpeed("aEmeraldSaber.speed", 2.0, ConfigValueOperation.SUBTRACT, 4.0)
                 .name(config.getString("dEmeraldSaber.name", "Emerald Saber"))
                 .lore(lore)
                 .customModelData(1000010)
@@ -1845,16 +1716,14 @@ public class RecipeProvider {
     }
 
     private ShapedRecipe getDiamondSaberRecipe() {
-        double dmg = config.getDouble("aDiamondSaber.damage", 8.0) - 1.0;
-        double spd = config.getDouble("aDiamondSaber.speed", 1.6) - 4.0;
         List<String> lore = new ArrayList<>(config.getStringList("SaberDescription"));
         lore.add(config.getString("dDiamondSaber.line5", ""));
         lore.add(config.getString("dDiamondSaber.line6", ""));
         lore.add(config.getString("dDiamondSaber.line7", ""));
 
-        ItemStack item = new WeaponBuilder(Material.DIAMOND_SWORD)
-                .attackDamage(dmg)
-                .attackSpeed(spd)
+        ItemStack item = new WeaponBuilder(Material.DIAMOND_SWORD, config)
+                .withConfiguredDamage("aDiamondSaber.damage", 8.0, ConfigValueOperation.SUBTRACT, 1.0)
+                .withConfiguredSpeed("aDiamondSaber.speed", 1.6, ConfigValueOperation.SUBTRACT, 4.0)
                 .name(config.getString("dDiamondSaber.name", "Diamond Saber"))
                 .lore(lore)
                 .customModelData(1000010)
@@ -1864,16 +1733,14 @@ public class RecipeProvider {
     }
 
     private ShapedRecipe getNetheriteSaberRecipe() {
-        double dmg = config.getDouble("aNetheriteSaber.damage", 9.0) - 1.0;
-        double spd = config.getDouble("aNetheriteSaber.speed", 1.6) - 4.0;
         List<String> lore = new ArrayList<>(config.getStringList("SaberDescription"));
         lore.add(config.getString("dNetheriteSaber.line5", ""));
         lore.add(config.getString("dNetheriteSaber.line6", ""));
         lore.add(config.getString("dNetheriteSaber.line7", ""));
 
-        ItemStack item = new WeaponBuilder(Material.NETHERITE_SWORD)
-                .attackDamage(dmg)
-                .attackSpeed(spd)
+        ItemStack item = new WeaponBuilder(Material.NETHERITE_SWORD, config)
+                .withConfiguredDamage("aNetheriteSaber.damage", 9.0, ConfigValueOperation.SUBTRACT, 1.0)
+                .withConfiguredSpeed("aNetheriteSaber.speed", 1.6, ConfigValueOperation.SUBTRACT, 4.0)
                 .name(config.getString("dNetheriteSaber.name", "Netherite Saber"))
                 .lore(lore)
                 .customModelData(1000010)
@@ -1885,27 +1752,27 @@ public class RecipeProvider {
     }
 
     private ShapedRecipe getTestFishRecipe() {
-        ItemStack item = new WeaponBuilder(Material.COD)
-                .attackDamage(10.0)
-                .attackSpeed(1.6)
+        ItemStack item = new WeaponBuilder(Material.COD, config)
+                .withConfiguredDamage("aTestFish.damage", 10.0, ConfigValueOperation.NONE, 0.0)
+                .withConfiguredSpeed("aTestFish.speed", 1.6, ConfigValueOperation.NONE, 0.0)
                 .name("Test Fish Sword")
                 .build();
         return createShapedRecipe("test_fish_sword", item, new String[]{" F ", " F ", " S "}, 'F', Material.COD, 'S', Material.STICK);
     }
 
     private ShapedRecipe getWindBladeRecipe() {
-        ItemStack item = new WeaponBuilder(Material.IRON_SWORD)
-                .attackDamage(config.getDouble("aWindBlade.damage", 8.0))
-                .attackSpeed(config.getDouble("aWindBlade.speed", 1.6))
+        ItemStack item = new WeaponBuilder(Material.IRON_SWORD, config)
+                .withConfiguredDamage("aWindBlade.damage", 8.0, ConfigValueOperation.NONE, 0.0)
+                .withConfiguredSpeed("aWindBlade.speed", 1.6, ConfigValueOperation.NONE, 0.0)
                 .name("Wind Blade")
                 .build();
         return createShapedRecipe("wind_blade", item, new String[]{" I ", "I I", " I "}, 'I', Material.IRON_INGOT);
     }
 
     private ShapedRecipe getFlameBladeRecipe() {
-        ItemStack item = new WeaponBuilder(Material.IRON_SWORD)
-                .attackDamage(config.getDouble("aVolcanicBlade.damage", 9.0))
-                .attackSpeed(config.getDouble("aVolcanicBlade.speed", 1.6))
+        ItemStack item = new WeaponBuilder(Material.IRON_SWORD, config)
+                .withConfiguredDamage("aVolcanicBlade.damage", 9.0, ConfigValueOperation.NONE, 0.0)
+                .withConfiguredSpeed("aVolcanicBlade.speed", 1.6, ConfigValueOperation.NONE, 0.0)
                 .name("Volcanic Blade")
                 .build();
         return createShapedRecipe("flame_blade", item, new String[]{" L ", "L L", " L "}, 'L', Material.LAVA_BUCKET);
@@ -1956,9 +1823,9 @@ public class RecipeProvider {
     }
 
     private ShapedRecipe getLongswordBowRecipe() {
-        ItemStack item = new WeaponBuilder(Material.BOW)
-                .attackDamage(config.getDouble("aLongswordBow.damage", 8.0))
-                .attackSpeed(config.getDouble("aLongswordBow.speed", 1.0))
+        ItemStack item = new WeaponBuilder(Material.BOW, config)
+                .withConfiguredDamage("aLongswordBow.damage", 8.0, ConfigValueOperation.NONE, 0.0)
+                .withConfiguredSpeed("aLongswordBow.speed", 1.0, ConfigValueOperation.NONE, 0.0)
                 .name(config.getString("dLongswordBow.name", "Longsword Bow"))
                 .customModelData(3330004)
                 .build();
@@ -1966,9 +1833,9 @@ public class RecipeProvider {
     }
 
     private ShapedRecipe getRedstoneBowRecipe() {
-        ItemStack item = new WeaponBuilder(Material.BOW)
-                .attackDamage(config.getDouble("aRedstoneBow.damage", 7.0))
-                .attackSpeed(config.getDouble("aRedstoneBow.speed", 1.0))
+        ItemStack item = new WeaponBuilder(Material.BOW, config)
+                .withConfiguredDamage("aRedstoneBow.damage", 7.0, ConfigValueOperation.NONE, 0.0)
+                .withConfiguredSpeed("aRedstoneBow.speed", 1.0, ConfigValueOperation.NONE, 0.0)
                 .name(config.getString("dRedstoneBow.name", "Redstone Bow"))
                 .customModelData(3330005)
                 .build();
@@ -1976,9 +1843,9 @@ public class RecipeProvider {
     }
 
     private ShapedRecipe getTridentBowRecipe() {
-        ItemStack item = new WeaponBuilder(Material.BOW)
-                .attackDamage(config.getDouble("aTridentBow.damage", 9.0))
-                .attackSpeed(config.getDouble("aTridentBow.speed", 1.0))
+        ItemStack item = new WeaponBuilder(Material.BOW, config)
+                .withConfiguredDamage("aTridentBow.damage", 9.0, ConfigValueOperation.NONE, 0.0)
+                .withConfiguredSpeed("aTridentBow.speed", 1.0, ConfigValueOperation.NONE, 0.0)
                 .name(config.getString("dTridentBow.name", "Trident Bow"))
                 .customModelData(1069691)
                 .build();
@@ -2025,7 +1892,7 @@ public class RecipeProvider {
     }
 
     private ShapedRecipe getTestKatanaRecipe() {
-        ItemStack item = new WeaponBuilder(Material.NETHERITE_SWORD)
+        ItemStack item = new WeaponBuilder(Material.NETHERITE_SWORD, config)
                 .attackDamage(10.0)
                 .attackSpeed(1.6)
                 .name("Test Katana")
@@ -2035,7 +1902,7 @@ public class RecipeProvider {
     }
 
     private ShapedRecipe getTestScytheRecipe() {
-        ItemStack item = new WeaponBuilder(Material.NETHERITE_SWORD)
+        ItemStack item = new WeaponBuilder(Material.NETHERITE_SWORD, config)
                 .attackDamage(10.0)
                 .attackSpeed(1.0)
                 .name("Test Scythe")
@@ -2053,7 +1920,7 @@ public class RecipeProvider {
             lore.add(config.getString("dWoodenCleaver.line" + i, ""));
         }
 
-        ItemStack item = new WeaponBuilder(Material.WOODEN_AXE)
+        ItemStack item = new WeaponBuilder(Material.WOODEN_AXE, config)
                 .attackDamage(dmg)
                 .attackSpeed(spd)
                 .name(config.getString("dWoodenCleaver.name", "Wooden Cleaver"))
@@ -2072,7 +1939,7 @@ public class RecipeProvider {
             lore.add(config.getString("dStoneCleaver.line" + i, ""));
         }
 
-        ItemStack item = new WeaponBuilder(Material.STONE_AXE)
+        ItemStack item = new WeaponBuilder(Material.STONE_AXE, config)
                 .attackDamage(dmg)
                 .attackSpeed(spd)
                 .name(config.getString("dStoneCleaver.name", "Stone Cleaver"))
@@ -2091,7 +1958,7 @@ public class RecipeProvider {
             lore.add(config.getString("dGoldenCleaver.line" + i, ""));
         }
 
-        ItemStack item = new WeaponBuilder(Material.GOLDEN_AXE)
+        ItemStack item = new WeaponBuilder(Material.GOLDEN_AXE, config)
                 .attackDamage(dmg)
                 .attackSpeed(spd)
                 .name(config.getString("dGoldenCleaver.name", "Golden Cleaver"))
@@ -2110,7 +1977,7 @@ public class RecipeProvider {
             lore.add(config.getString("dIronCleaver.line" + i, ""));
         }
 
-        ItemStack item = new WeaponBuilder(Material.IRON_AXE)
+        ItemStack item = new WeaponBuilder(Material.IRON_AXE, config)
                 .attackDamage(dmg)
                 .attackSpeed(spd)
                 .name(config.getString("dIronCleaver.name", "Iron Cleaver"))
@@ -2129,7 +1996,7 @@ public class RecipeProvider {
             lore.add(config.getString("dEmeraldCleaver.line" + i, ""));
         }
 
-        ItemStack item = new WeaponBuilder(Material.GOLDEN_AXE)
+        ItemStack item = new WeaponBuilder(Material.GOLDEN_AXE, config)
                 .attackDamage(dmg)
                 .attackSpeed(spd)
                 .name(config.getString("dEmeraldCleaver.name", "Emerald Cleaver"))
@@ -2148,7 +2015,7 @@ public class RecipeProvider {
             lore.add(config.getString("dDiamondCleaver.line" + i, ""));
         }
 
-        ItemStack item = new WeaponBuilder(Material.DIAMOND_AXE)
+        ItemStack item = new WeaponBuilder(Material.DIAMOND_AXE, config)
                 .attackDamage(dmg)
                 .attackSpeed(spd)
                 .name(config.getString("dDiamondCleaver.name", "Diamond Cleaver"))
@@ -2167,7 +2034,7 @@ public class RecipeProvider {
             lore.add(config.getString("dNetheriteCleaver.line" + i, ""));
         }
 
-        ItemStack item = new WeaponBuilder(Material.NETHERITE_AXE)
+        ItemStack item = new WeaponBuilder(Material.NETHERITE_AXE, config)
                 .attackDamage(dmg)
                 .attackSpeed(spd)
                 .name(config.getString("dNetheriteCleaver.name", "Netherite Cleaver"))
@@ -2181,7 +2048,7 @@ public class RecipeProvider {
     private ShapedRecipe getFlameSpearRecipe() {
         double dmg = config.getDouble("aVolcanicSpear.damage", 5.0) - 1.0;
         double spd = config.getDouble("aVolcanicSpear.speed", 2.5) - 4.0;
-        ItemStack item = new WeaponBuilder(Material.IRON_SWORD)
+        ItemStack item = new WeaponBuilder(Material.IRON_SWORD, config)
                 .attackDamage(dmg)
                 .attackSpeed(spd)
                 .name("Volcanic Spear")
@@ -2193,7 +2060,7 @@ public class RecipeProvider {
     private ShapedRecipe getFlameAxeRecipe() {
         double dmg = config.getDouble("aVolcanicAxe.damage", 10.0) - 1.0;
         double spd = config.getDouble("aVolcanicAxe.speed", 1.0) - 4.0;
-        ItemStack item = new WeaponBuilder(Material.IRON_AXE)
+        ItemStack item = new WeaponBuilder(Material.IRON_AXE, config)
                 .attackDamage(dmg)
                 .attackSpeed(spd)
                 .name("Volcanic Axe")
@@ -2205,7 +2072,7 @@ public class RecipeProvider {
     private ShapedRecipe getFlameCleaverRecipe() {
         double dmg = config.getDouble("aVolcanicCleaver.damage", 13.0) - 1.0;
         double spd = config.getDouble("aVolcanicCleaver.speed", 0.4) - 4.0;
-        ItemStack item = new WeaponBuilder(Material.IRON_AXE)
+        ItemStack item = new WeaponBuilder(Material.IRON_AXE, config)
                 .attackDamage(dmg)
                 .attackSpeed(spd)
                 .name("Volcanic Cleaver")
@@ -2215,7 +2082,7 @@ public class RecipeProvider {
     }
 
     private ShapedRecipe getAwakenedSwordsRecipe() {
-        ItemStack item = new WeaponBuilder(Material.NETHERITE_SWORD)
+        ItemStack item = new WeaponBuilder(Material.NETHERITE_SWORD, config)
                 .attackDamage(config.getDouble("aAwakenedSword.damage", 12.0))
                 .attackSpeed(config.getDouble("aAwakenedSword.speed", 1.6))
                 .name("Awakened Sword")
