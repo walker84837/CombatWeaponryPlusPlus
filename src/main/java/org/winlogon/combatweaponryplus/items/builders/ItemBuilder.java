@@ -7,6 +7,8 @@ import org.bukkit.inventory.EquipmentSlotGroup;
 import org.bukkit.inventory.ItemFlag;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import org.winlogon.combatweaponryplus.util.AttributeModifierUtil;
 import org.winlogon.combatweaponryplus.util.TextUtil;
 
@@ -19,54 +21,59 @@ public class ItemBuilder {
     protected final ItemStack item;
     protected final ItemMeta meta;
 
-    public ItemBuilder(Material material) {
+    public ItemBuilder(@NotNull Material material) {
         this.item = new ItemStack(material);
         this.meta = item.getItemMeta();
     }
 
-    public ItemBuilder name(String name) {
+    public @NotNull ItemBuilder name(@NotNull String name) {
         meta.displayName(Component.text(name));
         return this;
     }
 
-    public ItemBuilder lore(String... lore) {
+    public @NotNull ItemBuilder lore(@NotNull String... lore) {
+        // avoid doing unnecessary logic for empty args
+        if (lore.length == 0) {
+            return this;
+        }
+
         meta.lore(TextUtil.convertLegacyLoreToComponents(Arrays.asList(lore)));
         return this;
     }
 
 
-    public ItemBuilder lore(List<String> lore) {
+    public @NotNull ItemBuilder lore(@Nullable List<String> lore) {
         meta.lore(TextUtil.convertLegacyLoreToComponents(lore));
         return this;
     }
 
-    public ItemBuilder customModelData(int customModelData) {
+    public @NotNull ItemBuilder customModelData(int customModelData) {
         // TODO: use ItemModelData to set custom model data instead
         meta.setCustomModelData(customModelData);
         return this;
     }
 
-    public ItemBuilder unbreakable(boolean unbreakable) {
+    public @NotNull ItemBuilder unbreakable(boolean unbreakable) {
         meta.setUnbreakable(unbreakable);
         return this;
     }
 
-    public ItemBuilder hideFlags(boolean hideFlags) {
+    public @NotNull ItemBuilder hideFlags(boolean hideFlags) {
         if (hideFlags) {
             meta.addItemFlags(ItemFlag.values());
         }
         return this;
     }
 
-    public ItemBuilder attribute(Attribute attribute, double value, AttributeModifier.Operation operation, EquipmentSlotGroup slot) {
+    public @NotNull ItemBuilder attribute(@NotNull Attribute attribute, double value, @NotNull AttributeModifier.Operation operation, @NotNull EquipmentSlotGroup slot) {
         if (value != 0) {
-            AttributeModifier modifier = AttributeModifierUtil.createAttributeModifier(attribute, value, operation, slot);
+            var modifier = AttributeModifierUtil.createAttributeModifier(attribute, value, operation, slot);
             meta.addAttributeModifier(attribute, modifier);
         }
         return this;
     }
 
-    public ItemStack build() {
+    public @NotNull ItemStack build() {
         item.setItemMeta(meta);
         return item;
     }

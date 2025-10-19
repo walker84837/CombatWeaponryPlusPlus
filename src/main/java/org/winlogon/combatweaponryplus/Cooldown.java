@@ -1,6 +1,7 @@
 package org.winlogon.combatweaponryplus;
 
 import org.bukkit.entity.Player;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.Optional;
 import java.util.UUID;
@@ -18,7 +19,7 @@ public class Cooldown {
      * @param player The player to set the cooldown of
      * @param seconds The amount of seconds to set the cooldown to
      */
-    public void setCooldown(Player player, int seconds) {
+    public void setCooldown(@NotNull Player player, int seconds) {
         double delay = System.currentTimeMillis() + (long)seconds * 1000L;
         cooldowns.put(player.getUniqueId(), delay);
     }
@@ -28,7 +29,7 @@ public class Cooldown {
      * @param player The player to get the cooldown of
      * @return The cooldown of the player, if there is one
      */
-    public Optional<Integer> getCooldown(Player player) {
+    public Optional<Integer> getCooldown(@NotNull Player player) {
         var uuid = player.getUniqueId();
         if (!cooldowns.containsKey(uuid)) {
             return Optional.empty();
@@ -49,7 +50,7 @@ public class Cooldown {
      * @param player The player to check.
      * @return true if the player has a cooldown, false otherwise.
      */
-    public boolean checkCooldown(Player player) {
+    public boolean checkCooldown(@NotNull Player player) {
         return !cooldowns.containsKey(player.getUniqueId()) || cooldowns.get(player.getUniqueId()) <= (double)System.currentTimeMillis();
     }
 }
