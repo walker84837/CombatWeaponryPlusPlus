@@ -15,5 +15,6 @@ buildNumber.properties
 .project
 # JDT-specific (Eclipse Java Development Tools)
 .classpath
-.factorypath                                                                                                                                                                                                    
+.factorypath
 .settings/
+precommit_files/

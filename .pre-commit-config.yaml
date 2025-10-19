@@ -1,0 +1,28 @@
+repos:
+  - repo: https://github.com/pre-commit/pre-commit-hooks
+    rev: v6.0.0
+    hooks:
+      - id: trailing-whitespace
+      - id: end-of-file-fixer
+      - id: check-yaml
+      - id: check-json
+
+  # TODO: Checkstyle for code style checks
+  # - repo: local
+  #   hooks:
+  #     - id: checkstyle-check
+  #       name: Checkstyle Check
+  #       entry: mvn checkstyle:check
+  #       language: system
+  #       types: [java]
+  #       pass_filenames: false
+
+  # TODO: Spotless for applying Checkstyle formatting rules
+  # - repo: local
+  #   hooks:
+  #     - id: spotless-check
+  #       name: Spotless Check
+  #       entry: mvn spotless:check
+  #       language: system
+  #       types: [java]
+  #       pass_filenames: false

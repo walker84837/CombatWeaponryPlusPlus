@@ -58,6 +58,19 @@
                     </execution>
                 </executions>
             </plugin>
+            <plugin>
+                <groupId>dev.rvr</groupId>
+                <artifactId>pre-commit-maven-plugin</artifactId>
+                <version>1.0.0</version>
+                <executions>
+                    <execution>
+                        <id>install-pre-commit-hooks</id>
+                        <goals>
+                            <goal>install</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
         </plugins>
         <resources>
             <resource>
