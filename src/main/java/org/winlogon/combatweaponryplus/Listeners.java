@@ -32,7 +32,6 @@ import org.bukkit.event.inventory.PrepareSmithingEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.inventory.EquipmentSlotGroup;
-import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemFlag;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.PlayerInventory;
@@ -156,7 +155,7 @@ class Listeners implements Listener {
 
     @EventHandler
     public void onJoin(PlayerJoinEvent event) {
-        Player player = event.getPlayer();
+        var player = event.getPlayer();
         if (config.isEnabled("ResourcePack")) {
             player.setResourcePack(config.getString("PackLink", ""));
         }
@@ -456,8 +455,7 @@ class Listeners implements Listener {
         Float speed = event.getForce();
         Arrow arrow = (Arrow) event.getProjectile();
 
-        if (!(entity instanceof Player)) return;
-        Player player = (Player) entity;
+        if (!(entity instanceof Player player)) return;
 
         if (player.getInventory().getItemInOffHand().getType() == Material.BOW || player.getInventory().getItemInOffHand().getType() == Material.CROSSBOW) {
             return; // Ignore if bow is in off-hand
