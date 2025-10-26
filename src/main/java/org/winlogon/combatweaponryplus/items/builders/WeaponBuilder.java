@@ -26,8 +26,6 @@ public class WeaponBuilder extends ItemBuilder {
      */
     public @NotNull WeaponBuilder(@NotNull Material material, @NotNull ConfigHelper configHelper) {
         super(material);
-        this.configHelper = configHelper;
-        this.customValues = configHelper.raw().getBoolean("UseCustomValues");
     }
 
     /**

@@ -14,7 +14,7 @@ import org.bukkit.event.inventory.PrepareSmithingEvent;
 import org.jetbrains.annotations.NotNull;
 import org.winlogon.combatweaponryplus.CombatWeaponryPlus;
 import org.winlogon.combatweaponryplus.util.ConfigHelper;
-import org.winlogon.combatweaponryplus.util.ItemModelData;
+import org.winlogon.combatweaponryplus.items.ItemModelData;
 import org.winlogon.combatweaponryplus.util.TextUtil;
 
 import java.util.ArrayList;

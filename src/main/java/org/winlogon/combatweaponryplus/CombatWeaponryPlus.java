@@ -30,11 +30,11 @@ import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.scheduler.BukkitRunnable;
 import org.bukkit.util.Vector;
+import org.winlogon.combatweaponryplus.items.ItemModelData;
 import org.winlogon.combatweaponryplus.items.builders.WeaponBuilder;
 import org.winlogon.combatweaponryplus.util.AttributeModifierUtil;
 import org.winlogon.combatweaponryplus.util.ConfigHelper;
 import org.winlogon.combatweaponryplus.util.ConfigValueOperation;
-import org.winlogon.combatweaponryplus.util.ItemModelData;
 import org.winlogon.combatweaponryplus.util.TextUtil;
 import org.winlogon.retrohue.RetroHue;
 
@@ -45,12 +45,12 @@ import java.util.UUID;
 
 public class CombatWeaponryPlus extends JavaPlugin {
     public List<NamespacedKey> keys = new ArrayList<NamespacedKey>();
+
     private Random rand = new Random();
     private FileConfiguration config;
     private ConfigHelper configHelper;
 
     private MiniMessage mm = MiniMessage.miniMessage();
-
     private RetroHue rh = new RetroHue(mm);
 
     public int getRandomInt(int max) {
@@ -1867,7 +1867,7 @@ public class CombatWeaponryPlus extends JavaPlugin {
                     config.getString("dDiamondKnife.line9")
                 )
                 .hideFlags(true)
-                .customModelData(1000006)
+                .customModelData(true)
                 .name(config.getString("dDiamondKnife.name"))
                 .build();
 

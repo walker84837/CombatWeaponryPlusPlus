@@ -1,4 +1,4 @@
-package org.winlogon.combatweaponryplus.util;
+package org.winlogon.combatweaponryplus.items;
 
 import org.bukkit.inventory.meta.ItemMeta;
 

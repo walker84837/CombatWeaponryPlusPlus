@@ -9,15 +9,17 @@ import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.winlogon.combatweaponryplus.items.HashItemModelDataGenerator;
+import org.winlogon.combatweaponryplus.items.ItemModelData;
+import org.winlogon.combatweaponryplus.items.ItemModelDataGenerator;
 import org.winlogon.combatweaponryplus.util.AttributeModifierUtil;
-import org.winlogon.combatweaponryplus.util.ItemModelData;
 import org.winlogon.combatweaponryplus.util.TextUtil;
 
 import net.kyori.adventure.text.Component;
 
-import java.util.Objects;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Objects;
 
 /**
  * A fluent builder class for creating and configuring {@link ItemStack} objects.
@@ -30,12 +32,15 @@ public class ItemBuilder {
     protected final ItemStack item;
     /** The ItemMeta of the ItemStack being built. */
     protected final ItemMeta meta;
+    /** The static ItemModelDataGenerator to use for generating custom model data. */
+    private static final ItemModelDataGenerator itemModelDataGenerator = new HashItemModelDataGenerator();
+    /** Flag to indicate if custom model data should be generated. */
+    private boolean shouldGenerateCustomModelData = false;
 
     /**
      * Constructs a new ItemBuilder with the specified material.
      *
      * @param material The {@link Material} of the item. Must not be null.
-     * @throws NullPointerException if the material is null.
      */
     public ItemBuilder(@NotNull Material material) {
         Objects.requireNonNull(material, "Material cannot be null");
@@ -73,7 +78,6 @@ public class ItemBuilder {
         return this;
     }
 
-
     /**
      * Sets the lore of the item using a list of strings.
      * Each string in the list will be a separate line of lore.
@@ -88,14 +92,15 @@ public class ItemBuilder {
     }
 
     /**
-     * Sets the custom model data of the item.
-     * This is used for custom textures based on the item's NBT data.
+     * Sets whether custom model data should be generated for this item.
+     * The actual custom model data integer will be generated in the build() method
+     * based on the item's final properties.
      *
-     * @param customModelData The integer value for the custom model data.
+     * @param generate True to generate custom model data, false otherwise.
      * @return This ItemBuilder instance.
      */
-    public @NotNull ItemBuilder customModelData(int customModelData) {
-        ItemModelData.set(meta, customModelData);
+    public @NotNull ItemBuilder customModelData(boolean generate) {
+        this.shouldGenerateCustomModelData = generate;
         return this;
     }
 
@@ -148,6 +153,10 @@ public class ItemBuilder {
      * @return The fully configured {@link ItemStack}.
      */
     public @NotNull ItemStack build() {
+        if (shouldGenerateCustomModelData) {
+            int customModelData = itemModelDataGenerator.generate(item.getType(), meta);
+            ItemModelData.set(meta, customModelData);
+        }
         item.setItemMeta(meta);
         return item;
     }

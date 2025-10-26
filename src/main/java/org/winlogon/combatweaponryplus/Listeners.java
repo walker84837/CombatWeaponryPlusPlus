@@ -7,12 +7,9 @@ import java.util.stream.Collectors;
 
 import org.bukkit.Location;
 import org.bukkit.Material;
-import org.bukkit.NamespacedKey;
 import org.bukkit.Particle;
 import org.bukkit.Sound;
 import org.bukkit.World;
-import org.bukkit.attribute.Attribute;
-import org.bukkit.attribute.AttributeModifier;
 import org.bukkit.entity.AbstractArrow;
 import org.bukkit.entity.Arrow;
 import org.bukkit.entity.EnderPearl;
@@ -31,17 +28,14 @@ import org.bukkit.event.entity.EntityToggleGlideEvent;
 import org.bukkit.event.inventory.PrepareSmithingEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.event.player.PlayerJoinEvent;
-import org.bukkit.inventory.EquipmentSlotGroup;
-import org.bukkit.inventory.ItemFlag;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.PlayerInventory;
-import org.bukkit.inventory.SmithingInventory;
 import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
 import org.bukkit.util.Vector;
 import org.winlogon.combatweaponryplus.util.ConfigHelper;
-import org.winlogon.combatweaponryplus.util.ItemModelData;
+import org.winlogon.combatweaponryplus.items.ItemModelData;
 import org.winlogon.combatweaponryplus.util.TextUtil;
 
 import net.kyori.adventure.text.serializer.plain.PlainTextComponentSerializer;
@@ -74,8 +68,6 @@ class Listeners implements Listener {
 
         return armor;
     }
-
-
 
     private boolean isValidItem(Player player, Material material, int modelData) {
         var item = player.getInventory().getItemInMainHand();
