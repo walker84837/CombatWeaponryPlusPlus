@@ -1,17 +1,13 @@
 package org.winlogon.combatweaponryplus.util;
 
-import org.bukkit.NamespacedKey;
 import org.bukkit.attribute.Attribute;
 import org.bukkit.attribute.AttributeModifier;
 import org.bukkit.inventory.EquipmentSlotGroup;
 import org.jetbrains.annotations.NotNull;
-import org.winlogon.combatweaponryplus.CombatWeaponryPlus;
-import org.winlogon.combatweaponryplus.util.PersistentDataManager;
 
 import java.util.UUID;
 
 public class AttributeModifierUtil {
-
     /**
      * Creates an AttributeModifier.
      * <br><b>Implementation detail</b>: Creates a random key for the attribute
@@ -23,7 +19,7 @@ public class AttributeModifierUtil {
      * @return The {@link AttributeModifier}
      */
     public static @NotNull AttributeModifier createAttributeModifier(@NotNull Attribute attribute, double amount, @NotNull AttributeModifier.Operation operation, @NotNull EquipmentSlotGroup slotGroup) {
-        var key = PersistentDataManager.createNamespacedKey(attribute.name().toLowerCase() + "_" + UUID.randomUUID().toString());
+        var key = PersistentDataManager.createNamespacedKey(attribute.getKey().getKey().toLowerCase() + "_" + UUID.randomUUID().toString());
         return new AttributeModifier(key, amount, operation, slotGroup);
     }
 
