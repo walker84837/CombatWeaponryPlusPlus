@@ -121,48 +121,21 @@ class Listeners implements Listener {
     public void onClick(PlayerInteractEvent event) {
         var player = event.getPlayer();
 
-        if (isValidItem(player, Material.IRON_SWORD, 1000007)) {
-            if (event.getAction() == Action.RIGHT_CLICK_AIR && cooldown.checkCooldown(player)) {
-                player.launchProjectile(EnderPearl.class);
-                cooldown.setCooldown(player, 2);
-            }
-        }
+        if (!isValidItem(player, Material.IRON_SWORD, 1000007)) return;
+        if (event.getAction() != Action.RIGHT_CLICK_AIR && !cooldown.checkCooldown(player)) return;
+
+        player.launchProjectile(EnderPearl.class);
+        cooldown.setCooldown(player, 2);
     }
 
     @EventHandler
     public void onBlockClick(PlayerInteractEvent event) {
-        Player player = event.getPlayer();
+        var player = event.getPlayer();
 
-        if (isValidItem(player, Material.NETHERITE_PICKAXE, 1000001)) {
-            if (event.getAction() == Action.LEFT_CLICK_BLOCK) {
-                player.addPotionEffect(new PotionEffect(PotionEffectType.HASTE, 40, 2));
-            }
-        }
-    }
+        if (!isValidItem(player, Material.NETHERITE_PICKAXE, 1000001)) return;
+        if (event.getAction() != Action.LEFT_CLICK_BLOCK) return;
 
-    @EventHandler
-    public void onTestHoeClick(PlayerInteractEvent event) {
-        Player player = event.getPlayer();
-        ItemStack itemInHand = player.getInventory().getItemInMainHand();
-
-        if (isValidItem(player, Material.NETHERITE_HOE, 1234567)) {
-            if (event.getAction() == Action.RIGHT_CLICK_AIR) {
-                World world = player.getWorld();
-                world.playSound(player.getLocation(), Sound.MUSIC_DISC_CAT, 10.0f, 1.0f);
-                ItemMeta meta = itemInHand.getItemMeta();
-                // ???
-                // meta.setDisplayName("GOTTEM");
-                List<String> lore = new ArrayList<>();
-                lore.add("");
-                // im not forgiving you for this one bro
-                lore.add("&6im sorry");
-                lore.add("");
-                meta.lore(lore.stream().map(TextUtil::convertLegacyToComponent).collect(Collectors.toList()));
-                // bro?
-                // meta.setCustomModelData(6969420);
-                itemInHand.setItemMeta(meta);
-            }
-        }
+        player.addPotionEffect(new PotionEffect(PotionEffectType.HASTE, 40, 2));
     }
 
     @EventHandler
@@ -175,45 +148,45 @@ class Listeners implements Listener {
 
         int customModelData = ItemModelData.get(mainHandItem.getItemMeta());
 
+        final Material[] validBlocks = new Material[]{Material.NETHERITE_SWORD, Material.DIAMOND_SWORD, Material.IRON_SWORD, Material.GOLDEN_SWORD, Material.STONE_SWORD, Material.WOODEN_SWORD};
+
         // Knife logic
-        if (customModelData == 1000006 || customModelData == 1200006 || customModelData == 1000016 || customModelData == 4000006) {
-            if (!attacker.hasCooldown(Material.NETHERITE_SWORD)) {
-                // Apply cooldowns to all sword materials
-                for (Material swordMaterial : new Material[]{Material.NETHERITE_SWORD, Material.DIAMOND_SWORD, Material.IRON_SWORD, Material.GOLDEN_SWORD, Material.STONE_SWORD, Material.WOODEN_SWORD}) {
-                    attacker.setCooldown(swordMaterial, 15);
-                }
+        if (customModelData != 1000006 || customModelData != 1200006 || customModelData != 1000016 || customModelData != 4000006);
+
+        if (!attacker.hasCooldown(Material.NETHERITE_SWORD)) {
+            // Apply cooldowns to all sword materials
+            for (Material swordMaterial : validBlocks) {
+                attacker.setCooldown(swordMaterial, 15);
             }
-            // Check if any sword material has a cooldown less than or equal to 14 ticks
-            boolean hasActiveCooldown = false;
-            for (Material swordMaterial : new Material[]{Material.NETHERITE_SWORD, Material.DIAMOND_SWORD, Material.IRON_SWORD, Material.GOLDEN_SWORD, Material.STONE_SWORD, Material.WOODEN_SWORD}) {
-                if (attacker.getCooldown(swordMaterial) <= 14) {
-                    hasActiveCooldown = true;
-                    break;
-                }
+        }
+        // Check if any sword material has a cooldown less than or equal to 14 ticks
+        boolean hasActiveCooldown = false;
+        for (Material swordMaterial : validBlocks) {
+            if (attacker.getCooldown(swordMaterial) <= 14) {
+                hasActiveCooldown = true;
+                break;
             }
-            if (hasActiveCooldown) {
-                // Reset cooldowns to 14 ticks
-                for (Material swordMaterial : new Material[]{Material.NETHERITE_SWORD, Material.DIAMOND_SWORD, Material.IRON_SWORD, Material.GOLDEN_SWORD, Material.STONE_SWORD, Material.WOODEN_SWORD}) {
-                    attacker.setCooldown(swordMaterial, 14);
-                }
-                if (attacker.getAttackCooldown() <= 0.9) {
-                    return;
-                }
-                attacker.addPotionEffect(new PotionEffect(PotionEffectType.STRENGTH, 15, 0));
+        }
+        if (hasActiveCooldown) {
+            // Reset cooldowns to 14 ticks
+            for (Material swordMaterial : validBlocks) {
+                attacker.setCooldown(swordMaterial, 14);
             }
+            if (attacker.getAttackCooldown() <= 0.9) {
+                return;
+            }
+            attacker.addPotionEffect(new PotionEffect(PotionEffectType.STRENGTH, 15, 0));
         }
 
         // Specific item effects based on custom model data
-        if (event.getEntity() instanceof Player) {
-            Player damagedPlayer = (Player) event.getEntity();
+        if (event.getEntity() instanceof Player damagedPlayer) {
             if (isValidItem(damagedPlayer, Material.NETHERITE_SWORD, 1222225) || isValidItem(damagedPlayer, Material.NETHERITE_SWORD, 2222225)) {
                 event.setDamage(event.getDamage() * 1.5);
             }
         }
 
         if (isValidItem(attacker, Material.NETHERITE_SWORD, 1222224) || isValidItem(attacker, Material.NETHERITE_SWORD, 2222224)) {
-            if (event.getEntity() instanceof LivingEntity) {
-                LivingEntity entity = (LivingEntity) event.getEntity();
+            if (event.getEntity() instanceof LivingEntity entity) {
                 entity.addPotionEffect(new PotionEffect(PotionEffectType.WITHER, 60, 1));
             }
         }
