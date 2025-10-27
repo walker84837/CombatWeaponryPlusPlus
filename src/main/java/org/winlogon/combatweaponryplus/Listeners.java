@@ -1,8 +1,12 @@
 package org.winlogon.combatweaponryplus;
 
+import java.net.URI;
+import java.net.URISyntaxException;
+import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
+import java.util.UUID;
 import java.util.stream.Collectors;
 
 import org.bukkit.Location;
@@ -31,6 +35,7 @@ import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.PlayerInventory;
 import org.bukkit.inventory.meta.ItemMeta;
+import org.bukkit.plugin.Plugin;
 import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
 import org.bukkit.util.Vector;
@@ -38,6 +43,11 @@ import org.winlogon.combatweaponryplus.util.ConfigHelper;
 import org.winlogon.combatweaponryplus.items.ItemModelData;
 import org.winlogon.combatweaponryplus.util.TextUtil;
 
+import com.google.common.base.Strings;
+
+import net.kyori.adventure.resource.ResourcePackInfo;
+import net.kyori.adventure.resource.ResourcePackRequest;
+import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.serializer.plain.PlainTextComponentSerializer;
 import org.winlogon.combatweaponryplus.recipes.SmithingRecipeBuilder;
 
@@ -92,15 +102,24 @@ class Listeners implements Listener {
     @EventHandler
     public void onJoin(PlayerJoinEvent event) {
         var player = event.getPlayer();
-        if (config.isEnabled("ResourcePack")) {
-            player.setResourcePack(config.getString("PackLink", ""));
-        }
         player.discoverRecipes(plugin.keys);
+        // Avoid sending resource packs if they're disabled in config
+        if (!config.isEnabled("resource-pack.enabled")) return;
+
+        var url = config.getString("resource-pack.link", "");
+        try {
+            var request = createResourcePackRequest(plugin);
+            player.sendResourcePacks(request);
+            player.sendRichMessage("Sending resource pack: " + url);
+        } catch (IllegalArgumentException e) {
+            player.sendRichMessage("Failed to send resource pack: " + e.getMessage());
+            System.err.println("Error sending resource pack to " + player.getName() + ": " + e.getMessage());
+        }
     }
 
     @EventHandler
     public void onClick(PlayerInteractEvent event) {
-        Player player = event.getPlayer();
+        var player = event.getPlayer();
 
         if (isValidItem(player, Material.IRON_SWORD, 1000007)) {
             if (event.getAction() == Action.RIGHT_CLICK_AIR && cooldown.checkCooldown(player)) {
@@ -740,5 +759,51 @@ class Listeners implements Listener {
                 loc.getWorld().spawnEntity(loc, EntityType.AREA_EFFECT_CLOUD);
             }
         }
+    }
+
+    /**
+     * Creates a ResourcePackRequest for a single resource pack, reading URL and hash from plugin config.
+     *
+     * @param plugin The plugin instance to read configuration from.
+     * @return A configured ResourcePackRequest.
+     * @throws IllegalArgumentException if the URL is invalid or hash is not a valid SHA-1 hash.
+     */
+    private ResourcePackRequest createResourcePackRequest(Plugin plugin) {
+        String base = "resource-pack" + ".";
+        String configPathHash = base + "hash";
+        String configPathUrl = base + "link";
+
+        var config = plugin.getConfig();
+        String url = config.getString(configPathUrl);
+        String hash = config.getString(configPathHash);
+    
+        if (Strings.isNullOrEmpty(url))  {
+            throw new IllegalArgumentException("Resource pack URL cannot be null. Check config path: " + configPathUrl);
+        }
+        if (Strings.isNullOrEmpty(hash)) {
+            throw new IllegalArgumentException("Resource pack hash cannot be null. Check config path: " + configPathHash);
+        }
+
+        var packId = UUID.nameUUIDFromBytes(url.getBytes(StandardCharsets.UTF_8));
+        URI packUri;
+        try {
+            packUri = new URI(url);
+        } catch (URISyntaxException e) {
+            throw new IllegalArgumentException("Invalid resource pack URL: " + url, e);
+        }
+
+        // Validate hash length (SHA-1 is 40 hex characters)
+        if (hash.length() != 40 || !hash.matches("[0-9a-fA-F]+")) {
+            throw new IllegalArgumentException("Invalid SHA-1 hash. Must be a 40-character hexadecimal string.");
+        }
+
+        var packInfo = ResourcePackInfo.resourcePackInfo(packId, packUri, hash);
+
+        return ResourcePackRequest.resourcePackRequest()
+                .required(false) // Not required
+                .replace(true) // Replacing existing packs
+                .prompt(null) // Empty prompt message
+                .packs(packInfo)
+                .build();
     }
 }
