@@ -30,7 +30,7 @@ import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.scheduler.BukkitRunnable;
 import org.bukkit.util.Vector;
-import org.winlogon.combatweaponryplus.items.ItemModelData;
+import org.winlogon.combatweaponryplus.items.builders.ItemBuilder;
 import org.winlogon.combatweaponryplus.items.builders.WeaponBuilder;
 import org.winlogon.combatweaponryplus.util.AttributeModifierUtil;
 import org.winlogon.combatweaponryplus.util.ConfigHelper;
@@ -322,35 +322,30 @@ public class CombatWeaponryPlus extends JavaPlugin {
     }
 
     public ShapedRecipe getChestplateRecipe() {
-        var item = new ItemStack(Material.GOLDEN_CHESTPLATE);
-
-        item.editMeta(meta -> {
-            double hp = 1.0;
-            double def = 6.0;
-            if (config.getBoolean("UseCustomValues")) {
-                hp = config.getDouble("aEmeraldChestplate.BonusHealth");
-                def = config.getDouble("aEmeraldChestplate.Armor");
-            }
-            meta.addAttributeModifier(Attribute.MAX_HEALTH, AttributeModifierUtil.createAttributeModifier(
-                Attribute.MAX_HEALTH, hp, AttributeModifier.Operation.ADD_NUMBER, EquipmentSlotGroup.CHEST
-            ));
-            meta.addAttributeModifier(Attribute.ARMOR, AttributeModifierUtil.createAttributeModifier(
-                Attribute.ARMOR, def, AttributeModifier.Operation.ADD_NUMBER, EquipmentSlotGroup.CHEST
-            ));
-            meta.displayName(Component.text("Emerald Chestplate", NamedTextColor.DARK_GREEN));
-
-            if (config.getBoolean("EnchantmentsOnEmeraldArmor")) {
-                int num = config.getInt("EmeraldArmorEnchantLevels.Unbreaking");
-                int num2 = config.getInt("EmeraldArmorEnchantLevels.Mending");
-                meta.addEnchant(Enchantment.UNBREAKING, num, true);
-                meta.addEnchant(Enchantment.MENDING, num2, true);
-            }
-
-            ItemModelData.set(meta, 1000001);
-        });
-
         var key = new NamespacedKey(this, "emerald_chestplate");
         this.keys.add(key);
+
+        boolean useCustomValues = config.getBoolean("UseCustomValues");
+        double maxHealthBuff = useCustomValues ? config.getDouble("aEmeraldChestplate.BonusHealth") : 1.0;
+        double armorBuff = useCustomValues ? config.getDouble("aEmeraldChestplate.Armor") : 6.0;
+
+        var item = new ItemBuilder(Material.GOLDEN_CHESTPLATE)
+                .name("Emerald Chestplate")
+                .unbreakable(true)
+                .hideFlags(true)
+                .attribute(Attribute.MAX_HEALTH, maxHealthBuff, AttributeModifier.Operation.ADD_NUMBER, EquipmentSlotGroup.CHEST)
+                .attribute(Attribute.ARMOR, armorBuff, AttributeModifier.Operation.ADD_NUMBER, EquipmentSlotGroup.CHEST)
+                .customModelData(true)
+                .build();
+
+        if (configHelper.isEnabled("EnchantmentsOnEmeraldArmor")) {
+            int unbreakingIntensity = config.getInt("EmeraldArmorEnchantLevels.Unbreaking");
+            item.addEnchantment(Enchantment.UNBREAKING, unbreakingIntensity);
+
+            int mendingIntensity = config.getInt("EmeraldArmorEnchantLevels.Mending");
+            item.addEnchantment(Enchantment.MENDING, mendingIntensity);
+        }
+
         var recipe = new ShapedRecipe(key, item);
         recipe.shape(new String[]{"E E", "EEE", "EEE"});
         recipe.setIngredient('E', Material.EMERALD);
@@ -358,32 +353,32 @@ public class CombatWeaponryPlus extends JavaPlugin {
     }
 
     public ShapedRecipe getLeggingsRecipe() {
-        var item = new ItemStack(Material.GOLDEN_LEGGINGS);
-        ItemMeta meta = item.getItemMeta();
-        double hp = 1.0;
-        double def = 5.0;
-        if (config.getBoolean("UseCustomValues")) {
-            hp = config.getDouble("aEmeraldLeggings.BonusHealth");
-            def = config.getDouble("aEmeraldLeggings.Armor");
-        }
-        var modifier = AttributeModifierUtil.createAttributeModifier(Attribute.MAX_HEALTH, hp, AttributeModifier.Operation.ADD_NUMBER, EquipmentSlotGroup.LEGS);
-        meta.addAttributeModifier(Attribute.MAX_HEALTH, modifier);
-        var modifier2 = AttributeModifierUtil.createAttributeModifier(Attribute.ARMOR, def, AttributeModifier.Operation.ADD_NUMBER, EquipmentSlotGroup.LEGS);
-        meta.addAttributeModifier(Attribute.ARMOR, modifier2);
-        meta.displayName(Component.text("Emerald Leggings", NamedTextColor.DARK_GREEN));
+        var key = new NamespacedKey(this, "emerald_leggings");
+        this.keys.add(key);
+
+        boolean useCustomValues = config.getBoolean("UseCustomValues");
+        double maxHealthBuff = useCustomValues ? config.getDouble("aEmeraldLeggings.BonusHealth") : 1.0;
+        double armorBuff = useCustomValues ? config.getDouble("aEmeraldLeggings.Armor") : 5.0;
+
+        var item = new ItemBuilder(Material.GOLDEN_LEGGINGS)
+                .name("Emerald Leggings")
+                .attribute(Attribute.MAX_HEALTH, maxHealthBuff, AttributeModifier.Operation.ADD_NUMBER, EquipmentSlotGroup.LEGS)
+                .attribute(Attribute.ARMOR, armorBuff, AttributeModifier.Operation.ADD_NUMBER, EquipmentSlotGroup.LEGS)
+                .hideFlags(true)
+                .customModelData(true)
+                .build();
+
         if (config.getBoolean("EnchantmentsOnEmeraldArmor")) {
             int num = config.getInt("EmeraldArmorEnchantLevels.Unbreaking");
             int num2 = config.getInt("EmeraldArmorEnchantLevels.Mending");
-            meta.addEnchant(Enchantment.UNBREAKING, num, true);
-            meta.addEnchant(Enchantment.MENDING, num2, true);
+            item.addEnchantment(Enchantment.UNBREAKING, num);
+            item.addEnchantment(Enchantment.MENDING, num2);
         }
-        meta.setCustomModelData(1000001);
-        item.setItemMeta(meta);
-        NamespacedKey key = new NamespacedKey(this, "emerald_leggings");
-        this.keys.add(key);
-        ShapedRecipe recipe = new ShapedRecipe(key, item);
+
+        var recipe = new ShapedRecipe(key, item);
         recipe.shape(new String[]{"EEE", "E E", "E E"});
         recipe.setIngredient('E', Material.EMERALD);
+
         return recipe;
     }
 
