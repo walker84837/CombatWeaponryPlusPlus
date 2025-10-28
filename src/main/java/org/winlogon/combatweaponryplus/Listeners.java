@@ -5,9 +5,11 @@ import java.net.URISyntaxException;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 import java.util.Random;
 import java.util.UUID;
 import java.util.stream.Collectors;
+import java.util.stream.IntStream;
 
 import org.bukkit.Location;
 import org.bukkit.Material;
@@ -41,13 +43,11 @@ import org.bukkit.potion.PotionEffectType;
 import org.bukkit.util.Vector;
 import org.winlogon.combatweaponryplus.util.ConfigHelper;
 import org.winlogon.combatweaponryplus.items.ItemModelData;
-import org.winlogon.combatweaponryplus.util.TextUtil;
 
 import com.google.common.base.Strings;
 
 import net.kyori.adventure.resource.ResourcePackInfo;
 import net.kyori.adventure.resource.ResourcePackRequest;
-import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.serializer.plain.PlainTextComponentSerializer;
 import org.winlogon.combatweaponryplus.recipes.SmithingRecipeBuilder;
 
@@ -556,6 +556,7 @@ class Listeners implements Listener {
         World world = player.getWorld();
 
         switch (customModelData) {
+            // TODO: this seems to be a test element, should I change the names to something else?
             case 1069691: // Trident Bow
                 arrow.remove();
                 Trident trident = (Trident) player.launchProjectile(Trident.class, vector.multiply(speed * 5.0));
@@ -581,6 +582,7 @@ class Listeners implements Listener {
                 trident.addPassenger(pig);
                 break;
             case 3330001: // Longbow
+            // TODO: extract the tripled code to a function
             case 3330004: // Longsword Bow
                 double longBowSpeed = config.getDouble("aLongBow.arrowSpeed", 4.0);
                 double longBowDmgMultiplier = config.getDouble("aLongBow.dmgMultiplier", 1.0);
@@ -612,56 +614,85 @@ class Listeners implements Listener {
     }
 
     private void handleRepeatingCrossbow(Player player, EntityShootBowEvent event) {
-        if (player.getInventory().getChestplate() != null && player.getInventory().getChestplate().getType() == Material.IRON_CHESTPLATE &&
-            player.getInventory().getChestplate().hasItemMeta() && player.getInventory().getChestplate().getItemMeta().getCustomModelData() == 1231234) {
-            return; // Redstone Core check
+        var inventory = player.getInventory();
+        var chestplate = inventory.getChestplate();
+
+        if (chestplate != null && chestplate.getType() == Material.IRON_CHESTPLATE) {
+            Optional.ofNullable(chestplate.getItemMeta())
+                    .filter(meta -> meta.getCustomModelData() == 1231234)
+                    .ifPresent(meta -> {
+                        return; // Redstone Core check
+                    });
         }
+
+        if (inventory.getItemInOffHand().getType() != Material.REDSTONE) return;
+
+        var offHandItem = inventory.getItemInOffHand();
+
+        offHandItem.setAmount(offHandItem.getAmount() - 1);
+        IntStream.range(0, 4).forEach(i -> 
+            plugin.getServer().getScheduler().runTaskLater(plugin, () -> {
+                var playerDirection = player.getLocation().getDirection();
+                var arrow = (Arrow) player.launchProjectile(Arrow.class, playerDirection);
+                arrow.setPickupStatus(AbstractArrow.PickupStatus.DISALLOWED);
+                arrow.setVelocity(playerDirection.multiply(event.getForce() * 4.5));
+                player.getWorld().playSound(player.getLocation(), Sound.ITEM_CROSSBOW_SHOOT, 10.0f, 1.0f);
+            }, 3L * i)
+        );
+    }
+
+    private void handleBurstCrossbow(Player player, EntityShootBowEvent event) {      
+        Material chestplateMaterial = Material.IRON_CHESTPLATE;
+        int customModelData = 1231234;
+        double arrowSpeed = 5.0;
+
+        // Check if:
+        // - the player's chestplate is not null
+        // - is of a specific type
+        // - has item metadata
+        // - matches a specified custom model data
+        // if all conditions are met, it skips further processing
+        Optional.ofNullable(player.getInventory().getChestplate())
+            .filter(chestplate -> chestplate.getType() == chestplateMaterial)
+            .filter(ItemStack::hasItemMeta)
+            .filter(chestplate -> ItemModelData.get(chestplate.getItemMeta()) == customModelData)
+            .ifPresent(chestplate -> {
+                return; // Redstone Core check
+            });
+
         if (player.getInventory().getItemInOffHand().getType() == Material.REDSTONE) {
-            player.getInventory().getItemInOffHand().setAmount(player.getInventory().getItemInOffHand().getAmount() - 1);
-            for (int i = 0; i < 4; i++) {
-                plugin.getServer().getScheduler().runTaskLater(plugin, () -> {
-                    Vector playerDirection = player.getLocation().getDirection();
-                    Arrow arrow = (Arrow) player.launchProjectile(Arrow.class, playerDirection);
-                    arrow.setPickupStatus(AbstractArrow.PickupStatus.DISALLOWED);
-                    arrow.setVelocity(playerDirection.multiply(event.getForce() * 4.5));
-                    player.getWorld().playSound(player.getLocation(), Sound.ITEM_CROSSBOW_SHOOT, 10.0f, 1.0f);
-                }, 3L * i);
-            }
+            player.getInventory().getItemInOffHand()
+                .setAmount(player.getInventory().getItemInOffHand().getAmount() - 1);
+            Location loc = player.getLocation();
+
+            double totalAngle1 = loc.getPitch() + 80.0;
+            double totalAngle2 = loc.getPitch() + 100.0;
+
+            Vector arrowDir1 = createArrowDirection(loc, totalAngle1, arrowSpeed);
+            Vector arrowDir2 = createArrowDirection(loc, totalAngle2, arrowSpeed);
+
+            launchArrow(player, arrowDir1);
+            launchArrow(player, arrowDir2);
+
+            playSoundWithDelay(plugin, player, 2L);
+            playSoundWithDelay(plugin, player, 4L);
         }
     }
 
-    private void handleBurstCrossbow(Player player, EntityShootBowEvent event) {
-        if (player.getInventory().getChestplate() != null && player.getInventory().getChestplate().getType() == Material.IRON_CHESTPLATE &&
-            player.getInventory().getChestplate().hasItemMeta() && player.getInventory().getChestplate().getItemMeta().getCustomModelData() == 1231234) {
-            return; // Redstone Core check
-        }
-        if (player.getInventory().getItemInOffHand().getType() == Material.REDSTONE) {
-            player.getInventory().getItemInOffHand().setAmount(player.getInventory().getItemInOffHand().getAmount() - 1);
-            Location loc = player.getLocation();
-            double arrowAngle1 = 80.0;
-            double arrowAngle2 = 100.0;
+    private Vector createArrowDirection(Location loc, double totalAngle, double speed) {
+        double arrowDirY = Math.cos(Math.toRadians(totalAngle));
+        return new Vector(loc.getDirection().getX() * speed, arrowDirY * speed, loc.getDirection().getZ() * speed);
+    }
 
-            double totalAngle1 = loc.getPitch() + arrowAngle1;
-            double totalAngle2 = loc.getPitch() + arrowAngle2;
+    private void launchArrow(Player player, Vector direction) {
+        Arrow arrow = (Arrow) player.launchProjectile(Arrow.class, direction);
+        arrow.setPickupStatus(AbstractArrow.PickupStatus.DISALLOWED);
+    }
 
-            double arrowDirY1 = Math.cos(Math.toRadians(totalAngle1));
-            double arrowDirY2 = Math.cos(Math.toRadians(totalAngle2));
-
-            Vector arrowDir1 = new Vector(loc.getDirection().getX() * 5.0, arrowDirY1 * 5.0, loc.getDirection().getZ() * 5.0);
-            Vector arrowDir2 = new Vector(loc.getDirection().getX() * 5.0, arrowDirY2 * 5.0, loc.getDirection().getZ() * 5.0);
-
-            Arrow arrow1 = (Arrow) player.launchProjectile(Arrow.class, arrowDir1);
-            arrow1.setPickupStatus(AbstractArrow.PickupStatus.DISALLOWED);
-            Arrow arrow2 = (Arrow) player.launchProjectile(Arrow.class, arrowDir2);
-            arrow2.setPickupStatus(AbstractArrow.PickupStatus.DISALLOWED);
-
-            plugin.getServer().getScheduler().runTaskLater(plugin, () -> {
-                player.getWorld().playSound(player.getLocation(), Sound.ITEM_CROSSBOW_SHOOT, 10.0f, 1.0f);
-            }, 2L);
-            plugin.getServer().getScheduler().runTaskLater(plugin, () -> {
-                player.getWorld().playSound(player.getLocation(), Sound.ITEM_CROSSBOW_SHOOT, 10.0f, 1.0f);
-            }, 4L);
-        }
+    private void playSoundWithDelay(Plugin plugin, Player player, long delay) {
+        plugin.getServer().getScheduler().runTaskLater(plugin, 
+            () -> player.getWorld().playSound(player.getLocation(), Sound.ITEM_CROSSBOW_SHOOT, 10.0f, 1.0f), 
+            delay);
     }
 
     private void handleRedstoneBow(Player player, EntityShootBowEvent event) {
@@ -742,7 +773,7 @@ class Listeners implements Listener {
      * @throws IllegalArgumentException if the URL is invalid or hash is not a valid SHA-1 hash.
      */
     private ResourcePackRequest createResourcePackRequest(Plugin plugin) {
-        String base = "resource-pack" + ".";
+        final String base = "resource-pack" + ".";
         String configPathHash = base + "hash";
         String configPathUrl = base + "link";
 
