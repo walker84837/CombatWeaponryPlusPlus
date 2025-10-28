@@ -415,20 +415,22 @@ public class CombatWeaponryPlus extends JavaPlugin {
     }
 
     public ShapedRecipe getPickaxeRecipe() {
-        ItemStack item = new ItemStack(Material.GOLDEN_PICKAXE);
-        ItemMeta meta = item.getItemMeta();
-        meta.displayName(Component.text("Emerald Pickaxe", NamedTextColor.DARK_GREEN));
+        var builder = new ItemBuilder(Material.GOLDEN_PICKAXE)
+            .name(Component.text("Emerald Pickaxe", NamedTextColor.DARK_GREEN));
+
         if (config.getBoolean("EnchantsOnEmeraldGear")) {
             int num = config.getInt("EmeraldGearEnchantLevels.Unbreaking");
             int num2 = config.getInt("EmeraldGearEnchantLevels.Mending");
-            meta.addEnchant(Enchantment.UNBREAKING, num, true);
-            meta.addEnchant(Enchantment.MENDING, num2, true);
+            builder.enchant(Enchantment.UNBREAKING, num);
+            builder.enchant(Enchantment.MENDING, num2);
         }
-        meta.setCustomModelData(1000001);
-        item.setItemMeta(meta);
-        NamespacedKey key = new NamespacedKey(this, "emerald_pickaxe");
+        builder.customModelData(true);
+
+        var item = builder.build();
+
+        var key = new NamespacedKey(this, "emerald_pickaxe");
         this.keys.add(key);
-        ShapedRecipe recipe = new ShapedRecipe(key, item);
+        var recipe = new ShapedRecipe(key, item);
         recipe.shape(new String[]{"EEE", " S ", " S "});
         recipe.setIngredient('E', Material.EMERALD);
         recipe.setIngredient('S', Material.STICK);
@@ -448,14 +450,10 @@ public class CombatWeaponryPlus extends JavaPlugin {
         meta.addAttributeModifier(Attribute.ATTACK_SPEED, modifier);
         AttributeModifier modifier2 = AttributeModifierUtil.createAttributeModifier(Attribute.ATTACK_DAMAGE, dmg, AttributeModifier.Operation.ADD_NUMBER, EquipmentSlotGroup.HAND);
         meta.addAttributeModifier(Attribute.ATTACK_DAMAGE, modifier2);
-        ArrayList<String> lore = new ArrayList<String>();
-        lore.add("");
-        lore.add(TextUtil.convertLegacyToSection("&7When in Main Hand:"));
-        lore.add(TextUtil.convertLegacyToSection("&9 6 Attack Damage"));
-        lore.add(TextUtil.convertLegacyToSection("&9 1.8 Attack Speed"));
-        meta.setLore(lore);
+        var lore = TextUtil.convertLegacyLoreToComponents(List.of("&7When in Main Hand:", "&9 6 Attack Damage", "&9 1.8 Attack Speed"));
+        meta.lore(lore);
         meta.addItemFlags(new ItemFlag[]{ItemFlag.HIDE_ATTRIBUTES});
-        meta.displayName(TextUtil.convertLegacyToComponent(ChatColor.DARK_GREEN + "Emerald Sword"));
+        meta.displayName(Component.text("Emerald Sword", NamedTextColor.DARK_GREEN));
         meta.setCustomModelData(1000017);
         if (config.getBoolean("EnchantsOnEmeraldGear")) {
             int num = config.getInt("EmeraldGearEnchantLevels.Unbreaking");

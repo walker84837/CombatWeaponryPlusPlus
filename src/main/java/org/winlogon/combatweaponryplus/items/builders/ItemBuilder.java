@@ -56,8 +56,18 @@ public class ItemBuilder {
      * @param name The display name of the item. Must not be null.
      * @return This ItemBuilder instance.
      */
-    public @NotNull ItemBuilder name(@NotNull String name) {
+    public @NotNull ItemBuilder name(@Nullable String name) {
         meta.displayName(Component.text(name));
+        return this;
+    }
+    /**
+     * Sets the display name of the item.
+     *
+     * @param name The display name of the item. Must not be null.
+     * @return This ItemBuilder instance.
+     */
+    public @NotNull ItemBuilder name(@NotNull Component name) {
+        meta.displayName(name);
         return this;
     }
 
