@@ -3,6 +3,7 @@ package org.winlogon.combatweaponryplus.items.builders;
 import org.bukkit.Material;
 import org.bukkit.attribute.Attribute;
 import org.bukkit.attribute.AttributeModifier;
+import org.bukkit.enchantments.Enchantment;
 import org.bukkit.inventory.EquipmentSlotGroup;
 import org.bukkit.inventory.ItemFlag;
 import org.bukkit.inventory.ItemStack;
@@ -144,6 +145,18 @@ public class ItemBuilder {
             var modifier = AttributeModifierUtil.createAttributeModifier(attribute, value, operation, slot);
             meta.addAttributeModifier(attribute, modifier);
         }
+        return this;
+    }
+
+    /**
+     * Adds an enchantment to the item, ignoring level restrictions.
+     * 
+     * @param enchant The enchantment to add
+     * @param level The level of the enchantmewnt
+     * @return This ItemBuilder instance.
+     */
+    public @NotNull ItemBuilder enchant(@NotNull Enchantment enchant, int level) {
+        meta.addEnchant(enchant, level, true);
         return this;
     }
 
