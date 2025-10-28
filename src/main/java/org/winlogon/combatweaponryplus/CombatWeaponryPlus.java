@@ -383,32 +383,34 @@ public class CombatWeaponryPlus extends JavaPlugin {
     }
 
     public ShapedRecipe getBootsRecipe() {
-        ItemStack item = new ItemStack(Material.GOLDEN_BOOTS);
-        ItemMeta meta = item.getItemMeta();
-        double hp = 1.0;
-        double def = 2.0;
-        if (config.getBoolean("UseCustomValues")) {
-            hp = config.getDouble("aEmeraldBoots.BonusHealth");
-            def = config.getDouble("aEmeraldBoots.Armor");
-        }
-        AttributeModifier modifier = AttributeModifierUtil.createAttributeModifier(Attribute.MAX_HEALTH, hp, AttributeModifier.Operation.ADD_NUMBER, EquipmentSlotGroup.FEET);
-        meta.addAttributeModifier(Attribute.MAX_HEALTH, modifier);
-        AttributeModifier modifier2 = AttributeModifierUtil.createAttributeModifier(Attribute.ARMOR, def, AttributeModifier.Operation.ADD_NUMBER, EquipmentSlotGroup.FEET);
-        meta.addAttributeModifier(Attribute.ARMOR, modifier2);
-        meta.displayName(TextUtil.convertLegacyToComponent(ChatColor.DARK_GREEN + "Emerald Boots"));
+        var itemBuilder = new ItemBuilder(Material.GOLDEN_BOOTS);
+
+        double hp = config.getBoolean("UseCustomValues") ? config.getDouble("aEmeraldBoots.BonusHealth") : 1.0;
+        double def = config.getBoolean("UseCustomValues") ? config.getDouble("aEmeraldBoots.Armor") : 2.0;
+
+        itemBuilder
+            .attribute(Attribute.MAX_HEALTH, hp, AttributeModifier.Operation.ADD_NUMBER, EquipmentSlotGroup.FEET)
+            .attribute(Attribute.ARMOR, def, AttributeModifier.Operation.ADD_NUMBER, EquipmentSlotGroup.FEET)
+            .name(ChatColor.DARK_GREEN + "Emerald Boots");
+
         if (config.getBoolean("EnchantmentsOnEmeraldArmor")) {
-            int num = config.getInt("EmeraldArmorEnchantLevels.Unbreaking");
-            int num2 = config.getInt("EmeraldArmorEnchantLevels.Mending");
-            meta.addEnchant(Enchantment.UNBREAKING, num, true);
-            meta.addEnchant(Enchantment.MENDING, num2, true);
+            int unbreakingLevel = config.getInt("EmeraldArmorEnchantLevels.Unbreaking");
+            int mendingLevel = config.getInt("EmeraldArmorEnchantLevels.Mending");
+            
+            itemBuilder.enchant(Enchantment.UNBREAKING, unbreakingLevel);
+            itemBuilder.enchant(Enchantment.MENDING, mendingLevel);
         }
-        meta.setCustomModelData(1000001);
-        item.setItemMeta(meta);
-        NamespacedKey key = new NamespacedKey(this, "emerald_boots");
+
+        itemBuilder.customModelData(true);
+
+        ItemStack item = itemBuilder.build();
+        var key = new NamespacedKey(this, "emerald_boots");
         this.keys.add(key);
-        ShapedRecipe recipe = new ShapedRecipe(key, item);
+
+        var recipe = new ShapedRecipe(key, item);
         recipe.shape(new String[]{"   ", "E E", "E E"});
         recipe.setIngredient('E', Material.EMERALD);
+        
         return recipe;
     }
 
