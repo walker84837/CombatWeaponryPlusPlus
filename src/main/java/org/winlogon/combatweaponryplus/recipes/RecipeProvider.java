@@ -14,7 +14,6 @@ import org.winlogon.combatweaponryplus.items.builders.ItemBuilder;
 import org.winlogon.combatweaponryplus.items.builders.WeaponBuilder;
 import org.winlogon.combatweaponryplus.util.ConfigHelper;
 import org.winlogon.combatweaponryplus.util.ConfigValueOperation;
-import org.winlogon.combatweaponryplus.util.TextUtil;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -253,21 +252,32 @@ public class RecipeProvider {
         double hp = config.getDouble("aEmeraldLeggings.BonusHealth", 1.0);
         double def = config.getDouble("aEmeraldLeggings.Armor", 5.0);
 
-        ItemBuilder builder = new ItemBuilder(Material.GOLDEN_LEGGINGS)
+        var builder = new ItemBuilder(Material.GOLDEN_LEGGINGS)
                 .name("Emerald Leggings")
                 .customModelData(true)
                 .attribute(Attribute.MAX_HEALTH, hp, AttributeModifier.Operation.ADD_NUMBER, EquipmentSlotGroup.LEGS)
                 .attribute(Attribute.ARMOR, def, AttributeModifier.Operation.ADD_NUMBER, EquipmentSlotGroup.LEGS);
 
-        ItemStack item = builder.build(); // Build the item once
+        applyConfiguredEnchantments("EmeraldArmor", builder);
 
-        if (config.isEnabled("EnchantmentsOnEmeraldArmor")) {
-            int unbreaking = config.getInt("EmeraldArmorEnchantLevels.Unbreaking", 0);
-            int mending = config.getInt("EmeraldArmorEnchantLevels.Mending", 0);
-            item.addUnsafeEnchantment(Enchantment.UNBREAKING, unbreaking); // Apply enchantments to the built item
-            item.addUnsafeEnchantment(Enchantment.MENDING, mending);
-        }
+        ItemStack item = builder.build();
+
         return createShapedRecipe("emerald_leggings", item, new String[]{"EEE", "E E", "E E"}, 'E', Material.EMERALD);
+    }
+
+    /**
+     * Adds the configured values for unbreaking and mending for a group of recipes, if they exist.
+     * @param name The recipe group
+     * @param item The item builder
+     */
+    private void applyConfiguredEnchantments(String name, ItemBuilder item) {
+        if (config.isEnabled("EnchantmentsOn" + name)) {
+            int unbreaking = config.getInt(name + "EnchantLevels.Unbreaking", 0);
+            item.enchant(Enchantment.UNBREAKING, unbreaking);
+
+            int mending = config.getInt(name + "EnchantLevels.Mending", 0);
+            item.enchant(Enchantment.MENDING, mending);
+        }
     }
 
     private ShapedRecipe getEmeraldBootsRecipe() {
@@ -280,96 +290,70 @@ public class RecipeProvider {
                 .attribute(Attribute.MAX_HEALTH, hp, AttributeModifier.Operation.ADD_NUMBER, EquipmentSlotGroup.FEET)
                 .attribute(Attribute.ARMOR, def, AttributeModifier.Operation.ADD_NUMBER, EquipmentSlotGroup.FEET);
 
-        ItemStack item = builder.build(); // Build the item once
+        applyConfiguredEnchantments("EmeraldArmor", builder);
 
-        if (config.isEnabled("EnchantmentsOnEmeraldArmor")) {
-            int unbreaking = config.getInt("EmeraldArmorEnchantLevels.Unbreaking", 0);
-            int mending = config.getInt("EmeraldArmorEnchantLevels.Mending", 0);
-            item.addUnsafeEnchantment(Enchantment.UNBREAKING, unbreaking); // Apply enchantments to the built item
-            item.addUnsafeEnchantment(Enchantment.MENDING, mending);
-        }
+        ItemStack item = builder.build();
         return createShapedRecipe("emerald_boots", item, new String[]{"   ", "E E", "E E"}, 'E', Material.EMERALD);
     }
 
     // Emerald Gear
     private ShapedRecipe getEmeraldPickaxeRecipe() {
-        ItemStack item = new ItemBuilder(Material.GOLDEN_PICKAXE)
+        var b = new ItemBuilder(Material.GOLDEN_PICKAXE)
                 .name("Emerald Pickaxe")
-                .customModelData(true)
-                .build();
-        if (config.isEnabled("EnchantsOnEmeraldGear")) {
-            int unbreaking = config.getInt("EmeraldGearEnchantLevels.Unbreaking", 0);
-            int mending = config.getInt("EmeraldGearEnchantLevels.Mending", 0);
-            item.addUnsafeEnchantment(Enchantment.UNBREAKING, unbreaking);
-            item.addUnsafeEnchantment(Enchantment.MENDING, mending);
-        }
+                .customModelData(true);
+
+        applyConfiguredEnchantments("EmeraldGear", b);
+        var item = b.build();
+
         return createShapedRecipe("emerald_pickaxe", item, new String[]{"EEE", " S ", " S "}, 'E', Material.EMERALD, 'S', Material.STICK);
     }
 
     private ShapedRecipe getEmeraldSwordRecipe() {
-        List<String> lore = new ArrayList<>();
-        lore.add("");
-        lore.add(TextUtil.convertLegacyToSection("&7When in Main Hand:"));
-        lore.add(TextUtil.convertLegacyToSection("&9 6 Attack Damage"));
-        lore.add(TextUtil.convertLegacyToSection("&9 1.8 Attack Speed"));
-
-        ItemStack item = new WeaponBuilder(Material.GOLDEN_SWORD, config)
+        var b = new WeaponBuilder(Material.GOLDEN_SWORD, config)
                 .withConfiguredDamage("aEmeraldSword.damage", 6.0, ConfigValueOperation.SUBTRACT, 1.0)
                 .withConfiguredSpeed("aEmeraldSword.speed", 1.8, ConfigValueOperation.SUBTRACT, 4.0)
                 .name("Emerald Sword")
-                .lore(lore)
+                .lore("&7When in Main Hand:", "&9 6 Attack Damage", "&9 1.8 Attack Speed")
                 .customModelData(true)
-                .hideFlags(true)
-                .build();
+                .hideFlags(true);
 
-        if (config.isEnabled("EnchantsOnEmeraldGear")) {
-            int unbreaking = config.getInt("EmeraldGearEnchantLevels.Unbreaking", 0);
-            int mending = config.getInt("EmeraldGearEnchantLevels.Mending", 0);
-            item.addUnsafeEnchantment(Enchantment.UNBREAKING, unbreaking);
-            item.addUnsafeEnchantment(Enchantment.MENDING, mending);
-        }
+        applyConfiguredEnchantments("EmeraldGear", b);
+
+        var item = b.build();
+
         return createShapedRecipe("emerald_sword", item, new String[]{" E ", " E ", " S "}, 'E', Material.EMERALD, 'S', Material.STICK);
     }
 
     private ShapedRecipe getEmeraldAxeRecipe() {
-        ItemStack item = new ItemBuilder(Material.GOLDEN_AXE)
+        var b = new ItemBuilder(Material.GOLDEN_AXE)
                 .name("Emerald Axe")
-                .customModelData(true)
-                .build();
-        if (config.isEnabled("EnchantsOnEmeraldGear")) {
-            int unbreaking = config.getInt("EmeraldGearEnchantLevels.Unbreaking", 0);
-            int mending = config.getInt("EmeraldGearEnchantLevels.Mending", 0);
-            item.addUnsafeEnchantment(Enchantment.UNBREAKING, unbreaking);
-            item.addUnsafeEnchantment(Enchantment.MENDING, mending);
-        }
+                .customModelData(true);
+
+        applyConfiguredEnchantments("EmeraldGear", b);
+
+        var item = b.build();
         return createShapedRecipe("emerald_axe", item, new String[]{"EE ", "ES ", " S "}, 'E', Material.EMERALD, 'S', Material.STICK);
     }
 
     private ShapedRecipe getEmeraldShovelRecipe() {
-        ItemStack item = new ItemBuilder(Material.GOLDEN_SHOVEL)
+        var b = new ItemBuilder(Material.GOLDEN_SHOVEL)
                 .name("Emerald Shovel")
-                .customModelData(true)
-                .build();
-        if (config.isEnabled("EnchantsOnEmeraldGear")) {
-            int unbreaking = config.getInt("EmeraldGearEnchantLevels.Unbreaking", 0);
-            int mending = config.getInt("EmeraldGearEnchantLevels.Mending", 0);
-            item.addUnsafeEnchantment(Enchantment.UNBREAKING, unbreaking);
-            item.addUnsafeEnchantment(Enchantment.MENDING, mending);
-        }
+                .customModelData(true);
+
+        applyConfiguredEnchantments("EmeraldGear", b);
+        var item = b.build();
+
         return createShapedRecipe("emerald_shovel", item, new String[]{" E ", " S ", " S "}, 'E', Material.EMERALD, 'S', Material.STICK);
     }
 
     private ShapedRecipe getEmeraldHoeRecipe() {
-        ItemStack item = new ItemBuilder(Material.GOLDEN_HOE)
+        var b = new ItemBuilder(Material.GOLDEN_HOE)
                 .name("Emerald Hoe")
-                .customModelData(true)
-                .build();
-        if (config.isEnabled("EnchantsOnEmeraldGear")) {
-            int unbreaking = config.getInt("EmeraldGearEnchantLevels.Unbreaking", 0);
-            int mending = config.getInt("EmeraldGearEnchantLevels.Mending", 0);
-            item.addUnsafeEnchantment(Enchantment.UNBREAKING, unbreaking);
-            item.addUnsafeEnchantment(Enchantment.MENDING, mending);
-        }
+                .customModelData(true);
+
+        applyConfiguredEnchantments("EmeraldGear", b);
+
+        var item = b.build();
         return createShapedRecipe("emerald_hoe", item, new String[]{"EE ", " S ", " S "}, 'E', Material.EMERALD, 'S', Material.STICK);
     }
 
@@ -405,16 +389,11 @@ public class RecipeProvider {
 
     // Sword Bows
     private ShapedRecipe getSwordBowRecipe() {
-        List<String> lore = new ArrayList<>();
-        lore.add(config.getString("dSwordBow.line1", ""));
-        lore.add(config.getString("dSwordBow.line2", ""));
-        lore.add(config.getString("dSwordBow.line3", ""));
-
         ItemStack item = new WeaponBuilder(Material.BOW, config)
                 .withConfiguredDamage("aSwordBow.damage", 9.0, ConfigValueOperation.SUBTRACT, 1.0)
                 .withConfiguredSpeed("aSwordBow.speed", 1.0, ConfigValueOperation.SUBTRACT, 4.0)
                 .name(config.getString("dSwordBow.name", "Sword Bow"))
-                .lore(lore)
+                .loreConfigRange(config, "dSwordBow", 1, 3)
                 .customModelData(true)
                 .build();
 
@@ -434,10 +413,10 @@ public class RecipeProvider {
     }
 
     private ShapedRecipe getHeavySwordBowRecipe() {
-        double mspd = config.getDouble("aHeavySwordBow.moveSpeed", -0.05);
-        double omspd = config.getDouble("aHeavySwordBow.offhandMoveSpeed", -0.05);
-        double kbr = config.getDouble("aHeavySwordBow.KBResist", 0.5) / 10.0;
-        double okbr = config.getDouble("aHeavySwordBow.offhandKBResist", 0.5) / 10.0;
+        double moveSpeed = config.getDouble("aHeavySwordBow.moveSpeed", -0.05);
+        double offhandMoveSpeed = config.getDouble("aHeavySwordBow.offhandMoveSpeed", -0.05);
+        double knockbackResistance = config.getDouble("aHeavySwordBow.KBResist", 0.5) / 10.0;
+        double offhandKnockbackResistance = config.getDouble("aHeavySwordBow.offhandKBResist", 0.5) / 10.0;
 
         List<String> lore = new ArrayList<>();
         lore.add(config.getString("dHeavySwordBow.line1", ""));
@@ -450,12 +429,12 @@ public class RecipeProvider {
                 .name(config.getString("dHeavySwordBow.name", "Heavy Sword Bow"))
                 .lore(lore)
                 .customModelData(true)
-                .attribute(Attribute.MOVEMENT_SPEED, mspd, AttributeModifier.Operation.ADD_NUMBER, EquipmentSlotGroup.HAND)
-                .attribute(Attribute.MOVEMENT_SPEED, omspd, AttributeModifier.Operation.ADD_NUMBER, EquipmentSlotGroup.OFFHAND)
-                .attribute(Attribute.KNOCKBACK_RESISTANCE, kbr, AttributeModifier.Operation.ADD_NUMBER, EquipmentSlotGroup.HAND)
-                .attribute(Attribute.KNOCKBACK_RESISTANCE, okbr, AttributeModifier.Operation.ADD_NUMBER, EquipmentSlotGroup.OFFHAND);
+                .attribute(Attribute.MOVEMENT_SPEED, moveSpeed, AttributeModifier.Operation.ADD_NUMBER, EquipmentSlotGroup.HAND)
+                .attribute(Attribute.MOVEMENT_SPEED, offhandMoveSpeed, AttributeModifier.Operation.ADD_NUMBER, EquipmentSlotGroup.OFFHAND)
+                .attribute(Attribute.KNOCKBACK_RESISTANCE, knockbackResistance, AttributeModifier.Operation.ADD_NUMBER, EquipmentSlotGroup.HAND)
+                .attribute(Attribute.KNOCKBACK_RESISTANCE, offhandKnockbackResistance, AttributeModifier.Operation.ADD_NUMBER, EquipmentSlotGroup.OFFHAND);
 
-        ItemStack item = builder.build(); // Build the item once
+        ItemStack item = builder.build();
 
         if (config.isEnabled("EnchantsHeavySwordBow")) {
             int power = config.getInt("HSbowEnchantLevels.Power", 0);
@@ -519,7 +498,7 @@ public class RecipeProvider {
                 .unbreakable(true)
                 .attribute(Attribute.ARMOR, def, AttributeModifier.Operation.ADD_NUMBER, EquipmentSlotGroup.CHEST);
 
-        ItemStack item = builder.build(); // Build the item once
+        ItemStack item = builder.build();
 
         if (config.isEnabled("EnchantsPlatedChainmail")) {
             int unbreaking = config.getInt("PChainEnchantLevels.Unbreaking", 0);
@@ -535,7 +514,7 @@ public class RecipeProvider {
                 .unbreakable(true)
                 .attribute(Attribute.ARMOR, def, AttributeModifier.Operation.ADD_NUMBER, EquipmentSlotGroup.LEGS);
 
-        ItemStack item = builder.build(); // Build the item once
+        ItemStack item = builder.build();
 
         if (config.isEnabled("EnchantsPlatedChainmail")) {
             int unbreaking = config.getInt("PChainEnchantLevels.Unbreaking", 0);
@@ -691,7 +670,7 @@ public class RecipeProvider {
                 .withConfiguredDamage("aIronScythe.damage", 8.0, ConfigValueOperation.SUBTRACT, 1.0)
                 .withConfiguredSpeed("aIronScythe.speed", 1.0, ConfigValueOperation.SUBTRACT, 4.0)
                 .name(config.getString("dIronScythe.name", "Iron Scythe"))
-                .lore(lore)
+                .loreConfigRange(config, "dIronScythe", 8, 10)
                 .customModelData(true)
                 .hideFlags(true)
                 .build();

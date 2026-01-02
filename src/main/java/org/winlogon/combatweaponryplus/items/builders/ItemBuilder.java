@@ -1,5 +1,6 @@
 package org.winlogon.combatweaponryplus.items.builders;
 
+import com.google.common.base.Preconditions;
 import org.bukkit.Material;
 import org.bukkit.attribute.Attribute;
 import org.bukkit.attribute.AttributeModifier;
@@ -14,10 +15,12 @@ import org.winlogon.combatweaponryplus.items.HashItemModelDataGenerator;
 import org.winlogon.combatweaponryplus.items.ItemModelData;
 import org.winlogon.combatweaponryplus.items.ItemModelDataGenerator;
 import org.winlogon.combatweaponryplus.util.AttributeModifierUtil;
+import org.winlogon.combatweaponryplus.util.ConfigHelper;
 import org.winlogon.combatweaponryplus.util.TextUtil;
 
 import net.kyori.adventure.text.Component;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Objects;
@@ -90,6 +93,37 @@ public class ItemBuilder {
     }
 
     /**
+     * Uses configuration entries, such as dSwordBow, to interpret lore lines. For example, dSwordBow has line1, line2,
+     * and so on, where each line is its lore.
+     * @param config The server's configuration
+     * @param configEntry The configuration entry
+     * @param from The lower bound of the range (inclusive)
+     * @param to The upper bound of the range (inclusive)
+     * @return This ItemBuilder instance
+     */
+    public @NotNull ItemBuilder loreConfigRange(
+            @NotNull ConfigHelper config,
+            @NotNull String configEntry,
+            int from,
+            int to
+    ) {
+        Preconditions.checkArgument(from > 0, "Lore lines start at 1");
+        Preconditions.checkArgument(to >= from, "`to` must be >= `from`");
+
+        List<String> lore = new ArrayList<>(to - from + 1);
+
+        for (int i = from; i <= to; i++) {
+            String line = config.getString(configEntry + ".line" + i, null);
+            if (line != null && !line.isEmpty()) {
+                lore.add(line);
+            }
+        }
+
+        return lore(lore);
+    }
+
+
+    /**
      * Sets the lore of the item using a list of strings.
      * Each string in the list will be a separate line of lore.
      * Legacy color codes will be converted.
@@ -160,7 +194,7 @@ public class ItemBuilder {
 
     /**
      * Adds an enchantment to the item, ignoring level restrictions.
-     * 
+     *
      * @param enchant The enchantment to add
      * @param level The level of the enchantmewnt
      * @return This ItemBuilder instance.
