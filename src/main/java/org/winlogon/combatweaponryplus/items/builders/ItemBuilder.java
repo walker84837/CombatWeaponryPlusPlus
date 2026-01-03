@@ -31,7 +31,7 @@ import java.util.Objects;
  * such as its name, lore, custom model data, unbreakability, hidden flags,
  * and attribute modifiers.
  */
-public class ItemBuilder {
+public class ItemBuilder<Builder extends ItemBuilder<Builder>> {
     /** The ItemStack being built. */
     protected final ItemStack item;
     /** The ItemMeta of the ItemStack being built. */
@@ -40,6 +40,8 @@ public class ItemBuilder {
     private static final ItemModelDataGenerator itemModelDataGenerator = new HashItemModelDataGenerator();
     /** Flag to indicate if custom model data should be generated. */
     private boolean shouldGenerateCustomModelData = false;
+    /** The item's lore. */
+    protected List<Component> lore = new ArrayList<>();
 
     /**
      * Constructs a new ItemBuilder with the specified material.
@@ -59,9 +61,9 @@ public class ItemBuilder {
      * @param name The display name of the item. Must not be null.
      * @return This ItemBuilder instance.
      */
-    public @NotNull ItemBuilder name(@Nullable String name) {
+    public @NotNull Builder name(@Nullable String name) {
         meta.displayName(Component.text(name));
-        return this;
+        return (Builder) this;
     }
     /**
      * Sets the display name of the item.
@@ -69,9 +71,9 @@ public class ItemBuilder {
      * @param name The display name of the item. Must not be null.
      * @return This ItemBuilder instance.
      */
-    public @NotNull ItemBuilder name(@NotNull Component name) {
+    public @NotNull Builder name(@NotNull Component name) {
         meta.displayName(name);
-        return this;
+        return (Builder) this;
     }
 
     /**
@@ -82,14 +84,14 @@ public class ItemBuilder {
      * @param lore An array of strings representing the lore lines.
      * @return This ItemBuilder instance.
      */
-    public @NotNull ItemBuilder lore(@NotNull String... lore) {
+    public @NotNull Builder lore(@NotNull String... lore) {
         // avoid doing unnecessary logic for empty args
         if (lore.length == 0) {
-            return this;
+            return (Builder) this;
         }
 
-        meta.lore(TextUtil.convertLegacyLoreToComponents(Arrays.asList(lore)));
-        return this;
+        this.lore.addAll(TextUtil.convertLegacyLoreToComponents(Arrays.asList(lore)));
+        return (Builder) this;
     }
 
     /**
@@ -101,7 +103,7 @@ public class ItemBuilder {
      * @param to The upper bound of the range (inclusive)
      * @return This ItemBuilder instance
      */
-    public @NotNull ItemBuilder loreConfigRange(
+    public @NotNull Builder loreConfigRange(
             @NotNull ConfigHelper config,
             @NotNull String configEntry,
             int from,
@@ -128,12 +130,12 @@ public class ItemBuilder {
      * Each string in the list will be a separate line of lore.
      * Legacy color codes will be converted.
      *
-     * @param lore A list of strings representing the lore lines. Can be null.
+     * @param lore A list of strings representing the lore lines. Can be set to null to reset the lore.
      * @return This ItemBuilder instance.
      */
-    public @NotNull ItemBuilder lore(@Nullable List<String> lore) {
-        meta.lore(TextUtil.convertLegacyLoreToComponents(lore));
-        return this;
+    public @NotNull Builder lore(@NotNull List<String> lore) {
+        this.lore.addAll(TextUtil.convertLegacyLoreToComponents(lore));
+        return (Builder) this;
     }
 
     /**
@@ -144,9 +146,9 @@ public class ItemBuilder {
      * @param generate True to generate custom model data, false otherwise.
      * @return This ItemBuilder instance.
      */
-    public @NotNull ItemBuilder customModelData(boolean generate) {
+    public @NotNull Builder customModelData(boolean generate) {
         this.shouldGenerateCustomModelData = generate;
-        return this;
+        return (Builder) this;
     }
 
     /**
@@ -155,9 +157,9 @@ public class ItemBuilder {
      * @param unbreakable True to make the item unbreakable, false otherwise.
      * @return This ItemBuilder instance.
      */
-    public @NotNull ItemBuilder unbreakable(boolean unbreakable) {
+    public @NotNull Builder unbreakable(boolean unbreakable) {
         meta.setUnbreakable(unbreakable);
-        return this;
+        return (Builder) this;
     }
 
     /**
@@ -167,11 +169,11 @@ public class ItemBuilder {
      * @param hideFlags True to hide all flags, false to keep them visible.
      * @return This ItemBuilder instance.
      */
-    public @NotNull ItemBuilder hideFlags(boolean hideFlags) {
+    public @NotNull Builder hideFlags(boolean hideFlags) {
         if (hideFlags) {
             meta.addItemFlags(ItemFlag.values());
         }
-        return this;
+        return (Builder) this;
     }
 
     /**
@@ -184,24 +186,24 @@ public class ItemBuilder {
      * @param slot The {@link EquipmentSlotGroup} to which this modifier applies. Must not be null.
      * @return This ItemBuilder instance.
      */
-    public @NotNull ItemBuilder attribute(@NotNull Attribute attribute, double value, @NotNull AttributeModifier.Operation operation, @NotNull EquipmentSlotGroup slot) {
+    public @NotNull Builder attribute(@NotNull Attribute attribute, double value, @NotNull AttributeModifier.Operation operation, @NotNull EquipmentSlotGroup slot) {
         if (value != 0) {
             var modifier = AttributeModifierUtil.createAttributeModifier(attribute, value, operation, slot);
             meta.addAttributeModifier(attribute, modifier);
         }
-        return this;
+        return (Builder) this;
     }
 
     /**
      * Adds an enchantment to the item, ignoring level restrictions.
      *
      * @param enchant The enchantment to add
-     * @param level The level of the enchantmewnt
+     * @param level The level of the enchantment
      * @return This ItemBuilder instance.
      */
-    public @NotNull ItemBuilder enchant(@NotNull Enchantment enchant, int level) {
+    public @NotNull Builder enchant(@NotNull Enchantment enchant, int level) {
         meta.addEnchant(enchant, level, true);
-        return this;
+        return (Builder) this;
     }
 
     /**
@@ -214,6 +216,7 @@ public class ItemBuilder {
             int customModelData = itemModelDataGenerator.generate(item.getType(), meta);
             ItemModelData.set(meta, customModelData);
         }
+        meta.lore(this.lore);
         item.setItemMeta(meta);
         return item;
     }

@@ -9,14 +9,14 @@ import org.winlogon.combatweaponryplus.util.ConfigHelper;
 import org.winlogon.combatweaponryplus.util.ConfigValueOperation;
 
 /**
- * A builder for creating and configuring weapon {@link ItemStack} objects.
+ * A builder for creating and configuring weapon {@link org.bukkit.inventory.ItemStack} objects.
  * This class provides specific methods for setting weapon-related attributes like attack damage,
  * attack speed, movement speed, and knockback resistance. It also includes functionality to apply
  * configured attribute values from a {@link ConfigHelper}.
  */
-public class WeaponBuilder extends ItemBuilder {
-    private ConfigHelper configHelper;
-    private boolean customValues;
+public class WeaponBuilder extends ItemBuilder<WeaponBuilder> {
+    private final ConfigHelper configHelper;
+    private final boolean customValues;
 
     /**
      * Constructs a new WeaponBuilder with the specified material and configuration helper.
