@@ -1,6 +1,14 @@
 # CombatWeaponry++
 
-A refactor of [CombatWeaponryPlus](https://github.com/soupeater333/Combat-weaponry-plus-plugin-minecraft), but improved and fit to work on 1.21.
+A major and comprehensive refactor of [CombatWeaponryPlus](https://github.com/soupeater333/Combat-weaponry-plus-plugin-minecraft), but:
+- more maintainable
+- future-proof
+- fit to work on 1.21
+
+> [!WARNING]
+> This rewrite is **still in progress**. While the code compiles, it is **NOT yet safe for production**.
+>
+> Running it on your server may cause unexpected behavior, crashes, or data loss. Please wait for the official `2.0.0` release before using it in any environment you care about.
 
 ## License
 
