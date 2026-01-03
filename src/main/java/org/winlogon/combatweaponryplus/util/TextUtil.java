@@ -58,8 +58,7 @@ public final class TextUtil {
      * Translates all legacy color codes in the given string.
      *
      * @see <a href="https://minecraft.wiki/w/Formatting_codes">Minecraft Wiki</a>
-     * @param identifier The color code identifier
-     * @param input The input string
+     * @param s The input string
      * @return The translated string
      */
     public static @Nullable String convertLegacyToSection(@Nullable String s) {
@@ -82,8 +81,7 @@ public final class TextUtil {
     /**
      * Translates all legacy color codes in the given string and produces a component.
      *
-     * @param identifier The color code identifier
-     * @param input The input string
+     * @param s The input string
      * @return The translated component
      */
     public static @NotNull Component convertLegacyToComponent(@Nullable String s) {
@@ -98,7 +96,7 @@ public final class TextUtil {
     /**
      * Translates all legacy color codes in the given list of strings and produces a list of components.
      *
-     * @param input The input list of strings
+     * @param lore The input list of strings
      * @return The translated list of components
      */
     public static @Nullable List<Component> convertLegacyLoreToComponents(@Nullable List<String> lore) {
@@ -110,6 +108,10 @@ public final class TextUtil {
 
     private static @NotNull String translateAlternateColorCodes(char identifier, @NotNull String input) {
         final int length = input.length();
+        if (length == 0) {
+            return input; // nothing to process; bail out early
+        }
+
         StringBuilder out = null;
         int lastAppended = 0;
 
