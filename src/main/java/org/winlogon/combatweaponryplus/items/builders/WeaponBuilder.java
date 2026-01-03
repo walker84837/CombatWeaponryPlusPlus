@@ -76,17 +76,12 @@ public class WeaponBuilder extends ItemBuilder<WeaponBuilder> {
 
     // Applies a specified operation to a value.
     private double applyOperation(double value, ConfigValueOperation op, double opValue) {
-        switch (op) {
-            case SUBTRACT:
-                return value - opValue;
-            case DIVIDE:
-                return value / opValue;
-            case ADD:
-                return value + opValue;
-            case NONE:
-            default:
-                return value;
-        }
+        return switch (op) {
+            case SUBTRACT -> value - opValue;
+            case DIVIDE -> value / opValue;
+            case ADD -> value + opValue;
+            default -> value;
+        };
     }
 
     /**
