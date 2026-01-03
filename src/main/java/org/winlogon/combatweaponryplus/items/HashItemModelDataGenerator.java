@@ -1,12 +1,16 @@
 package org.winlogon.combatweaponryplus.items;
 
+import com.google.common.collect.HashMultimap;
+
 import net.kyori.adventure.text.Component;
 import org.bukkit.Material;
 import org.bukkit.attribute.Attribute;
 import org.bukkit.attribute.AttributeModifier;
 import org.bukkit.inventory.meta.ItemMeta;
 
+import java.util.List;
 import java.util.Objects;
+import java.util.Optional;
 
 public class HashItemModelDataGenerator implements ItemModelDataGenerator {
     private final int seed;
@@ -33,7 +37,9 @@ public class HashItemModelDataGenerator implements ItemModelDataGenerator {
         }
 
         if (itemMeta.hasLore()) {
-            itemMeta.lore().stream()
+            Optional.ofNullable(itemMeta.lore())
+                    .orElse(List.of())
+                    .stream()
                     .map(Component::toString)
                     .map(this::normalizeString)
                     .sorted()
@@ -48,7 +54,9 @@ public class HashItemModelDataGenerator implements ItemModelDataGenerator {
                 .forEach(flag -> compositeIdentifierBuilder.append("FLAG:").append(flag).append("|"));
 
         if (itemMeta.hasAttributeModifiers()) {
-            itemMeta.getAttributeModifiers().entries().stream()
+            Optional.ofNullable(itemMeta.getAttributeModifiers())
+                    .orElse(HashMultimap.create())
+                    .entries().stream()
                     .map(entry -> {
                         Attribute attribute = entry.getKey();
                         AttributeModifier modifier = entry.getValue();
@@ -61,7 +69,7 @@ public class HashItemModelDataGenerator implements ItemModelDataGenerator {
                     .forEach(attrString -> compositeIdentifierBuilder.append(attrString).append("|"));
         }
 
-        String compositeIdentifier = compositeIdentifierBuilder.toString();
+        var compositeIdentifier = compositeIdentifierBuilder.toString();
 
         // Fallback if no properties contribute to the identifier (should ideally not happen for valid items)
         if (compositeIdentifier.isEmpty()) {
