@@ -15,7 +15,7 @@ import java.util.stream.Collectors;
 /**
  * Utility class for handling formatted text in Minecraft, such as translating legacy color codes to MiniMessage.
  */
-public final class TextUtil {
+public final class Format {
     private static MiniMessage miniMessage;
     private static RetroHue retroHue;
 
@@ -44,7 +44,7 @@ public final class TextUtil {
     }
 
     /**
-     * Initializes the TextUtil with the provided MiniMessage and RetroHue instances.
+     * Initializes the Format with the provided MiniMessage and RetroHue instances.
      *
      * @param mm The MiniMessage instance
      * @param rh The RetroHue instance
@@ -75,7 +75,7 @@ public final class TextUtil {
      */
     public static Optional<String> convertLegacyToSectionWithConfig(@NotNull String key, @NotNull FileConfiguration config) {
         return Optional.ofNullable(config.getString(key))
-            .map(TextUtil::convertLegacyToSection);
+            .map(Format::convertLegacyToSection);
     }
 
     /**
@@ -102,7 +102,7 @@ public final class TextUtil {
     public static @Nullable List<Component> convertLegacyLoreToComponents(@Nullable List<String> lore) {
         if (lore == null) return null;
         return lore.stream()
-                .map(TextUtil::convertLegacyToComponent)
+                .map(Format::convertLegacyToComponent)
                 .collect(Collectors.toList());
     }
 

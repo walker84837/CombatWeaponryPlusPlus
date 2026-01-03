@@ -6,21 +6,15 @@ import org.bukkit.attribute.Attribute;
 import org.bukkit.attribute.AttributeModifier;
 import org.bukkit.inventory.EquipmentSlotGroup;
 import org.bukkit.inventory.ItemFlag;
-import org.bukkit.inventory.ItemStack;
-import org.bukkit.inventory.meta.ItemMeta;
-import org.bukkit.inventory.SmithingInventory;
 import org.bukkit.event.inventory.PrepareSmithingEvent;
 
 import org.jetbrains.annotations.NotNull;
 import org.winlogon.combatweaponryplus.CombatWeaponryPlus;
 import org.winlogon.combatweaponryplus.util.ConfigHelper;
 import org.winlogon.combatweaponryplus.items.ItemModelData;
-import org.winlogon.combatweaponryplus.util.TextUtil;
+import org.winlogon.combatweaponryplus.util.Format;
 
-import java.util.ArrayList;
-import java.util.List;
 import java.util.Objects;
-import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
 public class SmithingRecipeBuilder {
@@ -108,13 +102,13 @@ public class SmithingRecipeBuilder {
 
         // Name
         var namePath = configKey + ".name";
-        resultMeta.displayName(TextUtil.convertLegacyToComponent(config.getString(namePath, "")));
+        resultMeta.displayName(Format.convertLegacyToComponent(config.getString(namePath, "")));
 
         // Lore
         if (amountOfLines > 0) {
             var lore = IntStream.range(0, amountOfLines)
                     .mapToObj(i -> config.getString(configKey + ".line" + i, ""))
-                    .map(TextUtil::convertLegacyToComponent)
+                    .map(Format::convertLegacyToComponent)
                     .toList();
 
             resultMeta.lore(lore);

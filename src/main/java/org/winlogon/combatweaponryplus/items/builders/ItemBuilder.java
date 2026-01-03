@@ -14,9 +14,9 @@ import org.jetbrains.annotations.Nullable;
 import org.winlogon.combatweaponryplus.items.HashItemModelDataGenerator;
 import org.winlogon.combatweaponryplus.items.ItemModelData;
 import org.winlogon.combatweaponryplus.items.ItemModelDataGenerator;
-import org.winlogon.combatweaponryplus.util.AttributeModifierUtil;
+import org.winlogon.combatweaponryplus.util.AttributeFactory;
 import org.winlogon.combatweaponryplus.util.ConfigHelper;
-import org.winlogon.combatweaponryplus.util.TextUtil;
+import org.winlogon.combatweaponryplus.util.Format;
 
 import net.kyori.adventure.text.Component;
 
@@ -93,7 +93,7 @@ public class ItemBuilder<Builder extends ItemBuilder<Builder>> {
             return (Builder) this;
         }
 
-        this.lore.addAll(TextUtil.convertLegacyLoreToComponents(Arrays.asList(lore)));
+        this.lore.addAll(Format.convertLegacyLoreToComponents(Arrays.asList(lore)));
         return (Builder) this;
     }
 
@@ -137,7 +137,7 @@ public class ItemBuilder<Builder extends ItemBuilder<Builder>> {
      * @return This ItemBuilder instance.
      */
     public @NotNull Builder lore(@NotNull List<String> lore) {
-        this.lore.addAll(TextUtil.convertLegacyLoreToComponents(lore));
+        this.lore.addAll(Format.convertLegacyLoreToComponents(lore));
         return (Builder) this;
     }
 
@@ -191,7 +191,7 @@ public class ItemBuilder<Builder extends ItemBuilder<Builder>> {
      */
     public @NotNull Builder attribute(@NotNull Attribute attribute, double value, @NotNull AttributeModifier.Operation operation, @NotNull EquipmentSlotGroup slot) {
         if (value != 0) {
-            var modifier = AttributeModifierUtil.createAttributeModifier(attribute, value, operation, slot);
+            var modifier = AttributeFactory.createAttributeModifier(attribute, value, operation, slot);
             meta.addAttributeModifier(attribute, modifier);
         }
         return (Builder) this;

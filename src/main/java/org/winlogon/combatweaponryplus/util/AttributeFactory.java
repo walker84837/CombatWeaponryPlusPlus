@@ -7,7 +7,7 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.UUID;
 
-public class AttributeModifierUtil {
+public class AttributeFactory {
     /**
      * Creates an AttributeModifier.
      * <br><b>Implementation detail</b>: Creates a random key for the attribute

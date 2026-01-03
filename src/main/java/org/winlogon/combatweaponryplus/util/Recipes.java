@@ -8,10 +8,11 @@ import org.bukkit.enchantments.Enchantment;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.ShapedRecipe;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import org.winlogon.combatweaponryplus.CombatWeaponryPlus;
 import org.winlogon.combatweaponryplus.items.builders.ItemBuilder;
 
-public class RecipeUtil {
+public final class Recipes {
     private static ConfigHelper config;
     private static CombatWeaponryPlus plugin;
 
@@ -56,6 +57,7 @@ public class RecipeUtil {
         plugin.keys.add(key);
         var recipe = new ShapedRecipe(key, result);
         recipe.shape(shape);
+
         for (int i = 0; i < ingredients.length; i += 2) {
             recipe.setIngredient((char) ingredients[i], (Material) ingredients[i + 1]);
         }

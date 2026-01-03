@@ -3,12 +3,9 @@ package org.winlogon.combatweaponryplus.recipes.registry;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
 import net.kyori.adventure.text.minimessage.MiniMessage;
-import net.md_5.bungee.api.ChatColor;
 import org.bukkit.Material;
-import org.bukkit.NamespacedKey;
 import org.bukkit.attribute.Attribute;
 import org.bukkit.attribute.AttributeModifier;
-import org.bukkit.enchantments.Enchantment;
 import org.bukkit.inventory.EquipmentSlotGroup;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.Recipe;
@@ -17,7 +14,7 @@ import org.winlogon.combatweaponryplus.items.builders.ItemBuilder;
 import org.winlogon.combatweaponryplus.items.builders.WeaponBuilder;
 import org.winlogon.combatweaponryplus.util.ConfigHelper;
 import org.winlogon.combatweaponryplus.util.ConfigValueOperation;
-import org.winlogon.combatweaponryplus.util.RecipeUtil;
+import org.winlogon.combatweaponryplus.util.Recipes;
 
 public class EmeraldRecipes implements RecipeGroupRegistrar {
     // TODO: get this from somewhere eventually
@@ -41,7 +38,7 @@ public class EmeraldRecipes implements RecipeGroupRegistrar {
                 .attribute(Attribute.MAX_HEALTH, hp, AttributeModifier.Operation.ADD_NUMBER, EquipmentSlotGroup.HEAD)
                 .attribute(Attribute.ARMOR, def, AttributeModifier.Operation.ADD_NUMBER, EquipmentSlotGroup.HEAD)
                 .build();
-        return RecipeUtil.createShapedRecipe("emerald_helmet", item, new String[]{"EEE", "E E", "   "}, 'E', Material.EMERALD);
+        return Recipes.createShapedRecipe("emerald_helmet", item, new String[]{"EEE", "E E", "   "}, 'E', Material.EMERALD);
     }
 
     private ShapedRecipe emeraldChestplate() {
@@ -56,11 +53,11 @@ public class EmeraldRecipes implements RecipeGroupRegistrar {
                 .attribute(Attribute.MAX_HEALTH, hp, AttributeModifier.Operation.ADD_NUMBER, EquipmentSlotGroup.CHEST)
                 .attribute(Attribute.ARMOR, def, AttributeModifier.Operation.ADD_NUMBER, EquipmentSlotGroup.CHEST);
 
-        RecipeUtil.applyConfiguredEnchantments("EmeraldArmor", builder);
+        Recipes.applyConfiguredEnchantments("EmeraldArmor", builder);
 
         ItemStack item = builder.build();
 
-        return RecipeUtil.createShapedRecipe("emerald_chestplate", item, new String[]{"E E", "EEE", "EEE"}, 'E', Material.EMERALD);
+        return Recipes.createShapedRecipe("emerald_chestplate", item, new String[]{"E E", "EEE", "EEE"}, 'E', Material.EMERALD);
     }
 
     private ShapedRecipe emeraldLeggings() {
@@ -75,11 +72,11 @@ public class EmeraldRecipes implements RecipeGroupRegistrar {
                 .attribute(Attribute.MAX_HEALTH, hp, AttributeModifier.Operation.ADD_NUMBER, EquipmentSlotGroup.LEGS)
                 .attribute(Attribute.ARMOR, def, AttributeModifier.Operation.ADD_NUMBER, EquipmentSlotGroup.LEGS);
 
-        RecipeUtil.applyConfiguredEnchantments("EmeraldArmor", builder);
+        Recipes.applyConfiguredEnchantments("EmeraldArmor", builder);
 
         ItemStack item = builder.build();
 
-        return RecipeUtil.createShapedRecipe("emerald_leggings", item, new String[]{"EEE", "E E", "E E"}, 'E', Material.EMERALD);
+        return Recipes.createShapedRecipe("emerald_leggings", item, new String[]{"EEE", "E E", "E E"}, 'E', Material.EMERALD);
     }
 
     public ShapedRecipe emeraldBoots() {
@@ -96,11 +93,11 @@ public class EmeraldRecipes implements RecipeGroupRegistrar {
                 .attribute(Attribute.MAX_HEALTH, hp, AttributeModifier.Operation.ADD_NUMBER, EquipmentSlotGroup.FEET)
                 .attribute(Attribute.ARMOR, def, AttributeModifier.Operation.ADD_NUMBER, EquipmentSlotGroup.FEET);
 
-        RecipeUtil.applyConfiguredEnchantments("EmeraldArmor", builder);
+        Recipes.applyConfiguredEnchantments("EmeraldArmor", builder);
 
         ItemStack item = builder.build();
 
-        return RecipeUtil.createShapedRecipe(
+        return Recipes.createShapedRecipe(
                 "emerald_boots",
                 item,
                 new String[]{"   ", "E E", "E E"},
@@ -114,11 +111,11 @@ public class EmeraldRecipes implements RecipeGroupRegistrar {
                 .name(Component.text("Emerald Pickaxe"))
                 .customModelData(true);
 
-        RecipeUtil.applyConfiguredEnchantments("EmeraldGear", builder);
+        Recipes.applyConfiguredEnchantments("EmeraldGear", builder);
 
         var item = builder.build();
 
-        return RecipeUtil.createShapedRecipe(
+        return Recipes.createShapedRecipe(
                 "emerald_pickaxe",
                 item, new String[] {
                     "EEE",
@@ -143,11 +140,11 @@ public class EmeraldRecipes implements RecipeGroupRegistrar {
                 .customModelData(true)
                 .hideFlags(true);
 
-        RecipeUtil.applyConfiguredEnchantments("EmeraldGear", builder);
+        Recipes.applyConfiguredEnchantments("EmeraldGear", builder);
 
         ItemStack item = builder.build();
 
-        return RecipeUtil.createShapedRecipe(
+        return Recipes.createShapedRecipe(
                 "emerald_sword", item,
                 new String[]{" E ", " E ", " S "},
                 'E', Material.EMERALD,
@@ -160,11 +157,11 @@ public class EmeraldRecipes implements RecipeGroupRegistrar {
                 .name(mm.deserialize("<green>Emerald Axe"))
                 .customModelData(true);
 
-        RecipeUtil.applyConfiguredEnchantments("EmeraldGear", builder);
+        Recipes.applyConfiguredEnchantments("EmeraldGear", builder);
 
         ItemStack item = builder.build();
 
-        return RecipeUtil.createShapedRecipe(
+        return Recipes.createShapedRecipe(
             "emerald_axe",
             item, new String[] {
                 "EE ",
@@ -181,10 +178,10 @@ public class EmeraldRecipes implements RecipeGroupRegistrar {
                 .name(mm.deserialize("<green>Emerald Shovel"))
                 .customModelData(true);
 
-        RecipeUtil.applyConfiguredEnchantments("EmeraldGear", b);
+        Recipes.applyConfiguredEnchantments("EmeraldGear", b);
         var item = b.build();
 
-        return RecipeUtil.createShapedRecipe("emerald_shovel", item, new String[]{" E ", " S ", " S "}, 'E', Material.EMERALD, 'S', Material.STICK);
+        return Recipes.createShapedRecipe("emerald_shovel", item, new String[]{" E ", " S ", " S "}, 'E', Material.EMERALD, 'S', Material.STICK);
     }
 
     private ShapedRecipe emeraldHoe() {
@@ -192,10 +189,10 @@ public class EmeraldRecipes implements RecipeGroupRegistrar {
                 .name("Emerald Hoe")
                 .customModelData(true);
 
-        RecipeUtil.applyConfiguredEnchantments("EmeraldGear", b);
+        Recipes.applyConfiguredEnchantments("EmeraldGear", b);
 
         var item = b.build();
-        return RecipeUtil.createShapedRecipe("emerald_hoe", item, new String[]{"EE ", " S ", " S "}, 'E', Material.EMERALD, 'S', Material.STICK);
+        return Recipes.createShapedRecipe("emerald_hoe", item, new String[]{"EE ", " S ", " S "}, 'E', Material.EMERALD, 'S', Material.STICK);
     }
 
     @Override
