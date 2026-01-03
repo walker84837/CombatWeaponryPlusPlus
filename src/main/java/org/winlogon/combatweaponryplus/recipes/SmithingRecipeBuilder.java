@@ -21,6 +21,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 import java.util.stream.Collectors;
+import java.util.stream.IntStream;
 
 public class SmithingRecipeBuilder {
     private final CombatWeaponryPlus plugin;
@@ -89,69 +90,69 @@ public class SmithingRecipeBuilder {
     public void build(PrepareSmithingEvent event) {
         if (!config.isEnabled(configKey)) return;
 
-        SmithingInventory inv = event.getInventory();
-        ItemStack template = inv.getItem(0);
-        ItemStack tool = inv.getItem(1);
-        ItemStack itemModifier = inv.getItem(2);
+        var inv = event.getInventory();
+        var template = inv.getItem(0);
+        var tool = inv.getItem(1);
+        var modifier = inv.getItem(2);
 
         if (template == null || template.getType() != Material.LAPIS_LAZULI) return;
-        if (tool == null || itemModifier == null) return;
-        if (tool.getType() != toolType || itemModifier.getType() != modifierType) return;
+        if (tool == null || modifier == null) return;
+        if (tool.getType() != toolType || modifier.getType() != modifierType) return;
 
-        ItemMeta toolMeta = tool.getItemMeta();
+        var toolMeta = tool.getItemMeta();
         if (ItemModelData.get(toolMeta) != requiredModelData) return;
 
-        // Clone the tool item to preserve its original properties
-        ItemStack result = tool.clone();
-        ItemMeta resultMeta = result.getItemMeta();
+        // Clone tool to preserve original item
+        var result = tool.clone();
+        var resultMeta = result.getItemMeta();
 
-        var resultNameConfigPath = configKey + ".name";
-        List<String> loreConfigPaths = new ArrayList<>();
+        // Name
+        var namePath = configKey + ".name";
+        resultMeta.displayName(
+                TextUtil.convertLegacyToComponent(
+                        config.getString(namePath, "")
+                )
+        );
 
-        if (amountOfLines != 0) {
-            for (int i = 0; i < amountOfLines; i++) {
-                loreConfigPaths.add(configKey + ".line" + i);
-            }
+        // Lore
+        if (amountOfLines > 0) {
+            var lore = IntStream.range(0, amountOfLines)
+                    .mapToObj(i -> config.getString(configKey + ".line" + i, ""))
+                    .map(TextUtil::convertLegacyToComponent)
+                    .toList();
+
+            resultMeta.lore(lore);
         }
 
-        // Apply modifications to the cloned item's meta
+        // Model data
         ItemModelData.set(resultMeta, resultModelData);
-        resultMeta.displayName(TextUtil.convertLegacyToComponent(config.getString(resultNameConfigPath, "")));
 
-        if (amountOfLines != 0) {
-            List<String> lore = new ArrayList<>();
-            for (String path : loreConfigPaths) {
-                lore.add(config.getString(path, ""));
-            }
-            resultMeta.lore(lore.stream().map(TextUtil::convertLegacyToComponent).collect(Collectors.toList()));
-        }
-
-        // Add attribute modifiers dynamically based on config
-        if (damageAddedConfigPath != 0.0) { // Only add if there's a value to add
-            Attribute attribute = null;
-            if ("Damage".equals(damageAddedKey)) {
-                attribute = Attribute.ATTACK_DAMAGE;
-            } else if ("Armor".equals(damageAddedKey)) {
-                attribute = Attribute.ARMOR;
-            }
-            // Add more attribute mappings as needed
+        // Attribute modifier
+        if (damageAddedConfigPath != 0.0) {
+            var attribute = switch (damageAddedKey) {
+                case "Damage" -> Attribute.ATTACK_DAMAGE;
+                case "Armor"  -> Attribute.ARMOR;
+                default       -> null;
+            };
 
             if (attribute != null) {
-                double value = config.getDouble(configKey + "." + damageAddedKey, damageAddedConfigPath);
-                NamespacedKey attributeKey = new NamespacedKey(plugin, damageAddedKey.toLowerCase()); // Use plugin name and lowercase key
-                // Determine EquipmentSlotGroup dynamically if needed, for now assuming HAND for damage and CHEST for armor
-                EquipmentSlotGroup slot = EquipmentSlotGroup.HAND;
-                if ("Armor".equals(damageAddedKey)) {
-                    slot = EquipmentSlotGroup.CHEST;
-                }
-                var modifier = new AttributeModifier(attributeKey, value, AttributeModifier.Operation.ADD_NUMBER, slot);
-                resultMeta.addAttributeModifier(attribute, modifier);
+                var value = config.getDouble(configKey + "." + damageAddedKey, damageAddedConfigPath);
+                var key = new NamespacedKey(plugin, damageAddedKey.toLowerCase());
+                var slot = "Armor".equals(damageAddedKey)
+                        ? EquipmentSlotGroup.CHEST
+                        : EquipmentSlotGroup.HAND;
+
+                var modifierMeta = new AttributeModifier(
+                    key, value, AttributeModifier.Operation.ADD_NUMBER, slot
+                );
+
+                resultMeta.addAttributeModifier(attribute, modifierMeta);
             }
         }
 
-        resultMeta.addItemFlags(ItemFlag.HIDE_ATTRIBUTES); // Assuming we always want to hide flags for custom items
+        resultMeta.addItemFlags(ItemFlag.HIDE_ATTRIBUTES);
 
-        result.setItemMeta(resultMeta); // Set the modified meta back to the cloned item
+        result.setItemMeta(resultMeta);
         event.setResult(result);
     }
 }
