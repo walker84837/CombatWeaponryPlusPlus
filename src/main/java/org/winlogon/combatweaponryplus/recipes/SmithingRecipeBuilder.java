@@ -108,11 +108,7 @@ public class SmithingRecipeBuilder {
 
         // Name
         var namePath = configKey + ".name";
-        resultMeta.displayName(
-                TextUtil.convertLegacyToComponent(
-                        config.getString(namePath, "")
-                )
-        );
+        resultMeta.displayName(TextUtil.convertLegacyToComponent(config.getString(namePath, "")));
 
         // Lore
         if (amountOfLines > 0) {

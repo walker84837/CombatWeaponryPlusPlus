@@ -79,6 +79,16 @@ public class ConfigHelper {
     }
 
     /**
+     * Gets an integer value from the configuration at the specified path.
+     * Simply calls {@link this.getInt(String, int)}
+     * @param path The path to the integer value.
+     * @return The integer value from the configuration or {@code 0} if incorrect.
+     */
+    public int getInt(String path) {
+        return getInt(path, 0);
+    }
+
+    /**
      * Retrieves a string value from the configuration at the specified path.
      * If the path does not exist or is not a valid string, the default value is returned.
      *
