@@ -51,7 +51,7 @@ public class ItemBuilder<Builder extends ItemBuilder<Builder>> {
     public ItemBuilder(@NotNull Material material) {
         Objects.requireNonNull(material, "Material cannot be null");
 
-        this.item = new ItemStack(material);
+        this.item = ItemStack.of(material);
         this.meta = item.getItemMeta();
     }
 
@@ -62,7 +62,10 @@ public class ItemBuilder<Builder extends ItemBuilder<Builder>> {
      * @return This ItemBuilder instance.
      */
     public @NotNull Builder name(@Nullable String name) {
-        meta.displayName(Component.text(name));
+        if (name != null) {
+            meta.displayName(Component.text(name));
+        }
+        meta.displayName(null);
         return (Builder) this;
     }
     /**
