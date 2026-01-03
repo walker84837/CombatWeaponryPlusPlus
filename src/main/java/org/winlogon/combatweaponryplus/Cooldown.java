@@ -11,7 +11,7 @@ public class Cooldown {
     private ConcurrentHashMap<UUID, Double> cooldowns;
 
     public Cooldown() {
-        this.cooldowns = new ConcurrentHashMap<UUID, Double>();
+        this.cooldowns = new ConcurrentHashMap<>();
     }
 
     /**
