@@ -1,16 +1,6 @@
 package org.winlogon.combatweaponryplus;
 
-import java.net.URI;
-import java.net.URISyntaxException;
-import java.nio.charset.StandardCharsets;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Optional;
-import java.util.Random;
-import java.util.UUID;
-import java.util.stream.Collectors;
-import java.util.stream.IntStream;
-
+import net.kyori.adventure.text.minimessage.MiniMessage;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.Particle;
@@ -41,15 +31,25 @@ import org.bukkit.plugin.Plugin;
 import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
 import org.bukkit.util.Vector;
+import org.jspecify.annotations.NonNull;
+import org.jspecify.annotations.Nullable;
 import org.winlogon.combatweaponryplus.util.ConfigHelper;
 import org.winlogon.combatweaponryplus.items.ItemModelData;
+import org.winlogon.combatweaponryplus.recipes.SmithingRecipeBuilder;
 
 import com.google.common.base.Strings;
 
 import net.kyori.adventure.resource.ResourcePackInfo;
 import net.kyori.adventure.resource.ResourcePackRequest;
 import net.kyori.adventure.text.serializer.plain.PlainTextComponentSerializer;
-import org.winlogon.combatweaponryplus.recipes.SmithingRecipeBuilder;
+
+import java.net.URI;
+import java.net.URISyntaxException;
+import java.nio.charset.StandardCharsets;
+import java.util.Optional;
+import java.util.Random;
+import java.util.UUID;
+import java.util.stream.IntStream;
 
 class Listeners implements Listener {
     private final CombatWeaponryPlus plugin;
@@ -108,7 +108,7 @@ class Listeners implements Listener {
 
         var url = config.getString("resource-pack.link", "");
         try {
-            var request = createResourcePackRequest(plugin);
+            var request = createResourcePackRequest(plugin, "TODO: we need the texture for the extra items provided by this plugin");
             player.sendResourcePacks(request);
             player.sendRichMessage("Sending resource pack: " + url);
         } catch (IllegalArgumentException e) {
@@ -539,7 +539,7 @@ class Listeners implements Listener {
     @EventHandler
     public void playerBowShoot(EntityShootBowEvent event) {
         LivingEntity entity = event.getEntity();
-        Float speed = event.getForce();
+        float speed = event.getForce();
         Arrow arrow = (Arrow) event.getProjectile();
 
         if (!(entity instanceof Player player)) return;
@@ -565,9 +565,9 @@ class Listeners implements Listener {
                 trident.setFireTicks(100);
                 trident.setGravity(false);
                 trident.setPickupStatus(AbstractArrow.PickupStatus.DISALLOWED);
-                trident.setBounce(false);
                 trident.setCustomName("Bob");
                 trident.setCustomNameVisible(true);
+                // TODO: see https://jd.papermc.io/paper/1.21.11/org/bukkit/entity/AbstractArrow.html#setKnockbackStrength(int)
                 trident.setKnockbackStrength(10);
                 world.playSound(player.getLocation(), Sound.ITEM_TRIDENT_THROW, 10.0f, 1.0f);
 
@@ -630,7 +630,7 @@ class Listeners implements Listener {
         var offHandItem = inventory.getItemInOffHand();
 
         offHandItem.setAmount(offHandItem.getAmount() - 1);
-        IntStream.range(0, 4).forEach(i -> 
+        IntStream.range(0, 4).forEach(i ->
             plugin.getServer().getScheduler().runTaskLater(plugin, () -> {
                 var playerDirection = player.getLocation().getDirection();
                 var arrow = (Arrow) player.launchProjectile(Arrow.class, playerDirection);
@@ -641,7 +641,7 @@ class Listeners implements Listener {
         );
     }
 
-    private void handleBurstCrossbow(Player player, EntityShootBowEvent event) {      
+    private void handleBurstCrossbow(Player player, EntityShootBowEvent event) {
         Material chestplateMaterial = Material.IRON_CHESTPLATE;
         int customModelData = 1231234;
         double arrowSpeed = 5.0;
@@ -660,9 +660,9 @@ class Listeners implements Listener {
                 return; // Redstone Core check
             });
 
-        if (player.getInventory().getItemInOffHand().getType() == Material.REDSTONE) {
-            player.getInventory().getItemInOffHand()
-                .setAmount(player.getInventory().getItemInOffHand().getAmount() - 1);
+        var offHandItem = player.getInventory().getItemInOffHand();
+        if (offHandItem.getType() == Material.REDSTONE) {
+            offHandItem.setAmount(offHandItem.getAmount() - 1);
             Location loc = player.getLocation();
 
             double totalAngle1 = loc.getPitch() + 80.0;
@@ -685,25 +685,35 @@ class Listeners implements Listener {
     }
 
     private void launchArrow(Player player, Vector direction) {
-        Arrow arrow = (Arrow) player.launchProjectile(Arrow.class, direction);
+        var arrow = (Arrow) player.launchProjectile(Arrow.class, direction);
         arrow.setPickupStatus(AbstractArrow.PickupStatus.DISALLOWED);
     }
 
     private void playSoundWithDelay(Plugin plugin, Player player, long delay) {
-        plugin.getServer().getScheduler().runTaskLater(plugin, 
-            () -> player.getWorld().playSound(player.getLocation(), Sound.ITEM_CROSSBOW_SHOOT, 10.0f, 1.0f), 
+        plugin.getServer().getScheduler().runTaskLater(plugin,
+            () -> player.getWorld().playSound(player.getLocation(), Sound.ITEM_CROSSBOW_SHOOT, 10.0f, 1.0f),
             delay);
     }
 
     private void handleRedstoneBow(Player player, EntityShootBowEvent event) {
-        if (player.getInventory().getChestplate() != null && player.getInventory().getChestplate().getType() == Material.IRON_CHESTPLATE &&
-            player.getInventory().getChestplate().hasItemMeta() && player.getInventory().getChestplate().getItemMeta().getCustomModelData() == 1231234) {
+        var inventory = player.getInventory();
+        var chestplate = inventory.getChestplate();
+
+        var ironChestplateFound = chestplate != null && chestplate.getType() == Material.IRON_CHESTPLATE;
+        var customModelDataMatch = chestplate.hasItemMeta() && chestplate.getItemMeta().getCustomModelData() == 1231234;
+
+        if (ironChestplateFound && customModelDataMatch) {
             return; // Redstone Core check
         }
-        if (player.getInventory().getItemInOffHand().getType() == Material.REDSTONE) {
-            player.getInventory().getItemInOffHand().setAmount(player.getInventory().getItemInOffHand().getAmount() - 1);
-            Arrow arrow = (Arrow) event.getProjectile();
-            Vector vector = player.getLocation().getDirection();
+
+        var offHandItem = inventory.getItemInOffHand();
+
+        if (offHandItem.getType() == Material.REDSTONE) {
+            offHandItem.setAmount(offHandItem.getAmount() - 1);
+
+            var arrow = (Arrow) event.getProjectile();
+            var vector = player.getLocation().getDirection();
+
             arrow.setVelocity(vector.multiply(event.getForce() * 10.0));
             arrow.setPierceLevel(5);
             arrow.setDamage(arrow.getDamage() * 0.2);
@@ -715,53 +725,101 @@ class Listeners implements Listener {
         Player player = event.getPlayer();
         ItemStack chestplate = player.getInventory().getChestplate();
 
-        if (chestplate != null && chestplate.hasItemMeta() && chestplate.getItemMeta().hasCustomModelData() && chestplate.getItemMeta().getCustomModelData() == 1560001 && event.getAction() == Action.RIGHT_CLICK_AIR && player.isGliding()) {
-            ItemMeta meta = chestplate.getItemMeta();
-            meta.setCustomModelData(1560002);
+        if (chestplate == null) return;
+        var meta = chestplate.getItemMeta();
+        if (meta == null) return;
+
+        boolean correctModel = ItemModelData.hasModelData(meta) && ItemModelData.get(meta) == 1560001;
+        boolean rightClick = event.getAction() == Action.RIGHT_CLICK_AIR;
+        boolean gliding = player.isGliding();
+
+        if (correctModel && rightClick && gliding) {
+            ItemModelData.set(meta, 1560002);
             chestplate.setItemMeta(meta);
-            player.getWorld().playSound(player.getLocation(), Sound.ENTITY_PHANTOM_FLAP, 10.0f, 1.0f);
-            player.setVelocity(player.getLocation().getDirection().multiply(2));
+
+            var playerLocation = player.getLocation();
+
+            player.getWorld().playSound(playerLocation, Sound.ENTITY_PHANTOM_FLAP, 10.0f, 1.0f);
+
+            player.setVelocity(playerLocation.getDirection().multiply(2));
         }
     }
 
     @EventHandler
     public void onToggleGlide(EntityToggleGlideEvent event) {
-        if (!(event.getEntity() instanceof Player)) return;
-        Player player = (Player) event.getEntity();
-        ItemStack chestplate = player.getInventory().getChestplate();
+        // Only handle players
+        if (!(event.getEntity() instanceof Player player)) return;
 
-        if (chestplate != null && chestplate.getType() == Material.ELYTRA && chestplate.hasItemMeta() && (chestplate.getItemMeta().getCustomModelData() == 1560001 || chestplate.getItemMeta().getCustomModelData() == 1560002)) {
-            if (player.isGliding()) {
-                if (!player.isDead()) {
-                    plugin.getServer().getScheduler().runTaskLater(plugin, () -> {
-                        if (player.getInventory().getChestplate() != null) {
-                            ItemMeta meta = player.getInventory().getChestplate().getItemMeta();
-                            meta.setCustomModelData(1560001);
-                            player.getInventory().getChestplate().setItemMeta(meta);
-                        }
-                    }, 10L);
-                }
-            } else {
-                player.setVelocity(new Vector(0, 1, 0));
-            }
+        var chestplate = player.getInventory().getChestplate();
+        if (chestplate == null) return;
+
+        // Check that the chestplate is an Elytra with one of the allowed custom model IDs
+        var isElytra = chestplate.getType() == Material.ELYTRA;
+        var meta = chestplate.getItemMeta();
+        var hasValidModel = meta != null && (ItemModelData.get(meta) == 1560001 || ItemModelData.get(meta) == 1560002);
+
+        if (!isElytra || !hasValidModel) return;
+
+        // Player is gliding -> schedule a model‑reset after a short delay
+        if (player.isGliding() && !player.isDead()) {
+            plugin.getServer().getScheduler().runTaskLater(plugin, () -> {
+                ItemStack currentChest = player.getInventory().getChestplate();
+                if (currentChest == null) return;
+
+                ItemMeta currentMeta = currentChest.getItemMeta();
+                if (currentMeta == null) return;
+
+                ItemModelData.set(meta, 1560001);
+                currentChest.setItemMeta(currentMeta);
+            }, 10L);
+            return;
         }
+
+        // Player is not gliding -> give a small upward boost
+        player.setVelocity(new Vector(0, 1, 0));
     }
 
     @EventHandler
-    public void onCustomElytraDamage(EntityDamageEvent event) {
-        if (!(event.getEntity() instanceof Player player)) return;
-        if (player.isDead()) return;
+    public void onCustomElytraDamage(EntityDamageEvent damageEvent) {
+        if (!(damageEvent.getEntity() instanceof Player player) || player.isDead()) {
+            return;
+        }
 
         ItemStack chestplate = player.getInventory().getChestplate();
-        if (chestplate != null && chestplate.hasItemMeta() && chestplate.getItemMeta().hasCustomModelData() && chestplate.getItemMeta().hasLore() && (chestplate.getItemMeta().getCustomModelData() == 1560001 || chestplate.getItemMeta().getCustomModelData() == 1560002)) {
-            event.setDamage(event.getDamage() * 0.5);
-            if (event.getCause() == EntityDamageEvent.DamageCause.FALL && chestplate.getItemMeta().getCustomModelData() == 1560002) {
-                Location loc = player.getLocation();
-                player.addPotionEffect(new PotionEffect(PotionEffectType.REGENERATION, 60, 2));
-                player.setVelocity(new Vector(0.0, 0.5, 0.0));
-                loc.getWorld().createExplosion(loc.getX(), loc.getY(), loc.getZ(), 2.0f, false, false);
-                loc.getWorld().spawnEntity(loc, EntityType.AREA_EFFECT_CLOUD);
-            }
+        if (chestplate == null) {
+            return;
+        }
+
+        var meta = chestplate.getItemMeta();
+        if (meta == null || !ItemModelData.hasModelData(meta) || !meta.hasLore()) {
+            return;
+        }
+
+        var modelId = ItemModelData.get(meta);
+        var isStandardElytra = modelId == 1560001;
+        var isFallResistantElytra = modelId == 1560002;
+
+        // Apply generic damage reduction for both custom elytras
+        if (isStandardElytra || isFallResistantElytra) {
+            damageEvent.setDamage(damageEvent.getDamage() * 0.5);
+        }
+
+        // Extra effects only for the fall‑resistant variant
+        if (damageEvent.getCause() == EntityDamageEvent.DamageCause.FALL && isFallResistantElytra) {
+            var playerLocation = player.getLocation();
+
+            player.addPotionEffect(new PotionEffect(PotionEffectType.REGENERATION, 60, 2));
+            player.setVelocity(new Vector(0.0, 0.5, 0.0));
+            World world = playerLocation.getWorld();
+            world.createExplosion(
+                    playerLocation.getX(),
+                    playerLocation.getY(),
+                    playerLocation.getZ(),
+                    2.0f, false, false
+            );
+
+            // Spawn a cloud to show the effect area
+            world.spawnEntity(playerLocation, EntityType.AREA_EFFECT_CLOUD);
         }
     }
 
@@ -772,7 +830,7 @@ class Listeners implements Listener {
      * @return A configured ResourcePackRequest.
      * @throws IllegalArgumentException if the URL is invalid or hash is not a valid SHA-1 hash.
      */
-    private ResourcePackRequest createResourcePackRequest(Plugin plugin) {
+    private ResourcePackRequest createResourcePackRequest(Plugin plugin, @Nullable String prompt) {
         final String base = "resource-pack" + ".";
         String configPathHash = base + "hash";
         String configPathUrl = base + "link";
@@ -780,7 +838,7 @@ class Listeners implements Listener {
         var config = plugin.getConfig();
         String url = config.getString(configPathUrl);
         String hash = config.getString(configPathHash);
-    
+
         if (Strings.isNullOrEmpty(url))  {
             throw new IllegalArgumentException("Resource pack URL cannot be null. Check config path: " + configPathUrl);
         }
@@ -789,6 +847,20 @@ class Listeners implements Listener {
         }
 
         var packId = UUID.nameUUIDFromBytes(url.getBytes(StandardCharsets.UTF_8));
+        var packInfo = getResourcePackInfo(url, hash, packId);
+
+        var mm = MiniMessage.miniMessage();
+        var finalPrompt = prompt != null ? mm.deserialize(prompt) : null;
+
+        return ResourcePackRequest.resourcePackRequest()
+                .required(false) // Not required
+                .replace(true) // Replacing existing packs
+                .prompt(finalPrompt) // Empty prompt message
+                .packs(packInfo)
+                .build();
+    }
+
+    private static @NonNull ResourcePackInfo getResourcePackInfo(String url, String hash, UUID packId) {
         URI packUri;
         try {
             packUri = new URI(url);
@@ -801,13 +873,6 @@ class Listeners implements Listener {
             throw new IllegalArgumentException("Invalid SHA-1 hash. Must be a 40-character hexadecimal string.");
         }
 
-        var packInfo = ResourcePackInfo.resourcePackInfo(packId, packUri, hash);
-
-        return ResourcePackRequest.resourcePackRequest()
-                .required(false) // Not required
-                .replace(true) // Replacing existing packs
-                .prompt(null) // Empty prompt message
-                .packs(packInfo)
-                .build();
+        return ResourcePackInfo.resourcePackInfo(packId, packUri, hash);
     }
 }
