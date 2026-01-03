@@ -1,19 +1,21 @@
 package org.winlogon.combatweaponryplus.recipes;
 
 import org.bukkit.Material;
-import org.bukkit.NamespacedKey;
 import org.bukkit.attribute.Attribute;
 import org.bukkit.attribute.AttributeModifier;
 import org.bukkit.enchantments.Enchantment;
 import org.bukkit.inventory.EquipmentSlotGroup;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.ShapedRecipe;
-import org.jetbrains.annotations.NotNull;
 import org.winlogon.combatweaponryplus.CombatWeaponryPlus;
 import org.winlogon.combatweaponryplus.items.builders.ItemBuilder;
 import org.winlogon.combatweaponryplus.items.builders.WeaponBuilder;
+import org.winlogon.combatweaponryplus.recipes.registry.EmeraldRecipes;
+import org.winlogon.combatweaponryplus.recipes.registry.RecipeGroupRegistrar;
 import org.winlogon.combatweaponryplus.util.ConfigHelper;
 import org.winlogon.combatweaponryplus.util.ConfigValueOperation;
+import org.winlogon.combatweaponryplus.util.RecipeUtil;
+import org.winlogon.combatweaponryplus.util.TextUtil;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -31,18 +33,13 @@ public class RecipeProvider {
     }
 
     public void registerRecipes() {
-        // Emerald Armor
-        recipeRegistrar.register("Emerald", this::getEmeraldHelmetRecipe);
-        recipeRegistrar.register("Emerald", this::getEmeraldChestplateRecipe);
-        recipeRegistrar.register("Emerald", this::getEmeraldLeggingsRecipe);
-        recipeRegistrar.register("Emerald", this::getEmeraldBootsRecipe);
+        RecipeGroupRegistrar[] groups = {
+            new EmeraldRecipes(config)
+        };
 
-        // Emerald Gear
-        recipeRegistrar.register("EmeraldGear", this::getEmeraldPickaxeRecipe);
-        recipeRegistrar.register("EmeraldGear", this::getEmeraldSwordRecipe);
-        recipeRegistrar.register("EmeraldGear", this::getEmeraldAxeRecipe);
-        recipeRegistrar.register("EmeraldGear", this::getEmeraldShovelRecipe);
-        recipeRegistrar.register("EmeraldGear", this::getEmeraldHoeRecipe);
+        for (var group : groups) {
+            group.registerAll(recipeRegistrar);
+        }
 
         // Chorus Blade
         recipeRegistrar.register("ChorusBlade", this::getChorusBladeRecipe);
@@ -179,6 +176,7 @@ public class RecipeProvider {
         recipeRegistrar.register("WitherArmor", this::getWitherBootsRecipe);
         recipeRegistrar.register("TestKatana", this::getTestKatanaRecipe);
         recipeRegistrar.register("TestScythe", this::getTestScytheRecipe);
+
         recipeRegistrar.register("Cleavers", this::getWoodenCleaverRecipe);
         recipeRegistrar.register("Cleavers", this::getStoneCleaverRecipe);
         recipeRegistrar.register("Cleavers", this::getGoldenCleaverRecipe);
@@ -186,175 +184,13 @@ public class RecipeProvider {
         recipeRegistrar.register("Cleavers", this::getEmeraldCleaverRecipe);
         recipeRegistrar.register("Cleavers", this::getDiamondCleaverRecipe);
         recipeRegistrar.register("Cleavers", this::getNetheriteCleaverRecipe);
+
         recipeRegistrar.register("VolcanicSpear", this::getFlameSpearRecipe);
         recipeRegistrar.register("VolcanicAxe", this::getFlameAxeRecipe);
         recipeRegistrar.register("VolcanicCleaver", this::getFlameCleaverRecipe);
 
         // Always registered
         plugin.getServer().addRecipe(getAwakenedSwordsRecipe());
-    }
-
-    private NamespacedKey createNamespacedKey(String key) {
-        return new NamespacedKey(plugin, key);
-    }
-
-    private ShapedRecipe createShapedRecipe(@NotNull String keyName, @NotNull ItemStack result, @NotNull String[] shape, Object... ingredients) {
-        Objects.requireNonNull(keyName, "Recipe keyName cannot be null");
-        Objects.requireNonNull(result, "Recipe result ItemStack cannot be null");
-        Objects.requireNonNull(shape, "Recipe shape cannot be null");
-
-        NamespacedKey key = createNamespacedKey(keyName);
-        plugin.keys.add(key);
-        ShapedRecipe recipe = new ShapedRecipe(key, result);
-        recipe.shape(shape);
-        for (int i = 0; i < ingredients.length; i += 2) {
-            recipe.setIngredient((char) ingredients[i], (Material) ingredients[i + 1]);
-        }
-        return recipe;
-    }
-
-    // Emerald Armor
-    private ShapedRecipe getEmeraldHelmetRecipe() {
-        double hp = config.getDouble("aEmeraldHelmet.BonusHealth", 1.0);
-        double def = config.getDouble("aEmeraldHelmet.Armor", 2.0);
-
-        ItemStack item = new ItemBuilder(Material.GOLDEN_HELMET)
-                .name("Emerald Helmet")
-                .customModelData(true)
-                .attribute(Attribute.MAX_HEALTH, hp, AttributeModifier.Operation.ADD_NUMBER, EquipmentSlotGroup.HEAD)
-                .attribute(Attribute.ARMOR, def, AttributeModifier.Operation.ADD_NUMBER, EquipmentSlotGroup.HEAD)
-                .build();
-        return createShapedRecipe("emerald_helmet", item, new String[]{"EEE", "E E", "   "}, 'E', Material.EMERALD);
-    }
-
-    private ShapedRecipe getEmeraldChestplateRecipe() {
-        double hp = config.getDouble("aEmeraldChestplate.BonusHealth", 1.0);
-        double def = config.getDouble("aEmeraldChestplate.Armor", 6.0);
-
-        ItemBuilder builder = new ItemBuilder(Material.GOLDEN_CHESTPLATE)
-                .name("Emerald Chestplate")
-                .customModelData(true)
-                .attribute(Attribute.MAX_HEALTH, hp, AttributeModifier.Operation.ADD_NUMBER, EquipmentSlotGroup.CHEST)
-                .attribute(Attribute.ARMOR, def, AttributeModifier.Operation.ADD_NUMBER, EquipmentSlotGroup.CHEST);
-
-        ItemStack item = builder.build(); // Build the item once
-
-        if (config.isEnabled("EnchantmentsOnEmeraldArmor")) {
-            int unbreaking = config.getInt("EmeraldArmorEnchantLevels.Unbreaking", 0);
-            int mending = config.getInt("EmeraldArmorEnchantLevels.Mending", 0);
-            item.addUnsafeEnchantment(Enchantment.UNBREAKING, unbreaking); // Apply enchantments to the built item
-            item.addUnsafeEnchantment(Enchantment.MENDING, mending);
-        }
-        return createShapedRecipe("emerald_chestplate", item, new String[]{"E E", "EEE", "EEE"}, 'E', Material.EMERALD);
-    }
-
-    private ShapedRecipe getEmeraldLeggingsRecipe() {
-        double hp = config.getDouble("aEmeraldLeggings.BonusHealth", 1.0);
-        double def = config.getDouble("aEmeraldLeggings.Armor", 5.0);
-
-        var builder = new ItemBuilder(Material.GOLDEN_LEGGINGS)
-                .name("Emerald Leggings")
-                .customModelData(true)
-                .attribute(Attribute.MAX_HEALTH, hp, AttributeModifier.Operation.ADD_NUMBER, EquipmentSlotGroup.LEGS)
-                .attribute(Attribute.ARMOR, def, AttributeModifier.Operation.ADD_NUMBER, EquipmentSlotGroup.LEGS);
-
-        applyConfiguredEnchantments("EmeraldArmor", builder);
-
-        ItemStack item = builder.build();
-
-        return createShapedRecipe("emerald_leggings", item, new String[]{"EEE", "E E", "E E"}, 'E', Material.EMERALD);
-    }
-
-    /**
-     * Adds the configured values for unbreaking and mending for a group of recipes, if they exist.
-     * @param name The recipe group
-     * @param item The item builder
-     */
-    private void applyConfiguredEnchantments(String name, ItemBuilder item) {
-        if (config.isEnabled("EnchantmentsOn" + name)) {
-            int unbreaking = config.getInt(name + "EnchantLevels.Unbreaking", 0);
-            item.enchant(Enchantment.UNBREAKING, unbreaking);
-
-            int mending = config.getInt(name + "EnchantLevels.Mending", 0);
-            item.enchant(Enchantment.MENDING, mending);
-        }
-    }
-
-    private ShapedRecipe getEmeraldBootsRecipe() {
-        double hp = config.getDouble("aEmeraldBoots.BonusHealth", 1.0);
-        double def = config.getDouble("aEmeraldBoots.Armor", 2.0);
-
-        ItemBuilder builder = new ItemBuilder(Material.GOLDEN_BOOTS)
-                .name("Emerald Boots")
-                .customModelData(true)
-                .attribute(Attribute.MAX_HEALTH, hp, AttributeModifier.Operation.ADD_NUMBER, EquipmentSlotGroup.FEET)
-                .attribute(Attribute.ARMOR, def, AttributeModifier.Operation.ADD_NUMBER, EquipmentSlotGroup.FEET);
-
-        applyConfiguredEnchantments("EmeraldArmor", builder);
-
-        ItemStack item = builder.build();
-        return createShapedRecipe("emerald_boots", item, new String[]{"   ", "E E", "E E"}, 'E', Material.EMERALD);
-    }
-
-    // Emerald Gear
-    private ShapedRecipe getEmeraldPickaxeRecipe() {
-        var b = new ItemBuilder(Material.GOLDEN_PICKAXE)
-                .name("Emerald Pickaxe")
-                .customModelData(true);
-
-        applyConfiguredEnchantments("EmeraldGear", b);
-        var item = b.build();
-
-        return createShapedRecipe("emerald_pickaxe", item, new String[]{"EEE", " S ", " S "}, 'E', Material.EMERALD, 'S', Material.STICK);
-    }
-
-    private ShapedRecipe getEmeraldSwordRecipe() {
-        var b = new WeaponBuilder(Material.GOLDEN_SWORD, config)
-                .withConfiguredDamage("aEmeraldSword.damage", 6.0, ConfigValueOperation.SUBTRACT, 1.0)
-                .withConfiguredSpeed("aEmeraldSword.speed", 1.8, ConfigValueOperation.SUBTRACT, 4.0)
-                .name("Emerald Sword")
-                .lore("&7When in Main Hand:", "&9 6 Attack Damage", "&9 1.8 Attack Speed")
-                .customModelData(true)
-                .hideFlags(true);
-
-        applyConfiguredEnchantments("EmeraldGear", b);
-
-        var item = b.build();
-
-        return createShapedRecipe("emerald_sword", item, new String[]{" E ", " E ", " S "}, 'E', Material.EMERALD, 'S', Material.STICK);
-    }
-
-    private ShapedRecipe getEmeraldAxeRecipe() {
-        var b = new ItemBuilder(Material.GOLDEN_AXE)
-                .name("Emerald Axe")
-                .customModelData(true);
-
-        applyConfiguredEnchantments("EmeraldGear", b);
-
-        var item = b.build();
-        return createShapedRecipe("emerald_axe", item, new String[]{"EE ", "ES ", " S "}, 'E', Material.EMERALD, 'S', Material.STICK);
-    }
-
-    private ShapedRecipe getEmeraldShovelRecipe() {
-        var b = new ItemBuilder(Material.GOLDEN_SHOVEL)
-                .name("Emerald Shovel")
-                .customModelData(true);
-
-        applyConfiguredEnchantments("EmeraldGear", b);
-        var item = b.build();
-
-        return createShapedRecipe("emerald_shovel", item, new String[]{" E ", " S ", " S "}, 'E', Material.EMERALD, 'S', Material.STICK);
-    }
-
-    private ShapedRecipe getEmeraldHoeRecipe() {
-        var b = new ItemBuilder(Material.GOLDEN_HOE)
-                .name("Emerald Hoe")
-                .customModelData(true);
-
-        applyConfiguredEnchantments("EmeraldGear", b);
-
-        var item = b.build();
-        return createShapedRecipe("emerald_hoe", item, new String[]{"EE ", " S ", " S "}, 'E', Material.EMERALD, 'S', Material.STICK);
     }
 
     // Chorus Blade
@@ -379,7 +215,7 @@ public class RecipeProvider {
             item.addUnsafeEnchantment(Enchantment.UNBREAKING, unbreaking);
             item.addUnsafeEnchantment(Enchantment.KNOCKBACK, knockback);
         }
-        return createShapedRecipe("chorusblade", item, new String[]{" E ", "PCP", "qBq"},
+        return RecipeUtil.createShapedRecipe("chorusblade", item, new String[]{" E ", "PCP", "qBq"},
                 'E', Material.END_ROD,
                 'P', Material.ENDER_EYE,
                 'C', Material.CHORUS_FLOWER,
@@ -405,7 +241,7 @@ public class RecipeProvider {
             item.addUnsafeEnchantment(Enchantment.UNBREAKING, unbreaking);
             item.addUnsafeEnchantment(Enchantment.MENDING, mending);
         }
-        return createShapedRecipe("sword_bow", item, new String[]{"ISs", "SCs", "ISs"},
+        return RecipeUtil.createShapedRecipe("sword_bow", item, new String[]{"ISs", "SCs", "ISs"},
                 'S', Material.STICK,
                 's', Material.STRING,
                 'I', Material.IRON_INGOT,
@@ -446,7 +282,7 @@ public class RecipeProvider {
             item.addUnsafeEnchantment(Enchantment.SMITE, smite);
             item.addUnsafeEnchantment(Enchantment.MENDING, mending);
         }
-        return createShapedRecipe("heavy_sword_bow", item, new String[]{"ISs", "SCs", "ISs"},
+        return RecipeUtil.createShapedRecipe("heavy_sword_bow", item, new String[]{"ISs", "SCs", "ISs"},
                 'S', Material.STICK,
                 's', Material.CHAIN,
                 'I', Material.NETHERITE_SCRAP,
@@ -456,22 +292,22 @@ public class RecipeProvider {
     // Chainmail
     private ShapedRecipe getChainmailHelmetRecipe() {
         ItemStack item = new ItemBuilder(Material.CHAINMAIL_HELMET).build();
-        return createShapedRecipe("chainmail_helmet", item, new String[]{"CCC", "C C", "   "}, 'C', Material.CHAIN);
+        return RecipeUtil.createShapedRecipe("chainmail_helmet", item, new String[]{"CCC", "C C", "   "}, 'C', Material.CHAIN);
     }
 
     private ShapedRecipe getChainmailChestplateRecipe() {
         ItemStack item = new ItemBuilder(Material.CHAINMAIL_CHESTPLATE).build();
-        return createShapedRecipe("chainmail_chestplate", item, new String[]{"C C", "CCC", "CCC"}, 'C', Material.CHAIN);
+        return RecipeUtil.createShapedRecipe("chainmail_chestplate", item, new String[]{"C C", "CCC", "CCC"}, 'C', Material.CHAIN);
     }
 
     private ShapedRecipe getChainmailLeggingsRecipe() {
         ItemStack item = new ItemBuilder(Material.CHAINMAIL_LEGGINGS).build();
-        return createShapedRecipe("chainmail_leggings", item, new String[]{"CCC", "C C", "C C"}, 'C', Material.CHAIN);
+        return RecipeUtil.createShapedRecipe("chainmail_leggings", item, new String[]{"CCC", "C C", "C C"}, 'C', Material.CHAIN);
     }
 
     private ShapedRecipe getChainmailBootsRecipe() {
         ItemStack item = new ItemBuilder(Material.CHAINMAIL_BOOTS).build();
-        return createShapedRecipe("chainmail_boots", item, new String[]{"   ", "C C", "C C"}, 'C', Material.CHAIN);
+        return RecipeUtil.createShapedRecipe("chainmail_boots", item, new String[]{"   ", "C C", "C C"}, 'C', Material.CHAIN);
     }
 
     // Plated Chainmail
@@ -488,12 +324,12 @@ public class RecipeProvider {
             int unbreaking = config.getInt("PChainEnchantLevels.Unbreaking", 0);
             item.addUnsafeEnchantment(Enchantment.UNBREAKING, unbreaking);
         }
-        return createShapedRecipe("plated_chainmail_helmet", item, new String[]{"III", "IHI", "III"}, 'H', Material.CHAINMAIL_HELMET, 'I', Material.IRON_NUGGET);
+        return RecipeUtil.createShapedRecipe("plated_chainmail_helmet", item, new String[]{"III", "IHI", "III"}, 'H', Material.CHAINMAIL_HELMET, 'I', Material.IRON_NUGGET);
     }
 
     private ShapedRecipe getPlatedChainmailChestplateRecipe() {
         double def = config.getDouble("aPlateChainChestplate.Armor", 6.0);
-        ItemBuilder builder = new ItemBuilder(Material.IRON_CHESTPLATE)
+        var builder = new ItemBuilder(Material.IRON_CHESTPLATE)
                 .name("Plated Chainmail Chestplate")
                 .unbreakable(true)
                 .attribute(Attribute.ARMOR, def, AttributeModifier.Operation.ADD_NUMBER, EquipmentSlotGroup.CHEST);
@@ -504,12 +340,12 @@ public class RecipeProvider {
             int unbreaking = config.getInt("PChainEnchantLevels.Unbreaking", 0);
             item.addUnsafeEnchantment(Enchantment.UNBREAKING, unbreaking);
         }
-        return createShapedRecipe("plated_chainmail_chestplate", item, new String[]{"III", "ICI", "III"}, 'C', Material.CHAINMAIL_CHESTPLATE, 'I', Material.IRON_NUGGET);
+        return RecipeUtil.createShapedRecipe("plated_chainmail_chestplate", item, new String[]{"III", "ICI", "III"}, 'C', Material.CHAINMAIL_CHESTPLATE, 'I', Material.IRON_NUGGET);
     }
 
     private ShapedRecipe getPlatedChainmailLeggingsRecipe() {
         double def = config.getDouble("aPlateChainLeggings.Armor", 6.0);
-        ItemBuilder builder = new ItemBuilder(Material.IRON_LEGGINGS)
+        var builder = new ItemBuilder(Material.IRON_LEGGINGS)
                 .name("Plated Chainmail Leggings")
                 .unbreakable(true)
                 .attribute(Attribute.ARMOR, def, AttributeModifier.Operation.ADD_NUMBER, EquipmentSlotGroup.LEGS);
@@ -520,7 +356,7 @@ public class RecipeProvider {
             int unbreaking = config.getInt("PChainEnchantLevels.Unbreaking", 0);
             item.addUnsafeEnchantment(Enchantment.UNBREAKING, unbreaking);
         }
-        return createShapedRecipe("plated_chainmail_leggings", item, new String[]{"III", "ILI", "III"}, 'L', Material.CHAINMAIL_LEGGINGS, 'I', Material.IRON_NUGGET);
+        return RecipeUtil.createShapedRecipe("plated_chainmail_leggings", item, new String[]{"III", "ILI", "III"}, 'L', Material.CHAINMAIL_LEGGINGS, 'I', Material.IRON_NUGGET);
     }
 
     private ShapedRecipe getPlatedChainmailBootsRecipe() {
@@ -536,7 +372,7 @@ public class RecipeProvider {
             int unbreaking = config.getInt("PChainEnchantLevels.Unbreaking", 0);
             item.addUnsafeEnchantment(Enchantment.UNBREAKING, unbreaking);
         }
-        return createShapedRecipe("plated_chainmail_boots", item, new String[]{"III", "IBI", "III"}, 'B', Material.CHAINMAIL_BOOTS, 'I', Material.IRON_NUGGET);
+        return RecipeUtil.createShapedRecipe("plated_chainmail_boots", item, new String[]{"III", "IBI", "III"}, 'B', Material.CHAINMAIL_BOOTS, 'I', Material.IRON_NUGGET);
     }
 
     // Charms
@@ -546,7 +382,7 @@ public class RecipeProvider {
                 .lore("Prevents fall damage")
                 .customModelData(true)
                 .build();
-        return createShapedRecipe("feather_charm", item, new String[]{"FFF", "F F", "FFF"}, 'F', Material.FEATHER);
+        return RecipeUtil.createShapedRecipe("feather_charm", item, new String[]{"FFF", "F F", "FFF"}, 'F', Material.FEATHER);
     }
 
     private ShapedRecipe getEmeraldCharmRecipe() {
@@ -560,7 +396,7 @@ public class RecipeProvider {
                 .attribute(Attribute.MAX_HEALTH, health, AttributeModifier.Operation.ADD_NUMBER, EquipmentSlotGroup.OFFHAND)
                 .attribute(Attribute.ARMOR, armor, AttributeModifier.Operation.ADD_NUMBER, EquipmentSlotGroup.OFFHAND)
                 .build();
-        return createShapedRecipe("emerald_charm", item, new String[]{"EEE", "E E", "EEE"}, 'E', Material.EMERALD);
+        return RecipeUtil.createShapedRecipe("emerald_charm", item, new String[]{"EEE", "E E", "EEE"}, 'E', Material.EMERALD);
     }
 
     private ShapedRecipe getBlazeCharmRecipe() {
@@ -574,7 +410,7 @@ public class RecipeProvider {
                 .attribute(Attribute.ATTACK_DAMAGE, damage, AttributeModifier.Operation.ADD_NUMBER, EquipmentSlotGroup.OFFHAND)
                 .attribute(Attribute.MAX_HEALTH, health, AttributeModifier.Operation.ADD_NUMBER, EquipmentSlotGroup.OFFHAND)
                 .build();
-        return createShapedRecipe("blaze_charm", item, new String[]{"BBB", "B B", "BBB"}, 'B', Material.BLAZE_ROD);
+        return RecipeUtil.createShapedRecipe("blaze_charm", item, new String[]{"BBB", "B B", "BBB"}, 'B', Material.BLAZE_ROD);
     }
 
     private ShapedRecipe getGoldCharmRecipe() {
@@ -588,7 +424,7 @@ public class RecipeProvider {
                 .attribute(Attribute.ATTACK_SPEED, attackSpeed, AttributeModifier.Operation.MULTIPLY_SCALAR_1, EquipmentSlotGroup.OFFHAND)
                 .attribute(Attribute.MOVEMENT_SPEED, moveSpeed, AttributeModifier.Operation.MULTIPLY_SCALAR_1, EquipmentSlotGroup.OFFHAND)
                 .build();
-        return createShapedRecipe("gold_charm", item, new String[]{"GGG", "G G", "GGG"}, 'G', Material.GOLD_INGOT);
+        return RecipeUtil.createShapedRecipe("gold_charm", item, new String[]{"GGG", "G G", "GGG"}, 'G', Material.GOLD_INGOT);
     }
 
     private ShapedRecipe getStarCharmRecipe() {
@@ -597,7 +433,7 @@ public class RecipeProvider {
                 .lore("Grants Regeneration")
                 .customModelData(true)
                 .build();
-        return createShapedRecipe("star_charm", item, new String[]{"SSS", "S S", "SSS"}, 'S', Material.NETHER_STAR);
+        return RecipeUtil.createShapedRecipe("star_charm", item, new String[]{"SSS", "S S", "SSS"}, 'S', Material.NETHER_STAR);
     }
 
     private ShapedRecipe getFrostCharmRecipe() {
@@ -606,7 +442,7 @@ public class RecipeProvider {
                 .lore("Grants Slowness to nearby enemies")
                 .customModelData(true)
                 .build();
-        return createShapedRecipe("frost_charm", item, new String[]{"III", "I I", "III"}, 'I', Material.ICE);
+        return RecipeUtil.createShapedRecipe("frost_charm", item, new String[]{"III", "I I", "III"}, 'I', Material.ICE);
     }
 
     // Scythes
@@ -623,7 +459,7 @@ public class RecipeProvider {
                 .customModelData(true)
                 .hideFlags(true)
                 .build();
-        return createShapedRecipe("wooden_scythe", item, new String[]{"SSS", "  S", "  S"}, 'S', Material.STICK);
+        return RecipeUtil.createShapedRecipe("wooden_scythe", item, new String[]{"SSS", "  S", "  S"}, 'S', Material.STICK);
     }
 
     private ShapedRecipe getStoneScytheRecipe() {
@@ -640,7 +476,7 @@ public class RecipeProvider {
                 .customModelData(true)
                 .hideFlags(true)
                 .build();
-        return createShapedRecipe("stone_scythe", item, new String[]{"CCC", "  S", "  S"}, 'S', Material.STICK, 'C', Material.COBBLESTONE);
+        return RecipeUtil.createShapedRecipe("stone_scythe", item, new String[]{"CCC", "  S", "  S"}, 'S', Material.STICK, 'C', Material.COBBLESTONE);
     }
 
     private ShapedRecipe getGoldenScytheRecipe() {
@@ -657,7 +493,7 @@ public class RecipeProvider {
                 .customModelData(true)
                 .hideFlags(true)
                 .build();
-        return createShapedRecipe("golden_scythe", item, new String[]{"GGG", "  S", "  S"}, 'S', Material.STICK, 'G', Material.GOLD_INGOT);
+        return RecipeUtil.createShapedRecipe("golden_scythe", item, new String[]{"GGG", "  S", "  S"}, 'S', Material.STICK, 'G', Material.GOLD_INGOT);
     }
 
     private ShapedRecipe getIronScytheRecipe() {
@@ -674,7 +510,7 @@ public class RecipeProvider {
                 .customModelData(true)
                 .hideFlags(true)
                 .build();
-        return createShapedRecipe("iron_scythe", item, new String[]{"III", "  S", "  S"}, 'S', Material.STICK, 'I', Material.IRON_INGOT);
+        return RecipeUtil.createShapedRecipe("iron_scythe", item, new String[]{"III", "  S", "  S"}, 'S', Material.STICK, 'I', Material.IRON_INGOT);
     }
 
     private ShapedRecipe getDiamondScytheRecipe() {
@@ -691,7 +527,7 @@ public class RecipeProvider {
                 .customModelData(true)
                 .hideFlags(true)
                 .build();
-        return createShapedRecipe("diamond_scythe", item, new String[]{"DDD", "  S", "  S"}, 'S', Material.STICK, 'D', Material.DIAMOND);
+        return RecipeUtil.createShapedRecipe("diamond_scythe", item, new String[]{"DDD", "  S", "  S"}, 'S', Material.STICK, 'D', Material.DIAMOND);
     }
 
     private ShapedRecipe getNetheriteScytheRecipe() {
@@ -710,7 +546,7 @@ public class RecipeProvider {
                 .build();
 
         Material netheriteMaterial = config.isEnabled("NetheriteIngots") ? Material.NETHERITE_INGOT : Material.NETHERITE_SCRAP;
-        return createShapedRecipe("netherite_scythe", item, new String[]{"NNN", "  S", "  S"}, 'S', Material.STICK, 'N', netheriteMaterial);
+        return RecipeUtil.createShapedRecipe("netherite_scythe", item, new String[]{"NNN", "  S", "  S"}, 'S', Material.STICK, 'N', netheriteMaterial);
     }
 
     private ShapedRecipe getEmeraldScytheRecipe() {
@@ -732,7 +568,7 @@ public class RecipeProvider {
             item.addUnsafeEnchantment(Enchantment.UNBREAKING, unbreaking);
             item.addUnsafeEnchantment(Enchantment.MENDING, mending);
         }
-        return createShapedRecipe("emerald_scythe", item, new String[]{"EEE", "  S", "  S"}, 'S', Material.STICK, 'E', Material.EMERALD);
+        return RecipeUtil.createShapedRecipe("emerald_scythe", item, new String[]{"EEE", "  S", "  S"}, 'S', Material.STICK, 'E', Material.EMERALD);
     }
 
     // Obsidian Pickaxe
@@ -752,29 +588,32 @@ public class RecipeProvider {
             int unbreaking = config.getInt("OPickEnchantLevels.Unbreaking", 0);
             item.addUnsafeEnchantment(Enchantment.UNBREAKING, unbreaking);
         }
-        return createShapedRecipe("obsidian_pickaxe", item, new String[]{"NON", " S ", " S "},
+        return RecipeUtil.createShapedRecipe("obsidian_pickaxe", item, new String[]{"NON", " S ", " S "},
                 'S', Material.STICK,
                 'O', Material.CRYING_OBSIDIAN,
                 'N', Material.NETHERITE_INGOT);
     }
 
     // Rapiers
-    private ShapedRecipe getWoodenRapierRecipe() {
-        List<String> lore = new ArrayList<>(config.getStringList("RapierDescription"));
-        lore.add(config.getString("dWoodenRapier.line8", ""));
-        lore.add(config.getString("dWoodenRapier.line9", ""));
-        lore.add(config.getString("dWoodenRapier.line10", ""));
-
+    public ShapedRecipe getWoodenRapierRecipe() {
         ItemStack item = new WeaponBuilder(Material.WOODEN_SWORD, config)
-                .withConfiguredDamage("aWoodenRapier.damage", 3.0, ConfigValueOperation.SUBTRACT, 1.0)
-                .withConfiguredSpeed("aWoodenRapier.speed", 1.9, ConfigValueOperation.SUBTRACT, 4.0)
-                .name(config.getString("dWoodenRapier.name", "Wooden Rapier"))
-                .lore(lore)
+                .name(TextUtil.convertLegacyToSection(config.getString("dWoodenRapier.name", null)))
                 .customModelData(true)
                 .hideFlags(true)
+                .loreConfigRange(config, "RapierDescription", 1, 7)
+                .loreConfigRange(config, "dWoodenRapier", 8, 10)
+                .withConfiguredDamage("aWoodenRapier.damage", 2.0, ConfigValueOperation.SUBTRACT, 1.0)
+                .withConfiguredSpeed("aWoodenRapier.speed", -2.1, ConfigValueOperation.SUBTRACT, 4.0)
                 .build();
-        return createShapedRecipe("wooden_rapier", item, new String[]{"  S", "SS ", "SS "}, 'S', Material.STICK);
+
+        return RecipeUtil.createShapedRecipe(
+                "wooden_rapier",
+                item,
+                new String[]{"  S", "SS ", "SS "},
+                'S', Material.STICK
+        );
     }
+
 
     private ShapedRecipe getStoneRapierRecipe() {
         List<String> lore = new ArrayList<>(config.getStringList("RapierDescription"));
@@ -789,7 +628,7 @@ public class RecipeProvider {
                 .customModelData(true)
                 .hideFlags(true)
                 .build();
-        return createShapedRecipe("stone_rapier", item, new String[]{"  C", "CC ", "SC "}, 'C', Material.COBBLESTONE, 'S', Material.STICK);
+        return RecipeUtil.createShapedRecipe("stone_rapier", item, new String[]{"  C", "CC ", "SC "}, 'C', Material.COBBLESTONE, 'S', Material.STICK);
     }
 
     private ShapedRecipe getGoldenRapierRecipe() {
@@ -806,7 +645,7 @@ public class RecipeProvider {
                 .customModelData(true)
                 .hideFlags(true)
                 .build();
-        return createShapedRecipe("golden_rapier", item, new String[]{"  C", "CC ", "SC "}, 'C', Material.GOLD_INGOT, 'S', Material.STICK);
+        return RecipeUtil.createShapedRecipe("golden_rapier", item, new String[]{"  C", "CC ", "SC "}, 'C', Material.GOLD_INGOT, 'S', Material.STICK);
     }
 
     private ShapedRecipe getIronRapierRecipe() {
@@ -820,7 +659,7 @@ public class RecipeProvider {
                 .customModelData(true)
                 .hideFlags(true)
                 .build();
-        return createShapedRecipe("iron_rapier", item, new String[]{"  C", "CC ", "SC "}, 'C', Material.IRON_INGOT, 'S', Material.STICK);
+        return RecipeUtil.createShapedRecipe("iron_rapier", item, new String[]{"  C", "CC ", "SC "}, 'C', Material.IRON_INGOT, 'S', Material.STICK);
     }
 
     private ShapedRecipe getEmeraldRapierRecipe() {
@@ -841,7 +680,7 @@ public class RecipeProvider {
             item.addUnsafeEnchantment(Enchantment.UNBREAKING, unbreaking);
             item.addUnsafeEnchantment(Enchantment.MENDING, mending);
         }
-        return createShapedRecipe("emerald_rapier", item, new String[]{"  C", "CC ", "SC "}, 'C', Material.EMERALD, 'S', Material.STICK);
+        return RecipeUtil.createShapedRecipe("emerald_rapier", item, new String[]{"  C", "CC ", "SC "}, 'C', Material.EMERALD, 'S', Material.STICK);
     }
 
     private ShapedRecipe getDiamondRapierRecipe() {
@@ -855,7 +694,7 @@ public class RecipeProvider {
                 .customModelData(true)
                 .hideFlags(true)
                 .build();
-        return createShapedRecipe("diamond_rapier", item, new String[]{"  C", "CC ", "SC "}, 'C', Material.DIAMOND, 'S', Material.STICK);
+        return RecipeUtil.createShapedRecipe("diamond_rapier", item, new String[]{"  C", "CC ", "SC "}, 'C', Material.DIAMOND, 'S', Material.STICK);
     }
 
     private ShapedRecipe getNetheriteRapierRecipe() {
@@ -871,7 +710,7 @@ public class RecipeProvider {
                 .build();
 
         Material netheriteMaterial = config.isEnabled("NetheriteIngots") ? Material.NETHERITE_INGOT : Material.NETHERITE_SCRAP;
-        return createShapedRecipe("netherite_rapier", item, new String[]{"  C", "CC ", "SC "}, 'S', Material.STICK, 'C', netheriteMaterial);
+        return RecipeUtil.createShapedRecipe("netherite_rapier", item, new String[]{"  C", "CC ", "SC "}, 'S', Material.STICK, 'C', netheriteMaterial);
     }
 
     // Longswords
@@ -889,7 +728,7 @@ public class RecipeProvider {
                 .customModelData(true)
                 .hideFlags(true)
                 .build();
-        return createShapedRecipe("wooden_longsword", item, new String[]{" S ", " S ", "SSS"}, 'S', Material.STICK);
+        return RecipeUtil.createShapedRecipe("wooden_longsword", item, new String[]{" S ", " S ", "SSS"}, 'S', Material.STICK);
     }
 
     private ShapedRecipe getStoneLongswordRecipe() {
@@ -906,7 +745,7 @@ public class RecipeProvider {
                 .customModelData(true)
                 .hideFlags(true)
                 .build();
-        return createShapedRecipe("stone_longsword", item, new String[]{" C ", " C ", "CSC"}, 'C', Material.COBBLESTONE, 'S', Material.STICK);
+        return RecipeUtil.createShapedRecipe("stone_longsword", item, new String[]{" C ", " C ", "CSC"}, 'C', Material.COBBLESTONE, 'S', Material.STICK);
     }
 
     private ShapedRecipe getGoldenLongswordRecipe() {
@@ -923,7 +762,7 @@ public class RecipeProvider {
                 .customModelData(true)
                 .hideFlags(true)
                 .build();
-        return createShapedRecipe("golden_longsword", item, new String[]{" C ", " C ", "CSC"}, 'C', Material.GOLD_INGOT, 'S', Material.STICK);
+        return RecipeUtil.createShapedRecipe("golden_longsword", item, new String[]{" C ", " C ", "CSC"}, 'C', Material.GOLD_INGOT, 'S', Material.STICK);
     }
 
     private ShapedRecipe getIronLongswordRecipe() {
@@ -940,7 +779,7 @@ public class RecipeProvider {
                 .customModelData(true)
                 .hideFlags(true)
                 .build();
-        return createShapedRecipe("iron_longsword", item, new String[]{" C ", " C ", "CSC"}, 'C', Material.IRON_INGOT, 'S', Material.STICK);
+        return RecipeUtil.createShapedRecipe("iron_longsword", item, new String[]{" C ", " C ", "CSC"}, 'C', Material.IRON_INGOT, 'S', Material.STICK);
     }
 
     private ShapedRecipe getEmeraldLongswordRecipe() {
@@ -964,7 +803,7 @@ public class RecipeProvider {
             item.addUnsafeEnchantment(Enchantment.UNBREAKING, unbreaking);
             item.addUnsafeEnchantment(Enchantment.MENDING, mending);
         }
-        return createShapedRecipe("emerald_longsword", item, new String[]{" C ", " C ", "CSC"}, 'C', Material.EMERALD, 'S', Material.STICK);
+        return RecipeUtil.createShapedRecipe("emerald_longsword", item, new String[]{" C ", " C ", "CSC"}, 'C', Material.EMERALD, 'S', Material.STICK);
     }
 
     private ShapedRecipe getDiamondLongswordRecipe() {
@@ -981,7 +820,7 @@ public class RecipeProvider {
                 .customModelData(true)
                 .hideFlags(true)
                 .build();
-        return createShapedRecipe("diamond_longsword", item, new String[]{" C ", " C ", "CSC"}, 'C', Material.DIAMOND, 'S', Material.STICK);
+        return RecipeUtil.createShapedRecipe("diamond_longsword", item, new String[]{" C ", " C ", "CSC"}, 'C', Material.DIAMOND, 'S', Material.STICK);
     }
 
     private ShapedRecipe getNetheriteLongswordRecipe() {
@@ -1000,7 +839,7 @@ public class RecipeProvider {
                 .build();
 
         Material netheriteMaterial = config.isEnabled("NetheriteIngots") ? Material.NETHERITE_INGOT : Material.NETHERITE_SCRAP;
-        return createShapedRecipe("netherite_longsword", item, new String[]{" C ", " C ", "CSC"}, 'C', netheriteMaterial, 'S', Material.STICK);
+        return RecipeUtil.createShapedRecipe("netherite_longsword", item, new String[]{" C ", " C ", "CSC"}, 'C', netheriteMaterial, 'S', Material.STICK);
     }
 
     // Knives
@@ -1018,7 +857,7 @@ public class RecipeProvider {
                 .customModelData(true)
                 .hideFlags(true)
                 .build();
-        return createShapedRecipe("wooden_knife", item, new String[]{"   ", " S ", " S "}, 'S', Material.STICK);
+        return RecipeUtil.createShapedRecipe("wooden_knife", item, new String[]{"   ", " S ", " S "}, 'S', Material.STICK);
     }
 
     private ShapedRecipe getStoneKnifeRecipe() {
@@ -1035,7 +874,7 @@ public class RecipeProvider {
                 .customModelData(true)
                 .hideFlags(true)
                 .build();
-        return createShapedRecipe("stone_knife", item, new String[]{"   ", " C ", " S "}, 'C', Material.COBBLESTONE, 'S', Material.STICK);
+        return RecipeUtil.createShapedRecipe("stone_knife", item, new String[]{"   ", " C ", " S "}, 'C', Material.COBBLESTONE, 'S', Material.STICK);
     }
 
     private ShapedRecipe getGoldenKnifeRecipe() {
@@ -1052,7 +891,7 @@ public class RecipeProvider {
                 .customModelData(true)
                 .hideFlags(true)
                 .build();
-        return createShapedRecipe("golden_knife", item, new String[]{"   ", " C ", " S "}, 'C', Material.GOLD_INGOT, 'S', Material.STICK);
+        return RecipeUtil.createShapedRecipe("golden_knife", item, new String[]{"   ", " C ", " S "}, 'C', Material.GOLD_INGOT, 'S', Material.STICK);
     }
 
     private ShapedRecipe getIronKnifeRecipe() {
@@ -1069,7 +908,7 @@ public class RecipeProvider {
                 .customModelData(true)
                 .hideFlags(true)
                 .build();
-        return createShapedRecipe("iron_knife", item, new String[]{"   ", " C ", " S "}, 'C', Material.IRON_INGOT, 'S', Material.STICK);
+        return RecipeUtil.createShapedRecipe("iron_knife", item, new String[]{"   ", " C ", " S "}, 'C', Material.IRON_INGOT, 'S', Material.STICK);
     }
 
     private ShapedRecipe getEmeraldKnifeRecipe() {
@@ -1093,7 +932,7 @@ public class RecipeProvider {
             item.addUnsafeEnchantment(Enchantment.UNBREAKING, unbreaking);
             item.addUnsafeEnchantment(Enchantment.MENDING, mending);
         }
-        return createShapedRecipe("emerald_knife", item, new String[]{"   ", " C ", " S "}, 'C', Material.EMERALD, 'S', Material.STICK);
+        return RecipeUtil.createShapedRecipe("emerald_knife", item, new String[]{"   ", " C ", " S "}, 'C', Material.EMERALD, 'S', Material.STICK);
     }
 
     private ShapedRecipe getDiamondKnifeRecipe() {
@@ -1110,7 +949,7 @@ public class RecipeProvider {
                 .customModelData(true)
                 .hideFlags(true)
                 .build();
-        return createShapedRecipe("diamond_knife", item, new String[]{"   ", " C ", " S "}, 'C', Material.DIAMOND, 'S', Material.STICK);
+        return RecipeUtil.createShapedRecipe("diamond_knife", item, new String[]{"   ", " C ", " S "}, 'C', Material.DIAMOND, 'S', Material.STICK);
     }
 
     private ShapedRecipe getNetheriteKnifeRecipe() {
@@ -1129,7 +968,7 @@ public class RecipeProvider {
                 .build();
 
         Material netheriteMaterial = config.isEnabled("NetheriteIngots") ? Material.NETHERITE_INGOT : Material.NETHERITE_SCRAP;
-        return createShapedRecipe("netherite_knife", item, new String[]{"   ", " C ", " S "}, 'C', netheriteMaterial, 'S', Material.STICK);
+        return RecipeUtil.createShapedRecipe("netherite_knife", item, new String[]{"   ", " C ", " S "}, 'C', netheriteMaterial, 'S', Material.STICK);
     }
 
     // Spears
@@ -1147,7 +986,7 @@ public class RecipeProvider {
                 .customModelData(true)
                 .hideFlags(true)
                 .build();
-        return createShapedRecipe("wooden_spear", item, new String[]{" SS", " SS", "S  "}, 'S', Material.STICK);
+        return RecipeUtil.createShapedRecipe("wooden_spear", item, new String[]{" SS", " SS", "S  "}, 'S', Material.STICK);
     }
 
     private ShapedRecipe getStoneSpearRecipe() {
@@ -1164,7 +1003,7 @@ public class RecipeProvider {
                 .customModelData(true)
                 .hideFlags(true)
                 .build();
-        return createShapedRecipe("stone_spear", item, new String[]{" CC", " CC", "C  "}, 'C', Material.COBBLESTONE);
+        return RecipeUtil.createShapedRecipe("stone_spear", item, new String[]{" CC", " CC", "C  "}, 'C', Material.COBBLESTONE);
     }
 
     private ShapedRecipe getGoldenSpearRecipe() {
@@ -1181,7 +1020,7 @@ public class RecipeProvider {
                 .customModelData(true)
                 .hideFlags(true)
                 .build();
-        return createShapedRecipe("golden_spear", item, new String[]{" GG", " GG", "G  "}, 'G', Material.GOLD_INGOT);
+        return RecipeUtil.createShapedRecipe("golden_spear", item, new String[]{" GG", " GG", "G  "}, 'G', Material.GOLD_INGOT);
     }
 
     private ShapedRecipe getIronSpearRecipe() {
@@ -1198,7 +1037,7 @@ public class RecipeProvider {
                 .customModelData(true)
                 .hideFlags(true)
                 .build();
-        return createShapedRecipe("iron_spear", item, new String[]{" II", " II", "I  "}, 'I', Material.IRON_INGOT);
+        return RecipeUtil.createShapedRecipe("iron_spear", item, new String[]{" II", " II", "I  "}, 'I', Material.IRON_INGOT);
     }
 
     private ShapedRecipe getEmeraldSpearRecipe() {
@@ -1222,7 +1061,7 @@ public class RecipeProvider {
             item.addUnsafeEnchantment(Enchantment.UNBREAKING, unbreaking);
             item.addUnsafeEnchantment(Enchantment.MENDING, mending);
         }
-        return createShapedRecipe("emerald_spear", item, new String[]{" EE", " EE", "E  "}, 'E', Material.EMERALD);
+        return RecipeUtil.createShapedRecipe("emerald_spear", item, new String[]{" EE", " EE", "E  "}, 'E', Material.EMERALD);
     }
 
     private ShapedRecipe getDiamondSpearRecipe() {
@@ -1239,7 +1078,7 @@ public class RecipeProvider {
                 .customModelData(true)
                 .hideFlags(true)
                 .build();
-        return createShapedRecipe("diamond_spear", item, new String[]{" DD", " DD", "D  "}, 'D', Material.DIAMOND);
+        return RecipeUtil.createShapedRecipe("diamond_spear", item, new String[]{" DD", " DD", "D  "}, 'D', Material.DIAMOND);
     }
 
     private ShapedRecipe getNetheriteSpearRecipe() {
@@ -1258,7 +1097,7 @@ public class RecipeProvider {
                 .build();
 
         Material netheriteMaterial = config.isEnabled("NetheriteIngots") ? Material.NETHERITE_INGOT : Material.NETHERITE_SCRAP;
-        return createShapedRecipe("netherite_spear", item, new String[]{" NN", " NN", "N  "}, 'N', netheriteMaterial);
+        return RecipeUtil.createShapedRecipe("netherite_spear", item, new String[]{" NN", " NN", "N  "}, 'N', netheriteMaterial);
     }
 
     // Katanas
@@ -1276,7 +1115,7 @@ public class RecipeProvider {
                 .customModelData(true)
                 .hideFlags(true)
                 .build();
-        return createShapedRecipe("wooden_katana", item, new String[]{"  S", " S ", "S  "}, 'S', Material.STICK);
+        return RecipeUtil.createShapedRecipe("wooden_katana", item, new String[]{"  S", " S ", "S  "}, 'S', Material.STICK);
     }
 
     private ShapedRecipe getStoneKatanaRecipe() {
@@ -1293,7 +1132,7 @@ public class RecipeProvider {
                 .customModelData(true)
                 .hideFlags(true)
                 .build();
-        return createShapedRecipe("stone_katana", item, new String[]{"  C", " C ", "C  "}, 'C', Material.COBBLESTONE);
+        return RecipeUtil.createShapedRecipe("stone_katana", item, new String[]{"  C", " C ", "C  "}, 'C', Material.COBBLESTONE);
     }
 
     private ShapedRecipe getGoldenKatanaRecipe() {
@@ -1310,7 +1149,7 @@ public class RecipeProvider {
                 .customModelData(true)
                 .hideFlags(true)
                 .build();
-        return createShapedRecipe("golden_katana", item, new String[]{"  G", " G ", "G  "}, 'G', Material.GOLD_INGOT);
+        return RecipeUtil.createShapedRecipe("golden_katana", item, new String[]{"  G", " G ", "G  "}, 'G', Material.GOLD_INGOT);
     }
 
     private ShapedRecipe getIronKatanaRecipe() {
@@ -1327,7 +1166,7 @@ public class RecipeProvider {
                 .customModelData(true)
                 .hideFlags(true)
                 .build();
-        return createShapedRecipe("iron_katana", item, new String[]{"  I", " I ", "I  "}, 'I', Material.IRON_INGOT);
+        return RecipeUtil.createShapedRecipe("iron_katana", item, new String[]{"  I", " I ", "I  "}, 'I', Material.IRON_INGOT);
     }
 
     private ShapedRecipe getEmeraldKatanaRecipe() {
@@ -1351,7 +1190,7 @@ public class RecipeProvider {
             item.addUnsafeEnchantment(Enchantment.UNBREAKING, unbreaking);
             item.addUnsafeEnchantment(Enchantment.MENDING, mending);
         }
-        return createShapedRecipe("emerald_katana", item, new String[]{"  E", " E ", "E  "}, 'E', Material.EMERALD);
+        return RecipeUtil.createShapedRecipe("emerald_katana", item, new String[]{"  E", " E ", "E  "}, 'E', Material.EMERALD);
     }
 
     private ShapedRecipe getDiamondKatanaRecipe() {
@@ -1368,7 +1207,7 @@ public class RecipeProvider {
                 .customModelData(true)
                 .hideFlags(true)
                 .build();
-        return createShapedRecipe("diamond_katana", item, new String[]{"  D", " D ", "D  "}, 'D', Material.DIAMOND);
+        return RecipeUtil.createShapedRecipe("diamond_katana", item, new String[]{"  D", " D ", "D  "}, 'D', Material.DIAMOND);
     }
 
     private ShapedRecipe getNetheriteKatanaRecipe() {
@@ -1387,7 +1226,7 @@ public class RecipeProvider {
                 .build();
 
         Material netheriteMaterial = config.isEnabled("NetheriteIngots") ? Material.NETHERITE_INGOT : Material.NETHERITE_SCRAP;
-        return createShapedRecipe("netherite_katana", item, new String[]{"  N", " N ", "N  "}, 'N', netheriteMaterial);
+        return RecipeUtil.createShapedRecipe("netherite_katana", item, new String[]{"  N", " N ", "N  "}, 'N', netheriteMaterial);
     }
 
     // Prismarine
@@ -1406,7 +1245,7 @@ public class RecipeProvider {
                 .customModelData(true)
                 .hideFlags(true)
                 .build();
-        return createShapedRecipe("prismarine_sword", item, new String[]{" P ", " P ", " S "}, 'P', Material.PRISMARINE_SHARD, 'S', Material.STICK);
+        return RecipeUtil.createShapedRecipe("prismarine_sword", item, new String[]{" P ", " P ", " S "}, 'P', Material.PRISMARINE_SHARD, 'S', Material.STICK);
     }
 
     private ShapedRecipe getPrismarinePickaxeRecipe() {
@@ -1424,7 +1263,7 @@ public class RecipeProvider {
                 .customModelData(true)
                 .hideFlags(true)
                 .build();
-        return createShapedRecipe("prismarine_pickaxe", item, new String[]{"PPP", " S ", " S "}, 'P', Material.PRISMARINE_SHARD, 'S', Material.STICK);
+        return RecipeUtil.createShapedRecipe("prismarine_pickaxe", item, new String[]{"PPP", " S ", " S "}, 'P', Material.PRISMARINE_SHARD, 'S', Material.STICK);
     }
 
     private ShapedRecipe getPrismarineAxeRecipe() {
@@ -1442,7 +1281,7 @@ public class RecipeProvider {
                 .customModelData(true)
                 .hideFlags(true)
                 .build();
-        return createShapedRecipe("prismarine_axe", item, new String[]{"PP ", "PS ", " S "}, 'P', Material.PRISMARINE_SHARD, 'S', Material.STICK);
+        return RecipeUtil.createShapedRecipe("prismarine_axe", item, new String[]{"PP ", "PS ", " S "}, 'P', Material.PRISMARINE_SHARD, 'S', Material.STICK);
     }
 
     private ShapedRecipe getPrismarineShovelRecipe() {
@@ -1460,7 +1299,7 @@ public class RecipeProvider {
                 .customModelData(true)
                 .hideFlags(true)
                 .build();
-        return createShapedRecipe("prismarine_shovel", item, new String[]{" P ", " S ", " S "}, 'P', Material.PRISMARINE_SHARD, 'S', Material.STICK);
+        return RecipeUtil.createShapedRecipe("prismarine_shovel", item, new String[]{" P ", " S ", " S "}, 'P', Material.PRISMARINE_SHARD, 'S', Material.STICK);
     }
 
     private ShapedRecipe getPrismarineHoeRecipe() {
@@ -1478,7 +1317,7 @@ public class RecipeProvider {
                 .customModelData(true)
                 .hideFlags(true)
                 .build();
-        return createShapedRecipe("prismarine_hoe", item, new String[]{"PP ", " S ", " S "}, 'P', Material.PRISMARINE_SHARD, 'S', Material.STICK);
+        return RecipeUtil.createShapedRecipe("prismarine_hoe", item, new String[]{"PP ", " S ", " S "}, 'P', Material.PRISMARINE_SHARD, 'S', Material.STICK);
     }
 
     private ShapedRecipe getPrismarineHelmetRecipe() {
@@ -1495,7 +1334,7 @@ public class RecipeProvider {
                 .attribute(Attribute.KNOCKBACK_RESISTANCE, kbr, AttributeModifier.Operation.ADD_NUMBER, EquipmentSlotGroup.HEAD)
                 .attribute(Attribute.MAX_HEALTH, hp, AttributeModifier.Operation.ADD_NUMBER, EquipmentSlotGroup.HEAD)
                 .build();
-        return createShapedRecipe("prismarine_helmet", item, new String[]{"PPP", "P P", "   "}, 'P', Material.PRISMARINE_SHARD);
+        return RecipeUtil.createShapedRecipe("prismarine_helmet", item, new String[]{"PPP", "P P", "   "}, 'P', Material.PRISMARINE_SHARD);
     }
 
     private ShapedRecipe getPrismarineChestplateRecipe() {
@@ -1512,7 +1351,7 @@ public class RecipeProvider {
                 .attribute(Attribute.KNOCKBACK_RESISTANCE, kbr, AttributeModifier.Operation.ADD_NUMBER, EquipmentSlotGroup.CHEST)
                 .attribute(Attribute.MAX_HEALTH, hp, AttributeModifier.Operation.ADD_NUMBER, EquipmentSlotGroup.CHEST)
                 .build();
-        return createShapedRecipe("prismarine_chestplate", item, new String[]{"P P", "PPP", "PPP"}, 'P', Material.PRISMARINE_SHARD);
+        return RecipeUtil.createShapedRecipe("prismarine_chestplate", item, new String[]{"P P", "PPP", "PPP"}, 'P', Material.PRISMARINE_SHARD);
     }
 
     private ShapedRecipe getPrismarineLeggingsRecipe() {
@@ -1529,7 +1368,7 @@ public class RecipeProvider {
                 .attribute(Attribute.KNOCKBACK_RESISTANCE, kbr, AttributeModifier.Operation.ADD_NUMBER, EquipmentSlotGroup.LEGS)
                 .attribute(Attribute.MAX_HEALTH, hp, AttributeModifier.Operation.ADD_NUMBER, EquipmentSlotGroup.LEGS)
                 .build();
-        return createShapedRecipe("prismarine_leggings", item, new String[]{"PPP", "P P", "P P"}, 'P', Material.PRISMARINE_SHARD);
+        return RecipeUtil.createShapedRecipe("prismarine_leggings", item, new String[]{"PPP", "P P", "P P"}, 'P', Material.PRISMARINE_SHARD);
     }
 
     private ShapedRecipe getPrismarineBootsRecipe() {
@@ -1546,7 +1385,7 @@ public class RecipeProvider {
                 .attribute(Attribute.KNOCKBACK_RESISTANCE, kbr, AttributeModifier.Operation.ADD_NUMBER, EquipmentSlotGroup.FEET)
                 .attribute(Attribute.MAX_HEALTH, hp, AttributeModifier.Operation.ADD_NUMBER, EquipmentSlotGroup.FEET)
                 .build();
-        return createShapedRecipe("prismarine_boots", item, new String[]{"   ", "P P", "P P"}, 'P', Material.PRISMARINE_SHARD);
+        return RecipeUtil.createShapedRecipe("prismarine_boots", item, new String[]{"   ", "P P", "P P"}, 'P', Material.PRISMARINE_SHARD);
     }
 
     // Bows
@@ -1555,7 +1394,7 @@ public class RecipeProvider {
                 .name(config.getString("dLongBow.name", "Long Bow"))
                 .customModelData(true)
                 .build();
-        return createShapedRecipe("long_bow", item, new String[]{" S ", "S S", " S "}, 'S', Material.STICK);
+        return RecipeUtil.createShapedRecipe("long_bow", item, new String[]{" S ", "S S", " S "}, 'S', Material.STICK);
     }
 
     private ShapedRecipe getRecurveBowRecipe() {
@@ -1563,7 +1402,7 @@ public class RecipeProvider {
                 .name(config.getString("dRecurveBow.name", "Recurve Bow"))
                 .customModelData(true)
                 .build();
-        return createShapedRecipe("recurve_bow", item, new String[]{" S ", "S S", " S "}, 'S', Material.STICK);
+        return RecipeUtil.createShapedRecipe("recurve_bow", item, new String[]{" S ", "S S", " S "}, 'S', Material.STICK);
     }
 
     private ShapedRecipe getCompoundBowRecipe() {
@@ -1571,7 +1410,7 @@ public class RecipeProvider {
                 .name(config.getString("dCompoundBow.name", "Compound Bow"))
                 .customModelData(true)
                 .build();
-        return createShapedRecipe("compound_bow", item, new String[]{" S ", "S S", " S "}, 'S', Material.STICK);
+        return RecipeUtil.createShapedRecipe("compound_bow", item, new String[]{" S ", "S S", " S "}, 'S', Material.STICK);
     }
 
     // Elytra
@@ -1580,7 +1419,7 @@ public class RecipeProvider {
                 .name(config.getString("dEelytra.name", "Eelytra"))
                 .customModelData(true)
                 .build();
-        return createShapedRecipe("eelytra", item, new String[]{"EPE", "P P", "EPE"}, 'E', Material.ELYTRA, 'P', Material.PHANTOM_MEMBRANE);
+        return RecipeUtil.createShapedRecipe("eelytra", item, new String[]{"EPE", "P P", "EPE"}, 'E', Material.ELYTRA, 'P', Material.PHANTOM_MEMBRANE);
     }
 
     private ShapedRecipe getJumpElytraRecipe() {
@@ -1588,7 +1427,7 @@ public class RecipeProvider {
                 .name(config.getString("dJumpElytra.name", "Jump Elytra"))
                 .customModelData(true)
                 .build();
-        return createShapedRecipe("jump_elytra", item, new String[]{"EPE", "P P", "EPE"}, 'E', Material.ELYTRA, 'P', Material.SLIME_BALL);
+        return RecipeUtil.createShapedRecipe("jump_elytra", item, new String[]{"EPE", "P P", "EPE"}, 'E', Material.ELYTRA, 'P', Material.SLIME_BALL);
     }
 
     // Special Swords
@@ -1599,7 +1438,7 @@ public class RecipeProvider {
                 .name(config.getString("dOPSWORD.name", "OP Sword"))
                 .customModelData(true)
                 .build();
-        return createShapedRecipe("op_sword", item, new String[]{"NNN", "NNN", "NNN"}, 'N', Material.NETHERITE_BLOCK);
+        return RecipeUtil.createShapedRecipe("op_sword", item, new String[]{"NNN", "NNN", "NNN"}, 'N', Material.NETHERITE_BLOCK);
     }
 
     private ShapedRecipe getWoodenSaberRecipe() {
@@ -1616,7 +1455,7 @@ public class RecipeProvider {
                 .customModelData(true)
                 .hideFlags(true)
                 .build();
-        return createShapedRecipe("wooden_saber", item, new String[]{" S ", " S ", "S S"}, 'S', Material.STICK);
+        return RecipeUtil.createShapedRecipe("wooden_saber", item, new String[]{" S ", " S ", "S S"}, 'S', Material.STICK);
     }
 
     private ShapedRecipe getStoneSaberRecipe() {
@@ -1633,7 +1472,7 @@ public class RecipeProvider {
                 .customModelData(true)
                 .hideFlags(true)
                 .build();
-        return createShapedRecipe("stone_saber", item, new String[]{" C ", " C ", "C C"}, 'C', Material.COBBLESTONE);
+        return RecipeUtil.createShapedRecipe("stone_saber", item, new String[]{" C ", " C ", "C C"}, 'C', Material.COBBLESTONE);
     }
 
     private ShapedRecipe getGoldenSaberRecipe() {
@@ -1650,7 +1489,7 @@ public class RecipeProvider {
                 .customModelData(true)
                 .hideFlags(true)
                 .build();
-        return createShapedRecipe("golden_saber", item, new String[]{" G ", " G ", "G G"}, 'G', Material.GOLD_INGOT);
+        return RecipeUtil.createShapedRecipe("golden_saber", item, new String[]{" G ", " G ", "G G"}, 'G', Material.GOLD_INGOT);
     }
 
     private ShapedRecipe getIronSaberRecipe() {
@@ -1667,7 +1506,7 @@ public class RecipeProvider {
                 .customModelData(true)
                 .hideFlags(true)
                 .build();
-        return createShapedRecipe("iron_saber", item, new String[]{" I ", " I ", "I I"}, 'I', Material.IRON_INGOT);
+        return RecipeUtil.createShapedRecipe("iron_saber", item, new String[]{" I ", " I ", "I I"}, 'I', Material.IRON_INGOT);
     }
 
     private ShapedRecipe getEmeraldSaberRecipe() {
@@ -1691,7 +1530,7 @@ public class RecipeProvider {
             item.addUnsafeEnchantment(Enchantment.UNBREAKING, unbreaking);
             item.addUnsafeEnchantment(Enchantment.MENDING, mending);
         }
-        return createShapedRecipe("emerald_saber", item, new String[]{" E ", " E ", "E E"}, 'E', Material.EMERALD);
+        return RecipeUtil.createShapedRecipe("emerald_saber", item, new String[]{" E ", " E ", "E E"}, 'E', Material.EMERALD);
     }
 
     private ShapedRecipe getDiamondSaberRecipe() {
@@ -1708,7 +1547,7 @@ public class RecipeProvider {
                 .customModelData(true)
                 .hideFlags(true)
                 .build();
-        return createShapedRecipe("diamond_saber", item, new String[]{" D ", " D ", "D D"}, 'D', Material.DIAMOND);
+        return RecipeUtil.createShapedRecipe("diamond_saber", item, new String[]{" D ", " D ", "D D"}, 'D', Material.DIAMOND);
     }
 
     private ShapedRecipe getNetheriteSaberRecipe() {
@@ -1727,7 +1566,7 @@ public class RecipeProvider {
                 .build();
 
         Material netheriteMaterial = config.isEnabled("NetheriteIngots") ? Material.NETHERITE_INGOT : Material.NETHERITE_SCRAP;
-        return createShapedRecipe("netherite_saber", item, new String[]{" N ", " N ", "N N"}, 'N', netheriteMaterial);
+        return RecipeUtil.createShapedRecipe("netherite_saber", item, new String[]{" N ", " N ", "N N"}, 'N', netheriteMaterial);
     }
 
     private ShapedRecipe getTestFishRecipe() {
@@ -1736,7 +1575,7 @@ public class RecipeProvider {
                 .withConfiguredSpeed("aTestFish.speed", 1.6, ConfigValueOperation.NONE, 0.0)
                 .name("Test Fish Sword")
                 .build();
-        return createShapedRecipe("test_fish_sword", item, new String[]{" F ", " F ", " S "}, 'F', Material.COD, 'S', Material.STICK);
+        return RecipeUtil.createShapedRecipe("test_fish_sword", item, new String[]{" F ", " F ", " S "}, 'F', Material.COD, 'S', Material.STICK);
     }
 
     private ShapedRecipe getWindBladeRecipe() {
@@ -1745,7 +1584,7 @@ public class RecipeProvider {
                 .withConfiguredSpeed("aWindBlade.speed", 1.6, ConfigValueOperation.NONE, 0.0)
                 .name("Wind Blade")
                 .build();
-        return createShapedRecipe("wind_blade", item, new String[]{" I ", "I I", " I "}, 'I', Material.IRON_INGOT);
+        return RecipeUtil.createShapedRecipe("wind_blade", item, new String[]{" I ", "I I", " I "}, 'I', Material.IRON_INGOT);
     }
 
     private ShapedRecipe getFlameBladeRecipe() {
@@ -1754,7 +1593,7 @@ public class RecipeProvider {
                 .withConfiguredSpeed("aVolcanicBlade.speed", 1.6, ConfigValueOperation.NONE, 0.0)
                 .name("Volcanic Blade")
                 .build();
-        return createShapedRecipe("flame_blade", item, new String[]{" L ", "L L", " L "}, 'L', Material.LAVA_BUCKET);
+        return RecipeUtil.createShapedRecipe("flame_blade", item, new String[]{" L ", "L L", " L "}, 'L', Material.LAVA_BUCKET);
     }
 
     // Shields
@@ -1763,7 +1602,7 @@ public class RecipeProvider {
                 .name("Diamond Shield")
                 .customModelData(true)
                 .build();
-        return createShapedRecipe("diamond_shield", item, new String[]{" D ", "DSD", " D "}, 'D', Material.DIAMOND, 'S', Material.SHIELD);
+        return RecipeUtil.createShapedRecipe("diamond_shield", item, new String[]{" D ", "DSD", " D "}, 'D', Material.DIAMOND, 'S', Material.SHIELD);
     }
 
     private ShapedRecipe getNetheriteShieldRecipe() {
@@ -1772,7 +1611,7 @@ public class RecipeProvider {
                 .customModelData(true)
                 .build();
         Material netheriteMaterial = config.isEnabled("NetheriteIngots") ? Material.NETHERITE_INGOT : Material.NETHERITE_SCRAP;
-        return createShapedRecipe("netherite_shield", item, new String[]{" N ", "NSN", " N "}, 'N', netheriteMaterial, 'S', Material.SHIELD);
+        return RecipeUtil.createShapedRecipe("netherite_shield", item, new String[]{" N ", "NSN", " N "}, 'N', netheriteMaterial, 'S', Material.SHIELD);
     }
 
     // Crossbows
@@ -1781,7 +1620,7 @@ public class RecipeProvider {
                 .name(config.getString("dRepeatingCrossbow.name", "Repeating Crossbow"))
                 .customModelData(true)
                 .build();
-        return createShapedRecipe("repeating_crossbow", item, new String[]{" S ", "SCS", " S "}, 'S', Material.STICK, 'C', Material.CROSSBOW);
+        return RecipeUtil.createShapedRecipe("repeating_crossbow", item, new String[]{" S ", "SCS", " S "}, 'S', Material.STICK, 'C', Material.CROSSBOW);
     }
 
     private ShapedRecipe getBurstCrossbowRecipe() {
@@ -1789,7 +1628,7 @@ public class RecipeProvider {
                 .name(config.getString("dBurstCrossbow.name", "Burst Crossbow"))
                 .customModelData(true)
                 .build();
-        return createShapedRecipe("burst_crossbow", item, new String[]{" S ", "SCS", " S "}, 'S', Material.STICK, 'C', Material.CROSSBOW);
+        return RecipeUtil.createShapedRecipe("burst_crossbow", item, new String[]{" S ", "SCS", " S "}, 'S', Material.STICK, 'C', Material.CROSSBOW);
     }
 
     // Other
@@ -1798,7 +1637,7 @@ public class RecipeProvider {
                 .name("Redstone Core")
                 .customModelData(true)
                 .build();
-        return createShapedRecipe("redstone_core", item, new String[]{" R ", "RCR", " R "}, 'R', Material.REDSTONE, 'C', Material.IRON_CHESTPLATE);
+        return RecipeUtil.createShapedRecipe("redstone_core", item, new String[]{" R ", "RCR", " R "}, 'R', Material.REDSTONE, 'C', Material.IRON_CHESTPLATE);
     }
 
     private ShapedRecipe getLongswordBowRecipe() {
@@ -1808,7 +1647,7 @@ public class RecipeProvider {
                 .name(config.getString("dLongswordBow.name", "Longsword Bow"))
                 .customModelData(true)
                 .build();
-        return createShapedRecipe("longsword_bow", item, new String[]{" L ", "LBL", " L "}, 'L', Material.IRON_SWORD, 'B', Material.BOW);
+        return RecipeUtil.createShapedRecipe("longsword_bow", item, new String[]{" L ", "LBL", " L "}, 'L', Material.IRON_SWORD, 'B', Material.BOW);
     }
 
     private ShapedRecipe getRedstoneBowRecipe() {
@@ -1818,7 +1657,7 @@ public class RecipeProvider {
                 .name(config.getString("dRedstoneBow.name", "Redstone Bow"))
                 .customModelData(true)
                 .build();
-        return createShapedRecipe("redstone_bow", item, new String[]{" R ", "RBR", " R "}, 'R', Material.REDSTONE, 'B', Material.BOW);
+        return RecipeUtil.createShapedRecipe("redstone_bow", item, new String[]{" R ", "RBR", " R "}, 'R', Material.REDSTONE, 'B', Material.BOW);
     }
 
     private ShapedRecipe getTridentBowRecipe() {
@@ -1828,7 +1667,7 @@ public class RecipeProvider {
                 .name(config.getString("dTridentBow.name", "Trident Bow"))
                 .customModelData(true)
                 .build();
-        return createShapedRecipe("trident_bow", item, new String[]{" T ", "TBT", " T "}, 'T', Material.TRIDENT, 'B', Material.BOW);
+        return RecipeUtil.createShapedRecipe("trident_bow", item, new String[]{" T ", "TBT", " T "}, 'T', Material.TRIDENT, 'B', Material.BOW);
     }
 
     private ShapedRecipe getWitherChestplateRecipe() {
@@ -1841,7 +1680,7 @@ public class RecipeProvider {
                 .attribute(Attribute.KNOCKBACK_RESISTANCE, kbr, AttributeModifier.Operation.ADD_NUMBER, EquipmentSlotGroup.CHEST)
                 .attribute(Attribute.MAX_HEALTH, hp, AttributeModifier.Operation.ADD_NUMBER, EquipmentSlotGroup.CHEST)
                 .build();
-        return createShapedRecipe("wither_chestplate", item, new String[]{"WWW", "WCW", "WWW"}, 'W', Material.WITHER_SKELETON_SKULL, 'C', Material.NETHERITE_CHESTPLATE);
+        return RecipeUtil.createShapedRecipe("wither_chestplate", item, new String[]{"WWW", "WCW", "WWW"}, 'W', Material.WITHER_SKELETON_SKULL, 'C', Material.NETHERITE_CHESTPLATE);
     }
 
     private ShapedRecipe getWitherLeggingsRecipe() {
@@ -1854,7 +1693,7 @@ public class RecipeProvider {
                 .attribute(Attribute.KNOCKBACK_RESISTANCE, kbr, AttributeModifier.Operation.ADD_NUMBER, EquipmentSlotGroup.LEGS)
                 .attribute(Attribute.MAX_HEALTH, hp, AttributeModifier.Operation.ADD_NUMBER, EquipmentSlotGroup.LEGS)
                 .build();
-        return createShapedRecipe("wither_leggings", item, new String[]{"WWW", "WLW", "WWW"}, 'W', Material.WITHER_SKELETON_SKULL, 'L', Material.NETHERITE_LEGGINGS);
+        return RecipeUtil.createShapedRecipe("wither_leggings", item, new String[]{"WWW", "WLW", "WWW"}, 'W', Material.WITHER_SKELETON_SKULL, 'L', Material.NETHERITE_LEGGINGS);
     }
 
     private ShapedRecipe getWitherBootsRecipe() {
@@ -1867,7 +1706,7 @@ public class RecipeProvider {
                 .attribute(Attribute.KNOCKBACK_RESISTANCE, kbr, AttributeModifier.Operation.ADD_NUMBER, EquipmentSlotGroup.FEET)
                 .attribute(Attribute.MAX_HEALTH, hp, AttributeModifier.Operation.ADD_NUMBER, EquipmentSlotGroup.FEET)
                 .build();
-        return createShapedRecipe("wither_boots", item, new String[]{"WWW", "WBW", "WWW"}, 'W', Material.WITHER_SKELETON_SKULL, 'B', Material.NETHERITE_BOOTS);
+        return RecipeUtil.createShapedRecipe("wither_boots", item, new String[]{"WWW", "WBW", "WWW"}, 'W', Material.WITHER_SKELETON_SKULL, 'B', Material.NETHERITE_BOOTS);
     }
 
     private ShapedRecipe getTestKatanaRecipe() {
@@ -1877,7 +1716,7 @@ public class RecipeProvider {
                 .name("Test Katana")
                 .customModelData(true)
                 .build();
-        return createShapedRecipe("test_katana", item, new String[]{" N ", " N ", "N N"}, 'N', Material.NETHERITE_INGOT);
+        return RecipeUtil.createShapedRecipe("test_katana", item, new String[]{" N ", " N ", "N N"}, 'N', Material.NETHERITE_INGOT);
     }
 
     private ShapedRecipe getTestScytheRecipe() {
@@ -1887,7 +1726,7 @@ public class RecipeProvider {
                 .name("Test Scythe")
                 .customModelData(true)
                 .build();
-        return createShapedRecipe("test_scythe", item, new String[]{" N ", "N N", " N "}, 'N', Material.NETHERITE_INGOT);
+        return RecipeUtil.createShapedRecipe("test_scythe", item, new String[]{" N ", "N N", " N "}, 'N', Material.NETHERITE_INGOT);
     }
 
     // Cleavers
@@ -1907,7 +1746,7 @@ public class RecipeProvider {
                 .customModelData(true)
                 .hideFlags(true)
                 .build();
-        return createShapedRecipe("wooden_cleaver", item, new String[]{"PP ", "PS ", " S "}, 'P', Material.OAK_PLANKS, 'S', Material.STICK);
+        return RecipeUtil.createShapedRecipe("wooden_cleaver", item, new String[]{"PP ", "PS ", " S "}, 'P', Material.OAK_PLANKS, 'S', Material.STICK);
     }
 
     private ShapedRecipe getStoneCleaverRecipe() {
@@ -1926,7 +1765,7 @@ public class RecipeProvider {
                 .customModelData(true)
                 .hideFlags(true)
                 .build();
-        return createShapedRecipe("stone_cleaver", item, new String[]{"PP ", "PS ", " S "}, 'P', Material.COBBLESTONE, 'S', Material.STICK);
+        return RecipeUtil.createShapedRecipe("stone_cleaver", item, new String[]{"PP ", "PS ", " S "}, 'P', Material.COBBLESTONE, 'S', Material.STICK);
     }
 
     private ShapedRecipe getGoldenCleaverRecipe() {
@@ -1945,7 +1784,7 @@ public class RecipeProvider {
                 .customModelData(true)
                 .hideFlags(true)
                 .build();
-        return createShapedRecipe("golden_cleaver", item, new String[]{"PP ", "PS ", " S "}, 'P', Material.GOLD_INGOT, 'S', Material.STICK);
+        return RecipeUtil.createShapedRecipe("golden_cleaver", item, new String[]{"PP ", "PS ", " S "}, 'P', Material.GOLD_INGOT, 'S', Material.STICK);
     }
 
     private ShapedRecipe getIronCleaverRecipe() {
@@ -1964,7 +1803,7 @@ public class RecipeProvider {
                 .customModelData(true)
                 .hideFlags(true)
                 .build();
-        return createShapedRecipe("iron_cleaver", item, new String[]{"PP ", "PS ", " S "}, 'P', Material.IRON_INGOT, 'S', Material.STICK);
+        return RecipeUtil.createShapedRecipe("iron_cleaver", item, new String[]{"PP ", "PS ", " S "}, 'P', Material.IRON_INGOT, 'S', Material.STICK);
     }
 
     private ShapedRecipe getEmeraldCleaverRecipe() {
@@ -1983,7 +1822,7 @@ public class RecipeProvider {
                 .customModelData(true)
                 .hideFlags(true)
                 .build();
-        return createShapedRecipe("emerald_cleaver", item, new String[]{"PP ", "PS ", " S "}, 'P', Material.EMERALD, 'S', Material.STICK);
+        return RecipeUtil.createShapedRecipe("emerald_cleaver", item, new String[]{"PP ", "PS ", " S "}, 'P', Material.EMERALD, 'S', Material.STICK);
     }
 
     private ShapedRecipe getDiamondCleaverRecipe() {
@@ -2002,7 +1841,7 @@ public class RecipeProvider {
                 .customModelData(true)
                 .hideFlags(true)
                 .build();
-        return createShapedRecipe("diamond_cleaver", item, new String[]{"PP ", "PS ", " S "}, 'P', Material.DIAMOND, 'S', Material.STICK);
+        return RecipeUtil.createShapedRecipe("diamond_cleaver", item, new String[]{"PP ", "PS ", " S "}, 'P', Material.DIAMOND, 'S', Material.STICK);
     }
 
     private ShapedRecipe getNetheriteCleaverRecipe() {
@@ -2021,7 +1860,7 @@ public class RecipeProvider {
                 .customModelData(true)
                 .hideFlags(true)
                 .build();
-        return createShapedRecipe("netherite_cleaver", item, new String[]{"PP ", "PS ", " S "}, 'P', Material.NETHERITE_INGOT, 'S', Material.STICK);
+        return RecipeUtil.createShapedRecipe("netherite_cleaver", item, new String[]{"PP ", "PS ", " S "}, 'P', Material.NETHERITE_INGOT, 'S', Material.STICK);
     }
 
     private ShapedRecipe getFlameSpearRecipe() {
@@ -2033,7 +1872,7 @@ public class RecipeProvider {
                 .name("Volcanic Spear")
                 .customModelData(true)
                 .build();
-        return createShapedRecipe("flame_spear", item, new String[]{" L ", " L ", " S "}, 'L', Material.LAVA_BUCKET, 'S', Material.STICK);
+        return RecipeUtil.createShapedRecipe("flame_spear", item, new String[]{" L ", " L ", " S "}, 'L', Material.LAVA_BUCKET, 'S', Material.STICK);
     }
 
     private ShapedRecipe getFlameAxeRecipe() {
@@ -2045,7 +1884,7 @@ public class RecipeProvider {
                 .name("Volcanic Axe")
                 .customModelData(true)
                 .build();
-        return createShapedRecipe("flame_axe", item, new String[]{"LL ", "LS ", " S "}, 'L', Material.LAVA_BUCKET, 'S', Material.STICK);
+        return RecipeUtil.createShapedRecipe("flame_axe", item, new String[]{"LL ", "LS ", " S "}, 'L', Material.LAVA_BUCKET, 'S', Material.STICK);
     }
 
     private ShapedRecipe getFlameCleaverRecipe() {
@@ -2057,7 +1896,7 @@ public class RecipeProvider {
                 .name("Volcanic Cleaver")
                 .customModelData(true)
                 .build();
-        return createShapedRecipe("flame_cleaver", item, new String[]{"LL ", "LS ", " S "}, 'L', Material.LAVA_BUCKET, 'S', Material.STICK);
+        return RecipeUtil.createShapedRecipe("flame_cleaver", item, new String[]{"LL ", "LS ", " S "}, 'L', Material.LAVA_BUCKET, 'S', Material.STICK);
     }
 
     private ShapedRecipe getAwakenedSwordsRecipe() {
@@ -2066,6 +1905,6 @@ public class RecipeProvider {
                 .attackSpeed(config.getDouble("aAwakenedSword.speed", 1.6))
                 .name("Awakened Sword")
                 .build();
-        return createShapedRecipe("awakened_swords", item, new String[]{" S ", "S S", " S "}, 'S', Material.NETHERITE_SWORD);
+        return RecipeUtil.createShapedRecipe("awakened_swords", item, new String[]{" S ", "S S", " S "}, 'S', Material.NETHERITE_SWORD);
     }
 }

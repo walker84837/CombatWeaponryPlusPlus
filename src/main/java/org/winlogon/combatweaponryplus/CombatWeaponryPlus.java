@@ -77,341 +77,13 @@ public class CombatWeaponryPlus extends JavaPlugin {
         getServer().getPluginManager().registerEvents(serverListeners, this);
         saveDefaultConfig();
 
-        var ee = config.getBoolean("Emerald");
-        if (ee) {
-            Bukkit.addRecipe(this.getRecipe());
-            Bukkit.addRecipe(this.getChestplateRecipe());
-            Bukkit.addRecipe(this.getLeggingsRecipe());
-            Bukkit.addRecipe(this.getBootsRecipe());
-        }
-        if (config.getBoolean("EmeraldGear")) {
-            Bukkit.addRecipe(this.getPickaxeRecipe());
-            Bukkit.addRecipe(this.getSwordRecipe());
-            Bukkit.addRecipe(this.getAxeRecipe());
-            Bukkit.addRecipe(this.getShovelRecipe());
-            Bukkit.addRecipe(this.getHoeRecipe());
-        }
-        if (config.getBoolean("ChorusBlade")) {
-            Bukkit.addRecipe(this.getSworddRecipe());
-        }
-        if (config.getBoolean("SwordBow")) {
-            Bukkit.addRecipe(this.getSwordbowRecipe());
-        }
-        if (config.getBoolean("HeavySwordBow")) {
-            Bukkit.addRecipe(this.getHSwordbowRecipe());
-        }
-        if (config.getBoolean("Chainmail")) {
-            Bukkit.addRecipe(this.getChnHelmetRecipe());
-            Bukkit.addRecipe(this.getChnChestRecipe());
-            Bukkit.addRecipe(this.getChnLegRecipe());
-            Bukkit.addRecipe(this.getChnBootsRecipe());
-        }
-        if (config.getBoolean("PlatedChainmail")) {
-            Bukkit.addRecipe(this.getPChnHelmetRecipe());
-            Bukkit.addRecipe(this.getPChnChestRecipe());
-            Bukkit.addRecipe(this.getPChnLegRecipe());
-            Bukkit.addRecipe(this.getPChnBootsRecipe());
-        }
-        if (config.getBoolean("FeatherCharm")) {
-            Bukkit.addRecipe(this.getFCharmRecipe());
-        }
-        if (config.getBoolean("EmeraldCharm")) {
-            Bukkit.addRecipe(this.getECharmRecipe());
-        }
-        if (config.getBoolean("BlazeCharm")) {
-            Bukkit.addRecipe(this.getBCharmRecipe());
-        }
-        if (config.getBoolean("GoldCharm")) {
-            Bukkit.addRecipe(this.getGCharmRecipe());
-        }
-        if (config.getBoolean("StarCharm")) {
-            Bukkit.addRecipe(this.getERecipe());
-        }
-        if (config.getBoolean("FrostCharm")) {
-            Bukkit.addRecipe(this.getFrCharmRecipe());
-        }
-        if (config.getBoolean("Scythes")) {
-            Bukkit.addRecipe(this.getWScytheRecipe());
-            Bukkit.addRecipe(this.getSScytheRecipe());
-            Bukkit.addRecipe(this.getGScytheRecipe());
-            Bukkit.addRecipe(this.getIScytheRecipe());
-            Bukkit.addRecipe(this.getDScytheRecipe());
-            Bukkit.addRecipe(this.getNScytheRecipe());
-        }
-        if (config.getBoolean("EmeraldGear") && config.getBoolean("Scythes")) {
-            Bukkit.addRecipe(this.getEScytheRecipe());
-        }
-        if (config.getBoolean("ObsidianPickaxe")) {
-            Bukkit.addRecipe(this.getobpickRecipe());
-        }
-        if (config.getBoolean("Rapiers")) {
-            Bukkit.addRecipe(this.getRapierRecipe());
-            Bukkit.addRecipe(this.getsRapierRecipe());
-            Bukkit.addRecipe(this.getgRapierRecipe());
-            Bukkit.addRecipe(this.getIRapierRecipe());
-            Bukkit.addRecipe(this.getDRapierRecipe());
-            Bukkit.addRecipe(this.getNRapierRecipe());
-        }
-        if (config.getBoolean("EmeraldGear") && config.getBoolean("Rapiers")) {
-            Bukkit.addRecipe(this.geteeRapierRecipe());
-        }
-        if (config.getBoolean("Longswords")) {
-            Bukkit.addRecipe(this.getwlongRecipe());
-            Bukkit.addRecipe(this.getslongRecipe());
-            Bukkit.addRecipe(this.getglongRecipe());
-            Bukkit.addRecipe(this.getIlongRecipe());
-            Bukkit.addRecipe(this.getDlongRecipe());
-            Bukkit.addRecipe(this.getNlongRecipe());
-        }
-        if (config.getBoolean("EmeraldGear") && config.getBoolean("Longswords")) {
-            Bukkit.addRecipe(this.getelongRecipe());
-        }
-        if (config.getBoolean("Knives")) {
-            Bukkit.addRecipe(this.getwknifeRecipe());
-            Bukkit.addRecipe(this.getsknifeRecipe());
-            Bukkit.addRecipe(this.getgknifeRecipe());
-            Bukkit.addRecipe(this.getIknifeRecipe());
-            Bukkit.addRecipe(this.getDknifeRecipe());
-            Bukkit.addRecipe(this.getNknifeRecipe());
-        }
-        if (config.getBoolean("Knives") && config.getBoolean("EmeraldGear")) {
-            Bukkit.addRecipe(this.geteknifeRecipe());
-        }
-        if (config.getBoolean("Spears")) {
-            Bukkit.addRecipe(this.getwspearRecipe());
-            Bukkit.addRecipe(this.getsspearRecipe());
-            Bukkit.addRecipe(this.getgspearRecipe());
-            Bukkit.addRecipe(this.getispearRecipe());
-            Bukkit.addRecipe(this.getdspearRecipe());
-            Bukkit.addRecipe(this.getnspearRecipe());
-        }
-        if (config.getBoolean("EmeraldGear") && config.getBoolean("Spears")) {
-            Bukkit.addRecipe(this.getespearRecipe());
-        }
-        if (config.getBoolean("Katanas")) {
-            Bukkit.addRecipe(this.getwkatRecipe());
-            Bukkit.addRecipe(this.getgkatRecipe());
-            Bukkit.addRecipe(this.getskatRecipe());
-            Bukkit.addRecipe(this.getikatRecipe());
-            Bukkit.addRecipe(this.getdkatRecipe());
-            Bukkit.addRecipe(this.getnkatRecipe());
-        }
-        if (config.getBoolean("EmeraldGear") && config.getBoolean("Katanas")) {
-            Bukkit.addRecipe(this.getekatRecipe());
-        }
-        if (config.getBoolean("Prismarine")) {
-            Bukkit.addRecipe(this.getinsttRecipe());
-            Bukkit.addRecipe(this.getprisswordsrecipe());
-            Bukkit.addRecipe(this.getprispickrecipe());
-            Bukkit.addRecipe(this.getprisaxerecipe());
-            Bukkit.addRecipe(this.getprisshovelrecipe());
-            Bukkit.addRecipe(this.getprishoerecipe());
-            Bukkit.addRecipe(this.getprishelmetrecipe());
-            Bukkit.addRecipe(this.getprischestrecipe());
-            Bukkit.addRecipe(this.getprislegrecipe());
-            Bukkit.addRecipe(this.getprisbootsrecipe());
-        }
-        if (config.getBoolean("Longbow")) {
-            Bukkit.addRecipe(this.getLongBowRecipe());
-        }
-        if (config.getBoolean("Recurvebow")) {
-            Bukkit.addRecipe(this.getRecurveBowRecipe());
-        }
-        if (config.getBoolean("Compoundbow")) {
-            Bukkit.addRecipe(this.getCompoundBowRecipe());
-        }
-        if (config.getBoolean("Eelytra")) {
-            Bukkit.addRecipe(this.getEelytraRecipe());
-        }
-        if (config.getBoolean("ReallyGoodSword")) {
-            Bukkit.addRecipe(this.getOPSWORDRecipe());
-        }
-        if (config.getBoolean("DiamondShield")) {
-            Bukkit.addRecipe(this.getDiaShieldRecipe());
-        }
-        if (config.getBoolean("NetheriteShield")) {
-            Bukkit.addRecipe(this.getNethShieldRecipe());
-        }
-        Bukkit.addRecipe(this.getawakswordsrecipe());
-        if (config.getBoolean("Sabers")) {
-            Bukkit.addRecipe(this.getWSaberRecipe());
-            Bukkit.addRecipe(this.getGSaberRecipe());
-            Bukkit.addRecipe(this.getSSaberRecipe());
-            Bukkit.addRecipe(this.getISaberRecipe());
-            Bukkit.addRecipe(this.getDSaberRecipe());
-            Bukkit.addRecipe(this.getNSaberRecipe());
-        }
-        if (config.getBoolean("EmeraldGear") && config.getBoolean("Sabers")) {
-            Bukkit.addRecipe(this.getESaberRecipe());
-        }
-        if (config.getBoolean("RepeatingCrossbow")) {
-            Bukkit.addRecipe(this.getrepcrossRecipe());
-        }
-        if (config.getBoolean("BurstCrossbow")) {
-            Bukkit.addRecipe(this.getburscrossRecipe());
-        }
-        if (config.getBoolean("RedstoneCore")) {
-            Bukkit.addRecipe(this.getRedPlateRecipe());
-        }
-        if (config.getBoolean("LongswordBow")) {
-            Bukkit.addRecipe(this.getLsBowRecipe());
-        }
-        if (config.getBoolean("RedstoneBow")) {
-            Bukkit.addRecipe(this.getRedstoneBowRecipe());
-        }
-        if (config.getBoolean("TridentBow")) {
-            Bukkit.addRecipe(this.getTridentBowRecipe());
-        }
-        if (config.getBoolean("WitherArmor")) {
-            // Was this even included ??? HOW DID THIS EVEN COMPILE
-            // Bukkit.addRecipe(this.getWitherHelmetRecipe());
-            Bukkit.addRecipe(this.getWitherChestRecipe());
-            Bukkit.addRecipe(this.getWitherLegRecipe());
-            Bukkit.addRecipe(this.getWitherBootsRecipe());
-        }
-        if (config.getBoolean("JumpElytra")) {
-            Bukkit.addRecipe(this.jumpElytraRecipe());
-        }
-        if (config.getBoolean("TestKatana")) {
-            Bukkit.addRecipe(this.getTestKatanaRecipe());
-        }
-        if (config.getBoolean("TestScythe")) {
-            Bukkit.addRecipe(this.getTestScytheRecipe());
-        }
-        if (config.getBoolean("Cleavers")) {
-            Bukkit.addRecipe(this.getCleaverRecipe());
-            Bukkit.addRecipe(this.getGoldCleaverRecipe());
-            Bukkit.addRecipe(this.getStoneCleaverRecipe());
-            Bukkit.addRecipe(this.getICleaverRecipe());
-            Bukkit.addRecipe(this.getECleaverRecipe());
-            Bukkit.addRecipe(this.getDCleaverRecipe());
-            Bukkit.addRecipe(this.getNCleaverRecipe());
-        }
-        if (config.getBoolean("FishSword")) {
-            Bukkit.addRecipe(this.getTestFishRecipe());
-        }
-        if (config.getBoolean("WindBlade")) {
-            Bukkit.addRecipe(this.getWindBladeRecipe());
-        }
-        if (config.getBoolean("VolcanicBlade")) {
-            Bukkit.addRecipe(this.getFlameBladeRecipe());
-        }
-        if (config.getBoolean("VolcanicSpear")) {
-            Bukkit.addRecipe(this.getFlameSpearRecipe());
-        }
-        if (config.getBoolean("VolcanicAxe")) {
-            Bukkit.addRecipe(this.getFlameAxeRecipe());
-        }
-        if (config.getBoolean("VolcanicCleaver")) {
-            Bukkit.addRecipe(this.getFlameCleaverRecipe());
-        }
+        var recipeProvider = new org.winlogon.combatweaponryplus.recipes.RecipeProvider(this, this.configHelper);
+        recipeProvider.registerRecipes();
     }
 
     @Override
     public void onDisable() {
         // config = null;
-    }
-
-    public ShapedRecipe getRecipe() {
-        var key = new NamespacedKey(this, "emerald_helmet");
-        this.keys.add(key);
-        var recipe = new ShapedRecipe(key, null);
-        recipe.shape(new String[]{"EEE", "E E", "   "});
-        recipe.setIngredient('E', Material.EMERALD);
-        return recipe;
-    }
-
-    public ShapedRecipe getChestplateRecipe() {
-        var key = new NamespacedKey(this, "emerald_chestplate");
-        this.keys.add(key);
-
-        boolean useCustomValues = config.getBoolean("UseCustomValues");
-        double maxHealthBuff = useCustomValues ? config.getDouble("aEmeraldChestplate.BonusHealth") : 1.0;
-        double armorBuff = useCustomValues ? config.getDouble("aEmeraldChestplate.Armor") : 6.0;
-
-        var item = new ItemBuilder(Material.GOLDEN_CHESTPLATE)
-                .name("Emerald Chestplate")
-                .unbreakable(true)
-                .hideFlags(true)
-                .attribute(Attribute.MAX_HEALTH, maxHealthBuff, AttributeModifier.Operation.ADD_NUMBER, EquipmentSlotGroup.CHEST)
-                .attribute(Attribute.ARMOR, armorBuff, AttributeModifier.Operation.ADD_NUMBER, EquipmentSlotGroup.CHEST)
-                .customModelData(true)
-                .build();
-
-        if (configHelper.isEnabled("EnchantmentsOnEmeraldArmor")) {
-            int unbreakingIntensity = config.getInt("EmeraldArmorEnchantLevels.Unbreaking");
-            item.addEnchantment(Enchantment.UNBREAKING, unbreakingIntensity);
-
-            int mendingIntensity = config.getInt("EmeraldArmorEnchantLevels.Mending");
-            item.addEnchantment(Enchantment.MENDING, mendingIntensity);
-        }
-
-        var recipe = new ShapedRecipe(key, item);
-        recipe.shape(new String[]{"E E", "EEE", "EEE"});
-        recipe.setIngredient('E', Material.EMERALD);
-        return recipe;
-    }
-
-    public ShapedRecipe getLeggingsRecipe() {
-        var key = new NamespacedKey(this, "emerald_leggings");
-        this.keys.add(key);
-
-        boolean useCustomValues = config.getBoolean("UseCustomValues");
-        double maxHealthBuff = useCustomValues ? config.getDouble("aEmeraldLeggings.BonusHealth") : 1.0;
-        double armorBuff = useCustomValues ? config.getDouble("aEmeraldLeggings.Armor") : 5.0;
-
-        var item = new ItemBuilder(Material.GOLDEN_LEGGINGS)
-                .name("Emerald Leggings")
-                .attribute(Attribute.MAX_HEALTH, maxHealthBuff, AttributeModifier.Operation.ADD_NUMBER, EquipmentSlotGroup.LEGS)
-                .attribute(Attribute.ARMOR, armorBuff, AttributeModifier.Operation.ADD_NUMBER, EquipmentSlotGroup.LEGS)
-                .hideFlags(true)
-                .customModelData(true)
-                .build();
-
-        if (config.getBoolean("EnchantmentsOnEmeraldArmor")) {
-            int num = config.getInt("EmeraldArmorEnchantLevels.Unbreaking");
-            int num2 = config.getInt("EmeraldArmorEnchantLevels.Mending");
-            item.addEnchantment(Enchantment.UNBREAKING, num);
-            item.addEnchantment(Enchantment.MENDING, num2);
-        }
-
-        var recipe = new ShapedRecipe(key, item);
-        recipe.shape(new String[]{"EEE", "E E", "E E"});
-        recipe.setIngredient('E', Material.EMERALD);
-
-        return recipe;
-    }
-
-    public ShapedRecipe getBootsRecipe() {
-        var itemBuilder = new ItemBuilder(Material.GOLDEN_BOOTS);
-
-        double hp = config.getBoolean("UseCustomValues") ? config.getDouble("aEmeraldBoots.BonusHealth") : 1.0;
-        double def = config.getBoolean("UseCustomValues") ? config.getDouble("aEmeraldBoots.Armor") : 2.0;
-
-        itemBuilder
-            .attribute(Attribute.MAX_HEALTH, hp, AttributeModifier.Operation.ADD_NUMBER, EquipmentSlotGroup.FEET)
-            .attribute(Attribute.ARMOR, def, AttributeModifier.Operation.ADD_NUMBER, EquipmentSlotGroup.FEET)
-            .name(ChatColor.DARK_GREEN + "Emerald Boots");
-
-        if (config.getBoolean("EnchantmentsOnEmeraldArmor")) {
-            int unbreakingLevel = config.getInt("EmeraldArmorEnchantLevels.Unbreaking");
-            int mendingLevel = config.getInt("EmeraldArmorEnchantLevels.Mending");
-            
-            itemBuilder.enchant(Enchantment.UNBREAKING, unbreakingLevel);
-            itemBuilder.enchant(Enchantment.MENDING, mendingLevel);
-        }
-
-        itemBuilder.customModelData(true);
-
-        ItemStack item = itemBuilder.build();
-        var key = new NamespacedKey(this, "emerald_boots");
-        this.keys.add(key);
-
-        var recipe = new ShapedRecipe(key, item);
-        recipe.shape(new String[]{"   ", "E E", "E E"});
-        recipe.setIngredient('E', Material.EMERALD);
-        
-        return recipe;
     }
 
     public ShapedRecipe getPickaxeRecipe() {
@@ -432,40 +104,6 @@ public class CombatWeaponryPlus extends JavaPlugin {
         this.keys.add(key);
         var recipe = new ShapedRecipe(key, item);
         recipe.shape(new String[]{"EEE", " S ", " S "});
-        recipe.setIngredient('E', Material.EMERALD);
-        recipe.setIngredient('S', Material.STICK);
-        return recipe;
-    }
-
-    public ShapedRecipe getSwordRecipe() {
-        ItemStack item = new ItemStack(Material.GOLDEN_SWORD);
-        ItemMeta meta = item.getItemMeta();
-        double dmg = 5.0;
-        double spd = -2.2;
-        if (config.getBoolean("UseCustomValues")) {
-            dmg = config.getDouble("aEmeraldSword.damage") - 1.0;
-            spd = config.getDouble("aEmeraldSword.speed") - 4.0;
-        }
-        AttributeModifier modifier = AttributeModifierUtil.createAttributeModifier(Attribute.ATTACK_SPEED, spd, AttributeModifier.Operation.ADD_NUMBER, EquipmentSlotGroup.HAND);
-        meta.addAttributeModifier(Attribute.ATTACK_SPEED, modifier);
-        AttributeModifier modifier2 = AttributeModifierUtil.createAttributeModifier(Attribute.ATTACK_DAMAGE, dmg, AttributeModifier.Operation.ADD_NUMBER, EquipmentSlotGroup.HAND);
-        meta.addAttributeModifier(Attribute.ATTACK_DAMAGE, modifier2);
-        var lore = TextUtil.convertLegacyLoreToComponents(List.of("&7When in Main Hand:", "&9 6 Attack Damage", "&9 1.8 Attack Speed"));
-        meta.lore(lore);
-        meta.addItemFlags(new ItemFlag[]{ItemFlag.HIDE_ATTRIBUTES});
-        meta.displayName(Component.text("Emerald Sword", NamedTextColor.DARK_GREEN));
-        meta.setCustomModelData(1000017);
-        if (config.getBoolean("EnchantsOnEmeraldGear")) {
-            int num = config.getInt("EmeraldGearEnchantLevels.Unbreaking");
-            int num2 = config.getInt("EmeraldGearEnchantLevels.Mending");
-            meta.addEnchant(Enchantment.UNBREAKING, num, true);
-            meta.addEnchant(Enchantment.MENDING, num2, true);
-        }
-        item.setItemMeta(meta);
-        NamespacedKey key = new NamespacedKey(this, "emerald_sword");
-        this.keys.add(key);
-        ShapedRecipe recipe = new ShapedRecipe(key, item);
-        recipe.shape(new String[]{" E ", " E ", " S "});
         recipe.setIngredient('E', Material.EMERALD);
         recipe.setIngredient('S', Material.STICK);
         return recipe;
@@ -1025,21 +663,14 @@ public class CombatWeaponryPlus extends JavaPlugin {
     }
 
     public ShapedRecipe getDScytheRecipe() {
-        ItemStack item = new ItemStack(Material.DIAMOND_SWORD);
-        ItemMeta meta = item.getItemMeta();
-        ArrayList<String> lore = new ArrayList<String>();
-        lore.add(TextUtil.convertLegacyToSection(config.getString("ScytheDescription.line1")));
-        lore.add(TextUtil.convertLegacyToSection(config.getString("ScytheDescription.line2")));
-        lore.add(TextUtil.convertLegacyToSection(config.getString("ScytheDescription.line3")));
-        lore.add(TextUtil.convertLegacyToSection(config.getString("ScytheDescription.line4")));
-        lore.add(TextUtil.convertLegacyToSection(config.getString("ScytheDescription.line5")));
-        lore.add(TextUtil.convertLegacyToSection(config.getString("ScytheDescription.line6")));
-        lore.add(TextUtil.convertLegacyToSection(config.getString("ScytheDescription.line7")));
-        lore.add(TextUtil.convertLegacyToSection(config.getString("dDiamondScythe.line8")));
-        lore.add(TextUtil.convertLegacyToSection(config.getString("dDiamondScythe.line9")));
-        lore.add(TextUtil.convertLegacyToSection(config.getString("dDiamondScythe.line10")));
-        meta.setLore(lore);
-        meta.addItemFlags(new ItemFlag[]{ItemFlag.HIDE_ATTRIBUTES});
+        var builder = new WeaponBuilder(Material.DIAMOND_SWORD, configHelper)
+                .loreConfigRange(configHelper, "ScytheDescription", 1, 7)
+                .loreConfigRange(configHelper, "dDiamondScythe", 8, 10)
+                .hideFlags(true)
+                .build();
+
+        ItemMeta meta = null;
+        ItemStack item = null;
         double dmg = 8.0;
         double spd = -3.0;
         if (config.getBoolean("UseCustomValues")) {
@@ -1132,45 +763,7 @@ public class CombatWeaponryPlus extends JavaPlugin {
         return recipe;
     }
 
-    public ShapedRecipe getRapierRecipe() {
-        ItemStack item = new ItemStack(Material.WOODEN_SWORD);
-        ItemMeta meta = item.getItemMeta();
-        ArrayList<String> lore = new ArrayList<String>();
-        lore.add(TextUtil.convertLegacyToSection(config.getString("RapierDescription.line1")));
-        lore.add(TextUtil.convertLegacyToSection(config.getString("RapierDescription.line2")));
-        lore.add(TextUtil.convertLegacyToSection(config.getString("RapierDescription.line3")));
-        lore.add(TextUtil.convertLegacyToSection(config.getString("RapierDescription.line4")));
-        lore.add(TextUtil.convertLegacyToSection(config.getString("RapierDescription.line5")));
-        lore.add(TextUtil.convertLegacyToSection(config.getString("RapierDescription.line6")));
-        lore.add(TextUtil.convertLegacyToSection(config.getString("RapierDescription.line7")));
-        lore.add(TextUtil.convertLegacyToSection(config.getString("dWoodenRapier.line8")));
-        lore.add(TextUtil.convertLegacyToSection(config.getString("dWoodenRapier.line9")));
-        lore.add(TextUtil.convertLegacyToSection(config.getString("dWoodenRapier.line10")));
-        meta.setLore(lore);
-        meta.addItemFlags(new ItemFlag[]{ItemFlag.HIDE_ATTRIBUTES});
-        double dmg = 2.0;
-        double spd = -2.1;
-        if (config.getBoolean("UseCustomValues")) {
-            dmg = config.getDouble("aWoodenRapier.damage") - 1.0;
-            spd = config.getDouble("aWoodenRapier.speed") - 4.0;
-        }
-
-        AttributeModifier modifier = AttributeModifierUtil.createAttributeModifier(Attribute.ATTACK_SPEED, spd, AttributeModifier.Operation.ADD_NUMBER, EquipmentSlotGroup.HAND);
-        meta.addAttributeModifier(Attribute.ATTACK_SPEED, modifier);
-        AttributeModifier modifier2 = AttributeModifierUtil.createAttributeModifier(Attribute.ATTACK_DAMAGE, dmg, AttributeModifier.Operation.ADD_NUMBER, EquipmentSlotGroup.HAND);
-        meta.addAttributeModifier(Attribute.ATTACK_DAMAGE, modifier2);
-        meta.setDisplayName(TextUtil.convertLegacyToSection(config.getString("dWoodenRapier.name")));
-        meta.setCustomModelData(1000005);
-        item.setItemMeta(meta);
-        NamespacedKey key = new NamespacedKey(this, "wooden_rapier");
-        this.keys.add(key);
-        ShapedRecipe recipe = new ShapedRecipe(key, item);
-        recipe.shape(new String[]{"  S", "SS ", "SS "});
-        recipe.setIngredient('S', Material.STICK);
-        return recipe;
-    }
-
-    public ShapedRecipe getsRapierRecipe() {
+    public ShapedRecipe getStoneRapierRecipe() {
         ItemStack item = new ItemStack(Material.STONE_SWORD);
         ItemMeta meta = item.getItemMeta();
         ArrayList<String> lore = new ArrayList<String>();
@@ -1480,11 +1073,13 @@ public class CombatWeaponryPlus extends JavaPlugin {
         ItemStack item = new ItemStack(Material.GOLDEN_SWORD);
         ItemMeta meta = item.getItemMeta();
         ArrayList<String> lore = new ArrayList<String>();
+
         lore.add(TextUtil.convertLegacyToSection(config.getString("LongswordDescription.line1")));
         lore.add(TextUtil.convertLegacyToSection(config.getString("LongswordDescription.line2")));
         lore.add(TextUtil.convertLegacyToSection(config.getString("LongswordDescription.line3")));
         lore.add(TextUtil.convertLegacyToSection(config.getString("LongswordDescription.line4")));
         lore.add(TextUtil.convertLegacyToSection(config.getString("LongswordDescription.line5")));
+
         lore.add(TextUtil.convertLegacyToSection(config.getString("dGoldenLongsword.line6")));
         lore.add(TextUtil.convertLegacyToSection(config.getString("dGoldenLongsword.line7")));
         lore.add(TextUtil.convertLegacyToSection(config.getString("dGoldenLongsword.line8")));
