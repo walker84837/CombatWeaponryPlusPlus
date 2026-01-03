@@ -2,6 +2,7 @@ package org.winlogon.combatweaponryplus.recipes.registry;
 
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
+import net.kyori.adventure.text.minimessage.MiniMessage;
 import net.md_5.bungee.api.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.NamespacedKey;
@@ -21,6 +22,7 @@ import org.winlogon.combatweaponryplus.util.RecipeUtil;
 public class EmeraldRecipes implements RecipeGroupRegistrar {
     // TODO: get this from somewhere eventually
     private ConfigHelper config;
+    private final MiniMessage mm = MiniMessage.miniMessage();
 
     private EmeraldRecipes() { }
 
@@ -108,14 +110,24 @@ public class EmeraldRecipes implements RecipeGroupRegistrar {
 
     // Emerald Gear
     private ShapedRecipe emeraldPickaxe() {
-        var b = new ItemBuilder<>(Material.GOLDEN_PICKAXE)
-                .name("Emerald Pickaxe")
+        var builder = new ItemBuilder<>(Material.GOLDEN_PICKAXE)
+                .name(Component.text("Emerald Pickaxe"))
                 .customModelData(true);
 
-        RecipeUtil.applyConfiguredEnchantments("EmeraldGear", b);
-        var item = b.build();
+        RecipeUtil.applyConfiguredEnchantments("EmeraldGear", builder);
 
-        return RecipeUtil.createShapedRecipe("emerald_pickaxe", item, new String[]{"EEE", " S ", " S "}, 'E', Material.EMERALD, 'S', Material.STICK);
+        var item = builder.build();
+
+        return RecipeUtil.createShapedRecipe(
+                "emerald_pickaxe",
+                item, new String[] {
+                    "EEE",
+                    " S ",
+                    " S "
+                },
+                'E', Material.EMERALD,
+                'S', Material.STICK
+        );
     }
 
     private ShapedRecipe emeraldSword() {
@@ -144,19 +156,29 @@ public class EmeraldRecipes implements RecipeGroupRegistrar {
     }
 
     private ShapedRecipe emeraldAxe() {
-        var b = new ItemBuilder(Material.GOLDEN_AXE)
-                .name("Emerald Axe")
+        var builder = new ItemBuilder<>(Material.GOLDEN_AXE)
+                .name(mm.deserialize("<green>Emerald Axe"))
                 .customModelData(true);
 
-        RecipeUtil.applyConfiguredEnchantments("EmeraldGear", b);
+        RecipeUtil.applyConfiguredEnchantments("EmeraldGear", builder);
 
-        var item = b.build();
-        return RecipeUtil.createShapedRecipe("emerald_axe", item, new String[]{"EE ", "ES ", " S "}, 'E', Material.EMERALD, 'S', Material.STICK);
+        ItemStack item = builder.build();
+
+        return RecipeUtil.createShapedRecipe(
+            "emerald_axe",
+            item, new String[] {
+                "EE ",
+                "ES ",
+                " S "
+            },
+            'E', Material.EMERALD,
+            'S', Material.STICK
+        );
     }
 
     private ShapedRecipe emeraldShovel() {
-        var b = new ItemBuilder(Material.GOLDEN_SHOVEL)
-                .name("Emerald Shovel")
+        var b = new ItemBuilder<>(Material.GOLDEN_SHOVEL)
+                .name(mm.deserialize("<green>Emerald Shovel"))
                 .customModelData(true);
 
         RecipeUtil.applyConfiguredEnchantments("EmeraldGear", b);
@@ -166,7 +188,7 @@ public class EmeraldRecipes implements RecipeGroupRegistrar {
     }
 
     private ShapedRecipe emeraldHoe() {
-        var b = new ItemBuilder(Material.GOLDEN_HOE)
+        var b = new ItemBuilder<>(Material.GOLDEN_HOE)
                 .name("Emerald Hoe")
                 .customModelData(true);
 

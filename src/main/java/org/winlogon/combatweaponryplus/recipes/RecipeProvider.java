@@ -195,32 +195,30 @@ public class RecipeProvider {
 
     // Chorus Blade
     private ShapedRecipe getChorusBladeRecipe() {
-        List<String> lore = new ArrayList<>();
-        for (int i = 1; i <= 9; i++) {
-            lore.add(config.getString("dChorusBlade.line" + i, ""));
-        }
-
         ItemStack item = new WeaponBuilder(Material.IRON_SWORD, config)
                 .withConfiguredDamage("aChorusBlade.damage", 4.0, ConfigValueOperation.SUBTRACT, 1.0)
                 .withConfiguredSpeed("aChorusBlade.speed", 10.0, ConfigValueOperation.SUBTRACT, 4.0)
                 .name(config.getString("dChorusBlade.name", "Chorus Blade"))
-                .lore(lore)
+                .loreConfigRange(config, "dChorusBlade", 1, 9)
                 .customModelData(true)
                 .hideFlags(true)
                 .build();
 
         if (config.isEnabled("EnchantsChorusBlade")) {
-            int unbreaking = config.getInt("ChorusEnchantLevels.Unbreaking", 0);
-            int knockback = config.getInt("ChorusEnchantLevels.Knockback", 0);
+            int unbreaking = config.getInt("ChorusEnchantLevels.Unbreaking");
+            int knockback = config.getInt("ChorusEnchantLevels.Knockback");
             item.addUnsafeEnchantment(Enchantment.UNBREAKING, unbreaking);
             item.addUnsafeEnchantment(Enchantment.KNOCKBACK, knockback);
         }
-        return RecipeUtil.createShapedRecipe("chorusblade", item, new String[]{" E ", "PCP", "qBq"},
+
+        return RecipeUtil.createShapedRecipe("chorusblade", item,
+                new String[]{" E ", "PCP", "qBq"},
                 'E', Material.END_ROD,
                 'P', Material.ENDER_EYE,
                 'C', Material.CHORUS_FLOWER,
                 'B', Material.BLAZE_ROD,
-                'q', Material.END_CRYSTAL);
+                'q', Material.END_CRYSTAL
+        );
     }
 
     // Sword Bows
@@ -241,6 +239,7 @@ public class RecipeProvider {
             item.addUnsafeEnchantment(Enchantment.UNBREAKING, unbreaking);
             item.addUnsafeEnchantment(Enchantment.MENDING, mending);
         }
+
         return RecipeUtil.createShapedRecipe("sword_bow", item, new String[]{"ISs", "SCs", "ISs"},
                 'S', Material.STICK,
                 's', Material.STRING,
@@ -249,76 +248,69 @@ public class RecipeProvider {
     }
 
     private ShapedRecipe getHeavySwordBowRecipe() {
-        double moveSpeed = config.getDouble("aHeavySwordBow.moveSpeed", -0.05);
-        double offhandMoveSpeed = config.getDouble("aHeavySwordBow.offhandMoveSpeed", -0.05);
-        double knockbackResistance = config.getDouble("aHeavySwordBow.KBResist", 0.5) / 10.0;
-        double offhandKnockbackResistance = config.getDouble("aHeavySwordBow.offhandKBResist", 0.5) / 10.0;
+        var attributeRoot = "aHeavySwordBow";
+        double moveSpeed = config.getDouble(attributeRoot + ".moveSpeed", -0.05);
+        double offhandMoveSpeed = config.getDouble(attributeRoot + ".offhandMoveSpeed", -0.05);
+        double knockbackResistance = config.getDouble(attributeRoot + ".KBResist", 0.5) / 10.0;
+        double offhandKnockbackResistance = config.getDouble(attributeRoot + ".offhandKBResist", 0.5) / 10.0;
 
-        List<String> lore = new ArrayList<>();
-        lore.add(config.getString("dHeavySwordBow.line1", ""));
-        lore.add(config.getString("dHeavySwordBow.line2", ""));
-        lore.add(config.getString("dHeavySwordBow.line3", ""));
-
-        ItemBuilder builder = new WeaponBuilder(Material.BOW, config)
-                .withConfiguredDamage("aHeavySwordBow.damage", 11.0, ConfigValueOperation.SUBTRACT, 1.0)
-                .withConfiguredSpeed("aHeavySwordBow.speed", 0.8, ConfigValueOperation.SUBTRACT, 4.0)
+        ItemStack item = new ItemBuilder<>(Material.BOW)
                 .name(config.getString("dHeavySwordBow.name", "Heavy Sword Bow"))
-                .lore(lore)
+                .loreConfigRange(config, "dHeavySwordBow", 1, 3)
                 .customModelData(true)
                 .attribute(Attribute.MOVEMENT_SPEED, moveSpeed, AttributeModifier.Operation.ADD_NUMBER, EquipmentSlotGroup.HAND)
                 .attribute(Attribute.MOVEMENT_SPEED, offhandMoveSpeed, AttributeModifier.Operation.ADD_NUMBER, EquipmentSlotGroup.OFFHAND)
                 .attribute(Attribute.KNOCKBACK_RESISTANCE, knockbackResistance, AttributeModifier.Operation.ADD_NUMBER, EquipmentSlotGroup.HAND)
-                .attribute(Attribute.KNOCKBACK_RESISTANCE, offhandKnockbackResistance, AttributeModifier.Operation.ADD_NUMBER, EquipmentSlotGroup.OFFHAND);
-
-        ItemStack item = builder.build();
+                .attribute(Attribute.KNOCKBACK_RESISTANCE, offhandKnockbackResistance, AttributeModifier.Operation.ADD_NUMBER, EquipmentSlotGroup.OFFHAND)
+                .build();
 
         if (config.isEnabled("EnchantsHeavySwordBow")) {
-            int power = config.getInt("HSbowEnchantLevels.Power", 0);
-            int unbreaking = config.getInt("HSbowEnchantLevels.Unbreaking", 0);
-            int smite = config.getInt("HSbowEnchantLevels.Smite", 0);
-            int mending = config.getInt("HSbowEnchantLevels.Mending", 0);
-            item.addUnsafeEnchantment(Enchantment.POWER, power);
-            item.addUnsafeEnchantment(Enchantment.UNBREAKING, unbreaking);
-            item.addUnsafeEnchantment(Enchantment.SMITE, smite);
-            item.addUnsafeEnchantment(Enchantment.MENDING, mending);
+            var root = "HSbowEnchantLevels";
+            item.addUnsafeEnchantment(Enchantment.POWER, config.getInt(root + ".Power"));
+            item.addUnsafeEnchantment(Enchantment.UNBREAKING, config.getInt(root + ".Unbreaking"));
+            item.addUnsafeEnchantment(Enchantment.SMITE, config.getInt(root + ".Smite"));
+            item.addUnsafeEnchantment(Enchantment.MENDING, config.getInt(root + ".Mending"));
         }
-        return RecipeUtil.createShapedRecipe("heavy_sword_bow", item, new String[]{"ISs", "SCs", "ISs"},
-                'S', Material.STICK,
-                's', Material.CHAIN,
-                'I', Material.NETHERITE_SCRAP,
-                'C', Material.NETHERITE_SWORD);
+
+        return RecipeUtil.createShapedRecipe("heavy_sword_bow", item,
+            new String[]{"ISs", "SCs", "ISs"},
+            'S', Material.STICK,
+            's', Material.CHAIN,
+            'I', Material.NETHERITE_SCRAP,
+            'C', Material.NETHERITE_SWORD
+        );
     }
 
     // Chainmail
     private ShapedRecipe getChainmailHelmetRecipe() {
-        ItemStack item = new ItemBuilder(Material.CHAINMAIL_HELMET).build();
+        ItemStack item = new ItemBuilder<>(Material.CHAINMAIL_HELMET).build();
         return RecipeUtil.createShapedRecipe("chainmail_helmet", item, new String[]{"CCC", "C C", "   "}, 'C', Material.CHAIN);
     }
 
     private ShapedRecipe getChainmailChestplateRecipe() {
-        ItemStack item = new ItemBuilder(Material.CHAINMAIL_CHESTPLATE).build();
+        ItemStack item = new ItemBuilder<>(Material.CHAINMAIL_CHESTPLATE).build();
         return RecipeUtil.createShapedRecipe("chainmail_chestplate", item, new String[]{"C C", "CCC", "CCC"}, 'C', Material.CHAIN);
     }
 
     private ShapedRecipe getChainmailLeggingsRecipe() {
-        ItemStack item = new ItemBuilder(Material.CHAINMAIL_LEGGINGS).build();
+        ItemStack item = new ItemBuilder<>(Material.CHAINMAIL_LEGGINGS).build();
         return RecipeUtil.createShapedRecipe("chainmail_leggings", item, new String[]{"CCC", "C C", "C C"}, 'C', Material.CHAIN);
     }
 
     private ShapedRecipe getChainmailBootsRecipe() {
-        ItemStack item = new ItemBuilder(Material.CHAINMAIL_BOOTS).build();
+        ItemStack item = new ItemBuilder<>(Material.CHAINMAIL_BOOTS).build();
         return RecipeUtil.createShapedRecipe("chainmail_boots", item, new String[]{"   ", "C C", "C C"}, 'C', Material.CHAIN);
     }
 
     // Plated Chainmail
     private ShapedRecipe getPlatedChainmailHelmetRecipe() {
         double def = config.getDouble("aPlateChainHelmet.Armor", 4.0);
-        ItemBuilder builder = new ItemBuilder(Material.IRON_HELMET)
+        var builder = new ItemBuilder<>(Material.IRON_HELMET)
                 .name("Plated Chainmail Helmet")
                 .unbreakable(true)
                 .attribute(Attribute.ARMOR, def, AttributeModifier.Operation.ADD_NUMBER, EquipmentSlotGroup.HEAD);
 
-        ItemStack item = builder.build(); // Build the item once
+        ItemStack item = builder.build();
 
         if (config.isEnabled("EnchantsPlatedChainmail")) {
             int unbreaking = config.getInt("PChainEnchantLevels.Unbreaking", 0);
@@ -329,7 +321,7 @@ public class RecipeProvider {
 
     private ShapedRecipe getPlatedChainmailChestplateRecipe() {
         double def = config.getDouble("aPlateChainChestplate.Armor", 6.0);
-        var builder = new ItemBuilder(Material.IRON_CHESTPLATE)
+        var builder = new ItemBuilder<>(Material.IRON_CHESTPLATE)
                 .name("Plated Chainmail Chestplate")
                 .unbreakable(true)
                 .attribute(Attribute.ARMOR, def, AttributeModifier.Operation.ADD_NUMBER, EquipmentSlotGroup.CHEST);
@@ -345,7 +337,7 @@ public class RecipeProvider {
 
     private ShapedRecipe getPlatedChainmailLeggingsRecipe() {
         double def = config.getDouble("aPlateChainLeggings.Armor", 6.0);
-        var builder = new ItemBuilder(Material.IRON_LEGGINGS)
+        var builder = new ItemBuilder<>(Material.IRON_LEGGINGS)
                 .name("Plated Chainmail Leggings")
                 .unbreakable(true)
                 .attribute(Attribute.ARMOR, def, AttributeModifier.Operation.ADD_NUMBER, EquipmentSlotGroup.LEGS);
@@ -361,7 +353,7 @@ public class RecipeProvider {
 
     private ShapedRecipe getPlatedChainmailBootsRecipe() {
         double def = config.getDouble("aPlateChainBoots.Armor", 4.0);
-        ItemBuilder builder = new ItemBuilder(Material.IRON_BOOTS)
+        var builder = new ItemBuilder<>(Material.IRON_BOOTS)
                 .name("Plated Chainmail Boots")
                 .unbreakable(true)
                 .attribute(Attribute.ARMOR, def, AttributeModifier.Operation.ADD_NUMBER, EquipmentSlotGroup.FEET);
@@ -377,7 +369,7 @@ public class RecipeProvider {
 
     // Charms
     private ShapedRecipe getFeatherCharmRecipe() {
-        ItemStack item = new ItemBuilder(Material.RABBIT_FOOT)
+        ItemStack item = new ItemBuilder<>(Material.RABBIT_FOOT)
                 .name("Feather Charm")
                 .lore("Prevents fall damage")
                 .customModelData(true)
@@ -389,7 +381,7 @@ public class RecipeProvider {
         double health = config.getDouble("aEmeraldCharm.BonusHealth", 4.0);
         double armor = config.getDouble("aEmeraldCharm.BonusArmor", -2.0);
 
-        ItemStack item = new ItemBuilder(Material.EMERALD)
+        ItemStack item = new ItemBuilder<>(Material.EMERALD)
                 .name("Emerald Charm")
                 .lore("Grants Luck")
                 .customModelData(true)
@@ -403,7 +395,7 @@ public class RecipeProvider {
         double damage = config.getDouble("aBlazeCharm.BonusDamage", 4.0);
         double health = config.getDouble("aBlazeCharm.BonusHealth", -2.0);
 
-        ItemStack item = new ItemBuilder(Material.BLAZE_ROD)
+        ItemStack item = new ItemBuilder<>(Material.BLAZE_ROD)
                 .name("Blaze Charm")
                 .lore("Grants Fire Resistance")
                 .customModelData(true)
@@ -417,7 +409,7 @@ public class RecipeProvider {
         double attackSpeed = config.getDouble("aGoldCharm.BonusAttackSpeedPercent", 30.0) / 100.0;
         double moveSpeed = config.getDouble("aGoldCharm.BonusMoveSpeedPercent", -15.0) / 100.0;
 
-        ItemStack item = new ItemBuilder(Material.GOLD_INGOT)
+        ItemStack item = new ItemBuilder<>(Material.GOLD_INGOT)
                 .name("Gold Charm")
                 .lore("Grants Haste")
                 .customModelData(true)
@@ -428,7 +420,7 @@ public class RecipeProvider {
     }
 
     private ShapedRecipe getStarCharmRecipe() {
-        ItemStack item = new ItemBuilder(Material.NETHER_STAR)
+        ItemStack item = new ItemBuilder<>(Material.NETHER_STAR)
                 .name("Star Charm")
                 .lore("Grants Regeneration")
                 .customModelData(true)
@@ -437,7 +429,7 @@ public class RecipeProvider {
     }
 
     private ShapedRecipe getFrostCharmRecipe() {
-        ItemStack item = new ItemBuilder(Material.ICE)
+        ItemStack item = new ItemBuilder<>(Material.ICE)
                 .name("Frost Charm")
                 .lore("Grants Slowness to nearby enemies")
                 .customModelData(true)
@@ -578,7 +570,7 @@ public class RecipeProvider {
         lore.add(config.getString("dObsidianPickaxe.line2", ""));
         lore.add(config.getString("dObsidianPickaxe.line3", ""));
 
-        ItemStack item = new ItemBuilder(Material.NETHERITE_PICKAXE)
+        ItemStack item = new ItemBuilder<>(Material.NETHERITE_PICKAXE)
                 .name(config.getString("dObsidianPickaxe.name", "Obsidian Pickaxe"))
                 .lore(lore)
                 .customModelData(true)
@@ -1326,7 +1318,7 @@ public class RecipeProvider {
         double kbr = config.getDouble("aPrismarineHelmet.KBResist", 0.1);
         double hp = config.getDouble("aPrismarineHelmet.BonusHealth", 1.0);
 
-        ItemStack item = new ItemBuilder(Material.NETHERITE_HELMET)
+        ItemStack item = new ItemBuilder<>(Material.NETHERITE_HELMET)
                 .name("Prismarine Helmet")
                 .customModelData(true)
                 .attribute(Attribute.ARMOR, arm, AttributeModifier.Operation.ADD_NUMBER, EquipmentSlotGroup.HEAD)
@@ -1343,7 +1335,7 @@ public class RecipeProvider {
         double kbr = config.getDouble("aPrismarineChestplate.KBResist", 0.1);
         double hp = config.getDouble("aPrismarineChestplate.BonusHealth", 2.0);
 
-        ItemStack item = new ItemBuilder(Material.NETHERITE_CHESTPLATE)
+        ItemStack item = new ItemBuilder<>(Material.NETHERITE_CHESTPLATE)
                 .name("Prismarine Chestplate")
                 .customModelData(true)
                 .attribute(Attribute.ARMOR, arm, AttributeModifier.Operation.ADD_NUMBER, EquipmentSlotGroup.CHEST)
@@ -1360,7 +1352,7 @@ public class RecipeProvider {
         double kbr = config.getDouble("aPrismarineLeggings.KBResist", 0.1);
         double hp = config.getDouble("aPrismarineLeggings.BonusHealth", 2.0);
 
-        ItemStack item = new ItemBuilder(Material.NETHERITE_LEGGINGS)
+        ItemStack item = new ItemBuilder<>(Material.NETHERITE_LEGGINGS)
                 .name("Prismarine Leggings")
                 .customModelData(true)
                 .attribute(Attribute.ARMOR, arm, AttributeModifier.Operation.ADD_NUMBER, EquipmentSlotGroup.LEGS)
@@ -1377,7 +1369,7 @@ public class RecipeProvider {
         double kbr = config.getDouble("aPrismarineBoots.KBResist", 0.1);
         double hp = config.getDouble("aPrismarineBoots.BonusHealth", 1.0);
 
-        ItemStack item = new ItemBuilder(Material.NETHERITE_BOOTS)
+        ItemStack item = new ItemBuilder<>(Material.NETHERITE_BOOTS)
                 .name("Prismarine Boots")
                 .customModelData(true)
                 .attribute(Attribute.ARMOR, arm, AttributeModifier.Operation.ADD_NUMBER, EquipmentSlotGroup.FEET)
@@ -1390,7 +1382,7 @@ public class RecipeProvider {
 
     // Bows
     private ShapedRecipe getLongBowRecipe() {
-        ItemStack item = new ItemBuilder(Material.BOW)
+        ItemStack item = new ItemBuilder<>(Material.BOW)
                 .name(config.getString("dLongBow.name", "Long Bow"))
                 .customModelData(true)
                 .build();
@@ -1398,7 +1390,7 @@ public class RecipeProvider {
     }
 
     private ShapedRecipe getRecurveBowRecipe() {
-        ItemStack item = new ItemBuilder(Material.BOW)
+        ItemStack item = new ItemBuilder<>(Material.BOW)
                 .name(config.getString("dRecurveBow.name", "Recurve Bow"))
                 .customModelData(true)
                 .build();
@@ -1406,7 +1398,7 @@ public class RecipeProvider {
     }
 
     private ShapedRecipe getCompoundBowRecipe() {
-        ItemStack item = new ItemBuilder(Material.BOW)
+        ItemStack item = new ItemBuilder<>(Material.BOW)
                 .name(config.getString("dCompoundBow.name", "Compound Bow"))
                 .customModelData(true)
                 .build();
@@ -1415,7 +1407,7 @@ public class RecipeProvider {
 
     // Elytra
     private ShapedRecipe getEelytraRecipe() {
-        ItemStack item = new ItemBuilder(Material.ELYTRA)
+        ItemStack item = new ItemBuilder<>(Material.ELYTRA)
                 .name(config.getString("dEelytra.name", "Eelytra"))
                 .customModelData(true)
                 .build();
@@ -1423,7 +1415,7 @@ public class RecipeProvider {
     }
 
     private ShapedRecipe getJumpElytraRecipe() {
-        ItemStack item = new ItemBuilder(Material.ELYTRA)
+        ItemStack item = new ItemBuilder<>(Material.ELYTRA)
                 .name(config.getString("dJumpElytra.name", "Jump Elytra"))
                 .customModelData(true)
                 .build();
@@ -1598,7 +1590,7 @@ public class RecipeProvider {
 
     // Shields
     private ShapedRecipe getDiamondShieldRecipe() {
-        ItemStack item = new ItemBuilder(Material.SHIELD)
+        ItemStack item = new ItemBuilder<>(Material.SHIELD)
                 .name("Diamond Shield")
                 .customModelData(true)
                 .build();
@@ -1606,7 +1598,7 @@ public class RecipeProvider {
     }
 
     private ShapedRecipe getNetheriteShieldRecipe() {
-        ItemStack item = new ItemBuilder(Material.SHIELD)
+        ItemStack item = new ItemBuilder<>(Material.SHIELD)
                 .name("Netherite Shield")
                 .customModelData(true)
                 .build();
@@ -1616,7 +1608,7 @@ public class RecipeProvider {
 
     // Crossbows
     private ShapedRecipe getRepeatingCrossbowRecipe() {
-        ItemStack item = new ItemBuilder(Material.CROSSBOW)
+        ItemStack item = new ItemBuilder<>(Material.CROSSBOW)
                 .name(config.getString("dRepeatingCrossbow.name", "Repeating Crossbow"))
                 .customModelData(true)
                 .build();
@@ -1624,7 +1616,7 @@ public class RecipeProvider {
     }
 
     private ShapedRecipe getBurstCrossbowRecipe() {
-        ItemStack item = new ItemBuilder(Material.CROSSBOW)
+        ItemStack item = new ItemBuilder<>(Material.CROSSBOW)
                 .name(config.getString("dBurstCrossbow.name", "Burst Crossbow"))
                 .customModelData(true)
                 .build();
@@ -1633,7 +1625,7 @@ public class RecipeProvider {
 
     // Other
     private ShapedRecipe getRedPlateRecipe() {
-        ItemStack item = new ItemBuilder(Material.IRON_CHESTPLATE)
+        ItemStack item = new ItemBuilder<>(Material.IRON_CHESTPLATE)
                 .name("Redstone Core")
                 .customModelData(true)
                 .build();
@@ -1674,7 +1666,7 @@ public class RecipeProvider {
         double kbr = config.getDouble("aWitherChestplate.KBResist", 2.0);
         double hp = config.getDouble("aWitherChestplate.BonusHealth", 5.0);
 
-        ItemStack item = new ItemBuilder(Material.NETHERITE_CHESTPLATE)
+        ItemStack item = new ItemBuilder<>(Material.NETHERITE_CHESTPLATE)
                 .name("Wither Chestplate")
                 .customModelData(true)
                 .attribute(Attribute.KNOCKBACK_RESISTANCE, kbr, AttributeModifier.Operation.ADD_NUMBER, EquipmentSlotGroup.CHEST)
@@ -1687,7 +1679,7 @@ public class RecipeProvider {
         double kbr = config.getDouble("aWitherLeggings.KBResist", 2.0);
         double hp = config.getDouble("aWitherLeggings.BonusHealth", 5.0);
 
-        ItemStack item = new ItemBuilder(Material.NETHERITE_LEGGINGS)
+        ItemStack item = new ItemBuilder<>(Material.NETHERITE_LEGGINGS)
                 .name("Wither Leggings")
                 .customModelData(true)
                 .attribute(Attribute.KNOCKBACK_RESISTANCE, kbr, AttributeModifier.Operation.ADD_NUMBER, EquipmentSlotGroup.LEGS)
@@ -1700,7 +1692,7 @@ public class RecipeProvider {
         double kbr = config.getDouble("aWitherBoots.KBResist", 2.0);
         double hp = config.getDouble("aWitherBoots.BonusHealth", 5.0);
 
-        ItemStack item = new ItemBuilder(Material.NETHERITE_BOOTS)
+        ItemStack item = new ItemBuilder<>(Material.NETHERITE_BOOTS)
                 .name("Wither Boots")
                 .customModelData(true)
                 .attribute(Attribute.KNOCKBACK_RESISTANCE, kbr, AttributeModifier.Operation.ADD_NUMBER, EquipmentSlotGroup.FEET)

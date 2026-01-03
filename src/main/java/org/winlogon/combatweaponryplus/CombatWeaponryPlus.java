@@ -1,7 +1,6 @@
 package org.winlogon.combatweaponryplus;
 
 import net.kyori.adventure.text.Component;
-import net.kyori.adventure.text.format.NamedTextColor;
 import net.kyori.adventure.text.format.TextDecoration;
 import net.kyori.adventure.text.minimessage.MiniMessage;
 import net.md_5.bungee.api.ChatColor;
@@ -30,8 +29,8 @@ import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.scheduler.BukkitRunnable;
 import org.bukkit.util.Vector;
-import org.winlogon.combatweaponryplus.items.builders.ItemBuilder;
 import org.winlogon.combatweaponryplus.items.builders.WeaponBuilder;
+import org.winlogon.combatweaponryplus.recipes.RecipeProvider;
 import org.winlogon.combatweaponryplus.util.AttributeModifierUtil;
 import org.winlogon.combatweaponryplus.util.ConfigHelper;
 import org.winlogon.combatweaponryplus.util.ConfigValueOperation;
@@ -44,7 +43,7 @@ import java.util.Random;
 import java.util.UUID;
 
 public class CombatWeaponryPlus extends JavaPlugin {
-    public List<NamespacedKey> keys = new ArrayList<NamespacedKey>();
+    public List<NamespacedKey> keys = new ArrayList<>();
 
     private Random rand = new Random();
     private FileConfiguration config;
@@ -53,10 +52,6 @@ public class CombatWeaponryPlus extends JavaPlugin {
     private MiniMessage mm = MiniMessage.miniMessage();
     private RetroHue rh = new RetroHue(mm);
 
-    public int getRandomInt(int max) {
-        return rand.nextInt(max);
-    }
-
     private static CombatWeaponryPlus instance;
 
     public static CombatWeaponryPlus getInstance() {
@@ -64,9 +59,12 @@ public class CombatWeaponryPlus extends JavaPlugin {
     }
 
     @Override
-    public void onEnable() {
+    public void onLoad() {
         instance = this;
+    }
 
+    @Override
+    public void onEnable() {
         var cooldown = new Cooldown();
 
         this.configHelper = new ConfigHelper(getConfig());
@@ -77,7 +75,7 @@ public class CombatWeaponryPlus extends JavaPlugin {
         getServer().getPluginManager().registerEvents(serverListeners, this);
         saveDefaultConfig();
 
-        var recipeProvider = new org.winlogon.combatweaponryplus.recipes.RecipeProvider(this, this.configHelper);
+        var recipeProvider = new RecipeProvider(this, this.configHelper);
         recipeProvider.registerRecipes();
     }
 
@@ -86,250 +84,7 @@ public class CombatWeaponryPlus extends JavaPlugin {
         // config = null;
     }
 
-    public ShapedRecipe getPickaxeRecipe() {
-        var builder = new ItemBuilder(Material.GOLDEN_PICKAXE)
-            .name(Component.text("Emerald Pickaxe", NamedTextColor.DARK_GREEN));
 
-        if (config.getBoolean("EnchantsOnEmeraldGear")) {
-            int num = config.getInt("EmeraldGearEnchantLevels.Unbreaking");
-            int num2 = config.getInt("EmeraldGearEnchantLevels.Mending");
-            builder.enchant(Enchantment.UNBREAKING, num);
-            builder.enchant(Enchantment.MENDING, num2);
-        }
-        builder.customModelData(true);
-
-        var item = builder.build();
-
-        var key = new NamespacedKey(this, "emerald_pickaxe");
-        this.keys.add(key);
-        var recipe = new ShapedRecipe(key, item);
-        recipe.shape(new String[]{"EEE", " S ", " S "});
-        recipe.setIngredient('E', Material.EMERALD);
-        recipe.setIngredient('S', Material.STICK);
-        return recipe;
-    }
-
-    public ShapedRecipe getAxeRecipe() {
-        ItemStack item = new ItemStack(Material.GOLDEN_AXE);
-        ItemMeta meta = item.getItemMeta();
-        meta.displayName(Component.text("Emerald Axe", NamedTextColor.DARK_GREEN));
-        if (config.getBoolean("EnchantsOnEmeraldGear")) {
-            int num = config.getInt("EmeraldGearEnchantLevels.Unbreaking");
-            int num2 = config.getInt("EmeraldGearEnchantLevels.Mending");
-            meta.addEnchant(Enchantment.UNBREAKING, num, true);
-            meta.addEnchant(Enchantment.MENDING, num2, true);
-        }
-        meta.setCustomModelData(1000001);
-        item.setItemMeta(meta);
-        NamespacedKey key = new NamespacedKey(this, "emerald_axe");
-        this.keys.add(key);
-        ShapedRecipe recipe = new ShapedRecipe(key, item);
-        recipe.shape(new String[]{"EE ", "ES ", " S "});
-        recipe.setIngredient('E', Material.EMERALD);
-        recipe.setIngredient('S', Material.STICK);
-        return recipe;
-    }
-
-    public ShapedRecipe getShovelRecipe() {
-        ItemStack item = new ItemStack(Material.GOLDEN_SHOVEL);
-        ItemMeta meta = item.getItemMeta();
-        meta.displayName(Component.text("Emerald Shovel", NamedTextColor.DARK_GREEN));
-        if (config.getBoolean("EnchantsOnEmeraldGear")) {
-            int num = config.getInt("EmeraldGearEnchantLevels.Unbreaking");
-            int num2 = config.getInt("EmeraldGearEnchantLevels.Mending");
-            meta.addEnchant(Enchantment.UNBREAKING, num, true);
-            meta.addEnchant(Enchantment.MENDING, num2, true);
-        }
-        meta.setCustomModelData(1000001);
-        item.setItemMeta(meta);
-        NamespacedKey key = new NamespacedKey(this, "emerald_shovel");
-        this.keys.add(key);
-        ShapedRecipe recipe = new ShapedRecipe(key, item);
-        recipe.shape(new String[]{" E ", " S ", " S "});
-        recipe.setIngredient('E', Material.EMERALD);
-        recipe.setIngredient('S', Material.STICK);
-        return recipe;
-    }
-
-    public ShapedRecipe getHoeRecipe() {
-        ItemStack item = new ItemStack(Material.GOLDEN_HOE);
-        ItemMeta meta = item.getItemMeta();
-        meta.displayName(Component.text("Emerald Hoe", NamedTextColor.DARK_GREEN));
-        if (config.getBoolean("EnchantsOnEmeraldGear")) {
-            int num = config.getInt("EmeraldGearEnchantLevels.Unbreaking");
-            int num2 = config.getInt("EmeraldGearEnchantLevels.Mending");
-            meta.addEnchant(Enchantment.UNBREAKING, num, true);
-            meta.addEnchant(Enchantment.MENDING, num2, true);
-        }
-        meta.setCustomModelData(1000001);
-        item.setItemMeta(meta);
-        NamespacedKey key = new NamespacedKey(this, "emerald_hoe");
-        this.keys.add(key);
-        ShapedRecipe recipe = new ShapedRecipe(key, item);
-        recipe.shape(new String[]{"EE ", " S ", " S "});
-        recipe.setIngredient('E', Material.EMERALD);
-        recipe.setIngredient('S', Material.STICK);
-        return recipe;
-    }
-
-    public ShapedRecipe getSworddRecipe() {
-        var item = new ItemStack(Material.IRON_SWORD);
-        var meta = item.getItemMeta();
-
-        TextUtil.convertLegacyToSectionWithConfig("dChorusBlade.name", config).ifPresent(meta::setDisplayName);
-
-        if (config.getBoolean("EnchantsChorusBlade")) {
-            int num = config.getInt("ChorusEnchantLevels.Unbreaking");
-            int num2 = config.getInt("ChorusEnchantLevels.Knockback");
-            meta.addEnchant(Enchantment.UNBREAKING, num, true);
-            meta.addEnchant(Enchantment.KNOCKBACK, num2, true);
-        }
-        List<Component> lore = new ArrayList<Component>();
-
-        for (int i = 1; i <= 9; i++) {
-            lore.add(TextUtil.convertLegacyToComponent(config.getString("dChorusBlade.line" + i)));
-        }
-        meta.addItemFlags(new ItemFlag[]{ItemFlag.HIDE_ATTRIBUTES});
-        meta.lore(lore);
-        double dmg = 3.0;
-        double spd = 6.0;
-
-        if (config.getBoolean("UseCustomValues")) {
-            dmg = config.getDouble("aChorusBlade.damage") - 1.0;
-            spd = config.getDouble("aChorusBlade.speed") - 4.0;
-        }
-
-        var attackSpeedModifier = AttributeModifierUtil.createAttributeModifier(Attribute.ATTACK_SPEED, spd, AttributeModifier.Operation.ADD_NUMBER, EquipmentSlotGroup.HAND);
-        meta.addAttributeModifier(Attribute.ATTACK_SPEED, attackSpeedModifier);
-
-        var attackDamageModifier = AttributeModifierUtil.createAttributeModifier(Attribute.ATTACK_DAMAGE, dmg, AttributeModifier.Operation.ADD_NUMBER, EquipmentSlotGroup.HAND);
-        meta.addAttributeModifier(Attribute.ATTACK_DAMAGE, attackDamageModifier);
-
-        meta.addItemFlags(new ItemFlag[]{ItemFlag.HIDE_ATTRIBUTES});
-        meta.setCustomModelData(1000007);
-        item.setItemMeta(meta);
-        NamespacedKey key = new NamespacedKey(this, "chorusblade");
-        this.keys.add(key);
-        ShapedRecipe recipe = new ShapedRecipe(key, item);
-        recipe.shape(new String[]{" E ", "PCP", "qBq"});
-        recipe.setIngredient('E', Material.END_ROD);
-        recipe.setIngredient('P', Material.ENDER_EYE);
-        recipe.setIngredient('C', Material.CHORUS_FLOWER);
-        recipe.setIngredient('B', Material.BLAZE_ROD);
-        recipe.setIngredient('q', Material.END_CRYSTAL);
-        return recipe;
-    }
-
-    public ShapedRecipe getSwordbowRecipe() {
-        ItemStack item = new ItemStack(Material.BOW);
-        ItemMeta meta = item.getItemMeta();
-        meta.setDisplayName(TextUtil.convertLegacyToSection(config.getString("dSwordBow.name")));
-        if (config.getBoolean("EnchantsSwordBow")) {
-            int num = config.getInt("SbowEnchantLevels.Smite");
-            int num2 = config.getInt("SbowEnchantLevels.Unbreaking");
-            int num4 = config.getInt("SbowEnchantLevels.Mending");
-            meta.addEnchant(Enchantment.SMITE, num, true);
-            meta.addEnchant(Enchantment.UNBREAKING, num2, true);
-            meta.addEnchant(Enchantment.MENDING, num4, true);
-        }
-        ArrayList<String> lore = new ArrayList<String>();
-        lore.add(TextUtil.convertLegacyToSection(config.getString("dSwordBow.line1")));
-        lore.add(TextUtil.convertLegacyToSection(config.getString("dSwordBow.line2")));
-        lore.add(TextUtil.convertLegacyToSection(config.getString("dSwordBow.line3")));
-        meta.setLore(lore);
-        double dmg = 8.0;
-        double spd = -3.0;
-        if (config.getBoolean("UseCustomValues")) {
-            dmg = config.getDouble("aSwordBow.damage") - 1.0;
-            spd = config.getDouble("aSwordBow.speed") - 4.0;
-        }
-        AttributeModifier modifier = AttributeModifierUtil.createAttributeModifier(Attribute.ATTACK_SPEED, spd, AttributeModifier.Operation.ADD_NUMBER, EquipmentSlotGroup.HAND);
-        meta.addAttributeModifier(Attribute.ATTACK_SPEED, modifier);
-        AttributeModifier modifier2 = AttributeModifierUtil.createAttributeModifier(Attribute.ATTACK_DAMAGE, dmg, AttributeModifier.Operation.ADD_NUMBER, EquipmentSlotGroup.HAND);
-        meta.addAttributeModifier(Attribute.ATTACK_DAMAGE, modifier2);
-        meta.setCustomModelData(1000001);
-        item.setItemMeta(meta);
-        NamespacedKey key = new NamespacedKey(this, "sword_bow");
-        this.keys.add(key);
-        ShapedRecipe recipe = new ShapedRecipe(key, item);
-        recipe.shape(new String[]{"ISs", "SCs", "ISs"});
-        recipe.setIngredient('S', Material.STICK);
-        recipe.setIngredient('s', Material.STRING);
-        recipe.setIngredient('I', Material.IRON_INGOT);
-        recipe.setIngredient('C', Material.IRON_SWORD);
-        return recipe;
-    }
-
-    public ShapedRecipe getHSwordbowRecipe() {
-        ItemStack item = new ItemStack(Material.BOW);
-        ItemMeta meta = item.getItemMeta();
-        meta.setDisplayName(TextUtil.convertLegacyToSection(config.getString("dHeavySwordBow.name")));
-        if (config.getBoolean("EnchantsHeavySwordBow")) {
-            int num = config.getInt("HSbowEnchantLevels.Power");
-            int num2 = config.getInt("HSbowEnchantLevels.Unbreaking");
-            int num3 = config.getInt("HSbowEnchantLevels.Smite");
-            int num4 = config.getInt("HSbowEnchantLevels.Mending");
-            meta.addEnchant(Enchantment.POWER, num, true);
-            meta.addEnchant(Enchantment.UNBREAKING, num2, true);
-            meta.addEnchant(Enchantment.SMITE, num3, true);
-            meta.addEnchant(Enchantment.MENDING, num4, true);
-        }
-        ArrayList<String> lore = new ArrayList<String>();
-        lore.add(TextUtil.convertLegacyToSection(config.getString("dHeavySwordBow.line1")));
-        lore.add(TextUtil.convertLegacyToSection(config.getString("dHeavySwordBow.line2")));
-        lore.add(TextUtil.convertLegacyToSection(config.getString("dHeavySwordBow.line3")));
-        meta.setLore(lore);
-        double dmg = 10.0;
-        double spd = -3.2;
-        double mspd = -0.05;
-        double omspd = -0.05;
-        double kbr = 0.5;
-        double okbr = 0.5;
-        if (config.getBoolean("UseCustomValues")) {
-            dmg = config.getDouble("aHeavySwordBow.damage") - 1.0;
-            spd = config.getDouble("aHeavySwordBow.speed") - 4.0;
-            mspd = config.getDouble("aHeavySwordBow.moveSpeed");
-            omspd = config.getDouble("aHeavySwordBow.offhandMoveSpeed");
-            kbr = config.getDouble("aHeavySwordBow.KBResist") / 10.0;
-            okbr = config.getDouble("aHeavySwordBow.offhandKBResist") / 10.0;
-        }
-
-        AttributeModifier[] modifiers = {
-            AttributeModifierUtil.createAttributeModifier(Attribute.ATTACK_SPEED, spd, AttributeModifier.Operation.ADD_NUMBER, EquipmentSlotGroup.HAND),
-            AttributeModifierUtil.createAttributeModifier(Attribute.ATTACK_DAMAGE, dmg, AttributeModifier.Operation.ADD_NUMBER, EquipmentSlotGroup.HAND),
-            AttributeModifierUtil.createAttributeModifier(Attribute.MOVEMENT_SPEED, mspd, AttributeModifier.Operation.ADD_NUMBER, EquipmentSlotGroup.HAND),
-            AttributeModifierUtil.createAttributeModifier(Attribute.MOVEMENT_SPEED, omspd, AttributeModifier.Operation.ADD_NUMBER, EquipmentSlotGroup.OFFHAND),
-            AttributeModifierUtil.createAttributeModifier(Attribute.KNOCKBACK_RESISTANCE, kbr, AttributeModifier.Operation.ADD_NUMBER, EquipmentSlotGroup.HAND),
-            AttributeModifierUtil.createAttributeModifier(Attribute.KNOCKBACK_RESISTANCE, okbr, AttributeModifier.Operation.ADD_NUMBER, EquipmentSlotGroup.OFFHAND),
-        };
-
-        Attribute[] attributes =  {
-            Attribute.ATTACK_SPEED,
-            Attribute.ATTACK_DAMAGE,
-            Attribute.MOVEMENT_SPEED,
-            Attribute.MOVEMENT_SPEED,
-            Attribute.KNOCKBACK_RESISTANCE,
-            Attribute.KNOCKBACK_RESISTANCE
-        };
-
-        assert modifiers.length == attributes.length : "modifiers and attributes must be the same length";
-
-        for (int i = 0; i < modifiers.length; i++) {
-            meta.addAttributeModifier(attributes[i], modifiers[i]);
-        }
-
-        meta.setCustomModelData(1000002);
-        item.setItemMeta(meta);
-        NamespacedKey key = new NamespacedKey(this, "heavy_sword_bow");
-        this.keys.add(key);
-        ShapedRecipe recipe = new ShapedRecipe(key, item);
-        recipe.shape(new String[]{"ISs", "SCs", "ISs"});
-        recipe.setIngredient('S', Material.STICK);
-        recipe.setIngredient('s', Material.CHAIN);
-        recipe.setIngredient('I', Material.NETHERITE_SCRAP);
-        recipe.setIngredient('C', Material.NETHERITE_SWORD);
-        return recipe;
-    }
 
     public ShapedRecipe getChnHelmetRecipe() {
         ItemStack item = new ItemStack(Material.CHAINMAIL_HELMET);
