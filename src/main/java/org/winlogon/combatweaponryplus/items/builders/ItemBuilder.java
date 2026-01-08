@@ -58,14 +58,15 @@ public class ItemBuilder<Builder extends ItemBuilder<Builder>> {
     /**
      * Sets the display name of the item.
      *
-     * @param name The display name of the item. Must not be null.
+     * @param name The display name of the item.
      * @return This ItemBuilder instance.
      */
     public @NotNull Builder name(@Nullable String name) {
         if (name != null) {
             meta.displayName(Component.text(name));
+        } else {
+            meta.displayName(null);
         }
-        meta.displayName(null);
         return (Builder) this;
     }
     /**
@@ -76,6 +77,16 @@ public class ItemBuilder<Builder extends ItemBuilder<Builder>> {
      */
     public @NotNull Builder name(@NotNull Component name) {
         meta.displayName(name);
+        return (Builder) this;
+    }
+    /**
+     * Sets the display name of the item.
+     *
+     * @param name The display name of the item. Parsed with legacy color codes.
+     * @return This ItemBuilder instance.
+     */
+    public @NotNull Builder nameLegacy(@NotNull String name) {
+        meta.displayName(Format.convertLegacyToComponent(name));
         return (Builder) this;
     }
 
@@ -151,6 +162,18 @@ public class ItemBuilder<Builder extends ItemBuilder<Builder>> {
      */
     public @NotNull Builder customModelData(boolean generate) {
         this.shouldGenerateCustomModelData = generate;
+        return (Builder) this;
+    }
+
+    /**
+     * Sets an explicit custom model data value for this item.
+     *
+     * @param customModelData The custom model data integer value.
+     * @return This ItemBuilder instance.
+     */
+    public @NotNull Builder customModelData(int customModelData) {
+        ItemModelData.set(meta, customModelData);
+        this.shouldGenerateCustomModelData = false;
         return (Builder) this;
     }
 

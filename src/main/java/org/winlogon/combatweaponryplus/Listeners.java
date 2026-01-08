@@ -102,7 +102,6 @@ class Listeners implements Listener {
     @EventHandler
     public void onJoin(PlayerJoinEvent event) {
         var player = event.getPlayer();
-        player.discoverRecipes(plugin.keys);
         // Avoid sending resource packs if they're disabled in config
         if (!config.isEnabled("resource-pack.enabled")) return;
 
