@@ -54,7 +54,6 @@ public final class Recipes {
         Preconditions.checkNotNull(shape);
 
         var key = createNamespacedKey(keyName);
-        plugin.keys.add(key);
         var recipe = new ShapedRecipe(key, result);
         recipe.shape(shape);
 

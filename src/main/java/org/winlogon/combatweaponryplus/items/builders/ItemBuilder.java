@@ -63,9 +63,10 @@ public class ItemBuilder<Builder extends ItemBuilder<Builder>> {
      */
     public @NotNull Builder name(@Nullable String name) {
         if (name != null) {
-            meta.displayName(Component.text(name));
+            meta.displayName(Format.convertLegacyToComponent(name));
+        } else {
+            meta.displayName(null);
         }
-        meta.displayName(null);
         return (Builder) this;
     }
     /**
@@ -151,6 +152,18 @@ public class ItemBuilder<Builder extends ItemBuilder<Builder>> {
      */
     public @NotNull Builder customModelData(boolean generate) {
         this.shouldGenerateCustomModelData = generate;
+        return (Builder) this;
+    }
+
+    /**
+     * Sets an explicit custom model data value for this item.
+     *
+     * @param customModelData The custom model data integer value.
+     * @return This ItemBuilder instance.
+     */
+    public @NotNull Builder customModelData(int customModelData) {
+        ItemModelData.set(meta, customModelData);
+        this.shouldGenerateCustomModelData = false;
         return (Builder) this;
     }
 
