@@ -209,7 +209,7 @@ public class RecipeProvider {
                         "&7  launch nearby entities, including arrows",
                         ""
                 )
-                .customModelData(22)
+                .customModelData(true)
                 .build();
 
         return Recipes.createShapedRecipe("explosive_staff", item, new String[]{"GTG", " S ", " S "},
@@ -222,7 +222,7 @@ public class RecipeProvider {
         ItemStack item = new ItemBuilder<>(Material.PRISMARINE_SHARD)
                 .name(config.getString("dPrismarineAlloy.name", "Prismarine Alloy"))
                 .loreConfigRange(config, "dPrismarineAlloy", 1, 5)
-                .customModelData(9999901)
+                .customModelData(true)
                 .enchant(Enchantment.UNBREAKING, 5)
                 .hideFlags(true)
                 .build();
@@ -253,7 +253,7 @@ public class RecipeProvider {
                     "&9 4 Attack Damage",
                     "&9 1.8 Attack Speed"
                 )
-                .customModelData(4000002)
+                .customModelData(true)
                 .hideFlags(true)
                 .build();
         return Recipes.createShapedRecipe("bone_katana", item, new String[]{"  M", " M ", "S  "}, 'M', Material.BONE, 'S', Material.BEDROCK);
@@ -1508,12 +1508,9 @@ public class RecipeProvider {
                         "&7test it in creative or something)",
                         ""
                 )
-                .customModelData(1560001)
+                .customModelData(true)
                 .build();
-        return Recipes.createShapedRecipe("eelytra", item, new String[]{"LCL", "CBC", "LCL"},
-                'B', Material.ELYTRA,
-                'C', Material.EXPERIENCE_BOTTLE,
-                'L', Material.BEDROCK);
+        return Recipes.createShapedRecipe("eelytra", item, new String[]{"EPE", "P P", "EPE"}, 'E', Material.ELYTRA, 'P', Material.PHANTOM_MEMBRANE);
     }
 
     private ShapedRecipe getJumpElytraRecipe() {

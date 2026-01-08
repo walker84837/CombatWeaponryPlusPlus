@@ -58,12 +58,12 @@ public class ItemBuilder<Builder extends ItemBuilder<Builder>> {
     /**
      * Sets the display name of the item.
      *
-     * @param name The display name of the item. Must not be null.
+     * @param name The display name of the item.
      * @return This ItemBuilder instance.
      */
     public @NotNull Builder name(@Nullable String name) {
         if (name != null) {
-            meta.displayName(Format.convertLegacyToComponent(name));
+            meta.displayName(Component.text(name));
         } else {
             meta.displayName(null);
         }
@@ -77,6 +77,16 @@ public class ItemBuilder<Builder extends ItemBuilder<Builder>> {
      */
     public @NotNull Builder name(@NotNull Component name) {
         meta.displayName(name);
+        return (Builder) this;
+    }
+    /**
+     * Sets the display name of the item.
+     *
+     * @param name The display name of the item. Parsed with legacy color codes.
+     * @return This ItemBuilder instance.
+     */
+    public @NotNull Builder nameLegacy(@NotNull String name) {
+        meta.displayName(Format.convertLegacyToComponent(name));
         return (Builder) this;
     }
 
