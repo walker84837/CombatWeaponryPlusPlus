@@ -10,8 +10,7 @@ import org.bukkit.inventory.ShapedRecipe;
 import org.winlogon.combatweaponryplus.CombatWeaponryPlus;
 import org.winlogon.combatweaponryplus.items.builders.ItemBuilder;
 import org.winlogon.combatweaponryplus.items.builders.WeaponBuilder;
-import org.winlogon.combatweaponryplus.recipes.registry.EmeraldRecipes;
-import org.winlogon.combatweaponryplus.recipes.registry.RecipeGroupRegistrar;
+import org.winlogon.combatweaponryplus.recipes.registry.*;
 import org.winlogon.combatweaponryplus.util.ConfigHelper;
 import org.winlogon.combatweaponryplus.util.ConfigValueOperation;
 import org.winlogon.combatweaponryplus.util.Recipes;
@@ -34,7 +33,8 @@ public class RecipeProvider {
 
     public void registerRecipes() {
         RecipeGroupRegistrar[] groups = {
-            new EmeraldRecipes(config)
+            new EmeraldRecipes(config),
+            new Charms(config)
         };
 
         for (var group : groups) {
@@ -59,14 +59,6 @@ public class RecipeProvider {
         recipeRegistrar.register("PlatedChainmail", this::getPlatedChainmailChestplateRecipe);
         recipeRegistrar.register("PlatedChainmail", this::getPlatedChainmailLeggingsRecipe);
         recipeRegistrar.register("PlatedChainmail", this::getPlatedChainmailBootsRecipe);
-
-        // Charms
-        recipeRegistrar.register("FeatherCharm", this::getFeatherCharmRecipe);
-        recipeRegistrar.register("EmeraldCharm", this::getEmeraldCharmRecipe);
-        recipeRegistrar.register("BlazeCharm", this::getBlazeCharmRecipe);
-        recipeRegistrar.register("GoldCharm", this::getGoldCharmRecipe);
-        recipeRegistrar.register("StarCharm", this::getStarCharmRecipe);
-        recipeRegistrar.register("FrostCharm", this::getFrostCharmRecipe);
 
         // Scythes
         recipeRegistrar.register("Scythes", this::getWoodenScytheRecipe);
@@ -173,7 +165,6 @@ public class RecipeProvider {
         recipeRegistrar.register("WitherArmor", this::getWitherChestplateRecipe);
         recipeRegistrar.register("WitherArmor", this::getWitherLeggingsRecipe);
         recipeRegistrar.register("WitherArmor", this::getWitherBootsRecipe);
-        recipeRegistrar.register("WitherArmor", this::getWitherHelmetRecipe);
 
         recipeRegistrar.register("Cleavers", this::getWoodenCleaverRecipe);
         recipeRegistrar.register("Cleavers", this::getStoneCleaverRecipe);
@@ -1475,7 +1466,7 @@ public class RecipeProvider {
         ItemStack item = new ItemBuilder<>(Material.BOW)
                 .name(config.getString("dLongBow.name", "Long Bow"))
                 .loreConfigRange(config, "dLongBow", 1, 4)
-                .customModelData(3330001)
+                .customModelData(true)
                 .attribute(Attribute.MOVEMENT_SPEED, -0.01, AttributeModifier.Operation.ADD_NUMBER, EquipmentSlotGroup.HAND)
                 .build();
         return Recipes.createShapedRecipe("long_bow", item, new String[]{" S ", "S S", " S "}, 'S', Material.STICK);
@@ -1500,15 +1491,7 @@ public class RecipeProvider {
     // Elytra
     private ShapedRecipe getEelytraRecipe() {
         ItemStack item = new ItemBuilder<>(Material.ELYTRA)
-                .name("&6Eelytra")
-                .lore(
-                        "",
-                        "&7test",
-                        "&7(not really meant to be",
-                        "&7obtainable yet but you can",
-                        "&7test it in creative or something)",
-                        ""
-                )
+                .name(config.getString("dEelytra.name", "Eelytra"))
                 .customModelData(true)
                 .build();
         return Recipes.createShapedRecipe("eelytra", item, new String[]{"EPE", "P P", "EPE"}, 'E', Material.ELYTRA, 'P', Material.PHANTOM_MEMBRANE);
@@ -1524,10 +1507,12 @@ public class RecipeProvider {
 
     // Special Swords
     private ShapedRecipe getOPSWORDRecipe() {
-        ItemStack item = new WeaponBuilder(Material.NETHERITE_HOE, config)
+        ItemStack item = new WeaponBuilder(Material.NETHERITE_SWORD, config)
                 .name(config.getString("dReallyGoodSword.name", "Really Really Good Sword"))
                 .loreConfigRange(config, "dReallyGoodSword", 1, 6)
-                .customModelData(1234567)
+                .withConfiguredDamage("aOPSWORD.damage", 100.0, ConfigValueOperation.NONE, 0.0)
+                .withConfiguredSpeed("aOPSWORD.speed", 100.0, ConfigValueOperation.NONE, 0.0)
+                .customModelData(true)
                 .hideFlags(true)
                 .build();
         return Recipes.createShapedRecipe("op_sword", item, new String[]{"LLL", "fef", "fsf"},
@@ -1544,11 +1529,11 @@ public class RecipeProvider {
         lore.add(config.getString("dWoodenSaber.line7", ""));
 
         ItemStack item = new WeaponBuilder(Material.WOODEN_SWORD, config)
-                .withConfiguredDamage("aWoodenSaber.damage", 3.0, ConfigValueOperation.SUBTRACT, 1.0)
-                .withConfiguredSpeed("aWoodenSaber.speed", -2.4, ConfigValueOperation.SUBTRACT, 4.0)
+                .withConfiguredDamage("aWoodenSaber.damage", 6.0, ConfigValueOperation.SUBTRACT, 1.0)
+                .withConfiguredSpeed("aWoodenSaber.speed", 1.6, ConfigValueOperation.SUBTRACT, 4.0)
                 .name(config.getString("dWoodenSaber.name", "Wooden Saber"))
                 .lore(lore)
-                .customModelData(1000010)
+                .customModelData(true)
                 .hideFlags(true)
                 .build();
         return Recipes.createShapedRecipe("wooden_saber", item, new String[]{" SS", " S ", "S  "}, 'S', Material.STICK);
@@ -1561,11 +1546,11 @@ public class RecipeProvider {
         lore.add(config.getString("dStoneSaber.line7", ""));
 
         ItemStack item = new WeaponBuilder(Material.STONE_SWORD, config)
-                .withConfiguredDamage("aStoneSaber.damage", 4.0, ConfigValueOperation.SUBTRACT, 1.0)
-                .withConfiguredSpeed("aStoneSaber.speed", -2.4, ConfigValueOperation.SUBTRACT, 4.0)
+                .withConfiguredDamage("aStoneSaber.damage", 6.5, ConfigValueOperation.SUBTRACT, 1.0)
+                .withConfiguredSpeed("aStoneSaber.speed", 1.6, ConfigValueOperation.SUBTRACT, 4.0)
                 .name(config.getString("dStoneSaber.name", "Stone Saber"))
                 .lore(lore)
-                .customModelData(1000010)
+                .customModelData(true)
                 .hideFlags(true)
                 .build();
         return Recipes.createShapedRecipe("stone_saber", item, new String[]{" aa", " a ", "S  "}, 'a', Material.COBBLESTONE, 'S', Material.STICK);
@@ -1578,11 +1563,11 @@ public class RecipeProvider {
         lore.add(config.getString("dGoldenSaber.line7", ""));
 
         ItemStack item = new WeaponBuilder(Material.GOLDEN_SWORD, config)
-                .withConfiguredDamage("aGoldenSaber.damage", 3.0, ConfigValueOperation.SUBTRACT, 1.0)
-                .withConfiguredSpeed("aGoldenSaber.speed", -2.4, ConfigValueOperation.SUBTRACT, 4.0)
+                .withConfiguredDamage("aGoldenSaber.damage", 6.0, ConfigValueOperation.SUBTRACT, 1.0)
+                .withConfiguredSpeed("aGoldenSaber.speed", 2.0, ConfigValueOperation.SUBTRACT, 4.0)
                 .name(config.getString("dGoldenSaber.name", "Golden Saber"))
                 .lore(lore)
-                .customModelData(1000010)
+                .customModelData(true)
                 .hideFlags(true)
                 .build();
         return Recipes.createShapedRecipe("golden_saber", item, new String[]{" aa", " a ", "S  "}, 'a', Material.GOLD_INGOT, 'S', Material.STICK);
@@ -1595,14 +1580,14 @@ public class RecipeProvider {
         lore.add(config.getString("dIronSaber.line7", ""));
 
         ItemStack item = new WeaponBuilder(Material.IRON_SWORD, config)
-                .withConfiguredDamage("aIronSaber.damage", 4.0, ConfigValueOperation.SUBTRACT, 1.0)
-                .withConfiguredSpeed("aIronSaber.speed", -2.4, ConfigValueOperation.SUBTRACT, 4.0)
+                .withConfiguredDamage("aIronSaber.damage", 7.0, ConfigValueOperation.SUBTRACT, 1.0)
+                .withConfiguredSpeed("aIronSaber.speed", 1.6, ConfigValueOperation.SUBTRACT, 4.0)
                 .name(config.getString("dIronSaber.name", "Iron Saber"))
                 .lore(lore)
-                .customModelData(1000010)
+                .customModelData(true)
                 .hideFlags(true)
                 .build();
-        return Recipes.createShapedRecipe("iron_saber", item, new String[]{" aa", " a ", "S  "}, 'a', Material.IRON_INGOT, 'S', Material.STICK);
+        return Recipes.createShapedRecipe("iron_saber", item, new String[]{" I ", " I ", "I I"}, 'I', Material.IRON_INGOT);
     }
 
     private ShapedRecipe getEmeraldSaberRecipe() {
@@ -1612,11 +1597,11 @@ public class RecipeProvider {
         lore.add(config.getString("dEmeraldSaber.line7", ""));
 
         ItemStack item = new WeaponBuilder(Material.GOLDEN_SWORD, config)
-                .withConfiguredDamage("aEmeraldSaber.damage", 4.0, ConfigValueOperation.SUBTRACT, 1.0)
-                .withConfiguredSpeed("aEmeraldSaber.speed", -2.0, ConfigValueOperation.SUBTRACT, 4.0)
+                .withConfiguredDamage("aEmeraldSaber.damage", 7.0, ConfigValueOperation.SUBTRACT, 1.0)
+                .withConfiguredSpeed("aEmeraldSaber.speed", 2.0, ConfigValueOperation.SUBTRACT, 4.0)
                 .name(config.getString("dEmeraldSaber.name", "Emerald Saber"))
                 .lore(lore)
-                .customModelData(1000030)
+                .customModelData(true)
                 .hideFlags(true)
                 .build();
 
@@ -1626,7 +1611,7 @@ public class RecipeProvider {
             item.addUnsafeEnchantment(Enchantment.UNBREAKING, unbreaking);
             item.addUnsafeEnchantment(Enchantment.MENDING, mending);
         }
-        return Recipes.createShapedRecipe("emerald_saber", item, new String[]{" aa", " a ", "S  "}, 'a', Material.EMERALD, 'S', Material.STICK);
+        return Recipes.createShapedRecipe("emerald_saber", item, new String[]{" E ", " E ", "E E"}, 'E', Material.EMERALD);
     }
 
     private ShapedRecipe getDiamondSaberRecipe() {
@@ -1636,14 +1621,14 @@ public class RecipeProvider {
         lore.add(config.getString("dDiamondSaber.line7", ""));
 
         ItemStack item = new WeaponBuilder(Material.DIAMOND_SWORD, config)
-                .withConfiguredDamage("aDiamondSaber.damage", 5.0, ConfigValueOperation.SUBTRACT, 1.0)
-                .withConfiguredSpeed("aDiamondSaber.speed", -2.4, ConfigValueOperation.SUBTRACT, 4.0)
+                .withConfiguredDamage("aDiamondSaber.damage", 8.0, ConfigValueOperation.SUBTRACT, 1.0)
+                .withConfiguredSpeed("aDiamondSaber.speed", 1.6, ConfigValueOperation.SUBTRACT, 4.0)
                 .name(config.getString("dDiamondSaber.name", "Diamond Saber"))
                 .lore(lore)
-                .customModelData(1000010)
+                .customModelData(true)
                 .hideFlags(true)
                 .build();
-        return Recipes.createShapedRecipe("diamond_saber", item, new String[]{" aa", " a ", "S  "}, 'a', Material.DIAMOND, 'S', Material.STICK);
+        return Recipes.createShapedRecipe("diamond_saber", item, new String[]{" D ", " D ", "D D"}, 'D', Material.DIAMOND);
     }
 
     private ShapedRecipe getNetheriteSaberRecipe() {
@@ -1653,16 +1638,16 @@ public class RecipeProvider {
         lore.add(config.getString("dNetheriteSaber.line7", ""));
 
         ItemStack item = new WeaponBuilder(Material.NETHERITE_SWORD, config)
-                .withConfiguredDamage("aNetheriteSaber.damage", 6.0, ConfigValueOperation.SUBTRACT, 1.0)
-                .withConfiguredSpeed("aNetheriteSaber.speed", -2.4, ConfigValueOperation.SUBTRACT, 4.0)
+                .withConfiguredDamage("aNetheriteSaber.damage", 9.0, ConfigValueOperation.SUBTRACT, 1.0)
+                .withConfiguredSpeed("aNetheriteSaber.speed", 1.6, ConfigValueOperation.SUBTRACT, 4.0)
                 .name(config.getString("dNetheriteSaber.name", "Netherite Saber"))
                 .lore(lore)
-                .customModelData(1000010)
+                .customModelData(true)
                 .hideFlags(true)
                 .build();
 
         Material netheriteMaterial = config.isEnabled("NetheriteIngots") ? Material.NETHERITE_INGOT : Material.NETHERITE_SCRAP;
-        return Recipes.createShapedRecipe("netherite_saber", item, new String[]{" aa", " a ", "S  "}, 'a', netheriteMaterial, 'S', Material.STICK);
+        return Recipes.createShapedRecipe("netherite_saber", item, new String[]{" N ", " N ", "N N"}, 'N', netheriteMaterial);
     }
 
     private ShapedRecipe getWindBladeRecipe() {

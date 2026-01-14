@@ -17,7 +17,6 @@ import org.winlogon.combatweaponryplus.util.ConfigValueOperation;
 import org.winlogon.combatweaponryplus.util.Recipes;
 
 public class EmeraldRecipes implements RecipeGroupRegistrar {
-    // TODO: get this from somewhere eventually
     private ConfigHelper config;
     private final MiniMessage mm = MiniMessage.miniMessage();
 
