@@ -1,11 +1,13 @@
 package org.winlogon.combatweaponryplus;
 
+import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.minimessage.MiniMessage;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.Particle;
 import org.bukkit.Sound;
 import org.bukkit.World;
+import org.bukkit.enchantments.Enchantment;
 import org.bukkit.entity.AbstractArrow;
 import org.bukkit.entity.Arrow;
 import org.bukkit.entity.EnderPearl;
@@ -548,37 +550,30 @@ class Listeners implements Listener {
         }
 
         ItemStack mainHandItem = player.getInventory().getItemInMainHand();
-        if (!mainHandItem.hasItemMeta() || !mainHandItem.getItemMeta().hasCustomModelData()) return;
 
-        int customModelData = mainHandItem.getItemMeta().getCustomModelData();
+        if (!mainHandItem.hasItemMeta() || !ItemModelData.hasModelData(mainHandItem.getItemMeta())) return;
+
+        int customModelData = ItemModelData.get(mainHandItem.getItemMeta());
         Vector vector = player.getLocation().getDirection();
         World world = player.getWorld();
 
         switch (customModelData) {
-            // TODO: this seems to be a test element, should I change the names to something else?
             case 1069691: // Trident Bow
                 arrow.remove();
-                Trident trident = (Trident) player.launchProjectile(Trident.class, vector.multiply(speed * 5.0));
+                Trident trident = player.launchProjectile(Trident.class, vector.multiply(speed * 5.0));
                 trident.setPierceLevel(20);
                 trident.setCritical(true);
                 trident.setFireTicks(100);
                 trident.setGravity(false);
                 trident.setPickupStatus(AbstractArrow.PickupStatus.DISALLOWED);
-                trident.setCustomName("Bob");
+                trident.customName(Component.text("Bob"));
                 trident.setCustomNameVisible(true);
-                // TODO: see https://jd.papermc.io/paper/1.21.11/org/bukkit/entity/AbstractArrow.html#setKnockbackStrength(int)
-                trident.setKnockbackStrength(10);
-                world.playSound(player.getLocation(), Sound.ITEM_TRIDENT_THROW, 10.0f, 1.0f);
 
-                // Additional entities for fun
-                Entity pig = world.spawnEntity(player.getLocation().add(0.0, 9.0, 0.0), EntityType.PIG);
-                pig.setCustomName("Kevin");
-                pig.setCustomNameVisible(true);
-                Entity chicken = world.spawnEntity(player.getLocation().add(0.0, 9.0, 0.0), EntityType.CHICKEN);
-                chicken.setCustomName("Phil");
-                chicken.setCustomNameVisible(true);
-                pig.addPassenger(chicken);
-                trident.addPassenger(pig);
+                ItemStack bowClone = mainHandItem.clone();
+                bowClone.addUnsafeEnchantment(Enchantment.PUNCH, 10);
+                trident.setWeapon(bowClone);
+
+                world.playSound(player.getLocation(), Sound.ITEM_TRIDENT_THROW, 10.0f, 1.0f);
                 break;
             case 3330001: // Longbow
             // TODO: extract the tripled code to a function
@@ -618,7 +613,7 @@ class Listeners implements Listener {
 
         if (chestplate != null && chestplate.getType() == Material.IRON_CHESTPLATE) {
             Optional.ofNullable(chestplate.getItemMeta())
-                    .filter(meta -> meta.getCustomModelData() == 1231234)
+                    .filter(meta -> ItemModelData.get(meta) == 1231234)
                     .ifPresent(meta -> {
                         return; // Redstone Core check
                     });
@@ -662,7 +657,7 @@ class Listeners implements Listener {
         var offHandItem = player.getInventory().getItemInOffHand();
         if (offHandItem.getType() == Material.REDSTONE) {
             offHandItem.setAmount(offHandItem.getAmount() - 1);
-            Location loc = player.getLocation();
+            var loc = player.getLocation();
 
             double totalAngle1 = loc.getPitch() + 80.0;
             double totalAngle2 = loc.getPitch() + 100.0;
