@@ -5,10 +5,8 @@ import org.bukkit.inventory.meta.ItemMeta;
 import java.util.List;
 
 public final class ItemModelData {
-
-    private ItemModelData() {
-        // Private constructor to prevent instantiation
-    }
+    // Utility class
+    private ItemModelData() { }
 
     /**
      * Gets the custom model data from an ItemMeta.
@@ -20,10 +18,9 @@ public final class ItemModelData {
         if (meta == null || !meta.hasCustomModelDataComponent()) return 0;
         var comp = meta.getCustomModelDataComponent();
 
-        if (comp == null) return 0;
         var floats = comp.getFloats();
 
-        return floats.isEmpty() ? 0 : floats.get(0).intValue();
+        return floats.isEmpty() ? 0 : floats.getFirst().intValue();
     }
 
     /**
