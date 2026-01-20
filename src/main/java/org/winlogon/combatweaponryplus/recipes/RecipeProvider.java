@@ -10,8 +10,7 @@ import org.bukkit.inventory.ShapedRecipe;
 import org.winlogon.combatweaponryplus.CombatWeaponryPlus;
 import org.winlogon.combatweaponryplus.items.builders.ItemBuilder;
 import org.winlogon.combatweaponryplus.items.builders.WeaponBuilder;
-import org.winlogon.combatweaponryplus.recipes.registry.EmeraldRecipes;
-import org.winlogon.combatweaponryplus.recipes.registry.RecipeGroupRegistrar;
+import org.winlogon.combatweaponryplus.recipes.registry.*;
 import org.winlogon.combatweaponryplus.util.ConfigHelper;
 import org.winlogon.combatweaponryplus.util.ConfigValueOperation;
 import org.winlogon.combatweaponryplus.util.Recipes;
@@ -34,7 +33,8 @@ public class RecipeProvider {
 
     public void registerRecipes() {
         RecipeGroupRegistrar[] groups = {
-            new EmeraldRecipes(config)
+            new EmeraldRecipes(config),
+            new Charms(config)
         };
 
         for (var group : groups) {
@@ -59,14 +59,6 @@ public class RecipeProvider {
         recipeRegistrar.register("PlatedChainmail", this::getPlatedChainmailChestplateRecipe);
         recipeRegistrar.register("PlatedChainmail", this::getPlatedChainmailLeggingsRecipe);
         recipeRegistrar.register("PlatedChainmail", this::getPlatedChainmailBootsRecipe);
-
-        // Charms
-        recipeRegistrar.register("FeatherCharm", this::getFeatherCharmRecipe);
-        recipeRegistrar.register("EmeraldCharm", this::getEmeraldCharmRecipe);
-        recipeRegistrar.register("BlazeCharm", this::getBlazeCharmRecipe);
-        recipeRegistrar.register("GoldCharm", this::getGoldCharmRecipe);
-        recipeRegistrar.register("StarCharm", this::getStarCharmRecipe);
-        recipeRegistrar.register("FrostCharm", this::getFrostCharmRecipe);
 
         // Scythes
         recipeRegistrar.register("Scythes", this::getWoodenScytheRecipe);
@@ -154,7 +146,6 @@ public class RecipeProvider {
         recipeRegistrar.register("Sabers", this::getDiamondSaberRecipe);
         recipeRegistrar.register("Sabers", this::getNetheriteSaberRecipe);
         recipeRegistrar.register(new String[]{"EmeraldGear", "Sabers"}, this::getEmeraldSaberRecipe);
-        recipeRegistrar.register("FishSword", this::getTestFishRecipe);
         recipeRegistrar.register("WindBlade", this::getWindBladeRecipe);
         recipeRegistrar.register("VolcanicBlade", this::getFlameBladeRecipe);
 
@@ -174,8 +165,6 @@ public class RecipeProvider {
         recipeRegistrar.register("WitherArmor", this::getWitherChestplateRecipe);
         recipeRegistrar.register("WitherArmor", this::getWitherLeggingsRecipe);
         recipeRegistrar.register("WitherArmor", this::getWitherBootsRecipe);
-        recipeRegistrar.register("TestKatana", this::getTestKatanaRecipe);
-        recipeRegistrar.register("TestScythe", this::getTestScytheRecipe);
 
         recipeRegistrar.register("Cleavers", this::getWoodenCleaverRecipe);
         recipeRegistrar.register("Cleavers", this::getStoneCleaverRecipe);
@@ -189,8 +178,77 @@ public class RecipeProvider {
         recipeRegistrar.register("VolcanicAxe", this::getFlameAxeRecipe);
         recipeRegistrar.register("VolcanicCleaver", this::getFlameCleaverRecipe);
 
+        recipeRegistrar.register("ExplosiveStaff", this::getExStaffRecipe);
+
+        // Additional Recipes from CombatWeaponryPlus.java
+        recipeRegistrar.register("PrismarineAlloy", this::getPrismarineAlloyRecipe);
+        recipeRegistrar.register("BoneKatana", this::getBoneKatanaRecipe);
+
         // Always registered
         plugin.getServer().addRecipe(getAwakenedSwordsRecipe());
+    }
+
+    // Additional Recipes
+    private ShapedRecipe getExStaffRecipe() {
+        ItemStack item = new ItemBuilder<>(Material.CROSSBOW)
+                .name("&6Explosive Staff")
+                .lore(
+                        "",
+                        "&6Explosion",
+                        "&7- Right click to create an explosion in the",
+                        "&7  direction you are facing",
+                        "&7- The created explosion is able to",
+                        "&7  launch nearby entities, including arrows",
+                        ""
+                )
+                .customModelData(true)
+                .build();
+
+        return Recipes.createShapedRecipe("explosive_staff", item, new String[]{"GTG", " S ", " S "},
+                'G', Material.GOLD_INGOT,
+                'T', Material.TNT,
+                'S', Material.BEDROCK);
+    }
+
+    private ShapedRecipe getPrismarineAlloyRecipe() {
+        ItemStack item = new ItemBuilder<>(Material.PRISMARINE_SHARD)
+                .name(config.getString("dPrismarineAlloy.name", "Prismarine Alloy"))
+                .loreConfigRange(config, "dPrismarineAlloy", 1, 5)
+                .customModelData(true)
+                .enchant(Enchantment.UNBREAKING, 5)
+                .hideFlags(true)
+                .build();
+
+        return Recipes.createShapedRecipe("prismarine_alloy", item, new String[]{"LCL", "IBI", "LDL"},
+                'B', Material.NETHERITE_INGOT,
+                'L', Material.PRISMARINE_SHARD,
+                'D', Material.DIAMOND_BLOCK,
+                'I', Material.IRON_BLOCK,
+                'C', Material.PRISMARINE_CRYSTALS);
+    }
+
+    private ShapedRecipe getBoneKatanaRecipe() {
+        ItemStack item = new WeaponBuilder(Material.IRON_SWORD, config)
+                .attackDamage(3.0)
+                .attackSpeed(-2.2)
+                .name("&6Bone Katana")
+                .lore(
+                    "",
+                    "&6Cutting Edge",
+                    "&7- +60% damage to players without a chestplate",
+                    "&6Two Handed",
+                    "&7- +50% damage if there is no item in offhand",
+                    "&6Critical Hit",
+                    "&7- 20% chance to deal 50% more damage when two handed",
+                    "",
+                    "&7When in Main Hand:",
+                    "&9 4 Attack Damage",
+                    "&9 1.8 Attack Speed"
+                )
+                .customModelData(true)
+                .hideFlags(true)
+                .build();
+        return Recipes.createShapedRecipe("bone_katana", item, new String[]{"  M", " M ", "S  "}, 'M', Material.BONE, 'S', Material.BEDROCK);
     }
 
     // Chorus Blade
@@ -365,76 +423,6 @@ public class RecipeProvider {
             item.addUnsafeEnchantment(Enchantment.UNBREAKING, unbreaking);
         }
         return Recipes.createShapedRecipe("plated_chainmail_boots", item, new String[]{"III", "IBI", "III"}, 'B', Material.CHAINMAIL_BOOTS, 'I', Material.IRON_NUGGET);
-    }
-
-    // Charms
-    private ShapedRecipe getFeatherCharmRecipe() {
-        ItemStack item = new ItemBuilder<>(Material.RABBIT_FOOT)
-                .name("Feather Charm")
-                .lore("Prevents fall damage")
-                .customModelData(true)
-                .build();
-        return Recipes.createShapedRecipe("feather_charm", item, new String[]{"FFF", "F F", "FFF"}, 'F', Material.FEATHER);
-    }
-
-    private ShapedRecipe getEmeraldCharmRecipe() {
-        double health = config.getDouble("aEmeraldCharm.BonusHealth", 4.0);
-        double armor = config.getDouble("aEmeraldCharm.BonusArmor", -2.0);
-
-        ItemStack item = new ItemBuilder<>(Material.EMERALD)
-                .name("Emerald Charm")
-                .lore("Grants Luck")
-                .customModelData(true)
-                .attribute(Attribute.MAX_HEALTH, health, AttributeModifier.Operation.ADD_NUMBER, EquipmentSlotGroup.OFFHAND)
-                .attribute(Attribute.ARMOR, armor, AttributeModifier.Operation.ADD_NUMBER, EquipmentSlotGroup.OFFHAND)
-                .build();
-        return Recipes.createShapedRecipe("emerald_charm", item, new String[]{"EEE", "E E", "EEE"}, 'E', Material.EMERALD);
-    }
-
-    private ShapedRecipe getBlazeCharmRecipe() {
-        double damage = config.getDouble("aBlazeCharm.BonusDamage", 4.0);
-        double health = config.getDouble("aBlazeCharm.BonusHealth", -2.0);
-
-        ItemStack item = new ItemBuilder<>(Material.BLAZE_ROD)
-                .name("Blaze Charm")
-                .lore("Grants Fire Resistance")
-                .customModelData(true)
-                .attribute(Attribute.ATTACK_DAMAGE, damage, AttributeModifier.Operation.ADD_NUMBER, EquipmentSlotGroup.OFFHAND)
-                .attribute(Attribute.MAX_HEALTH, health, AttributeModifier.Operation.ADD_NUMBER, EquipmentSlotGroup.OFFHAND)
-                .build();
-        return Recipes.createShapedRecipe("blaze_charm", item, new String[]{"BBB", "B B", "BBB"}, 'B', Material.BLAZE_ROD);
-    }
-
-    private ShapedRecipe getGoldCharmRecipe() {
-        double attackSpeed = config.getDouble("aGoldCharm.BonusAttackSpeedPercent", 30.0) / 100.0;
-        double moveSpeed = config.getDouble("aGoldCharm.BonusMoveSpeedPercent", -15.0) / 100.0;
-
-        ItemStack item = new ItemBuilder<>(Material.GOLD_INGOT)
-                .name("Gold Charm")
-                .lore("Grants Haste")
-                .customModelData(true)
-                .attribute(Attribute.ATTACK_SPEED, attackSpeed, AttributeModifier.Operation.MULTIPLY_SCALAR_1, EquipmentSlotGroup.OFFHAND)
-                .attribute(Attribute.MOVEMENT_SPEED, moveSpeed, AttributeModifier.Operation.MULTIPLY_SCALAR_1, EquipmentSlotGroup.OFFHAND)
-                .build();
-        return Recipes.createShapedRecipe("gold_charm", item, new String[]{"GGG", "G G", "GGG"}, 'G', Material.GOLD_INGOT);
-    }
-
-    private ShapedRecipe getStarCharmRecipe() {
-        ItemStack item = new ItemBuilder<>(Material.NETHER_STAR)
-                .name("Star Charm")
-                .lore("Grants Regeneration")
-                .customModelData(true)
-                .build();
-        return Recipes.createShapedRecipe("star_charm", item, new String[]{"SSS", "S S", "SSS"}, 'S', Material.NETHER_STAR);
-    }
-
-    private ShapedRecipe getFrostCharmRecipe() {
-        ItemStack item = new ItemBuilder<>(Material.ICE)
-                .name("Frost Charm")
-                .lore("Grants Slowness to nearby enemies")
-                .customModelData(true)
-                .build();
-        return Recipes.createShapedRecipe("frost_charm", item, new String[]{"III", "I I", "III"}, 'I', Material.ICE);
     }
 
     // Scythes
@@ -1384,7 +1372,9 @@ public class RecipeProvider {
     private ShapedRecipe getLongBowRecipe() {
         ItemStack item = new ItemBuilder<>(Material.BOW)
                 .name(config.getString("dLongBow.name", "Long Bow"))
+                .loreConfigRange(config, "dLongBow", 1, 4)
                 .customModelData(true)
+                .attribute(Attribute.MOVEMENT_SPEED, -0.01, AttributeModifier.Operation.ADD_NUMBER, EquipmentSlotGroup.HAND)
                 .build();
         return Recipes.createShapedRecipe("long_bow", item, new String[]{" S ", "S S", " S "}, 'S', Material.STICK);
     }
@@ -1425,12 +1415,18 @@ public class RecipeProvider {
     // Special Swords
     private ShapedRecipe getOPSWORDRecipe() {
         ItemStack item = new WeaponBuilder(Material.NETHERITE_SWORD, config)
+                .name(config.getString("dReallyGoodSword.name", "Really Really Good Sword"))
+                .loreConfigRange(config, "dReallyGoodSword", 1, 6)
                 .withConfiguredDamage("aOPSWORD.damage", 100.0, ConfigValueOperation.NONE, 0.0)
                 .withConfiguredSpeed("aOPSWORD.speed", 100.0, ConfigValueOperation.NONE, 0.0)
-                .name(config.getString("dOPSWORD.name", "OP Sword"))
                 .customModelData(true)
+                .hideFlags(true)
                 .build();
-        return Recipes.createShapedRecipe("op_sword", item, new String[]{"NNN", "NNN", "NNN"}, 'N', Material.NETHERITE_BLOCK);
+        return Recipes.createShapedRecipe("op_sword", item, new String[]{"LLL", "fef", "fsf"},
+                'L', Material.LAPIS_BLOCK,
+                'e', Material.GOLD_BLOCK,
+                's', Material.DIAMOND_BLOCK,
+                'f', Material.REDSTONE);
     }
 
     private ShapedRecipe getWoodenSaberRecipe() {
@@ -1447,7 +1443,7 @@ public class RecipeProvider {
                 .customModelData(true)
                 .hideFlags(true)
                 .build();
-        return Recipes.createShapedRecipe("wooden_saber", item, new String[]{" S ", " S ", "S S"}, 'S', Material.STICK);
+        return Recipes.createShapedRecipe("wooden_saber", item, new String[]{" SS", " S ", "S  "}, 'S', Material.STICK);
     }
 
     private ShapedRecipe getStoneSaberRecipe() {
@@ -1464,7 +1460,7 @@ public class RecipeProvider {
                 .customModelData(true)
                 .hideFlags(true)
                 .build();
-        return Recipes.createShapedRecipe("stone_saber", item, new String[]{" C ", " C ", "C C"}, 'C', Material.COBBLESTONE);
+        return Recipes.createShapedRecipe("stone_saber", item, new String[]{" aa", " a ", "S  "}, 'a', Material.COBBLESTONE, 'S', Material.STICK);
     }
 
     private ShapedRecipe getGoldenSaberRecipe() {
@@ -1481,7 +1477,7 @@ public class RecipeProvider {
                 .customModelData(true)
                 .hideFlags(true)
                 .build();
-        return Recipes.createShapedRecipe("golden_saber", item, new String[]{" G ", " G ", "G G"}, 'G', Material.GOLD_INGOT);
+        return Recipes.createShapedRecipe("golden_saber", item, new String[]{" aa", " a ", "S  "}, 'a', Material.GOLD_INGOT, 'S', Material.STICK);
     }
 
     private ShapedRecipe getIronSaberRecipe() {
@@ -1559,15 +1555,6 @@ public class RecipeProvider {
 
         Material netheriteMaterial = config.isEnabled("NetheriteIngots") ? Material.NETHERITE_INGOT : Material.NETHERITE_SCRAP;
         return Recipes.createShapedRecipe("netherite_saber", item, new String[]{" N ", " N ", "N N"}, 'N', netheriteMaterial);
-    }
-
-    private ShapedRecipe getTestFishRecipe() {
-        ItemStack item = new WeaponBuilder(Material.COD, config)
-                .withConfiguredDamage("aTestFish.damage", 10.0, ConfigValueOperation.NONE, 0.0)
-                .withConfiguredSpeed("aTestFish.speed", 1.6, ConfigValueOperation.NONE, 0.0)
-                .name("Test Fish Sword")
-                .build();
-        return Recipes.createShapedRecipe("test_fish_sword", item, new String[]{" F ", " F ", " S "}, 'F', Material.COD, 'S', Material.STICK);
     }
 
     private ShapedRecipe getWindBladeRecipe() {
@@ -1701,24 +1688,17 @@ public class RecipeProvider {
         return Recipes.createShapedRecipe("wither_boots", item, new String[]{"WWW", "WBW", "WWW"}, 'W', Material.WITHER_SKELETON_SKULL, 'B', Material.NETHERITE_BOOTS);
     }
 
-    private ShapedRecipe getTestKatanaRecipe() {
-        ItemStack item = new WeaponBuilder(Material.NETHERITE_SWORD, config)
-                .attackDamage(10.0)
-                .attackSpeed(1.6)
-                .name("Test Katana")
-                .customModelData(true)
-                .build();
-        return Recipes.createShapedRecipe("test_katana", item, new String[]{" N ", " N ", "N N"}, 'N', Material.NETHERITE_INGOT);
-    }
+    private ShapedRecipe getWitherHelmetRecipe() {
+        double kbr = config.getDouble("aWitherHelmet.KBResist", 2.0);
+        double hp = config.getDouble("aWitherHelmet.BonusHealth", 5.0);
 
-    private ShapedRecipe getTestScytheRecipe() {
-        ItemStack item = new WeaponBuilder(Material.NETHERITE_SWORD, config)
-                .attackDamage(10.0)
-                .attackSpeed(1.0)
-                .name("Test Scythe")
+        ItemStack item = new ItemBuilder<>(Material.NETHERITE_HELMET)
+                .name("Wither Helmet")
                 .customModelData(true)
+                .attribute(Attribute.KNOCKBACK_RESISTANCE, kbr, AttributeModifier.Operation.ADD_NUMBER, EquipmentSlotGroup.HEAD)
+                .attribute(Attribute.MAX_HEALTH, hp, AttributeModifier.Operation.ADD_NUMBER, EquipmentSlotGroup.HEAD)
                 .build();
-        return Recipes.createShapedRecipe("test_scythe", item, new String[]{" N ", "N N", " N "}, 'N', Material.NETHERITE_INGOT);
+        return Recipes.createShapedRecipe("wither_helmet", item, new String[]{"WWW", "WHW", "   "}, 'W', Material.WITHER_SKELETON_SKULL, 'H', Material.NETHERITE_HELMET);
     }
 
     // Cleavers
