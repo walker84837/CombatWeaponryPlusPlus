@@ -1,7 +1,5 @@
 package org.winlogon.combatweaponryplus.util;
 
-import com.google.common.base.Preconditions;
-
 import org.bukkit.Material;
 import org.bukkit.NamespacedKey;
 import org.bukkit.enchantments.Enchantment;
@@ -10,6 +8,8 @@ import org.bukkit.inventory.ShapedRecipe;
 import org.jspecify.annotations.NonNull;
 import org.winlogon.combatweaponryplus.CombatWeaponryPlus;
 import org.winlogon.combatweaponryplus.items.builders.ItemBuilder;
+
+import java.util.Objects;
 
 public final class Recipes {
     private static ConfigHelper config;
@@ -49,9 +49,9 @@ public final class Recipes {
      * @return a fully configured {@link ShapedRecipe}
      */
     public static ShapedRecipe createShapedRecipe(@NonNull String keyName, @NonNull ItemStack result, @NonNull String[] shape, Object... ingredients) {
-        Preconditions.checkNotNull(keyName);
-        Preconditions.checkNotNull(result);
-        Preconditions.checkNotNull(shape);
+        Objects.requireNonNull(keyName);
+        Objects.requireNonNull(result);
+        Objects.requireNonNull(shape);
 
         var key = createNamespacedKey(keyName);
         var recipe = new ShapedRecipe(key, result);
