@@ -16,4 +16,4 @@ A major and comprehensive refactor of [CombatWeaponryPlus](https://github.com/so
 
 Any new or updated assets (like textures or icons) will be released under the [CC BY-SA 4.0](https://creativecommons.org/licenses/by-sa/4.0/) license.
 
-All new and refactored code is licensed under the GNU GPLv3. See the [LICENSE](LICENSE.md) file for details.
+All new and refactored code is licensed under the GNU LGPLv3. See the [LICENSE](LICENSE.md) file or [here](https://www.gnu.org/licenses/lgpl-3.0.html) for details.
