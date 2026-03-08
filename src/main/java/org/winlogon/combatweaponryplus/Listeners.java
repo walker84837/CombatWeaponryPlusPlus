@@ -69,10 +69,6 @@ class Listeners implements Listener {
         this.cooldown = cooldown;
     }
 
-    private int getRandomInt(int max) {
-        return random.nextInt(max);
-    }
-
     private ItemStack[] getPlayerArmor(PlayerInventory inv) {
         ItemStack[] armor = new ItemStack[4];
 
@@ -320,7 +316,7 @@ class Listeners implements Listener {
                     if (attacker.getInventory().getItemInOffHand().getType() == Material.AIR) {
                         damageMultiplier = 1.3;
                     }
-                    int randomValue = getRandomInt(5);
+                    int randomValue = random.nextInt(5);
                     if (randomValue == 1) {
                         damageMultiplier *= 1.1; // Critical hit
                         for (int i = 0; i < 4; i++) {
