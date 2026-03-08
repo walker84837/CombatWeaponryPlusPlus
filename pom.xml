@@ -105,9 +105,9 @@
             <scope>provided</scope>
         </dependency>
         <dependency>
-        	<groupId>org.winlogon</groupId>
-        	<artifactId>retrohue</artifactId>
-        	<version>0.2.0</version>
+            <groupId>org.winlogon</groupId>
+            <artifactId>retrohue</artifactId>
+            <version>0.2.0</version>
         </dependency>
         <dependency>
             <groupId>org.junit.jupiter</groupId>
