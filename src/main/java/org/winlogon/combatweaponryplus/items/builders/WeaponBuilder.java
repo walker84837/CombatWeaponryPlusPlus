@@ -125,4 +125,40 @@ public class WeaponBuilder extends ItemBuilder<WeaponBuilder> {
         }
         return this.attackSpeed(spd);
     }
+
+    /**
+     * Configures the movement speed attribute based on plugin settings.
+     *
+     * @param configPath The configuration path to the custom movement speed value.
+     * @param defaultMoveSpeed The default movement speed value.
+     * @param op The {@link ConfigValueOperation} to apply.
+     * @param opValue The operand value for the operation.
+     * @return This WeaponBuilder instance.
+     */
+    public @NonNull WeaponBuilder withConfiguredMovementSpeed(String configPath, double defaultMoveSpeed, ConfigValueOperation op, double opValue) {
+        double ms = defaultMoveSpeed;
+        if (this.customValues) {
+            double rawMs = configHelper.getDouble(configPath, defaultMoveSpeed);
+            ms = applyOperation(rawMs, op, opValue);
+        }
+        return this.movementSpeed(ms);
+    }
+
+    /**
+     * Configures the knockback resistance attribute based on plugin settings.
+     *
+     * @param configPath The configuration path to the custom knockback resistance value.
+     * @param defaultKBResist The default knockback resistance value.
+     * @param op The {@link ConfigValueOperation} to apply.
+     * @param opValue The operand value for the operation.
+     * @return This WeaponBuilder instance.
+     */
+    public @NonNull WeaponBuilder withConfiguredKnockbackResistance(String configPath, double defaultKBResist, ConfigValueOperation op, double opValue) {
+        double kbr = defaultKBResist;
+        if (this.customValues) {
+            double rawKbr = configHelper.getDouble(configPath, defaultKBResist);
+            kbr = applyOperation(rawKbr, op, opValue);
+        }
+        return this.knockbackResistance(kbr);
+    }
 }
