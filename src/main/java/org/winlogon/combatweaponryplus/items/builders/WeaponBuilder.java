@@ -4,7 +4,7 @@ import org.bukkit.Material;
 import org.bukkit.attribute.Attribute;
 import org.bukkit.attribute.AttributeModifier;
 import org.bukkit.inventory.EquipmentSlotGroup;
-import org.jetbrains.annotations.NotNull;
+import org.jspecify.annotations.NonNull;
 import org.winlogon.combatweaponryplus.util.ConfigHelper;
 import org.winlogon.combatweaponryplus.util.ConfigValueOperation;
 
@@ -24,7 +24,7 @@ public class WeaponBuilder extends ItemBuilder<WeaponBuilder> {
      * @param material The {@link Material} of the weapon. Must not be null.
      * @param configHelper The {@link ConfigHelper} instance for accessing plugin configuration. Must not be null.
      */
-    public @NotNull WeaponBuilder(@NotNull Material material, @NotNull ConfigHelper configHelper) {
+    public @NonNull WeaponBuilder(@NonNull Material material, @NonNull ConfigHelper configHelper) {
         super(material);
         this.configHelper = configHelper;
         this.customValues = configHelper.raw().getBoolean("UseCustomValues");
@@ -36,7 +36,7 @@ public class WeaponBuilder extends ItemBuilder<WeaponBuilder> {
      * @param attackDamage The attack damage value to set.
      * @return This WeaponBuilder instance.
      */
-    public @NotNull WeaponBuilder attackDamage(double attackDamage) {
+    public @NonNull WeaponBuilder attackDamage(double attackDamage) {
         super.attribute(Attribute.ATTACK_DAMAGE, attackDamage, AttributeModifier.Operation.ADD_NUMBER, EquipmentSlotGroup.HAND);
         return this;
     }
@@ -47,7 +47,7 @@ public class WeaponBuilder extends ItemBuilder<WeaponBuilder> {
      * @param attackSpeed The attack speed value to set.
      * @return This WeaponBuilder instance.
      */
-    public @NotNull WeaponBuilder attackSpeed(double attackSpeed) {
+    public @NonNull WeaponBuilder attackSpeed(double attackSpeed) {
         super.attribute(Attribute.ATTACK_SPEED, attackSpeed, AttributeModifier.Operation.ADD_NUMBER, EquipmentSlotGroup.HAND);
         return this;
     }
@@ -58,7 +58,7 @@ public class WeaponBuilder extends ItemBuilder<WeaponBuilder> {
      * @param movementSpeed The movement speed value to set.
      * @return This WeaponBuilder instance.
      */
-    public @NotNull WeaponBuilder movementSpeed(double movementSpeed) {
+    public @NonNull WeaponBuilder movementSpeed(double movementSpeed) {
         super.attribute(Attribute.MOVEMENT_SPEED, movementSpeed, AttributeModifier.Operation.ADD_NUMBER, EquipmentSlotGroup.HAND);
         return this;
     }
@@ -69,7 +69,7 @@ public class WeaponBuilder extends ItemBuilder<WeaponBuilder> {
      * @param knockbackResistance The knockback resistance value to set.
      * @return This WeaponBuilder instance.
      */
-    public @NotNull WeaponBuilder knockbackResistance(double knockbackResistance) {
+    public @NonNull WeaponBuilder knockbackResistance(double knockbackResistance) {
         super.attribute(Attribute.KNOCKBACK_RESISTANCE, knockbackResistance, AttributeModifier.Operation.ADD_NUMBER, EquipmentSlotGroup.HAND);
         return this;
     }
@@ -96,7 +96,7 @@ public class WeaponBuilder extends ItemBuilder<WeaponBuilder> {
      * @param opValue The operand value for the operation.
      * @return This WeaponBuilder instance.
      */
-    public @NotNull WeaponBuilder withConfiguredDamage(String configPath, double defaultDamage, ConfigValueOperation op, double opValue) {
+    public @NonNull WeaponBuilder withConfiguredDamage(String configPath, double defaultDamage, ConfigValueOperation op, double opValue) {
         double dmg = defaultDamage;
         if (this.customValues) {
             double rawDmg = configHelper.getDouble(configPath, defaultDamage);
@@ -117,7 +117,7 @@ public class WeaponBuilder extends ItemBuilder<WeaponBuilder> {
      * @param opValue The operand value for the operation.
      * @return This WeaponBuilder instance.
      */
-    public @NotNull WeaponBuilder withConfiguredSpeed(String configPath, double defaultSpeed, ConfigValueOperation op, double opValue) {
+    public @NonNull WeaponBuilder withConfiguredSpeed(String configPath, double defaultSpeed, ConfigValueOperation op, double opValue) {
         double spd = defaultSpeed;
         if (this.customValues) {
             double rawSpd = configHelper.getDouble(configPath, defaultSpeed);

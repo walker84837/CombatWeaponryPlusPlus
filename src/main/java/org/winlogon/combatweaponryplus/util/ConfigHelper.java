@@ -1,7 +1,7 @@
 package org.winlogon.combatweaponryplus.util;
 
 import org.bukkit.configuration.file.FileConfiguration;
-import org.jetbrains.annotations.NotNull;
+import org.jspecify.annotations.NonNull;
 
 import java.util.List;
 
@@ -34,7 +34,7 @@ public class ConfigHelper {
      * @param paths The paths to check
      * @return Whether all paths are enabled
      */
-    public boolean areEnabled(@NotNull String... paths) {
+    public boolean areEnabled(@NonNull String... paths) {
         for (var path : paths) {
             if (!config.getBoolean(path, false)) {
                 return false;

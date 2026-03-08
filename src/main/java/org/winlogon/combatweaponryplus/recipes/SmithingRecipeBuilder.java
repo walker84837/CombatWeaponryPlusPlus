@@ -8,7 +8,7 @@ import org.bukkit.inventory.EquipmentSlotGroup;
 import org.bukkit.inventory.ItemFlag;
 import org.bukkit.event.inventory.PrepareSmithingEvent;
 
-import org.jetbrains.annotations.NotNull;
+import org.jspecify.annotations.NonNull;
 import org.winlogon.combatweaponryplus.CombatWeaponryPlus;
 import org.winlogon.combatweaponryplus.util.ConfigHelper;
 import org.winlogon.combatweaponryplus.items.ItemModelData;
@@ -31,17 +31,17 @@ public class SmithingRecipeBuilder {
     private double damageAddedConfigPath;
     private String damageAddedKey;
 
-    public SmithingRecipeBuilder(@NotNull CombatWeaponryPlus plugin, @NotNull ConfigHelper config) {
+    public SmithingRecipeBuilder(@NonNull CombatWeaponryPlus plugin, @NonNull ConfigHelper config) {
         this.plugin = Objects.requireNonNull(plugin, "Plugin cannot be null");
         this.config = Objects.requireNonNull(config, "ConfigHelper cannot be null");
     }
 
-    public SmithingRecipeBuilder toolType(@NotNull Material toolType) {
+    public SmithingRecipeBuilder toolType(@NonNull Material toolType) {
         this.toolType = Objects.requireNonNull(toolType, "Tool type cannot be null");
         return this;
     }
 
-    public SmithingRecipeBuilder modifierType(@NotNull Material modifierType) {
+    public SmithingRecipeBuilder modifierType(@NonNull Material modifierType) {
         this.modifierType = Objects.requireNonNull(modifierType, "Modifier type cannot be null");
         return this;
     }
@@ -56,12 +56,12 @@ public class SmithingRecipeBuilder {
         return this;
     }
 
-    public SmithingRecipeBuilder nameKey(@NotNull String nameKey) {
+    public SmithingRecipeBuilder nameKey(@NonNull String nameKey) {
         this.nameKey = Objects.requireNonNull(nameKey, "Name key cannot be null");
         return this;
     }
 
-    public SmithingRecipeBuilder configKey(@NotNull String configKey) {
+    public SmithingRecipeBuilder configKey(@NonNull String configKey) {
         this.configKey = Objects.requireNonNull(configKey, "Config key cannot be null");
         return this;
     }
@@ -76,7 +76,7 @@ public class SmithingRecipeBuilder {
         return this;
     }
 
-    public SmithingRecipeBuilder damageAddedKey(@NotNull String damageAddedKey) {
+    public SmithingRecipeBuilder damageAddedKey(@NonNull String damageAddedKey) {
         this.damageAddedKey = Objects.requireNonNull(damageAddedKey, "Damage added key cannot be null");
         return this;
     }

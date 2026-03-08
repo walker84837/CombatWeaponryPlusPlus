@@ -7,7 +7,7 @@ import org.bukkit.NamespacedKey;
 import org.bukkit.enchantments.Enchantment;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.ShapedRecipe;
-import org.jetbrains.annotations.NotNull;
+import org.jspecify.annotations.NonNull;
 import org.winlogon.combatweaponryplus.CombatWeaponryPlus;
 import org.winlogon.combatweaponryplus.items.builders.ItemBuilder;
 
@@ -25,7 +25,7 @@ public final class Recipes {
      * @param name The recipe group
      * @param item The item builder
      */
-    public static void applyConfiguredEnchantments(@NotNull String name, @NotNull ItemBuilder<?> item) {
+    public static void applyConfiguredEnchantments(@NonNull String name, @NonNull ItemBuilder<?> item) {
         if (config.isEnabled("EnchantmentsOn" + name)) {
             int unbreaking = config.getInt(name + "EnchantLevels.Unbreaking", 0);
             item.enchant(Enchantment.UNBREAKING, unbreaking);
@@ -48,7 +48,7 @@ public final class Recipes {
      *                     Example: <pre>createShapedRecipe("my_recipe", new ItemStack(Material.DIAMOND), new String[]{" X ", " X ", " X "}, 'X', Material.STICK);</pre>
      * @return a fully configured {@link ShapedRecipe}
      */
-    public static ShapedRecipe createShapedRecipe(@NotNull String keyName, @NotNull ItemStack result, @NotNull String[] shape, Object... ingredients) {
+    public static ShapedRecipe createShapedRecipe(@NonNull String keyName, @NonNull ItemStack result, @NonNull String[] shape, Object... ingredients) {
         Preconditions.checkNotNull(keyName);
         Preconditions.checkNotNull(result);
         Preconditions.checkNotNull(shape);

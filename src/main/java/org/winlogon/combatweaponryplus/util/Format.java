@@ -4,8 +4,8 @@ import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.minimessage.MiniMessage;
 
 import org.bukkit.configuration.file.FileConfiguration;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
+import org.jspecify.annotations.NonNull;
+import org.jspecify.annotations.Nullable;
 import org.winlogon.retrohue.RetroHue;
 
 import java.util.List;
@@ -73,7 +73,7 @@ public final class Format {
      * @param config The configuration
      * @return The translated string, if present in the configuration
      */
-    public static Optional<String> convertLegacyToSectionWithConfig(@NotNull String key, @NotNull FileConfiguration config) {
+    public static Optional<String> convertLegacyToSectionWithConfig(@NonNull String key, @NonNull FileConfiguration config) {
         return Optional.ofNullable(config.getString(key))
             .map(Format::convertLegacyToSection);
     }
@@ -84,7 +84,7 @@ public final class Format {
      * @param s The input string
      * @return The translated component
      */
-    public static @NotNull Component convertLegacyToComponent(@Nullable String s) {
+    public static @NonNull Component convertLegacyToComponent(@Nullable String s) {
         if (s == null) return Component.empty();
         if (miniMessage == null || retroHue == null) {
             return Component.text(s); // Fallback if not initialized
@@ -106,7 +106,7 @@ public final class Format {
                 .collect(Collectors.toList());
     }
 
-    private static @NotNull String translateAlternateColorCodes(char identifier, @NotNull String input) {
+    private static @NonNull String translateAlternateColorCodes(char identifier, @NonNull String input) {
         final int length = input.length();
         if (length == 0) {
             return input; // nothing to process; bail out early

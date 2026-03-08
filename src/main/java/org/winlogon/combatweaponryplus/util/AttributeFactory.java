@@ -3,7 +3,7 @@ package org.winlogon.combatweaponryplus.util;
 import org.bukkit.attribute.Attribute;
 import org.bukkit.attribute.AttributeModifier;
 import org.bukkit.inventory.EquipmentSlotGroup;
-import org.jetbrains.annotations.NotNull;
+import org.jspecify.annotations.NonNull;
 
 import java.util.UUID;
 
@@ -18,7 +18,7 @@ public class AttributeFactory {
      * @param slotGroup The slot group
      * @return The {@link AttributeModifier}
      */
-    public static @NotNull AttributeModifier createAttributeModifier(@NotNull Attribute attribute, double amount, @NotNull AttributeModifier.Operation operation, @NotNull EquipmentSlotGroup slotGroup) {
+    public static @NonNull AttributeModifier createAttributeModifier(@NonNull Attribute attribute, double amount, AttributeModifier.@NonNull Operation operation, @NonNull EquipmentSlotGroup slotGroup) {
         var key = PersistentDataManager.createNamespacedKey(attribute.getKey().getKey().toLowerCase() + "_" + UUID.randomUUID().toString());
         return new AttributeModifier(key, amount, operation, slotGroup);
     }
@@ -30,7 +30,7 @@ public class AttributeFactory {
      * @param amount The amount
      * @return The {@link AttributeModifier}
      */
-    public static @NotNull AttributeModifier createAttributeModifier(@NotNull Attribute attribute, double amount, @NotNull AttributeModifier.Operation operation) {
+    public static @NonNull AttributeModifier createAttributeModifier(@NonNull Attribute attribute, double amount, AttributeModifier.@NonNull Operation operation) {
         return createAttributeModifier(attribute, amount, operation, EquipmentSlotGroup.ANY);
     }
 }

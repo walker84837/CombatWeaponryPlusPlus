@@ -9,8 +9,8 @@ import org.bukkit.inventory.EquipmentSlotGroup;
 import org.bukkit.inventory.ItemFlag;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
+import org.jspecify.annotations.NonNull;
+import org.jspecify.annotations.Nullable;
 import org.bukkit.persistence.PersistentDataType;
 import org.winlogon.combatweaponryplus.items.HashItemModelDataGenerator;
 import org.winlogon.combatweaponryplus.items.ItemModelData;
@@ -50,7 +50,7 @@ public class ItemBuilder<Builder extends ItemBuilder<Builder>> {
      *
      * @param material The {@link Material} of the item. Must not be null.
      */
-    public ItemBuilder(@NotNull Material material) {
+    public ItemBuilder(@NonNull Material material) {
         Objects.requireNonNull(material, "Material cannot be null");
 
         this.item = ItemStack.of(material);
@@ -63,7 +63,7 @@ public class ItemBuilder<Builder extends ItemBuilder<Builder>> {
      * @param name The display name of the item.
      * @return This ItemBuilder instance.
      */
-    public @NotNull Builder name(@Nullable String name) {
+    public @NonNull Builder name(@Nullable String name) {
         if (name != null) {
             meta.displayName(Component.text(name));
         } else {
@@ -77,7 +77,7 @@ public class ItemBuilder<Builder extends ItemBuilder<Builder>> {
      * @param name The display name of the item. Must not be null.
      * @return This ItemBuilder instance.
      */
-    public @NotNull Builder name(@NotNull Component name) {
+    public @NonNull Builder name(@NonNull Component name) {
         meta.displayName(name);
         return (Builder) this;
     }
@@ -87,7 +87,7 @@ public class ItemBuilder<Builder extends ItemBuilder<Builder>> {
      * @param name The display name of the item. Parsed with legacy color codes.
      * @return This ItemBuilder instance.
      */
-    public @NotNull Builder nameLegacy(@NotNull String name) {
+    public @NonNull Builder nameLegacy(@NonNull String name) {
         meta.displayName(Format.convertLegacyToComponent(name));
         return (Builder) this;
     }
@@ -100,7 +100,7 @@ public class ItemBuilder<Builder extends ItemBuilder<Builder>> {
      * @param lore An array of strings representing the lore lines.
      * @return This ItemBuilder instance.
      */
-    public @NotNull Builder lore(@NotNull String... lore) {
+    public @NonNull Builder lore(@NonNull String... lore) {
         // avoid doing unnecessary logic for empty args
         if (lore.length == 0) {
             return (Builder) this;
@@ -119,9 +119,9 @@ public class ItemBuilder<Builder extends ItemBuilder<Builder>> {
      * @param to The upper bound of the range (inclusive)
      * @return This ItemBuilder instance
      */
-    public @NotNull Builder loreConfigRange(
-            @NotNull ConfigHelper config,
-            @NotNull String configEntry,
+    public @NonNull Builder loreConfigRange(
+            @NonNull ConfigHelper config,
+            @NonNull String configEntry,
             int from,
             int to
     ) {
@@ -149,7 +149,7 @@ public class ItemBuilder<Builder extends ItemBuilder<Builder>> {
      * @param lore A list of strings representing the lore lines. Can be set to null to reset the lore.
      * @return This ItemBuilder instance.
      */
-    public @NotNull Builder lore(@NotNull List<String> lore) {
+    public @NonNull Builder lore(@NonNull List<String> lore) {
         this.lore.addAll(Format.convertLegacyLoreToComponents(lore));
         return (Builder) this;
     }
@@ -160,7 +160,7 @@ public class ItemBuilder<Builder extends ItemBuilder<Builder>> {
      * @param id The unique identifier.
      * @return This ItemBuilder instance.
      */
-    public @NotNull Builder id(@NotNull String id) {
+    public @NonNull Builder id(@NonNull String id) {
         meta.getPersistentDataContainer().set(PersistentDataManager.ID_KEY, PersistentDataType.STRING, id);
         return (Builder) this;
     }
@@ -171,7 +171,7 @@ public class ItemBuilder<Builder extends ItemBuilder<Builder>> {
      * @param category The category name.
      * @return This ItemBuilder instance.
      */
-    public @NotNull Builder category(@NotNull String category) {
+    public @NonNull Builder category(@NonNull String category) {
         meta.getPersistentDataContainer().set(PersistentDataManager.CATEGORY_KEY, PersistentDataType.STRING, category);
         return (Builder) this;
     }
@@ -184,7 +184,7 @@ public class ItemBuilder<Builder extends ItemBuilder<Builder>> {
      * @param generate True to generate custom model data, false otherwise.
      * @return This ItemBuilder instance.
      */
-    public @NotNull Builder customModelData(boolean generate) {
+    public @NonNull Builder customModelData(boolean generate) {
         this.shouldGenerateCustomModelData = generate;
         return (Builder) this;
     }
@@ -195,7 +195,7 @@ public class ItemBuilder<Builder extends ItemBuilder<Builder>> {
      * @param customModelData The custom model data integer value.
      * @return This ItemBuilder instance.
      */
-    public @NotNull Builder customModelData(int customModelData) {
+    public @NonNull Builder customModelData(int customModelData) {
         ItemModelData.set(meta, customModelData);
         this.shouldGenerateCustomModelData = false;
         return (Builder) this;
@@ -207,7 +207,7 @@ public class ItemBuilder<Builder extends ItemBuilder<Builder>> {
      * @param unbreakable True to make the item unbreakable, false otherwise.
      * @return This ItemBuilder instance.
      */
-    public @NotNull Builder unbreakable(boolean unbreakable) {
+    public @NonNull Builder unbreakable(boolean unbreakable) {
         meta.setUnbreakable(unbreakable);
         return (Builder) this;
     }
@@ -219,7 +219,7 @@ public class ItemBuilder<Builder extends ItemBuilder<Builder>> {
      * @param hideFlags True to hide all flags, false to keep them visible.
      * @return This ItemBuilder instance.
      */
-    public @NotNull Builder hideFlags(boolean hideFlags) {
+    public @NonNull Builder hideFlags(boolean hideFlags) {
         if (hideFlags) {
             meta.addItemFlags(ItemFlag.values());
         }
@@ -236,7 +236,7 @@ public class ItemBuilder<Builder extends ItemBuilder<Builder>> {
      * @param slot The {@link EquipmentSlotGroup} to which this modifier applies. Must not be null.
      * @return This ItemBuilder instance.
      */
-    public @NotNull Builder attribute(@NotNull Attribute attribute, double value, @NotNull AttributeModifier.Operation operation, @NotNull EquipmentSlotGroup slot) {
+    public @NonNull Builder attribute(@NonNull Attribute attribute, double value, AttributeModifier.@NonNull Operation operation, @NonNull EquipmentSlotGroup slot) {
         if (value != 0) {
             var modifier = AttributeFactory.createAttributeModifier(attribute, value, operation, slot);
             meta.addAttributeModifier(attribute, modifier);
@@ -251,7 +251,7 @@ public class ItemBuilder<Builder extends ItemBuilder<Builder>> {
      * @param level The level of the enchantment
      * @return This ItemBuilder instance.
      */
-    public @NotNull Builder enchant(@NotNull Enchantment enchant, int level) {
+    public @NonNull Builder enchant(@NonNull Enchantment enchant, int level) {
         meta.addEnchant(enchant, level, true);
         return (Builder) this;
     }
@@ -262,7 +262,7 @@ public class ItemBuilder<Builder extends ItemBuilder<Builder>> {
      *
      * @param item The item stack to update.
      */
-    public static void refreshModelData(@NotNull ItemStack item) {
+    public static void refreshModelData(@NonNull ItemStack item) {
         if (item == null || !item.hasItemMeta()) return;
         var meta = item.getItemMeta();
         int customModelData = itemModelDataGenerator.generate(item.getType(), meta);
@@ -275,7 +275,7 @@ public class ItemBuilder<Builder extends ItemBuilder<Builder>> {
      *
      * @return The fully configured {@link ItemStack}.
      */
-    public @NotNull ItemStack build() {
+    public @NonNull ItemStack build() {
         if (shouldGenerateCustomModelData) {
             int customModelData = itemModelDataGenerator.generate(item.getType(), meta);
             ItemModelData.set(meta, customModelData);
