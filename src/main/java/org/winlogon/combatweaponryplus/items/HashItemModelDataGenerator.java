@@ -7,6 +7,8 @@ import org.bukkit.Material;
 import org.bukkit.attribute.Attribute;
 import org.bukkit.attribute.AttributeModifier;
 import org.bukkit.inventory.meta.ItemMeta;
+import org.bukkit.persistence.PersistentDataType;
+import org.winlogon.combatweaponryplus.util.PersistentDataManager;
 
 import java.util.List;
 import java.util.Objects;
@@ -31,6 +33,17 @@ public class HashItemModelDataGenerator implements ItemModelDataGenerator {
         var compositeIdentifierBuilder = new StringBuilder();
 
         compositeIdentifierBuilder.append("MATERIAL:").append(normalizeString(material.name())).append("|");
+
+        var pdc = itemMeta.getPersistentDataContainer();
+        if (pdc.has(PersistentDataManager.ID_KEY, PersistentDataType.STRING)) {
+            compositeIdentifierBuilder.append("ID:").append(normalizeString(pdc.get(PersistentDataManager.ID_KEY, PersistentDataType.STRING))).append("|");
+        }
+        if (pdc.has(PersistentDataManager.CATEGORY_KEY, PersistentDataType.STRING)) {
+            compositeIdentifierBuilder.append("CATEGORY:").append(normalizeString(pdc.get(PersistentDataManager.CATEGORY_KEY, PersistentDataType.STRING))).append("|");
+        }
+        if (pdc.has(PersistentDataManager.STATE_KEY, PersistentDataType.STRING)) {
+            compositeIdentifierBuilder.append("STATE:").append(normalizeString(pdc.get(PersistentDataManager.STATE_KEY, PersistentDataType.STRING))).append("|");
+        }
 
         if (itemMeta.hasDisplayName()) {
             compositeIdentifierBuilder.append("NAME:").append(normalizeString(itemMeta.displayName().toString())).append("|");

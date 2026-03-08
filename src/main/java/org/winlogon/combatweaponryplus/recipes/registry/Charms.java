@@ -26,6 +26,8 @@ public class Charms implements RecipeGroupRegistrar {
         ItemStack item = new ItemBuilder<>(Material.RABBIT_FOOT)
                 .name("Feather Charm")
                 .lore("Prevents fall damage")
+                .id("feather_charm")
+                .category("charms")
                 .customModelData(true)
                 .build();
         return Recipes.createShapedRecipe("feather_charm", item, new String[]{"FFF", "F F", "FFF"}, 'F', Material.FEATHER);
@@ -38,6 +40,8 @@ public class Charms implements RecipeGroupRegistrar {
         ItemStack item = new ItemBuilder<>(Material.EMERALD)
                 .name("Emerald Charm")
                 .lore("Grants Luck")
+                .id("emerald_charm")
+                .category("charms")
                 .customModelData(true)
                 .attribute(Attribute.MAX_HEALTH, health, AttributeModifier.Operation.ADD_NUMBER, EquipmentSlotGroup.OFFHAND)
                 .attribute(Attribute.ARMOR, armor, AttributeModifier.Operation.ADD_NUMBER, EquipmentSlotGroup.OFFHAND)
@@ -52,6 +56,8 @@ public class Charms implements RecipeGroupRegistrar {
         ItemStack item = new ItemBuilder<>(Material.BLAZE_ROD)
                 .name("Blaze Charm")
                 .lore("Grants Fire Resistance")
+                .id("blaze_charm")
+                .category("charms")
                 .customModelData(true)
                 .attribute(Attribute.ATTACK_DAMAGE, damage, AttributeModifier.Operation.ADD_NUMBER, EquipmentSlotGroup.OFFHAND)
                 .attribute(Attribute.MAX_HEALTH, health, AttributeModifier.Operation.ADD_NUMBER, EquipmentSlotGroup.OFFHAND)
@@ -66,6 +72,8 @@ public class Charms implements RecipeGroupRegistrar {
         ItemStack item = new ItemBuilder<>(Material.GOLD_INGOT)
                 .name("Gold Charm")
                 .lore("Grants Haste")
+                .id("gold_charm")
+                .category("charms")
                 .customModelData(true)
                 .attribute(Attribute.ATTACK_SPEED, attackSpeed, AttributeModifier.Operation.MULTIPLY_SCALAR_1, EquipmentSlotGroup.OFFHAND)
                 .attribute(Attribute.MOVEMENT_SPEED, moveSpeed, AttributeModifier.Operation.MULTIPLY_SCALAR_1, EquipmentSlotGroup.OFFHAND)
@@ -77,6 +85,8 @@ public class Charms implements RecipeGroupRegistrar {
         ItemStack item = new ItemBuilder<>(Material.NETHER_STAR)
                 .name("Star Charm")
                 .lore("Grants Regeneration")
+                .id("star_charm")
+                .category("charms")
                 .customModelData(true)
                 .build();
         return Recipes.createShapedRecipe("star_charm", item, new String[]{"SSS", "S S", "SSS"}, 'S', Material.NETHER_STAR);
@@ -86,6 +96,8 @@ public class Charms implements RecipeGroupRegistrar {
         ItemStack item = new ItemBuilder<>(Material.ICE)
                 .name("Frost Charm")
                 .lore("Grants Slowness to nearby enemies")
+                .id("frost_charm")
+                .category("charms")
                 .customModelData(true)
                 .build();
         return Recipes.createShapedRecipe("frost_charm", item, new String[]{"III", "I I", "III"}, 'I', Material.ICE);

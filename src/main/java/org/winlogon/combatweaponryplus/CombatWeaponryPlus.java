@@ -7,6 +7,7 @@ import org.bukkit.plugin.java.JavaPlugin;
 import org.winlogon.combatweaponryplus.recipes.RecipeProvider;
 import org.winlogon.combatweaponryplus.util.ConfigHelper;
 import org.winlogon.combatweaponryplus.util.Format;
+import org.winlogon.combatweaponryplus.util.Recipes;
 import org.winlogon.retrohue.RetroHue;
 
 import java.util.Random;
@@ -38,6 +39,7 @@ public class CombatWeaponryPlus extends JavaPlugin {
         var serverListeners = new Listeners(this, configHelper, cooldown);
 
         Format.initialize(mm, rh);
+        Recipes.init(this, configHelper);
 
         getServer().getPluginManager().registerEvents(serverListeners, this);
         saveDefaultConfig();

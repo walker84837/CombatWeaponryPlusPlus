@@ -8,7 +8,6 @@ import org.bukkit.enchantments.Enchantment;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.ShapedRecipe;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 import org.winlogon.combatweaponryplus.CombatWeaponryPlus;
 import org.winlogon.combatweaponryplus.items.builders.ItemBuilder;
 
@@ -16,8 +15,9 @@ public final class Recipes {
     private static ConfigHelper config;
     private static CombatWeaponryPlus plugin;
 
-    public static void init(ConfigHelper configHelper) {
-        configHelper = config;
+    public static void init(CombatWeaponryPlus pluginInstance, ConfigHelper configHelper) {
+        plugin = pluginInstance;
+        config = configHelper;
     }
 
     /**

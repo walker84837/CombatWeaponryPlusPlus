@@ -11,12 +11,14 @@ import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.bukkit.persistence.PersistentDataType;
 import org.winlogon.combatweaponryplus.items.HashItemModelDataGenerator;
 import org.winlogon.combatweaponryplus.items.ItemModelData;
 import org.winlogon.combatweaponryplus.items.ItemModelDataGenerator;
 import org.winlogon.combatweaponryplus.util.AttributeFactory;
 import org.winlogon.combatweaponryplus.util.ConfigHelper;
 import org.winlogon.combatweaponryplus.util.Format;
+import org.winlogon.combatweaponryplus.util.PersistentDataManager;
 
 import net.kyori.adventure.text.Component;
 
@@ -153,6 +155,28 @@ public class ItemBuilder<Builder extends ItemBuilder<Builder>> {
     }
 
     /**
+     * Sets the unique identifier for this item in its PersistentDataContainer.
+     *
+     * @param id The unique identifier.
+     * @return This ItemBuilder instance.
+     */
+    public @NotNull Builder id(@NotNull String id) {
+        meta.getPersistentDataContainer().set(PersistentDataManager.ID_KEY, PersistentDataType.STRING, id);
+        return (Builder) this;
+    }
+
+    /**
+     * Sets the category for this item in its PersistentDataContainer.
+     *
+     * @param category The category name.
+     * @return This ItemBuilder instance.
+     */
+    public @NotNull Builder category(@NotNull String category) {
+        meta.getPersistentDataContainer().set(PersistentDataManager.CATEGORY_KEY, PersistentDataType.STRING, category);
+        return (Builder) this;
+    }
+
+    /**
      * Sets whether custom model data should be generated for this item.
      * The actual custom model data integer will be generated in the build() method
      * based on the item's final properties.
@@ -230,6 +254,20 @@ public class ItemBuilder<Builder extends ItemBuilder<Builder>> {
     public @NotNull Builder enchant(@NotNull Enchantment enchant, int level) {
         meta.addEnchant(enchant, level, true);
         return (Builder) this;
+    }
+
+    /**
+     * Re-generates and sets the custom model data for an existing item stack.
+     * Useful when persistent data (like state) changes and requires a visual update.
+     *
+     * @param item The item stack to update.
+     */
+    public static void refreshModelData(@NotNull ItemStack item) {
+        if (item == null || !item.hasItemMeta()) return;
+        var meta = item.getItemMeta();
+        int customModelData = itemModelDataGenerator.generate(item.getType(), meta);
+        ItemModelData.set(meta, customModelData);
+        item.setItemMeta(meta);
     }
 
     /**

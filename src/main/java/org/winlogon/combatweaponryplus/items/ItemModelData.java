@@ -15,12 +15,8 @@ public final class ItemModelData {
      * @return The custom model data as an integer, or 0 if not present.
      */
     public static int get(ItemMeta meta) {
-        if (meta == null || !meta.hasCustomModelDataComponent()) return 0;
-        var comp = meta.getCustomModelDataComponent();
-
-        var floats = comp.getFloats();
-
-        return floats.isEmpty() ? 0 : floats.getFirst().intValue();
+        if (meta == null || !meta.hasCustomModelData()) return 0;
+        return meta.getCustomModelData();
     }
 
     /**
@@ -31,10 +27,7 @@ public final class ItemModelData {
      */
     public static void set(ItemMeta meta, int data) {
         if (meta == null) return;
-
-        var dataComponent = meta.getCustomModelDataComponent();
-        dataComponent.setFloats(List.of((float) data));
-        meta.setCustomModelDataComponent(dataComponent);
+        meta.setCustomModelData(data);
     }
 
     public static boolean hasModelData(ItemMeta meta) {

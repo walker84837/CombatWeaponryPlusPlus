@@ -134,7 +134,7 @@ public class RecipeProvider {
         recipeRegistrar.register("Compoundbow", this::getCompoundBowRecipe);
 
         // Elytra
-        recipeRegistrar.register("Eelytra", this::getEelytraRecipe);
+        recipeRegistrar.register("Eelytra", this::getPhantomWingedElytra);
         recipeRegistrar.register("JumpElytra", this::getJumpElytraRecipe);
 
         // Special Swords
@@ -333,7 +333,7 @@ public class RecipeProvider {
         return Recipes.createShapedRecipe("heavy_sword_bow", item,
             new String[]{"ISs", "SCs", "ISs"},
             'S', Material.STICK,
-            's', Material.CHAIN,
+            's', Material.IRON_CHAIN,
             'I', Material.NETHERITE_SCRAP,
             'C', Material.NETHERITE_SWORD
         );
@@ -342,22 +342,22 @@ public class RecipeProvider {
     // Chainmail
     private ShapedRecipe getChainmailHelmetRecipe() {
         ItemStack item = new ItemBuilder<>(Material.CHAINMAIL_HELMET).build();
-        return Recipes.createShapedRecipe("chainmail_helmet", item, new String[]{"CCC", "C C", "   "}, 'C', Material.CHAIN);
+        return Recipes.createShapedRecipe("chainmail_helmet", item, new String[]{"CCC", "C C", "   "}, 'C', Material.IRON_CHAIN);
     }
 
     private ShapedRecipe getChainmailChestplateRecipe() {
         ItemStack item = new ItemBuilder<>(Material.CHAINMAIL_CHESTPLATE).build();
-        return Recipes.createShapedRecipe("chainmail_chestplate", item, new String[]{"C C", "CCC", "CCC"}, 'C', Material.CHAIN);
+        return Recipes.createShapedRecipe("chainmail_chestplate", item, new String[]{"C C", "CCC", "CCC"}, 'C', Material.IRON_CHAIN);
     }
 
     private ShapedRecipe getChainmailLeggingsRecipe() {
         ItemStack item = new ItemBuilder<>(Material.CHAINMAIL_LEGGINGS).build();
-        return Recipes.createShapedRecipe("chainmail_leggings", item, new String[]{"CCC", "C C", "C C"}, 'C', Material.CHAIN);
+        return Recipes.createShapedRecipe("chainmail_leggings", item, new String[]{"CCC", "C C", "C C"}, 'C', Material.IRON_CHAIN);
     }
 
     private ShapedRecipe getChainmailBootsRecipe() {
         ItemStack item = new ItemBuilder<>(Material.CHAINMAIL_BOOTS).build();
-        return Recipes.createShapedRecipe("chainmail_boots", item, new String[]{"   ", "C C", "C C"}, 'C', Material.CHAIN);
+        return Recipes.createShapedRecipe("chainmail_boots", item, new String[]{"   ", "C C", "C C"}, 'C', Material.IRON_CHAIN);
     }
 
     // Plated Chainmail
@@ -477,15 +477,11 @@ public class RecipeProvider {
     }
 
     private ShapedRecipe getIronScytheRecipe() {
-        List<String> lore = new ArrayList<>(config.getStringList("ScytheDescription"));
-        lore.add(config.getString("dIronScythe.line8", ""));
-        lore.add(config.getString("dIronScythe.line9", ""));
-        lore.add(config.getString("dIronScythe.line10", ""));
-
         ItemStack item = new WeaponBuilder(Material.IRON_SWORD, config)
                 .withConfiguredDamage("aIronScythe.damage", 8.0, ConfigValueOperation.SUBTRACT, 1.0)
                 .withConfiguredSpeed("aIronScythe.speed", 1.0, ConfigValueOperation.SUBTRACT, 4.0)
                 .name(config.getString("dIronScythe.name", "Iron Scythe"))
+                .loreConfigRange(config, "ScytheDescription", 1, 7) // Assuming ScytheDescription has 7 lines
                 .loreConfigRange(config, "dIronScythe", 8, 10)
                 .customModelData(true)
                 .hideFlags(true)
@@ -494,16 +490,12 @@ public class RecipeProvider {
     }
 
     private ShapedRecipe getDiamondScytheRecipe() {
-        List<String> lore = new ArrayList<>(config.getStringList("ScytheDescription"));
-        lore.add(config.getString("dDiamondScythe.line8", ""));
-        lore.add(config.getString("dDiamondScythe.line9", ""));
-        lore.add(config.getString("dDiamondScythe.line10", ""));
-
         ItemStack item = new WeaponBuilder(Material.DIAMOND_SWORD, config)
                 .withConfiguredDamage("aDiamondScythe.damage", 9.0, ConfigValueOperation.SUBTRACT, 1.0)
                 .withConfiguredSpeed("aDiamondScythe.speed", 1.0, ConfigValueOperation.SUBTRACT, 4.0)
                 .name(config.getString("dDiamondScythe.name", "Diamond Scythe"))
-                .lore(lore)
+                .loreConfigRange(config, "ScytheDescription", 1, 7)
+                .loreConfigRange(config, "dDiamondScythe", 8, 10)
                 .customModelData(true)
                 .hideFlags(true)
                 .build();
@@ -511,16 +503,12 @@ public class RecipeProvider {
     }
 
     private ShapedRecipe getNetheriteScytheRecipe() {
-        List<String> lore = new ArrayList<>(config.getStringList("ScytheDescription"));
-        lore.add(config.getString("dNetheriteScythe.line8", ""));
-        lore.add(config.getString("dNetheriteScythe.line9", ""));
-        lore.add(config.getString("dNetheriteScythe.line10", ""));
-
         ItemStack item = new WeaponBuilder(Material.NETHERITE_SWORD, config)
                 .withConfiguredDamage("aNetheriteScythe.damage", 10.0, ConfigValueOperation.SUBTRACT, 1.0)
                 .withConfiguredSpeed("aNetheriteScythe.speed", 1.0, ConfigValueOperation.SUBTRACT, 4.0)
                 .name(config.getString("dNetheriteScythe.name", "Netherite Scythe"))
-                .lore(lore)
+                .loreConfigRange(config, "ScytheDescription", 1, 7)
+                .loreConfigRange(config, "dNetheriteScythe", 8, 10)
                 .customModelData(true)
                 .hideFlags(true)
                 .build();
@@ -553,14 +541,9 @@ public class RecipeProvider {
 
     // Obsidian Pickaxe
     private ShapedRecipe getObsidianPickaxeRecipe() {
-        List<String> lore = new ArrayList<>();
-        lore.add(config.getString("dObsidianPickaxe.line1", ""));
-        lore.add(config.getString("dObsidianPickaxe.line2", ""));
-        lore.add(config.getString("dObsidianPickaxe.line3", ""));
-
         ItemStack item = new ItemBuilder<>(Material.NETHERITE_PICKAXE)
                 .name(config.getString("dObsidianPickaxe.name", "Obsidian Pickaxe"))
-                .lore(lore)
+                .loreConfigRange(config, "dObsidianPickaxe", 1, 3)
                 .customModelData(true)
                 .build();
 
@@ -596,15 +579,11 @@ public class RecipeProvider {
 
 
     private ShapedRecipe getStoneRapierRecipe() {
-        List<String> lore = new ArrayList<>(config.getStringList("RapierDescription"));
-        lore.add(config.getString("dStoneRapier.line8", ""));
-        lore.add(config.getString("dStoneRapier.line9", ""));
-        lore.add(config.getString("dStoneRapier.line10", ""));
-
         ItemStack item = new WeaponBuilder(Material.STONE_SWORD, config)
                 .withConfiguredSpeed("aStoneRapier.speed", 1.9, ConfigValueOperation.SUBTRACT, 4.0)
                 .name(config.getString("dStoneRapier.name", "Stone Rapier"))
-                .lore(lore)
+                .loreConfigRange(config, "RapierDescription", 1, 7)
+                .loreConfigRange(config, "dStoneRapier", 8, 10)
                 .customModelData(true)
                 .hideFlags(true)
                 .build();
@@ -612,16 +591,12 @@ public class RecipeProvider {
     }
 
     private ShapedRecipe getGoldenRapierRecipe() {
-        List<String> lore = new ArrayList<>(config.getStringList("RapierDescription"));
-        lore.add(config.getString("dGoldenRapier.line8", ""));
-        lore.add(config.getString("dGoldenRapier.line9", ""));
-        lore.add(config.getString("dGoldenRapier.line10", ""));
-
         ItemStack item = new WeaponBuilder(Material.GOLDEN_SWORD, config)
                 .withConfiguredDamage("aGoldenRapier.damage", 3.0, ConfigValueOperation.SUBTRACT, 1.0)
                 .withConfiguredSpeed("aGoldenRapier.speed", 2.4, ConfigValueOperation.SUBTRACT, 4.0)
                 .name(config.getString("dGoldenRapier.name", "Golden Rapier"))
-                .lore(lore)
+                .loreConfigRange(config, "RapierDescription", 1, 7)
+                .loreConfigRange(config, "dGoldenRapier", 8, 10)
                 .customModelData(true)
                 .hideFlags(true)
                 .build();
@@ -884,6 +859,8 @@ public class RecipeProvider {
                 .withConfiguredDamage("aIronKnife.damage", 3.0, ConfigValueOperation.SUBTRACT, 1.0)
                 .withConfiguredSpeed("aIronKnife.speed", 3.0, ConfigValueOperation.SUBTRACT, 4.0)
                 .name(config.getString("dIronKnife.name", "Iron Knife"))
+                .id("iron_knife")
+                .category("knives")
                 .lore(lore)
                 .customModelData(true)
                 .hideFlags(true)
@@ -1352,18 +1329,18 @@ public class RecipeProvider {
     }
 
     private ShapedRecipe getPrismarineBootsRecipe() {
-        double arm = config.getDouble("aPrismarineBoots.Armor", 4.0);
-        double armt = config.getDouble("aPrismarineBoots.ArmorToughness", 3.0);
-        double kbr = config.getDouble("aPrismarineBoots.KBResist", 0.1);
-        double hp = config.getDouble("aPrismarineBoots.BonusHealth", 1.0);
+        double armor = config.getDouble("aPrismarineBoots.Armor", 4.0);
+        double armorToughness = config.getDouble("aPrismarineBoots.ArmorToughness", 3.0);
+        double knockbackResistance = config.getDouble("aPrismarineBoots.KBResist", 0.1);
+        double bonusHp = config.getDouble("aPrismarineBoots.BonusHealth", 1.0);
 
         ItemStack item = new ItemBuilder<>(Material.NETHERITE_BOOTS)
                 .name("Prismarine Boots")
                 .customModelData(true)
-                .attribute(Attribute.ARMOR, arm, AttributeModifier.Operation.ADD_NUMBER, EquipmentSlotGroup.FEET)
-                .attribute(Attribute.ARMOR_TOUGHNESS, armt, AttributeModifier.Operation.ADD_NUMBER, EquipmentSlotGroup.FEET)
-                .attribute(Attribute.KNOCKBACK_RESISTANCE, kbr, AttributeModifier.Operation.ADD_NUMBER, EquipmentSlotGroup.FEET)
-                .attribute(Attribute.MAX_HEALTH, hp, AttributeModifier.Operation.ADD_NUMBER, EquipmentSlotGroup.FEET)
+                .attribute(Attribute.ARMOR, armor, AttributeModifier.Operation.ADD_NUMBER, EquipmentSlotGroup.FEET)
+                .attribute(Attribute.ARMOR_TOUGHNESS, armorToughness, AttributeModifier.Operation.ADD_NUMBER, EquipmentSlotGroup.FEET)
+                .attribute(Attribute.KNOCKBACK_RESISTANCE, knockbackResistance, AttributeModifier.Operation.ADD_NUMBER, EquipmentSlotGroup.FEET)
+                .attribute(Attribute.MAX_HEALTH, bonusHp, AttributeModifier.Operation.ADD_NUMBER, EquipmentSlotGroup.FEET)
                 .build();
         return Recipes.createShapedRecipe("prismarine_boots", item, new String[]{"   ", "P P", "P P"}, 'P', Material.PRISMARINE_SHARD);
     }
@@ -1396,17 +1373,21 @@ public class RecipeProvider {
     }
 
     // Elytra
-    private ShapedRecipe getEelytraRecipe() {
+    private ShapedRecipe getPhantomWingedElytra() {
         ItemStack item = new ItemBuilder<>(Material.ELYTRA)
-                .name(config.getString("dEelytra.name", "Eelytra"))
+                .name(config.getString("dEelytra.name", "Phantom-Winged Elytra"))
+                .id("phantom_winged_elytra")
+                .category("elytra")
                 .customModelData(true)
                 .build();
-        return Recipes.createShapedRecipe("eelytra", item, new String[]{"EPE", "P P", "EPE"}, 'E', Material.ELYTRA, 'P', Material.PHANTOM_MEMBRANE);
+        return Recipes.createShapedRecipe("phantom_winged_elytra", item, new String[]{"EPE", "P P", "EPE"}, 'E', Material.ELYTRA, 'P', Material.PHANTOM_MEMBRANE);
     }
 
     private ShapedRecipe getJumpElytraRecipe() {
         ItemStack item = new ItemBuilder<>(Material.ELYTRA)
-                .name(config.getString("dJumpElytra.name", "Jump Elytra"))
+                .name(config.getString("dJumpElytra.name", "Spring-Step Elytra"))
+                .id("spring_step_elytra")
+                .category("elytra")
                 .customModelData(true)
                 .build();
         return Recipes.createShapedRecipe("jump_elytra", item, new String[]{"EPE", "P P", "EPE"}, 'E', Material.ELYTRA, 'P', Material.SLIME_BALL);

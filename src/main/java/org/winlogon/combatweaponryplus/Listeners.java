@@ -35,7 +35,10 @@ import org.bukkit.potion.PotionEffectType;
 import org.bukkit.util.Vector;
 import org.jspecify.annotations.NonNull;
 import org.jspecify.annotations.Nullable;
+import org.bukkit.persistence.PersistentDataType;
+import org.winlogon.combatweaponryplus.items.builders.ItemBuilder;
 import org.winlogon.combatweaponryplus.util.ConfigHelper;
+import org.winlogon.combatweaponryplus.util.PersistentDataManager;
 import org.winlogon.combatweaponryplus.items.ItemModelData;
 import org.winlogon.combatweaponryplus.recipes.SmithingRecipeBuilder;
 
@@ -109,7 +112,8 @@ class Listeners implements Listener {
 
         var url = config.getString("resource-pack.link", "");
         try {
-            var request = createResourcePackRequest(plugin, "TODO: we need the texture for the extra items provided by this plugin");
+            var prompt = config.getString("resource-pack.prompt", "<gold>CombatWeaponryPlus</gold> <gray>requires a resource pack for custom item textures. <white>Would you like to download it?");
+            var request = createResourcePackRequest(plugin, prompt);
             player.sendResourcePacks(request);
             player.sendRichMessage("Sending resource pack: " + url);
         } catch (IllegalArgumentException e) {
@@ -121,8 +125,14 @@ class Listeners implements Listener {
     @EventHandler
     public void onClick(PlayerInteractEvent event) {
         var player = event.getPlayer();
+        var item = player.getInventory().getItemInMainHand();
 
-        if (!isValidItem(player, Material.IRON_SWORD, 1000007)) return;
+        if (item.getType() == Material.AIR) return;
+
+        String category = PersistentDataManager.getPersistentData(item, PersistentDataManager.CATEGORY_KEY);
+        String id = PersistentDataManager.getPersistentData(item, PersistentDataManager.ID_KEY);
+
+        if (!"knives".equals(category) || !"iron_knife".equals(id)) return;
         if (event.getAction() != Action.RIGHT_CLICK_AIR && !cooldown.checkCooldown(player)) return;
 
         player.launchProjectile(EnderPearl.class);
@@ -278,8 +288,8 @@ class Listeners implements Listener {
                 case 1000005:
                 case 1200005:
                 case 1000015:
-                    // TODO: was EXPLOSION_LARGE
-                    spawnParticles(event.getEntity().getLocation(), Particle.EXPLOSION, 1);
+                    // Large explosion effect
+                    spawnParticles(event.getEntity().getLocation(), Particle.EXPLOSION_EMITTER, 1);
                     if (event.getEntity() instanceof Player targetPlayer) {
                         if (targetPlayer.isBlocking()) {
                             if (attacker.getAttackCooldown() == 1.0) {
@@ -316,8 +326,8 @@ class Listeners implements Listener {
                         for (int i = 0; i < 4; i++) {
                             plugin.getServer().getScheduler().runTaskLater(plugin, () -> {
                                 playSound(attacker.getLocation(), Sound.ENTITY_PLAYER_ATTACK_SWEEP, 10.0f, 1.0f);
-                                // TODO: was EXPLOSION_LARGE
-                                spawnParticles(event.getEntity().getLocation(), Particle.EXPLOSION, 1);
+                                // Large explosion effect
+                                spawnParticles(event.getEntity().getLocation(), Particle.EXPLOSION_EMITTER, 1);
                             }, 2L * i);
                         }
                     }
@@ -332,11 +342,14 @@ class Listeners implements Listener {
         if (event.getEntity().getType() == EntityType.PLAYER && event.getCause() == EntityDamageEvent.DamageCause.FALL) {
             Player player = (Player) event.getEntity();
             var offHandItem = player.getInventory().getItemInOffHand();
-            var itemMeta = offHandItem.getItemMeta();
 
-            boolean isNameCorrect = itemMeta.hasDisplayName() && serializer.serialize(itemMeta.displayName()).contains("Feather Charm");
-            if (offHandItem.hasItemMeta() && isNameCorrect && itemMeta.hasLore()) {
-                event.setCancelled(true);
+            if (offHandItem.getType() != Material.AIR) {
+                String category = PersistentDataManager.getPersistentData(offHandItem, PersistentDataManager.CATEGORY_KEY);
+                String id = PersistentDataManager.getPersistentData(offHandItem, PersistentDataManager.ID_KEY);
+
+                if ("charms".equals(category) && "feather_charm".equals(id)) {
+                    event.setCancelled(true);
+                }
             }
         }
     }
@@ -576,24 +589,14 @@ class Listeners implements Listener {
                 world.playSound(player.getLocation(), Sound.ITEM_TRIDENT_THROW, 10.0f, 1.0f);
                 break;
             case 3330001: // Longbow
-            // TODO: extract the tripled code to a function
             case 3330004: // Longsword Bow
-                double longBowSpeed = config.getDouble("aLongBow.arrowSpeed", 4.0);
-                double longBowDmgMultiplier = config.getDouble("aLongBow.dmgMultiplier", 1.0);
-                arrow.setVelocity(vector.multiply(speed * longBowSpeed));
-                arrow.setDamage(arrow.getDamage() * longBowDmgMultiplier);
+                handleBowProperties(arrow, vector, speed, "aLongBow");
                 break;
             case 3330002: // Recurve Bow
-                double recurveBowSpeed = config.getDouble("aRecurveBow.arrowSpeed", 5.0);
-                double recurveBowDmgMultiplier = config.getDouble("aRecurveBow.dmgMultiplier", 1.0);
-                arrow.setVelocity(vector.multiply(speed * recurveBowSpeed));
-                arrow.setDamage(arrow.getDamage() * recurveBowDmgMultiplier);
+                handleBowProperties(arrow, vector, speed, "aRecurveBow");
                 break;
             case 3330003: // Compound Bow
-                double compoundBowSpeed = config.getDouble("aCompoundBow.arrowSpeed", 6.0);
-                double compoundBowDmgMultiplier = config.getDouble("aCompoundBow.dmgMultiplier", 1.0);
-                arrow.setVelocity(vector.multiply(speed * compoundBowSpeed));
-                arrow.setDamage(arrow.getDamage() * compoundBowDmgMultiplier);
+                handleBowProperties(arrow, vector, speed, "aCompoundBow");
                 break;
             case 5552001: // Repeating Crossbow
                 handleRepeatingCrossbow(player, event);
@@ -720,21 +723,23 @@ class Listeners implements Listener {
         ItemStack chestplate = player.getInventory().getChestplate();
 
         if (chestplate == null) return;
-        var meta = chestplate.getItemMeta();
-        if (meta == null) return;
 
-        boolean correctModel = ItemModelData.hasModelData(meta) && ItemModelData.get(meta) == 1560001;
+        String category = PersistentDataManager.getPersistentData(chestplate, PersistentDataManager.CATEGORY_KEY);
+        String id = PersistentDataManager.getPersistentData(chestplate, PersistentDataManager.ID_KEY);
+
+        if (!"elytra".equals(category) || !"phantom_winged_elytra".equals(id)) return;
+
         boolean rightClick = event.getAction() == Action.RIGHT_CLICK_AIR;
         boolean gliding = player.isGliding();
 
-        if (correctModel && rightClick && gliding) {
-            ItemModelData.set(meta, 1560002);
+        if (rightClick && gliding) {
+            var meta = chestplate.getItemMeta();
+            meta.getPersistentDataContainer().set(PersistentDataManager.STATE_KEY, PersistentDataType.STRING, "boosted");
             chestplate.setItemMeta(meta);
+            ItemBuilder.refreshModelData(chestplate);
 
             var playerLocation = player.getLocation();
-
             player.getWorld().playSound(playerLocation, Sound.ENTITY_PHANTOM_FLAP, 10.0f, 1.0f);
-
             player.setVelocity(playerLocation.getDirection().multiply(2));
         }
     }
@@ -747,30 +752,33 @@ class Listeners implements Listener {
         var chestplate = player.getInventory().getChestplate();
         if (chestplate == null) return;
 
-        // Check that the chestplate is an Elytra with one of the allowed custom model IDs
-        var isElytra = chestplate.getType() == Material.ELYTRA;
-        var meta = chestplate.getItemMeta();
-        var hasValidModel = meta != null && (ItemModelData.get(meta) == 1560001 || ItemModelData.get(meta) == 1560002);
+        String category = PersistentDataManager.getPersistentData(chestplate, PersistentDataManager.CATEGORY_KEY);
+        if (!"elytra".equals(category)) return;
 
-        if (!isElytra || !hasValidModel) return;
+        String id = PersistentDataManager.getPersistentData(chestplate, PersistentDataManager.ID_KEY);
 
-        // Player is gliding -> schedule a model‑reset after a short delay
+        // Player is gliding -> schedule a model-reset after a short delay
         if (player.isGliding() && !player.isDead()) {
-            plugin.getServer().getScheduler().runTaskLater(plugin, () -> {
-                ItemStack currentChest = player.getInventory().getChestplate();
-                if (currentChest == null) return;
+            if ("phantom_winged_elytra".equals(id)) {
+                plugin.getServer().getScheduler().runTaskLater(plugin, () -> {
+                    ItemStack currentChest = player.getInventory().getChestplate();
+                    if (currentChest == null) return;
 
-                ItemMeta currentMeta = currentChest.getItemMeta();
-                if (currentMeta == null) return;
+                    var currentMeta = currentChest.getItemMeta();
+                    if (currentMeta == null) return;
 
-                ItemModelData.set(meta, 1560001);
-                currentChest.setItemMeta(currentMeta);
-            }, 10L);
+                    currentMeta.getPersistentDataContainer().remove(PersistentDataManager.STATE_KEY);
+                    currentChest.setItemMeta(currentMeta);
+                    ItemBuilder.refreshModelData(currentChest);
+                }, 10L);
+            }
             return;
         }
 
-        // Player is not gliding -> give a small upward boost
-        player.setVelocity(new Vector(0, 1, 0));
+        // Player is not gliding -> give a small upward boost if it's a Spring-Step Elytra
+        if ("spring_step_elytra".equals(id)) {
+            player.setVelocity(new Vector(0, 1, 0));
+        }
     }
 
     @EventHandler
@@ -852,6 +860,13 @@ class Listeners implements Listener {
                 .prompt(finalPrompt) // Empty prompt message
                 .packs(packInfo)
                 .build();
+    }
+
+    private void handleBowProperties(Arrow arrow, Vector vector, float speed, String configPrefix) {
+        double bowSpeed = config.getDouble(configPrefix + ".arrowSpeed", 4.0);
+        double dmgMultiplier = config.getDouble(configPrefix + ".dmgMultiplier", 1.0);
+        arrow.setVelocity(vector.multiply(speed * bowSpeed));
+        arrow.setDamage(arrow.getDamage() * dmgMultiplier);
     }
 
     private static @NonNull ResourcePackInfo getResourcePackInfo(String url, String hash, UUID packId) {
