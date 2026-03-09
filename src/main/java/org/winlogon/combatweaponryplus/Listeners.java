@@ -11,7 +11,6 @@ import org.bukkit.enchantments.Enchantment;
 import org.bukkit.entity.AbstractArrow;
 import org.bukkit.entity.Arrow;
 import org.bukkit.entity.EnderPearl;
-import org.bukkit.entity.Entity;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
@@ -28,7 +27,6 @@ import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.PlayerInventory;
-import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.plugin.Plugin;
 import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
@@ -51,6 +49,7 @@ import net.kyori.adventure.text.serializer.plain.PlainTextComponentSerializer;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.nio.charset.StandardCharsets;
+import java.util.Objects;
 import java.util.Optional;
 import java.util.Random;
 import java.util.UUID;
@@ -59,14 +58,16 @@ import java.util.stream.IntStream;
 class Listeners implements Listener {
     private final CombatWeaponryPlus plugin;
     private final ConfigHelper config;
-    private final Random random = new Random();
+    private final Random random;
     private final Cooldown cooldown;
-    private final PlainTextComponentSerializer serializer = PlainTextComponentSerializer.plainText();
+    private final PlainTextComponentSerializer plainText;
 
     public Listeners(CombatWeaponryPlus plugin, ConfigHelper config, Cooldown cooldown) {
         this.plugin = plugin;
         this.config = config;
         this.cooldown = cooldown;
+        this.random = new Random();
+        this.plainText = PlainTextComponentSerializer.plainText();
     }
 
     private ItemStack[] getPlayerArmor(PlayerInventory inv) {
@@ -219,118 +220,106 @@ class Listeners implements Listener {
             }
         }
 
-        // Damage multipliers based on custom model data
-        if (mainHandItem.hasItemMeta() && mainHandItem.getItemMeta().hasLore()) {
-            int customModelDataValue = ItemModelData.get(mainHandItem.getItemMeta());
-            double damageMultiplier = 1.0;
+        // Damage multipliers and special effects based on identity
+        String category = PersistentDataManager.getPersistentData(mainHandItem, PersistentDataManager.CATEGORY_KEY);
+        String id = PersistentDataManager.getPersistentData(mainHandItem, PersistentDataManager.ID_KEY);
 
-            var offHandItem = attacker.getInventory().getItemInOffHand();
-
-            switch (customModelDataValue) {
-                case 4000001: // Longsword
-                case 1000001:
-                case 1200001:
-                case 1000011:
-                    if (offHandItem.getType() == Material.AIR) {
-                        damageMultiplier = 1.3;
-                    }
-                    break;
-                case 4000003: // Scythe
-                case 1000003:
-                case 1200003:
-                case 1000013:
-                    if (offHandItem.getType() == Material.AIR) {
-                        damageMultiplier = 1.3;
-                    }
-                    if (event.getEntity() instanceof Player targetPlayer) {
-                        if (targetPlayer.getInventory().getChestplate() == null || targetPlayer.getInventory().getChestplate().getType() == Material.ELYTRA) {
-                            damageMultiplier *= 1.5;
-                            playSound(attacker.getLocation(), Sound.ENTITY_PLAYER_ATTACK_CRIT, 10.0f, 1.0f);
-                        }
-                    }
-                    break;
-                case 4000004: // Spear
-                case 1000004:
-                case 1200004:
-                case 1000014:
-                    if (offHandItem.getType() == Material.AIR) {
-                        damageMultiplier = 1.3;
-                    }
-                    if (event.getEntity() instanceof Player targetPlayer) {
-                        if (targetPlayer.isBlocking()) {
-                            if (attacker.getAttackCooldown() == 1.0) {
-                                targetPlayer.setCooldown(Material.SHIELD, 20);
-                            }
-                            playSound(targetPlayer.getLocation(), Sound.ITEM_SHIELD_BREAK, 10.0f, 1.0f);
-                            event.setCancelled(true); // Cancel event if shield breaks
-                            return;
-                        }
-                        var inventory = targetPlayer.getInventory();
-                        var playerArmor = getPlayerArmor(inventory);
-
-                        boolean hasArmor = playerArmor[0] != null || playerArmor[1] != null || playerArmor[2] != null || playerArmor[3] != null;
-                        if (hasArmor) {
-                            damageMultiplier *= 1.05;
-                            playSound(attacker.getLocation(), Sound.ENTITY_PLAYER_ATTACK_CRIT, 10.0f, 1.0f);
-                        }
-
-                        if (inventory.getHelmet() != null || inventory.getChestplate() != null || inventory.getLeggings() != null || inventory.getBoots() != null) {
-                            damageMultiplier *= 1.05;
-                            playSound(attacker.getLocation(), Sound.ENTITY_PLAYER_ATTACK_CRIT, 10.0f, 1.0f);
-                        }
-                    }
-                    break;
-                case 4000005: // Rapier
-                case 1000005:
-                case 1200005:
-                case 1000015:
-                    // Large explosion effect
-                    spawnParticles(event.getEntity().getLocation(), Particle.EXPLOSION_EMITTER, 1);
-                    if (event.getEntity() instanceof Player targetPlayer) {
-                        if (targetPlayer.isBlocking()) {
-                            if (attacker.getAttackCooldown() == 1.0) {
-                                targetPlayer.setCooldown(Material.SHIELD, 40);
-                            }
-                            playSound(targetPlayer.getLocation(), Sound.ITEM_SHIELD_BREAK, 10.0f, 1.0f);
-                            event.setCancelled(true); // Cancel event if shield breaks
-                            return;
-                        }
-                        if (targetPlayer.getInventory().getHelmet() != null || targetPlayer.getInventory().getChestplate() != null || targetPlayer.getInventory().getLeggings() != null || targetPlayer.getInventory().getBoots() != null) {
-                            damageMultiplier *= 1.05;
-                            playSound(attacker.getLocation(), Sound.ENTITY_PLAYER_ATTACK_CRIT, 10.0f, 1.0f);
-                        }
-                    }
-                    break;
-                case 4000006: // Knife
-                    if (event.getEntity() instanceof Player targetPlayer) {
-                        if (targetPlayer.getInventory().getChestplate() == null || targetPlayer.getInventory().getChestplate().getType() == Material.ELYTRA) {
-                            damageMultiplier *= 2.0;
-                            playSound(attacker.getLocation(), Sound.ENTITY_PLAYER_ATTACK_CRIT, 10.0f, 1.0f);
-                        }
-                    }
-                    break;
-                case 4000002: // Katana
-                case 1000002:
-                case 1200002:
-                case 1000012:
-                    if (attacker.getInventory().getItemInOffHand().getType() == Material.AIR) {
-                        damageMultiplier = 1.3;
-                    }
-                    int randomValue = random.nextInt(5);
-                    if (randomValue == 1) {
-                        damageMultiplier *= 1.1; // Critical hit
-                        for (int i = 0; i < 4; i++) {
-                            plugin.getServer().getScheduler().runTaskLater(plugin, () -> {
-                                playSound(attacker.getLocation(), Sound.ENTITY_PLAYER_ATTACK_SWEEP, 10.0f, 1.0f);
-                                // Large explosion effect
-                                spawnParticles(event.getEntity().getLocation(), Particle.EXPLOSION_EMITTER, 1);
-                            }, 2L * i);
-                        }
-                    }
-                    break;
-            }
-            event.setDamage(event.getDamage() * damageMultiplier);
+        if (category == null) {
+            return;
         }
+
+        double multiplier = config.getDouble("multipliers." + category, 1.0);
+        var offHandItem = attacker.getInventory().getItemInOffHand();
+
+        // Category-based logic
+        switch (category) {
+            case "longswords":
+                if (offHandItem.getType() == Material.AIR) {
+                    multiplier *= 1.3;
+                }
+                break;
+
+            case "scythes":
+                if (offHandItem.getType() == Material.AIR) {
+                    multiplier *= 1.3;
+                }
+                if (event.getEntity() instanceof Player targetPlayer) {
+                    var chest = targetPlayer.getInventory().getChestplate();
+                    if (chest == null || chest.getType() == Material.ELYTRA) {
+                        multiplier *= 1.5;
+                        playSound(attacker.getLocation(), Sound.ENTITY_PLAYER_ATTACK_CRIT, 10.0f, 1.0f);
+                    }
+                }
+                break;
+
+            case "spears":
+                if (offHandItem.getType() == Material.AIR) {
+                    multiplier *= 1.3;
+                }
+                if (event.getEntity() instanceof Player targetPlayer) {
+                    if (targetPlayer.isBlocking() && attacker.getAttackCooldown() == 1.0) {
+                        targetPlayer.setCooldown(Material.SHIELD, 20);
+                        playSound(targetPlayer.getLocation(), Sound.ITEM_SHIELD_BREAK, 10.0f, 1.0f);
+                        event.setCancelled(true);
+                        return;
+                    }
+                    if (hasAnyArmor(targetPlayer)) {
+                        multiplier *= 1.1; // Piercing bonus against armor
+                        playSound(attacker.getLocation(), Sound.ENTITY_PLAYER_ATTACK_CRIT, 10.0f, 1.0f);
+                    }
+                }
+                break;
+
+            case "rapiers":
+                spawnParticles(event.getEntity().getLocation(), Particle.EXPLOSION_EMITTER, 1);
+                if (event.getEntity() instanceof Player targetPlayer) {
+                    if (targetPlayer.isBlocking() && attacker.getAttackCooldown() == 1.0) {
+                        targetPlayer.setCooldown(Material.SHIELD, 40);
+                        playSound(targetPlayer.getLocation(), Sound.ITEM_SHIELD_BREAK, 10.0f, 1.0f);
+                        event.setCancelled(true);
+                        return;
+                    }
+                    if (hasAnyArmor(targetPlayer)) {
+                        multiplier *= 1.05;
+                        playSound(attacker.getLocation(), Sound.ENTITY_PLAYER_ATTACK_CRIT, 10.0f, 1.0f);
+                    }
+                }
+                break;
+
+            case "knives":
+                if (event.getEntity() instanceof Player targetPlayer) {
+                    var chest = targetPlayer.getInventory().getChestplate();
+                    if (chest == null || chest.getType() == Material.ELYTRA) {
+                        multiplier *= 2.0;
+                        playSound(attacker.getLocation(), Sound.ENTITY_PLAYER_ATTACK_CRIT, 10.0f, 1.0f);
+                    }
+                }
+                break;
+
+            case "katanas":
+                if (offHandItem.getType() == Material.AIR) {
+                    multiplier *= 1.3;
+                }
+                if (random.nextInt(5) == 1) {
+                    multiplier *= 1.1;
+                    for (int i = 0; i < 4; i++) {
+                        plugin.getServer().getScheduler().runTaskLater(plugin, () -> {
+                            playSound(attacker.getLocation(), Sound.ENTITY_PLAYER_ATTACK_SWEEP, 10.0f, 1.0f);
+                            spawnParticles(event.getEntity().getLocation(), Particle.EXPLOSION_EMITTER, 1);
+                        }, 2L * i);
+                    }
+                }
+                break;
+        }
+
+        if (multiplier != 1.0) {
+            event.setDamage(event.getDamage() * multiplier);
+        }
+    }
+
+    private boolean hasAnyArmor(Player player) {
+        var inv = player.getInventory();
+        return inv.getHelmet() != null || inv.getChestplate() != null || inv.getLeggings() != null || inv.getBoots() != null;
     }
 
     @EventHandler
@@ -586,13 +575,13 @@ class Listeners implements Listener {
                 break;
             case 3330001: // Longbow
             case 3330004: // Longsword Bow
-                handleBowProperties(arrow, vector, speed, "aLongBow");
+                applyBowConfigToArrow(arrow, vector, speed, "aLongBow");
                 break;
             case 3330002: // Recurve Bow
-                handleBowProperties(arrow, vector, speed, "aRecurveBow");
+                applyBowConfigToArrow(arrow, vector, speed, "aRecurveBow");
                 break;
             case 3330003: // Compound Bow
-                handleBowProperties(arrow, vector, speed, "aCompoundBow");
+                applyBowConfigToArrow(arrow, vector, speed, "aCompoundBow");
                 break;
             case 5552001: // Repeating Crossbow
                 handleRepeatingCrossbow(player, event);
@@ -626,9 +615,11 @@ class Listeners implements Listener {
         IntStream.range(0, 4).forEach(i ->
             plugin.getServer().getScheduler().runTaskLater(plugin, () -> {
                 var playerDirection = player.getLocation().getDirection();
-                var arrow = (Arrow) player.launchProjectile(Arrow.class, playerDirection);
+                var arrow = player.launchProjectile(Arrow.class, playerDirection);
+
                 arrow.setPickupStatus(AbstractArrow.PickupStatus.DISALLOWED);
                 arrow.setVelocity(playerDirection.multiply(event.getForce() * 4.5));
+
                 player.getWorld().playSound(player.getLocation(), Sound.ITEM_CROSSBOW_SHOOT, 10.0f, 1.0f);
             }, 3L * i)
         );
@@ -692,8 +683,10 @@ class Listeners implements Listener {
         var inventory = player.getInventory();
         var chestplate = inventory.getChestplate();
 
-        var ironChestplateFound = chestplate != null && chestplate.getType() == Material.IRON_CHESTPLATE;
-        var customModelDataMatch = chestplate.hasItemMeta() && chestplate.getItemMeta().getCustomModelData() == 1231234;
+        var isPlayerWearingChestplate = chestplate != null;
+
+        var ironChestplateFound = isPlayerWearingChestplate && chestplate.getType() == Material.IRON_CHESTPLATE;
+        var customModelDataMatch = isPlayerWearingChestplate && chestplate.hasItemMeta() && ItemModelData.get(chestplate.getItemMeta()) == 1231234;
 
         if (ironChestplateFound && customModelDataMatch) {
             return; // Redstone Core check
@@ -829,6 +822,8 @@ class Listeners implements Listener {
      * @throws IllegalArgumentException if the URL is invalid or hash is not a valid SHA-1 hash.
      */
     private ResourcePackRequest createResourcePackRequest(Plugin plugin, @Nullable String prompt) {
+        Objects.requireNonNull(plugin);
+
         final String base = "resource-pack" + ".";
         String configPathHash = base + "hash";
         String configPathUrl = base + "link";
@@ -858,9 +853,35 @@ class Listeners implements Listener {
                 .build();
     }
 
-    private void handleBowProperties(Arrow arrow, Vector vector, float speed, String configPrefix) {
-        double bowSpeed = config.getDouble(configPrefix + ".arrowSpeed", 4.0);
-        double dmgMultiplier = config.getDouble(configPrefix + ".dmgMultiplier", 1.0);
+    /**
+     * Applies bow configuration values from the plugin config to an Arrow entity.
+     * <p>
+     * This method reads two values from the configuration using the provided
+     * configPrefix:
+     * <ul>
+     *      <li>
+     *          {@code arrowSpeed} ({@code double}, default 4.0): multiplier applied to the provided
+     *          speed when setting the arrow's velocity.
+     *      </li>
+     *
+     *      <li>{@code dmgMultiplier} ({@code double}, default 1.0): multiplier applied to the arrow's current damage value.</li>
+     * <br/>
+     * The arrow's velocity is set to {@code vector * (speed * arrowSpeed)}. The arrow's
+     * damage is multiplied by dmgMultiplier.
+     * <br/>
+     *
+     * @param arrow the {@link Arrow} entity to modify; its velocity and damage will be updated
+     * @param vector the direction vector for the arrow's velocity (will be multiplied)
+     * @param speed base speed scalar multiplied by the configured arrowSpeed before applying to the vector
+     * @param configPrefix prefix used to lookup configuration keys
+     */
+    private void applyBowConfigToArrow(@NonNull Arrow arrow, @NonNull Vector vector, float speed, @NonNull String configPrefix) {
+        Objects.requireNonNull(arrow);
+        Objects.requireNonNull(vector);
+        Objects.requireNonNull(configPrefix);
+
+        var bowSpeed = config.getDouble(configPrefix + ".arrowSpeed", 4.0);
+        var dmgMultiplier = config.getDouble(configPrefix + ".dmgMultiplier", 1.0);
         arrow.setVelocity(vector.multiply(speed * bowSpeed));
         arrow.setDamage(arrow.getDamage() * dmgMultiplier);
     }
