@@ -1,6 +1,5 @@
 package org.winlogon.combatweaponryplus.recipes;
 
-import org.winlogon.combatweaponryplus.CombatWeaponryPlus;
 import org.winlogon.combatweaponryplus.recipes.registry.*;
 import org.winlogon.combatweaponryplus.util.ConfigHelper;
 
@@ -10,8 +9,7 @@ public class RecipeProvider {
     private final ConfigHelper config;
     private final RecipeRegistrar recipeRegistrar;
 
-    public RecipeProvider(CombatWeaponryPlus plugin, ConfigHelper config) {
-        Objects.requireNonNull(plugin, "Plugin cannot be null");
+    public RecipeProvider(ConfigHelper config) {
         this.config = Objects.requireNonNull(config, "ConfigHelper cannot be null");
         this.recipeRegistrar = new RecipeRegistrar(config);
     }
