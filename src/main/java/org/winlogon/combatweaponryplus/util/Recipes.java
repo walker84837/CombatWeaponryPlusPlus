@@ -22,16 +22,21 @@ public final class Recipes {
 
     /**
      * Adds the configured values for unbreaking and mending for a group of recipes, if they exist.
-     * @param name The recipe group
+     * @param toggleKey The configuration key to check if enchants are enabled
+     * @param levelKeyPrefix The prefix for enchantment level keys (e.g. "EmeraldGearEnchantLevels")
      * @param item The item builder
      */
-    public static void applyConfiguredEnchantments(@NonNull String name, @NonNull ItemBuilder<?> item) {
-        if (config.isEnabled("EnchantmentsOn" + name)) {
-            int unbreaking = config.getInt(name + "EnchantLevels.Unbreaking", 0);
-            item.enchant(Enchantment.UNBREAKING, unbreaking);
+    public static void applyConfiguredEnchantments(@NonNull String toggleKey, @NonNull String levelKeyPrefix, @NonNull ItemBuilder<?> item) {
+        if (config.isEnabled(toggleKey)) {
+            int unbreaking = config.getInt(levelKeyPrefix + ".Unbreaking", 0);
+            if (unbreaking > 0) {
+                item.enchant(Enchantment.UNBREAKING, unbreaking);
+            }
 
-            int mending = config.getInt(name + "EnchantLevels.Mending", 0);
-            item.enchant(Enchantment.MENDING, mending);
+            int mending = config.getInt(levelKeyPrefix + ".Mending", 0);
+            if (mending > 0) {
+                item.enchant(Enchantment.MENDING, mending);
+            }
         }
     }
 
