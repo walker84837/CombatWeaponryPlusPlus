@@ -16,7 +16,6 @@ import org.winlogon.combatweaponryplus.util.ConfigValueOperation;
  */
 public class WeaponBuilder extends ItemBuilder<WeaponBuilder> {
     private final ConfigHelper configHelper;
-    private final boolean customValues;
 
     /**
      * Constructs a new WeaponBuilder with the specified material and configuration helper.
@@ -27,7 +26,6 @@ public class WeaponBuilder extends ItemBuilder<WeaponBuilder> {
     public @NonNull WeaponBuilder(@NonNull Material material, @NonNull ConfigHelper configHelper) {
         super(material);
         this.configHelper = configHelper;
-        this.customValues = configHelper.raw().getBoolean("UseCustomValues");
     }
 
     /**
@@ -86,11 +84,11 @@ public class WeaponBuilder extends ItemBuilder<WeaponBuilder> {
 
     /**
      * Configures the attack damage attribute based on plugin settings.
-     * If "UseCustomValues" is true in the config, it retrieves the damage value
+     * If "use_custom_values" is true in the config, it retrieves the damage value
      * from the specified config path and applies the given operation.
      * Otherwise, it uses the provided default damage.
      *
-     * @param configPath The configuration path to the custom damage value (e.g., "aDiamondKnife.damage").
+     * @param configPath The configuration path to the custom damage value (e.g., "attributes.diamond_knife.damage").
      * @param defaultDamage The default damage value to use if custom values are not enabled or not found.
      * @param op The {@link ConfigValueOperation} to apply to the retrieved config value.
      * @param opValue The operand value for the operation.
@@ -98,7 +96,7 @@ public class WeaponBuilder extends ItemBuilder<WeaponBuilder> {
      */
     public @NonNull WeaponBuilder withConfiguredDamage(String configPath, double defaultDamage, ConfigValueOperation op, double opValue) {
         double dmg = defaultDamage;
-        if (this.customValues) {
+        if (configHelper.isEnabled("use_custom_values")) {
             double rawDmg = configHelper.getDouble(configPath, defaultDamage);
             dmg = applyOperation(rawDmg, op, opValue);
         }
@@ -107,11 +105,11 @@ public class WeaponBuilder extends ItemBuilder<WeaponBuilder> {
 
     /**
      * Configures the attack speed attribute based on plugin settings.
-     * If "UseCustomValues" is true in the config, it retrieves the speed value
+     * If "use_custom_values" is true in the config, it retrieves the speed value
      * from the specified config path and applies the given operation.
      * Otherwise, it uses the provided default speed.
      *
-     * @param configPath The configuration path to the custom speed value (e.g., "aDiamondKnife.speed").
+     * @param configPath The configuration path to the custom speed value (e.g., "attributes.diamond_knife.speed").
      * @param defaultSpeed The default speed value to use if custom values are not enabled or not found.
      * @param op The {@link ConfigValueOperation} to apply to the retrieved config value.
      * @param opValue The operand value for the operation.
@@ -119,7 +117,7 @@ public class WeaponBuilder extends ItemBuilder<WeaponBuilder> {
      */
     public @NonNull WeaponBuilder withConfiguredSpeed(String configPath, double defaultSpeed, ConfigValueOperation op, double opValue) {
         double spd = defaultSpeed;
-        if (this.customValues) {
+        if (configHelper.isEnabled("use_custom_values")) {
             double rawSpd = configHelper.getDouble(configPath, defaultSpeed);
             spd = applyOperation(rawSpd, op, opValue);
         }
@@ -137,7 +135,7 @@ public class WeaponBuilder extends ItemBuilder<WeaponBuilder> {
      */
     public @NonNull WeaponBuilder withConfiguredMovementSpeed(String configPath, double defaultMoveSpeed, ConfigValueOperation op, double opValue) {
         double ms = defaultMoveSpeed;
-        if (this.customValues) {
+        if (configHelper.isEnabled("use_custom_values")) {
             double rawMs = configHelper.getDouble(configPath, defaultMoveSpeed);
             ms = applyOperation(rawMs, op, opValue);
         }
@@ -155,7 +153,7 @@ public class WeaponBuilder extends ItemBuilder<WeaponBuilder> {
      */
     public @NonNull WeaponBuilder withConfiguredKnockbackResistance(String configPath, double defaultKBResist, ConfigValueOperation op, double opValue) {
         double kbr = defaultKBResist;
-        if (this.customValues) {
+        if (configHelper.isEnabled("use_custom_values")) {
             double rawKbr = configHelper.getDouble(configPath, defaultKBResist);
             kbr = applyOperation(rawKbr, op, opValue);
         }

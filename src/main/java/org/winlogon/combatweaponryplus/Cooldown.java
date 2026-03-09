@@ -3,6 +3,7 @@ package org.winlogon.combatweaponryplus;
 import org.bukkit.entity.Player;
 import org.jspecify.annotations.NonNull;
 
+import java.util.Objects;
 import java.util.Optional;
 import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
@@ -20,6 +21,8 @@ public class Cooldown {
      * @param seconds The amount of seconds to set the cooldown to
      */
     public void setCooldown(@NonNull Player player, int seconds) {
+        Objects.requireNonNull(player);
+
         double delay = System.currentTimeMillis() + (long)seconds * 1000L;
         cooldowns.put(player.getUniqueId(), delay);
     }
@@ -30,6 +33,8 @@ public class Cooldown {
      * @return The cooldown of the player, if there is one
      */
     public Optional<Integer> getCooldown(@NonNull Player player) {
+        Objects.requireNonNull(player);
+
         var uuid = player.getUniqueId();
         if (!cooldowns.containsKey(uuid)) {
             return Optional.empty();
@@ -51,6 +56,8 @@ public class Cooldown {
      * @return true if the player has a cooldown, false otherwise.
      */
     public boolean checkCooldown(@NonNull Player player) {
+        Objects.requireNonNull(player);
+
         return !cooldowns.containsKey(player.getUniqueId()) || cooldowns.get(player.getUniqueId()) <= (double)System.currentTimeMillis();
     }
 }

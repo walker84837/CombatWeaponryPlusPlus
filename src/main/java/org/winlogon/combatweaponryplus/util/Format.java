@@ -79,10 +79,10 @@ public final class Format {
     }
 
     /**
-     * Translates all legacy color codes in the given string and produces a component.
+     * Translates all legacy color codes in the given string and produces a {@link Component}.
      *
      * @param s The input string
-     * @return The translated component
+     * @return The translated component. If {@code s} is null, it returns an empty component.
      */
     public static @NonNull Component convertLegacyToComponent(@Nullable String s) {
         if (s == null) return Component.empty();

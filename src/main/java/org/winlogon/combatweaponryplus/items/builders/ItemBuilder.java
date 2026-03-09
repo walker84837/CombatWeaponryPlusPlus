@@ -1,6 +1,7 @@
 package org.winlogon.combatweaponryplus.items.builders;
 
 import com.google.common.base.Preconditions;
+import net.kyori.adventure.text.minimessage.MiniMessage;
 import org.bukkit.Material;
 import org.bukkit.attribute.Attribute;
 import org.bukkit.attribute.AttributeModifier;
@@ -71,6 +72,35 @@ public class ItemBuilder<Builder extends ItemBuilder<Builder>> {
         }
         return (Builder) this;
     }
+
+    /**
+     * Sets the display name of the item.
+     *
+     * @param name The display name of the item.
+     * @return This ItemBuilder instance.
+     */
+    public @NonNull Builder nameMiniMessage(@Nullable String name) {
+        if (name != null) {
+            meta.displayName(MiniMessage.miniMessage().deserialize(name));
+        } else {
+            meta.displayName(null);
+        }
+        return (Builder) this;
+    }
+
+    /**
+     * Sets the display name of the item from a configuration file's key as legacy-formatted.
+     * @param config
+     * @param key
+     * @param fallback
+     * @return
+     */
+    public @NonNull Builder nameFromConfig(@NonNull ConfigHelper config, @NonNull String key, @Nullable String fallback) {
+        var name = Format.convertLegacyToComponent(config.getString(key, fallback));
+        meta.displayName(name);
+        return (Builder) this;
+    }
+
     /**
      * Sets the display name of the item.
      *
@@ -140,6 +170,23 @@ public class ItemBuilder<Builder extends ItemBuilder<Builder>> {
         return lore(lore);
     }
 
+
+    /**
+     * Uses a configuration list entry to set the lore.
+     * @param config The server's configuration
+     * @param configEntry The configuration entry path
+     * @return This ItemBuilder instance
+     */
+    public @NonNull Builder loreConfigList(
+            @NonNull ConfigHelper config,
+            @NonNull String configEntry
+    ) {
+        List<String> loreList = config.raw().getStringList(configEntry);
+        if (!loreList.isEmpty()) {
+            return lore(loreList);
+        }
+        return (Builder) this;
+    }
 
     /**
      * Sets the lore of the item using a list of strings.
