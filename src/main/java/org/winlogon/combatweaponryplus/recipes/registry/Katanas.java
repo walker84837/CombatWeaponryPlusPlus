@@ -1,7 +1,6 @@
 package org.winlogon.combatweaponryplus.recipes.registry;
 
 import org.bukkit.Material;
-import org.bukkit.enchantments.Enchantment;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.Recipe;
 import org.bukkit.inventory.ShapedRecipe;
@@ -10,9 +9,6 @@ import org.winlogon.combatweaponryplus.util.ConfigHelper;
 import org.winlogon.combatweaponryplus.util.ConfigValueOperation;
 import org.winlogon.combatweaponryplus.util.Recipes;
 
-import java.util.ArrayList;
-import java.util.List;
-
 public class Katanas implements RecipeGroupRegistrar {
     private final ConfigHelper config;
 
@@ -20,140 +16,114 @@ public class Katanas implements RecipeGroupRegistrar {
         this.config = config;
     }
 
-    private ShapedRecipe getWoodenKatanaRecipe() {
-        List<String> lore = new ArrayList<>(config.getStringList("KatanaDescription"));
-        for (int i = 12; i <= 14; i++) {
-            lore.add(config.getString("dWoodenKatana.line" + i, ""));
-        }
-
+    private ShapedRecipe woodenKatana() {
         ItemStack item = new WeaponBuilder(Material.WOODEN_SWORD, config)
-                .withConfiguredDamage("aWoodenKatana.damage", 6.0, ConfigValueOperation.SUBTRACT, 1.0)
-                .withConfiguredSpeed("aWoodenKatana.speed", 1.6, ConfigValueOperation.SUBTRACT, 4.0)
-                .name(config.getString("dWoodenKatana.name", "Wooden Katana"))
+                .withConfiguredDamage("aWoodenKatana.damage", 3.5, ConfigValueOperation.SUBTRACT, 1.0)
+                .withConfiguredSpeed("aWoodenKatana.speed", 1.7, ConfigValueOperation.SUBTRACT, 4.0)
+                .withConfiguredMovementSpeed("aWoodenKatana.moveSpeed", 0.02, ConfigValueOperation.NONE, 0.0)
+                .nameLegacy(config.getString("dWoodenKatana.name", "Wooden Katana"))
                 .id("wooden_katana")
                 .category("katanas")
-                .lore(lore)
+                .loreConfigRange(config, "KatanaDescription", 1, 11)
+                .loreConfigRange(config, "dWoodenKatana", 12, 14)
                 .customModelData(true)
                 .hideFlags(true)
                 .build();
         return Recipes.createShapedRecipe("wooden_katana", item, new String[]{"  S", " S ", "S  "}, 'S', Material.STICK);
     }
 
-    private ShapedRecipe getStoneKatanaRecipe() {
-        List<String> lore = new ArrayList<>(config.getStringList("KatanaDescription"));
-        for (int i = 12; i <= 14; i++) {
-            lore.add(config.getString("dStoneKatana.line" + i, ""));
-        }
-
+    private ShapedRecipe stoneKatana() {
         ItemStack item = new WeaponBuilder(Material.STONE_SWORD, config)
-                .withConfiguredDamage("aStoneKatana.damage", 6.5, ConfigValueOperation.SUBTRACT, 1.0)
-                .withConfiguredSpeed("aStoneKatana.speed", 1.6, ConfigValueOperation.SUBTRACT, 4.0)
-                .name(config.getString("dStoneKatana.name", "Stone Katana"))
+                .withConfiguredDamage("aStoneKatana.damage", 4.0, ConfigValueOperation.SUBTRACT, 1.0)
+                .withConfiguredSpeed("aStoneKatana.speed", 1.7, ConfigValueOperation.SUBTRACT, 4.0)
+                .withConfiguredMovementSpeed("aStoneKatana.moveSpeed", 0.02, ConfigValueOperation.NONE, 0.0)
+                .nameLegacy(config.getString("dStoneKatana.name", "Stone Katana"))
                 .id("stone_katana")
                 .category("katanas")
-                .lore(lore)
+                .loreConfigRange(config, "KatanaDescription", 1, 11)
+                .loreConfigRange(config, "dStoneKatana", 12, 14)
                 .customModelData(true)
                 .hideFlags(true)
                 .build();
         return Recipes.createShapedRecipe("stone_katana", item, new String[]{"  C", " C ", "C  "}, 'C', Material.COBBLESTONE);
     }
 
-    private ShapedRecipe getGoldenKatanaRecipe() {
-        List<String> lore = new ArrayList<>(config.getStringList("KatanaDescription"));
-        for (int i = 12; i <= 14; i++) {
-            lore.add(config.getString("dGoldenKatana.line" + i, ""));
-        }
-
+    private ShapedRecipe goldenKatana() {
         ItemStack item = new WeaponBuilder(Material.GOLDEN_SWORD, config)
-                .withConfiguredDamage("aGoldenKatana.damage", 6.0, ConfigValueOperation.SUBTRACT, 1.0)
+                .withConfiguredDamage("aGoldenKatana.damage", 3.5, ConfigValueOperation.SUBTRACT, 1.0)
                 .withConfiguredSpeed("aGoldenKatana.speed", 2.0, ConfigValueOperation.SUBTRACT, 4.0)
-                .name(config.getString("dGoldenKatana.name", "Golden Katana"))
+                .withConfiguredMovementSpeed("aGoldenKatana.moveSpeed", 0.02, ConfigValueOperation.NONE, 0.0)
+                .nameLegacy(config.getString("dGoldenKatana.name", "Golden Katana"))
                 .id("golden_katana")
                 .category("katanas")
-                .lore(lore)
+                .loreConfigRange(config, "KatanaDescription", 1, 11)
+                .loreConfigRange(config, "dGoldenKatana", 12, 14)
                 .customModelData(true)
                 .hideFlags(true)
                 .build();
         return Recipes.createShapedRecipe("golden_katana", item, new String[]{"  G", " G ", "G  "}, 'G', Material.GOLD_INGOT);
     }
 
-    private ShapedRecipe getIronKatanaRecipe() {
-        List<String> lore = new ArrayList<>(config.getStringList("KatanaDescription"));
-        for (int i = 12; i <= 14; i++) {
-            lore.add(config.getString("dIronKatana.line" + i, ""));
-        }
-
+    private ShapedRecipe ironKatana() {
         ItemStack item = new WeaponBuilder(Material.IRON_SWORD, config)
-                .withConfiguredDamage("aIronKatana.damage", 7.0, ConfigValueOperation.SUBTRACT, 1.0)
-                .withConfiguredSpeed("aIronKatana.speed", 1.6, ConfigValueOperation.SUBTRACT, 4.0)
-                .name(config.getString("dIronKatana.name", "Iron Katana"))
+                .withConfiguredDamage("aIronKatana.damage", 5.0, ConfigValueOperation.SUBTRACT, 1.0)
+                .withConfiguredSpeed("aIronKatana.speed", 1.7, ConfigValueOperation.SUBTRACT, 4.0)
+                .withConfiguredMovementSpeed("aIronKatana.moveSpeed", 0.02, ConfigValueOperation.NONE, 0.0)
+                .nameLegacy(config.getString("dIronKatana.name", "Iron Katana"))
                 .id("iron_katana")
                 .category("katanas")
-                .lore(lore)
+                .loreConfigRange(config, "KatanaDescription", 1, 11)
+                .loreConfigRange(config, "dIronKatana", 12, 14)
                 .customModelData(true)
                 .hideFlags(true)
                 .build();
         return Recipes.createShapedRecipe("iron_katana", item, new String[]{"  I", " I ", "I  "}, 'I', Material.IRON_INGOT);
     }
 
-    private ShapedRecipe getEmeraldKatanaRecipe() {
-        List<String> lore = new ArrayList<>(config.getStringList("KatanaDescription"));
-        for (int i = 12; i <= 14; i++) {
-            lore.add(config.getString("dEmeraldKatana.line" + i, ""));
-        }
-
-        ItemStack item = new WeaponBuilder(Material.GOLDEN_SWORD, config)
-                .withConfiguredDamage("aEmeraldKatana.damage", 7.0, ConfigValueOperation.SUBTRACT, 1.0)
+    private ShapedRecipe emeraldKatana() {
+        var builder = new WeaponBuilder(Material.GOLDEN_SWORD, config)
+                .withConfiguredDamage("aEmeraldKatana.damage", 5.0, ConfigValueOperation.SUBTRACT, 1.0)
                 .withConfiguredSpeed("aEmeraldKatana.speed", 2.0, ConfigValueOperation.SUBTRACT, 4.0)
-                .name(config.getString("dEmeraldKatana.name", "Emerald Katana"))
+                .withConfiguredMovementSpeed("aEmeraldKatana.moveSpeed", 0.02, ConfigValueOperation.NONE, 0.0)
+                .nameLegacy(config.getString("dEmeraldKatana.name", "&2Emerald Katana"))
                 .id("emerald_katana")
                 .category("katanas")
-                .lore(lore)
+                .loreConfigRange(config, "KatanaDescription", 1, 11)
+                .loreConfigRange(config, "dEmeraldKatana", 12, 14)
                 .customModelData(true)
-                .hideFlags(true)
-                .build();
+                .hideFlags(true);
 
-        if (config.isEnabled("EnchantsOnEmeraldGear")) {
-            int unbreaking = config.getInt("EmeraldGearEnchantLevels.Unbreaking", 0);
-            int mending = config.getInt("EmeraldGearEnchantLevels.Mending", 0);
-            item.addUnsafeEnchantment(Enchantment.UNBREAKING, unbreaking);
-            item.addUnsafeEnchantment(Enchantment.MENDING, mending);
-        }
-        return Recipes.createShapedRecipe("emerald_katana", item, new String[]{"  E", " E ", "E  "}, 'E', Material.EMERALD);
+        Recipes.applyConfiguredEnchantments("EnchantsOnEmeraldGear", "EmeraldGearEnchantLevels", builder);
+
+        return Recipes.createShapedRecipe("emerald_katana", builder.build(), new String[]{"  E", " E ", "E  "}, 'E', Material.EMERALD);
     }
 
-    private ShapedRecipe getDiamondKatanaRecipe() {
-        List<String> lore = new ArrayList<>(config.getStringList("KatanaDescription"));
-        for (int i = 12; i <= 14; i++) {
-            lore.add(config.getString("dDiamondKatana.line" + i, ""));
-        }
-
+    private ShapedRecipe diamondKatana() {
         ItemStack item = new WeaponBuilder(Material.DIAMOND_SWORD, config)
-                .withConfiguredDamage("aDiamondKatana.damage", 8.0, ConfigValueOperation.SUBTRACT, 1.0)
-                .withConfiguredSpeed("aDiamondKatana.speed", 1.6, ConfigValueOperation.SUBTRACT, 4.0)
-                .name(config.getString("dDiamondKatana.name", "Diamond Katana"))
+                .withConfiguredDamage("aDiamondKatana.damage", 6.0, ConfigValueOperation.SUBTRACT, 1.0)
+                .withConfiguredSpeed("aDiamondKatana.speed", 1.7, ConfigValueOperation.SUBTRACT, 4.0)
+                .withConfiguredMovementSpeed("aDiamondKatana.moveSpeed", 0.02, ConfigValueOperation.NONE, 0.0)
+                .nameLegacy(config.getString("dDiamondKatana.name", "Diamond Katana"))
                 .id("diamond_katana")
                 .category("katanas")
-                .lore(lore)
+                .loreConfigRange(config, "KatanaDescription", 1, 11)
+                .loreConfigRange(config, "dDiamondKatana", 12, 14)
                 .customModelData(true)
                 .hideFlags(true)
                 .build();
         return Recipes.createShapedRecipe("diamond_katana", item, new String[]{"  D", " D ", "D  "}, 'D', Material.DIAMOND);
     }
 
-    private ShapedRecipe getNetheriteKatanaRecipe() {
-        List<String> lore = new ArrayList<>(config.getStringList("KatanaDescription"));
-        for (int i = 12; i <= 14; i++) {
-            lore.add(config.getString("dNetheriteKatana.line" + i, ""));
-        }
-
+    private ShapedRecipe netheriteKatana() {
         ItemStack item = new WeaponBuilder(Material.NETHERITE_SWORD, config)
-                .withConfiguredDamage("aNetheriteKatana.damage", 9.0, ConfigValueOperation.SUBTRACT, 1.0)
-                .withConfiguredSpeed("aNetheriteKatana.speed", 1.6, ConfigValueOperation.SUBTRACT, 4.0)
-                .name(config.getString("dNetheriteKatana.name", "Netherite Katana"))
+                .withConfiguredDamage("aNetheriteKatana.damage", 7.0, ConfigValueOperation.SUBTRACT, 1.0)
+                .withConfiguredSpeed("aNetheriteKatana.speed", 1.7, ConfigValueOperation.SUBTRACT, 4.0)
+                .withConfiguredMovementSpeed("aNetheriteKatana.moveSpeed", 0.02, ConfigValueOperation.NONE, 0.0)
+                .nameLegacy(config.getString("dNetheriteKatana.name", "Netherite Katana"))
                 .id("netherite_katana")
                 .category("katanas")
-                .lore(lore)
+                .loreConfigRange(config, "KatanaDescription", 1, 11)
+                .loreConfigRange(config, "dNetheriteKatana", 12, 14)
                 .customModelData(true)
                 .hideFlags(true)
                 .build();
@@ -165,26 +135,26 @@ public class Katanas implements RecipeGroupRegistrar {
     @Override
     public Recipe[] recipes() {
         return new Recipe[] {
-                getWoodenKatanaRecipe(),
-                getStoneKatanaRecipe(),
-                getGoldenKatanaRecipe(),
-                getIronKatanaRecipe(),
-                getEmeraldKatanaRecipe(),
-                getDiamondKatanaRecipe(),
-                getNetheriteKatanaRecipe()
+            woodenKatana(),
+            stoneKatana(),
+            goldenKatana(),
+            ironKatana(),
+            emeraldKatana(),
+            diamondKatana(),
+            netheriteKatana()
         };
     }
 
     @Override
     public String[] keys() {
         return new String[] {
-                "wooden_katana",
-                "stone_katana",
-                "golden_katana",
-                "iron_katana",
-                "emerald_katana",
-                "diamond_katana",
-                "netherite_katana"
+            "wooden_katana",
+            "stone_katana",
+            "golden_katana",
+            "iron_katana",
+            "emerald_katana",
+            "diamond_katana",
+            "netherite_katana"
         };
     }
 }

@@ -18,41 +18,39 @@ public class ToolsAndMisc implements RecipeGroupRegistrar {
         this.config = config;
     }
 
-    private ShapedRecipe getObsidianPickaxeRecipe() {
-        ItemStack item = new ItemBuilder<>(Material.NETHERITE_PICKAXE)
-                .name(config.getString("dObsidianPickaxe.name", "Obsidian Pickaxe"))
+    private ShapedRecipe obsidianPickaxe() {
+        var builder = new ItemBuilder<>(Material.NETHERITE_PICKAXE)
+                .nameLegacy(config.getString("descriptions.obsidian_pickaxe.name", "&5Obsidian Pickaxe"))
                 .id("obsidian_pickaxe")
                 .category("tools")
-                .loreConfigRange(config, "dObsidianPickaxe", 1, 3)
-                .customModelData(true)
-                .build();
+                .loreConfigRange(config, "descriptions.obsidian_pickaxe", 1, 3)
+                .customModelData(true);
 
-        if (config.isEnabled("EnchantsObsidianPick")) {
-            int unbreaking = config.getInt("OPickEnchantLevels.Unbreaking", 0);
-            item.addUnsafeEnchantment(Enchantment.UNBREAKING, unbreaking);
-        }
-        return Recipes.createShapedRecipe("obsidian_pickaxe", item, new String[]{"NON", " S ", " S "},
+        Recipes.applyConfiguredEnchantments("enchantments_on_obsidian_pickaxe", "obsidian_pick_enchant_levels", builder);
+
+        return Recipes.createShapedRecipe("obsidian_pickaxe", builder.build(), new String[]{"NON", " S ", " S "},
                 'S', Material.STICK,
                 'O', Material.CRYING_OBSIDIAN,
                 'N', Material.NETHERITE_INGOT);
     }
 
-    private ShapedRecipe getRedPlateRecipe() {
+    private ShapedRecipe redPlate() {
         ItemStack item = new ItemBuilder<>(Material.IRON_CHESTPLATE)
-                .name("Redstone Core")
+                .nameLegacy(config.getString("descriptions.redstone_core.name", "Redstone Core"))
                 .id("redstone_core")
                 .category("misc")
+                .loreConfigList(config, "descriptions.redstone_core")
                 .customModelData(true)
                 .build();
         return Recipes.createShapedRecipe("redstone_core", item, new String[]{" R ", "RCR", " R "}, 'R', Material.REDSTONE, 'C', Material.IRON_CHESTPLATE);
     }
 
-    private ShapedRecipe getPrismarineAlloyRecipe() {
+    private ShapedRecipe prismarineAlloy() {
         ItemStack item = new ItemBuilder<>(Material.PRISMARINE_SHARD)
-                .name(config.getString("dPrismarineAlloy.name", "Prismarine Alloy"))
+                .nameLegacy(config.getString("descriptions.prismarine_alloy.name", "&aPrismarine Alloy"))
                 .id("prismarine_alloy")
                 .category("misc")
-                .loreConfigRange(config, "dPrismarineAlloy", 1, 5)
+                .loreConfigRange(config, "descriptions.prismarine_alloy", 1, 5)
                 .customModelData(true)
                 .enchant(Enchantment.UNBREAKING, 5)
                 .hideFlags(true)
@@ -66,23 +64,23 @@ public class ToolsAndMisc implements RecipeGroupRegistrar {
                 'C', Material.PRISMARINE_CRYSTALS);
     }
 
-    private ShapedRecipe getBoneKatanaRecipe() {
+    private ShapedRecipe boneKatana() {
         ItemStack item = new WeaponBuilder(Material.IRON_SWORD, config)
-                .name(config.getString("dBoneKatana.name", "Bone Katana"))
+                .withConfiguredDamage("attributes.bone_katana.damage", 6.0, ConfigValueOperation.SUBTRACT, 1.0)
+                .withConfiguredSpeed("attributes.bone_katana.speed", 1.6, ConfigValueOperation.SUBTRACT, 4.0)
+                .nameLegacy(config.getString("descriptions.bone_katana.name", "Bone Katana"))
                 .id("bone_katana")
                 .category("katanas")
-                .loreConfigRange(config, "dBoneKatana", 1, 3)
+                .loreConfigRange(config, "descriptions.bone_katana", 1, 3)
                 .customModelData(true)
                 .hideFlags(true)
-                .withConfiguredDamage("aBoneKatana.damage", 6.0, ConfigValueOperation.SUBTRACT, 1.0)
-                .withConfiguredSpeed("aBoneKatana.speed", 1.6, ConfigValueOperation.SUBTRACT, 4.0)
                 .build();
         return Recipes.createShapedRecipe("bone_katana", item, new String[]{"  B", " B ", "S  "}, 'B', Material.BONE, 'S', Material.STICK);
     }
 
-    private ShapedRecipe getExStaffRecipe() {
+    private ShapedRecipe exStaff() {
         ItemStack item = new ItemBuilder<>(Material.CROSSBOW)
-                .name("&6Explosive Staff")
+                .nameLegacy(config.getString("descriptions.explosive_staff.name", "&6Explosive Staff"))
                 .id("explosive_staff")
                 .category("misc")
                 .lore(
@@ -103,9 +101,9 @@ public class ToolsAndMisc implements RecipeGroupRegistrar {
                 'S', Material.BEDROCK);
     }
 
-    private ShapedRecipe getPhantomWingedElytra() {
+    private ShapedRecipe phantomWingedElytra() {
         ItemStack item = new ItemBuilder<>(Material.ELYTRA)
-                .name(config.getString("dEelytra.name", "Phantom-Winged Elytra"))
+                .nameLegacy(config.getString("descriptions.phantom_winged_elytra.name", "Phantom-Winged Elytra"))
                 .id("phantom_winged_elytra")
                 .category("elytra")
                 .customModelData(true)
@@ -113,39 +111,39 @@ public class ToolsAndMisc implements RecipeGroupRegistrar {
         return Recipes.createShapedRecipe("phantom_winged_elytra", item, new String[]{"EPE", "P P", "EPE"}, 'E', Material.ELYTRA, 'P', Material.PHANTOM_MEMBRANE);
     }
 
-    private ShapedRecipe getJumpElytraRecipe() {
+    private ShapedRecipe springStepElytra() {
         ItemStack item = new ItemBuilder<>(Material.ELYTRA)
-                .name(config.getString("dJumpElytra.name", "Spring-Step Elytra"))
+                .nameLegacy(config.getString("descriptions.spring_step_elytra.name", "Spring-Step Elytra"))
                 .id("spring_step_elytra")
                 .category("elytra")
                 .customModelData(true)
                 .build();
-        return Recipes.createShapedRecipe("jump_elytra", item, new String[]{"EPE", "P P", "EPE"}, 'E', Material.ELYTRA, 'P', Material.SLIME_BALL);
+        return Recipes.createShapedRecipe("spring_step_elytra", item, new String[]{"EPE", "P P", "EPE"}, 'E', Material.ELYTRA, 'P', Material.SLIME_BALL);
     }
 
     @Override
     public Recipe[] recipes() {
         return new Recipe[] {
-                getObsidianPickaxeRecipe(),
-                getRedPlateRecipe(),
-                getPrismarineAlloyRecipe(),
-                getBoneKatanaRecipe(),
-                getExStaffRecipe(),
-                getPhantomWingedElytra(),
-                getJumpElytraRecipe()
+            obsidianPickaxe(),
+            redPlate(),
+            prismarineAlloy(),
+            boneKatana(),
+            exStaff(),
+            phantomWingedElytra(),
+            springStepElytra()
         };
     }
 
     @Override
     public String[] keys() {
         return new String[] {
-                "obsidian_pickaxe",
-                "redstone_core",
-                "prismarine_alloy",
-                "bone_katana",
-                "explosive_staff",
-                "phantom_winged_elytra",
-                "spring_step_elytra"
+            "obsidian_pickaxe",
+            "redstone_core",
+            "prismarine_alloy",
+            "bone_katana",
+            "explosive_staff",
+            "phantom_winged_elytra",
+            "spring_step_elytra"
         };
     }
 }

@@ -1,6 +1,7 @@
 package org.winlogon.combatweaponryplus.recipes.registry;
 
 import org.bukkit.Material;
+import org.bukkit.enchantments.Enchantment;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.Recipe;
 import org.bukkit.inventory.ShapedRecipe;
@@ -17,9 +18,9 @@ public class SpecialWeapons implements RecipeGroupRegistrar {
         this.config = config;
     }
 
-    private ShapedRecipe getOPSWORDRecipe() {
+    private ShapedRecipe opSword() {
         ItemStack item = new WeaponBuilder(Material.NETHERITE_SWORD, config)
-                .name(config.getString("dReallyGoodSword.name", "Really Really Good Sword"))
+                .nameLegacy(config.getString("dReallyGoodSword.name", "Really Really Good Sword"))
                 .id("op_sword")
                 .category("special_swords")
                 .loreConfigRange(config, "dReallyGoodSword", 1, 6)
@@ -35,128 +36,136 @@ public class SpecialWeapons implements RecipeGroupRegistrar {
                 'f', Material.REDSTONE);
     }
 
-    private ShapedRecipe getWindBladeRecipe() {
+    private ShapedRecipe windBlade() {
         ItemStack item = new WeaponBuilder(Material.IRON_SWORD, config)
                 .withConfiguredDamage("aWindBlade.damage", 8.0, ConfigValueOperation.NONE, 0.0)
                 .withConfiguredSpeed("aWindBlade.speed", 1.6, ConfigValueOperation.NONE, 0.0)
-                .name("Wind Blade")
+                .nameLegacy(config.getString("dWindBlade.name", "Wind Blade"))
                 .id("wind_blade")
                 .category("special_swords")
                 .build();
         return Recipes.createShapedRecipe("wind_blade", item, new String[]{" I ", "I I", " I "}, 'I', Material.IRON_INGOT);
     }
 
-    private ShapedRecipe getFlameBladeRecipe() {
+    private ShapedRecipe flameBlade() {
         ItemStack item = new WeaponBuilder(Material.IRON_SWORD, config)
                 .withConfiguredDamage("aVolcanicBlade.damage", 9.0, ConfigValueOperation.NONE, 0.0)
                 .withConfiguredSpeed("aVolcanicBlade.speed", 1.6, ConfigValueOperation.NONE, 0.0)
-                .name("Volcanic Blade")
+                .nameLegacy(config.getString("dVolcanicBlade.name", "Volcanic Blade"))
                 .id("volcanic_blade")
                 .category("special_swords")
+                .loreConfigRange(config, "dVolcanicBlade", 1, 11)
                 .build();
         return Recipes.createShapedRecipe("flame_blade", item, new String[]{" L ", "L L", " L "}, 'L', Material.LAVA_BUCKET);
     }
 
-    private ShapedRecipe getDiamondShieldRecipe() {
-        ItemStack item = new ItemBuilder<>(Material.SHIELD)
-                .name("Diamond Shield")
+    private ShapedRecipe diamondShield() {
+        var builder = new ItemBuilder<>(Material.SHIELD)
+                .nameLegacy(config.getString("dDiamondShield.name", "Diamond Shield"))
                 .id("diamond_shield")
                 .category("shields")
-                .customModelData(true)
-                .build();
-        return Recipes.createShapedRecipe("diamond_shield", item, new String[]{" D ", "DSD", " D "}, 'D', Material.DIAMOND, 'S', Material.SHIELD);
+                .customModelData(true);
+
+        Recipes.applyConfiguredEnchantments("EnchantsDiamondShield", "DShieldEnchantLevels", builder);
+
+        return Recipes.createShapedRecipe("diamond_shield", builder.build(), new String[]{" D ", "DSD", " D "}, 'D', Material.DIAMOND, 'S', Material.SHIELD);
     }
 
-    private ShapedRecipe getNetheriteShieldRecipe() {
-        ItemStack item = new ItemBuilder<>(Material.SHIELD)
-                .name("Netherite Shield")
+    private ShapedRecipe netheriteShield() {
+        var builder = new ItemBuilder<>(Material.SHIELD)
+                .nameLegacy(config.getString("dNetheriteShield.name", "Netherite Shield"))
                 .id("netherite_shield")
                 .category("shields")
-                .customModelData(true)
-                .build();
-        return Recipes.createShapedRecipe("netherite_shield", item, new String[]{" N ", "NSN", " N "}, 'N', Material.NETHERITE_INGOT, 'S', Material.SHIELD);
+                .customModelData(true);
+
+        Recipes.applyConfiguredEnchantments("EnchantsNetheriteShield", "NShieldEnchantLevels", builder);
+
+        return Recipes.createShapedRecipe("netherite_shield", builder.build(), new String[]{" N ", "NSN", " N "}, 'N', Material.NETHERITE_INGOT, 'S', Material.SHIELD);
     }
 
-    private ShapedRecipe getFlameSpearRecipe() {
-        double dmg = config.getDouble("aVolcanicSpear.damage", 5.0) - 1.0;
-        double spd = config.getDouble("aVolcanicSpear.speed", 2.5) - 4.0;
+    private ShapedRecipe flameSpear() {
         ItemStack item = new WeaponBuilder(Material.IRON_SWORD, config)
-                .attackDamage(dmg)
-                .attackSpeed(spd)
-                .name("Volcanic Spear")
+                .withConfiguredDamage("aVolcanicSpear.damage", 5.0, ConfigValueOperation.SUBTRACT, 1.0)
+                .withConfiguredSpeed("aVolcanicSpear.speed", 2.5, ConfigValueOperation.SUBTRACT, 4.0)
+                .nameLegacy(config.getString("dVolcanicSpear.name", "Volcanic Spear"))
                 .id("volcanic_spear")
                 .category("special_weapons")
+                .loreConfigRange(config, "dVolcanicSpear", 1, 11)
                 .customModelData(true)
                 .build();
         return Recipes.createShapedRecipe("flame_spear", item, new String[]{" L ", " L ", " S "}, 'L', Material.LAVA_BUCKET, 'S', Material.STICK);
     }
 
-    private ShapedRecipe getFlameAxeRecipe() {
-        double dmg = config.getDouble("aVolcanicAxe.damage", 10.0) - 1.0;
-        double spd = config.getDouble("aVolcanicAxe.speed", 1.0) - 4.0;
+    private ShapedRecipe flameAxe() {
         ItemStack item = new WeaponBuilder(Material.IRON_AXE, config)
-                .attackDamage(dmg)
-                .attackSpeed(spd)
-                .name("Volcanic Axe")
+                .withConfiguredDamage("aVolcanicAxe.damage", 10.0, ConfigValueOperation.SUBTRACT, 1.0)
+                .withConfiguredSpeed("aVolcanicAxe.speed", 1.0, ConfigValueOperation.SUBTRACT, 4.0)
+                .nameLegacy(config.getString("dVolcanicAxe.name", "Volcanic Axe"))
                 .id("volcanic_axe")
                 .category("special_weapons")
+                .loreConfigRange(config, "dVolcanicAxe", 1, 11)
                 .customModelData(true)
                 .build();
         return Recipes.createShapedRecipe("flame_axe", item, new String[]{"LL ", "LS ", " S "}, 'L', Material.LAVA_BUCKET, 'S', Material.STICK);
     }
 
-    private ShapedRecipe getFlameCleaverRecipe() {
-        double dmg = config.getDouble("aVolcanicCleaver.damage", 13.0) - 1.0;
-        double spd = config.getDouble("aVolcanicCleaver.speed", 0.4) - 4.0;
+    private ShapedRecipe flameCleaver() {
         ItemStack item = new WeaponBuilder(Material.IRON_AXE, config)
-                .attackDamage(dmg)
-                .attackSpeed(spd)
-                .name("Volcanic Cleaver")
+                .withConfiguredDamage("aVolcanicCleaver.damage", 13.0, ConfigValueOperation.SUBTRACT, 1.0)
+                .withConfiguredSpeed("aVolcanicCleaver.speed", 0.4, ConfigValueOperation.SUBTRACT, 4.0)
+                .nameLegacy(config.getString("dVolcanicCleaver.name", "Volcanic Cleaver"))
                 .id("volcanic_cleaver")
                 .category("special_weapons")
+                .loreConfigRange(config, "dVolcanicCleaver", 1, 11)
                 .customModelData(true)
                 .build();
         return Recipes.createShapedRecipe("flame_cleaver", item, new String[]{"LL ", "LS ", " S "}, 'L', Material.LAVA_BUCKET, 'S', Material.STICK);
     }
 
-    private ShapedRecipe getAwakenedSwordsRecipe() {
+    private ShapedRecipe awakenedSwords() {
         ItemStack item = new WeaponBuilder(Material.NETHERITE_SWORD, config)
-                .attackDamage(config.getDouble("aAwakenedSword.damage", 12.0))
-                .attackSpeed(config.getDouble("aAwakenedSword.speed", 1.6))
-                .name("Awakened Sword")
+                .withConfiguredDamage("aAwakenedSword.damage", 12.0, ConfigValueOperation.NONE, 0.0)
+                .withConfiguredSpeed("aAwakenedSword.speed", 1.6, ConfigValueOperation.NONE, 0.0)
+                .nameLegacy(config.getString("dAwakenedVesselPurple.name", "Awakened Sword"))
                 .id("awakened_sword")
                 .category("special_swords")
                 .build();
         return Recipes.createShapedRecipe("awakened_swords", item, new String[]{" S ", "S S", " S "}, 'S', Material.NETHERITE_SWORD);
     }
 
-    private ShapedRecipe getChorusBladeRecipe() {
-        ItemStack item = new WeaponBuilder(Material.IRON_SWORD, config)
-                .name(config.getString("dChorusBlade.name", "Chorus Blade"))
+    private ShapedRecipe chorusBlade() {
+        var builder = new WeaponBuilder(Material.IRON_SWORD, config)
+                .withConfiguredDamage("aChorusBlade.damage", 4.0, ConfigValueOperation.SUBTRACT, 1.0)
+                .withConfiguredSpeed("aChorusBlade.speed", 10.0, ConfigValueOperation.SUBTRACT, 4.0)
+                .nameLegacy(config.getString("dChorusBlade.name", "Chorus Blade"))
                 .id("chorus_blade")
                 .category("special_swords")
-                .loreConfigRange(config, "dChorusBlade", 1, 3)
+                .loreConfigRange(config, "dChorusBlade", 1, 9)
                 .customModelData(true)
-                .hideFlags(true)
-                .withConfiguredDamage("aChorusBlade.damage", 7.0, ConfigValueOperation.SUBTRACT, 1.0)
-                .withConfiguredSpeed("aChorusBlade.speed", 1.6, ConfigValueOperation.SUBTRACT, 4.0)
-                .build();
-        return Recipes.createShapedRecipe("chorus_blade", item, new String[]{" C ", " C ", " S "}, 'C', Material.CHORUS_FRUIT, 'S', Material.STICK);
+                .hideFlags(true);
+
+        Recipes.applyConfiguredEnchantments("EnchantsChorusBlade", "ChorusEnchantLevels", builder);
+        if (config.isEnabled("EnchantsChorusBlade")) {
+            int knockback = config.getInt("ChorusEnchantLevels.Knockback", 0);
+            if (knockback > 0) builder.enchant(Enchantment.KNOCKBACK, knockback);
+        }
+
+        return Recipes.createShapedRecipe("chorus_blade", builder.build(), new String[]{" C ", " C ", " S "}, 'C', Material.CHORUS_FRUIT, 'S', Material.STICK);
     }
 
     @Override
     public Recipe[] recipes() {
         return new Recipe[] {
-                getOPSWORDRecipe(),
-                getWindBladeRecipe(),
-                getFlameBladeRecipe(),
-                getDiamondShieldRecipe(),
-                getNetheriteShieldRecipe(),
-                getFlameSpearRecipe(),
-                getFlameAxeRecipe(),
-                getFlameCleaverRecipe(),
-                getAwakenedSwordsRecipe(),
-                getChorusBladeRecipe()
+                opSword(),
+                windBlade(),
+                flameBlade(),
+                diamondShield(),
+                netheriteShield(),
+                flameSpear(),
+                flameAxe(),
+                flameCleaver(),
+                awakenedSwords(),
+                chorusBlade()
         };
     }
 

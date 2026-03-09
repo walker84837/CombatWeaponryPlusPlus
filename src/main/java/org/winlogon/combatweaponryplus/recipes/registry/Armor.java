@@ -3,7 +3,6 @@ package org.winlogon.combatweaponryplus.recipes.registry;
 import org.bukkit.Material;
 import org.bukkit.attribute.Attribute;
 import org.bukkit.attribute.AttributeModifier;
-import org.bukkit.enchantments.Enchantment;
 import org.bukkit.inventory.EquipmentSlotGroup;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.Recipe;
@@ -19,106 +18,103 @@ public class Armor implements RecipeGroupRegistrar {
         this.config = config;
     }
 
-    private ShapedRecipe getChainmailHelmetRecipe() {
-        ItemStack item = new ItemBuilder<>(Material.CHAINMAIL_HELMET).build();
+    private ShapedRecipe chainmailHelmet() {
+        ItemStack item = new ItemBuilder<>(Material.CHAINMAIL_HELMET)
+                .id("chainmail_helmet")
+                .category("chainmail")
+                .build();
         return Recipes.createShapedRecipe("chainmail_helmet", item, new String[]{"CCC", "C C", "   "}, 'C', Material.IRON_CHAIN);
     }
 
-    private ShapedRecipe getChainmailChestplateRecipe() {
-        ItemStack item = new ItemBuilder<>(Material.CHAINMAIL_CHESTPLATE).build();
+    private ShapedRecipe chainmailChestplate() {
+        ItemStack item = new ItemBuilder<>(Material.CHAINMAIL_CHESTPLATE)
+                .id("chainmail_chestplate")
+                .category("chainmail")
+                .build();
         return Recipes.createShapedRecipe("chainmail_chestplate", item, new String[]{"C C", "CCC", "CCC"}, 'C', Material.IRON_CHAIN);
     }
 
-    private ShapedRecipe getChainmailLeggingsRecipe() {
-        ItemStack item = new ItemBuilder<>(Material.CHAINMAIL_LEGGINGS).build();
+    private ShapedRecipe chainmailLeggings() {
+        ItemStack item = new ItemBuilder<>(Material.CHAINMAIL_LEGGINGS)
+                .id("chainmail_leggings")
+                .category("chainmail")
+                .build();
         return Recipes.createShapedRecipe("chainmail_leggings", item, new String[]{"CCC", "C C", "C C"}, 'C', Material.IRON_CHAIN);
     }
 
-    private ShapedRecipe getChainmailBootsRecipe() {
-        ItemStack item = new ItemBuilder<>(Material.CHAINMAIL_BOOTS).build();
+    private ShapedRecipe chainmailBoots() {
+        ItemStack item = new ItemBuilder<>(Material.CHAINMAIL_BOOTS)
+                .id("chainmail_boots")
+                .category("chainmail")
+                .build();
         return Recipes.createShapedRecipe("chainmail_boots", item, new String[]{"   ", "C C", "C C"}, 'C', Material.IRON_CHAIN);
     }
 
-    private ShapedRecipe getPlatedChainmailHelmetRecipe() {
+    private ShapedRecipe platedChainmailHelmet() {
         double def = config.getDouble("aPlateChainHelmet.Armor", 4.0);
         var builder = new ItemBuilder<>(Material.IRON_HELMET)
-                .name("Plated Chainmail Helmet")
+                .nameLegacy(config.getString("dPlatedChainmailHelmet.name", "Plated Chainmail Helmet"))
                 .id("plated_chainmail_helmet")
                 .category("plated_chainmail")
                 .unbreakable(true)
                 .attribute(Attribute.ARMOR, def, AttributeModifier.Operation.ADD_NUMBER, EquipmentSlotGroup.HEAD);
 
-        ItemStack item = builder.build();
+        Recipes.applyConfiguredEnchantments("EnchantsPlatedChainmail", "PChainEnchantLevels", builder);
 
-        if (config.isEnabled("EnchantsPlatedChainmail")) {
-            int unbreaking = config.getInt("PChainEnchantLevels.Unbreaking", 0);
-            item.addUnsafeEnchantment(Enchantment.UNBREAKING, unbreaking);
-        }
-        return Recipes.createShapedRecipe("plated_chainmail_helmet", item, new String[]{"III", "IHI", "III"}, 'H', Material.CHAINMAIL_HELMET, 'I', Material.IRON_NUGGET);
+        return Recipes.createShapedRecipe("plated_chainmail_helmet", builder.build(), new String[]{"III", "IHI", "III"}, 'H', Material.CHAINMAIL_HELMET, 'I', Material.IRON_NUGGET);
     }
 
-    private ShapedRecipe getPlatedChainmailChestplateRecipe() {
+    private ShapedRecipe platedChainmailChestplate() {
         double def = config.getDouble("aPlateChainChestplate.Armor", 6.0);
         var builder = new ItemBuilder<>(Material.IRON_CHESTPLATE)
-                .name("Plated Chainmail Chestplate")
+                .nameLegacy(config.getString("dPlatedChainmailChestplate.name", "Plated Chainmail Chestplate"))
                 .id("plated_chainmail_chestplate")
                 .category("plated_chainmail")
                 .unbreakable(true)
                 .attribute(Attribute.ARMOR, def, AttributeModifier.Operation.ADD_NUMBER, EquipmentSlotGroup.CHEST);
 
-        ItemStack item = builder.build();
+        Recipes.applyConfiguredEnchantments("EnchantsPlatedChainmail", "PChainEnchantLevels", builder);
 
-        if (config.isEnabled("EnchantsPlatedChainmail")) {
-            int unbreaking = config.getInt("PChainEnchantLevels.Unbreaking", 0);
-            item.addUnsafeEnchantment(Enchantment.UNBREAKING, unbreaking);
-        }
-        return Recipes.createShapedRecipe("plated_chainmail_chestplate", item, new String[]{"III", "ICI", "III"}, 'C', Material.CHAINMAIL_CHESTPLATE, 'I', Material.IRON_NUGGET);
+        return Recipes.createShapedRecipe("plated_chainmail_chestplate", builder.build(), new String[]{"III", "ICI", "III"}, 'C', Material.CHAINMAIL_CHESTPLATE, 'I', Material.IRON_NUGGET);
     }
 
-    private ShapedRecipe getPlatedChainmailLeggingsRecipe() {
+    private ShapedRecipe platedChainmailLeggings() {
         double def = config.getDouble("aPlateChainLeggings.Armor", 6.0);
         var builder = new ItemBuilder<>(Material.IRON_LEGGINGS)
-                .name("Plated Chainmail Leggings")
+                .nameLegacy(config.getString("dPlatedChainmailLeggings.name", "Plated Chainmail Leggings"))
                 .id("plated_chainmail_leggings")
                 .category("plated_chainmail")
                 .unbreakable(true)
                 .attribute(Attribute.ARMOR, def, AttributeModifier.Operation.ADD_NUMBER, EquipmentSlotGroup.LEGS);
 
-        ItemStack item = builder.build();
+        Recipes.applyConfiguredEnchantments("EnchantsPlatedChainmail", "PChainEnchantLevels", builder);
 
-        if (config.isEnabled("EnchantsPlatedChainmail")) {
-            int unbreaking = config.getInt("PChainEnchantLevels.Unbreaking", 0);
-            item.addUnsafeEnchantment(Enchantment.UNBREAKING, unbreaking);
-        }
-        return Recipes.createShapedRecipe("plated_chainmail_leggings", item, new String[]{"III", "ILI", "III"}, 'L', Material.CHAINMAIL_LEGGINGS, 'I', Material.IRON_NUGGET);
+        return Recipes.createShapedRecipe("plated_chainmail_leggings", builder.build(), new String[]{"III", "ILI", "III"}, 'L', Material.CHAINMAIL_LEGGINGS, 'I', Material.IRON_NUGGET);
     }
 
-    private ShapedRecipe getPlatedChainmailBootsRecipe() {
+    private ShapedRecipe platedChainmailBoots() {
         double def = config.getDouble("aPlateChainBoots.Armor", 4.0);
         var builder = new ItemBuilder<>(Material.IRON_BOOTS)
-                .name("Plated Chainmail Boots")
+                .nameLegacy(config.getString("dPlatedChainmailBoots.name", "Plated Chainmail Boots"))
                 .id("plated_chainmail_boots")
                 .category("plated_chainmail")
                 .unbreakable(true)
                 .attribute(Attribute.ARMOR, def, AttributeModifier.Operation.ADD_NUMBER, EquipmentSlotGroup.FEET);
 
-        ItemStack item = builder.build();
+        Recipes.applyConfiguredEnchantments("EnchantsPlatedChainmail", "PChainEnchantLevels", builder);
 
-        if (config.isEnabled("EnchantsPlatedChainmail")) {
-            int unbreaking = config.getInt("PChainEnchantLevels.Unbreaking", 0);
-            item.addUnsafeEnchantment(Enchantment.UNBREAKING, unbreaking);
-        }
-        return Recipes.createShapedRecipe("plated_chainmail_boots", item, new String[]{"III", "IBI", "III"}, 'B', Material.CHAINMAIL_BOOTS, 'I', Material.IRON_NUGGET);
+        return Recipes.createShapedRecipe("plated_chainmail_boots", builder.build(), new String[]{"III", "IBI", "III"}, 'B', Material.CHAINMAIL_BOOTS, 'I', Material.IRON_NUGGET);
     }
 
-    private ShapedRecipe getWitherChestplateRecipe() {
+    private ShapedRecipe witherChestplate() {
         double kbr = config.getDouble("aWitherChestplate.KBResist", 2.0);
         double hp = config.getDouble("aWitherChestplate.BonusHealth", 5.0);
 
         ItemStack item = new ItemBuilder<>(Material.NETHERITE_CHESTPLATE)
-                .name("Wither Chestplate")
+                .nameLegacy(config.getString("dWitheringChestplate.name", "&eWithering Chestplate"))
                 .id("wither_chestplate")
                 .category("wither_armor")
+                .loreConfigList(config, "dWitheringArmorSet")
                 .customModelData(true)
                 .attribute(Attribute.KNOCKBACK_RESISTANCE, kbr, AttributeModifier.Operation.ADD_NUMBER, EquipmentSlotGroup.CHEST)
                 .attribute(Attribute.MAX_HEALTH, hp, AttributeModifier.Operation.ADD_NUMBER, EquipmentSlotGroup.CHEST)
@@ -126,14 +122,15 @@ public class Armor implements RecipeGroupRegistrar {
         return Recipes.createShapedRecipe("wither_chestplate", item, new String[]{"WWW", "WCW", "WWW"}, 'W', Material.WITHER_SKELETON_SKULL, 'C', Material.NETHERITE_CHESTPLATE);
     }
 
-    private ShapedRecipe getWitherLeggingsRecipe() {
+    private ShapedRecipe witherLeggings() {
         double kbr = config.getDouble("aWitherLeggings.KBResist", 2.0);
         double hp = config.getDouble("aWitherLeggings.BonusHealth", 5.0);
 
         ItemStack item = new ItemBuilder<>(Material.NETHERITE_LEGGINGS)
-                .name("Wither Leggings")
+                .nameLegacy(config.getString("dWitheringLeggings.name", "&eWithering Leggings"))
                 .id("wither_leggings")
                 .category("wither_armor")
+                .loreConfigList(config, "dWitheringArmorSet")
                 .customModelData(true)
                 .attribute(Attribute.KNOCKBACK_RESISTANCE, kbr, AttributeModifier.Operation.ADD_NUMBER, EquipmentSlotGroup.LEGS)
                 .attribute(Attribute.MAX_HEALTH, hp, AttributeModifier.Operation.ADD_NUMBER, EquipmentSlotGroup.LEGS)
@@ -141,14 +138,15 @@ public class Armor implements RecipeGroupRegistrar {
         return Recipes.createShapedRecipe("wither_leggings", item, new String[]{"WWW", "WLW", "WWW"}, 'W', Material.WITHER_SKELETON_SKULL, 'L', Material.NETHERITE_LEGGINGS);
     }
 
-    private ShapedRecipe getWitherBootsRecipe() {
+    private ShapedRecipe witherBoots() {
         double kbr = config.getDouble("aWitherBoots.KBResist", 2.0);
         double hp = config.getDouble("aWitherBoots.BonusHealth", 5.0);
 
         ItemStack item = new ItemBuilder<>(Material.NETHERITE_BOOTS)
-                .name("Wither Boots")
+                .nameLegacy(config.getString("dWitheringBoots.name", "&eWithering Boots"))
                 .id("wither_boots")
                 .category("wither_armor")
+                .loreConfigList(config, "dWitheringArmorSet")
                 .customModelData(true)
                 .attribute(Attribute.KNOCKBACK_RESISTANCE, kbr, AttributeModifier.Operation.ADD_NUMBER, EquipmentSlotGroup.FEET)
                 .attribute(Attribute.MAX_HEALTH, hp, AttributeModifier.Operation.ADD_NUMBER, EquipmentSlotGroup.FEET)
@@ -156,14 +154,15 @@ public class Armor implements RecipeGroupRegistrar {
         return Recipes.createShapedRecipe("wither_boots", item, new String[]{"WWW", "WBW", "WWW"}, 'W', Material.WITHER_SKELETON_SKULL, 'B', Material.NETHERITE_BOOTS);
     }
 
-    private ShapedRecipe getWitherHelmetRecipe() {
+    private ShapedRecipe witherHelmet() {
         double kbr = config.getDouble("aWitherHelmet.KBResist", 2.0);
         double hp = config.getDouble("aWitherHelmet.BonusHealth", 5.0);
 
         ItemStack item = new ItemBuilder<>(Material.NETHERITE_HELMET)
-                .name("Wither Helmet")
+                .nameLegacy(config.getString("dWitheringHelmet.name", "&eWithering Helmet"))
                 .id("wither_helmet")
                 .category("wither_armor")
+                .loreConfigList(config, "dWitheringArmorSet")
                 .customModelData(true)
                 .attribute(Attribute.KNOCKBACK_RESISTANCE, kbr, AttributeModifier.Operation.ADD_NUMBER, EquipmentSlotGroup.HEAD)
                 .attribute(Attribute.MAX_HEALTH, hp, AttributeModifier.Operation.ADD_NUMBER, EquipmentSlotGroup.HEAD)
@@ -174,36 +173,36 @@ public class Armor implements RecipeGroupRegistrar {
     @Override
     public Recipe[] recipes() {
         return new Recipe[] {
-                getChainmailHelmetRecipe(),
-                getChainmailChestplateRecipe(),
-                getChainmailLeggingsRecipe(),
-                getChainmailBootsRecipe(),
-                getPlatedChainmailHelmetRecipe(),
-                getPlatedChainmailChestplateRecipe(),
-                getPlatedChainmailLeggingsRecipe(),
-                getPlatedChainmailBootsRecipe(),
-                getWitherChestplateRecipe(),
-                getWitherLeggingsRecipe(),
-                getWitherBootsRecipe(),
-                getWitherHelmetRecipe()
+            chainmailHelmet(),
+            chainmailChestplate(),
+            chainmailLeggings(),
+            chainmailBoots(),
+            platedChainmailHelmet(),
+            platedChainmailChestplate(),
+            platedChainmailLeggings(),
+            platedChainmailBoots(),
+            witherChestplate(),
+            witherLeggings(),
+            witherBoots(),
+            witherHelmet()
         };
     }
 
     @Override
     public String[] keys() {
         return new String[] {
-                "chainmail_helmet",
-                "chainmail_chestplate",
-                "chainmail_leggings",
-                "chainmail_boots",
-                "plated_chainmail_helmet",
-                "plated_chainmail_chestplate",
-                "plated_chainmail_leggings",
-                "plated_chainmail_boots",
-                "wither_chestplate",
-                "wither_leggings",
-                "wither_boots",
-                "wither_helmet"
+            "chainmail_helmet",
+            "chainmail_chestplate",
+            "chainmail_leggings",
+            "chainmail_boots",
+            "plated_chainmail_helmet",
+            "plated_chainmail_chestplate",
+            "plated_chainmail_leggings",
+            "plated_chainmail_boots",
+            "wither_chestplate",
+            "wither_leggings",
+            "wither_boots",
+            "wither_helmet"
         };
     }
 }

@@ -21,9 +21,9 @@ public class Bows implements RecipeGroupRegistrar {
         this.config = config;
     }
 
-    private ShapedRecipe getLongBowRecipe() {
+    private ShapedRecipe longBow() {
         ItemStack item = new ItemBuilder<>(Material.BOW)
-                .name(config.getString("dLongBow.name", "Long Bow"))
+                .nameLegacy(config.getString("dLongBow.name", "Longbow"))
                 .id("long_bow")
                 .category("bows")
                 .loreConfigRange(config, "dLongBow", 1, 4)
@@ -33,113 +33,124 @@ public class Bows implements RecipeGroupRegistrar {
         return Recipes.createShapedRecipe("long_bow", item, new String[]{" S ", "S S", " S "}, 'S', Material.STICK);
     }
 
-    private ShapedRecipe getRecurveBowRecipe() {
+    private ShapedRecipe recurveBow() {
         ItemStack item = new ItemBuilder<>(Material.BOW)
-                .name(config.getString("dRecurveBow.name", "Recurve Bow"))
+                .nameLegacy(config.getString("dRecurveBow.name", "Recurve Bow"))
                 .id("recurve_bow")
                 .category("bows")
+                .loreConfigRange(config, "dRecurveBow", 1, 4)
                 .customModelData(true)
                 .build();
         return Recipes.createShapedRecipe("recurve_bow", item, new String[]{" S ", "S S", " S "}, 'S', Material.STICK);
     }
 
-    private ShapedRecipe getCompoundBowRecipe() {
+    private ShapedRecipe compoundBow() {
         ItemStack item = new ItemBuilder<>(Material.BOW)
-                .name(config.getString("dCompoundBow.name", "Compound Bow"))
+                .nameLegacy(config.getString("dCompoundBow.name", "Compound Bow"))
                 .id("compound_bow")
                 .category("bows")
+                .loreConfigRange(config, "dCompoundBow", 1, 4)
                 .customModelData(true)
                 .build();
         return Recipes.createShapedRecipe("compound_bow", item, new String[]{" S ", "S S", " S "}, 'S', Material.STICK);
     }
 
-    private ShapedRecipe getRepeatingCrossbowRecipe() {
+    private ShapedRecipe repeatingCrossbow() {
         ItemStack item = new ItemBuilder<>(Material.CROSSBOW)
-                .name(config.getString("dRepeatingCrossbow.name", "Repeating Crossbow"))
+                .nameLegacy(config.getString("dRepeatingCrossbow.name", "Repeating Crossbow"))
                 .id("repeating_crossbow")
                 .category("crossbows")
+                .loreConfigRange(config, "dRepeatingCrossbow", 1, 5)
                 .customModelData(true)
                 .build();
         return Recipes.createShapedRecipe("repeating_crossbow", item, new String[]{" S ", "SCS", " S "}, 'S', Material.STICK, 'C', Material.CROSSBOW);
     }
 
-    private ShapedRecipe getBurstCrossbowRecipe() {
+    private ShapedRecipe burstCrossbow() {
         ItemStack item = new ItemBuilder<>(Material.CROSSBOW)
-                .name(config.getString("dBurstCrossbow.name", "Burst Crossbow"))
+                .nameLegacy(config.getString("dBurstCrossbow.name", "Burst Crossbow"))
                 .id("burst_crossbow")
                 .category("crossbows")
+                .loreConfigRange(config, "dBurstCrossbow", 1, 5)
                 .customModelData(true)
                 .build();
         return Recipes.createShapedRecipe("burst_crossbow", item, new String[]{" S ", "SCS", " S "}, 'S', Material.STICK, 'C', Material.CROSSBOW);
     }
 
-    private ShapedRecipe getSwordBowRecipe() {
-        ItemStack item = new WeaponBuilder(Material.BOW, config)
+    private ShapedRecipe swordBow() {
+        var builder = new WeaponBuilder(Material.BOW, config)
                 .withConfiguredDamage("aSwordBow.damage", 9.0, ConfigValueOperation.SUBTRACT, 1.0)
                 .withConfiguredSpeed("aSwordBow.speed", 1.0, ConfigValueOperation.SUBTRACT, 4.0)
-                .name(config.getString("dSwordBow.name", "Sword Bow"))
+                .nameLegacy(config.getString("dSwordBow.name", "Sword Bow"))
                 .id("sword_bow")
                 .category("sword_bows")
                 .loreConfigRange(config, "dSwordBow", 1, 3)
-                .customModelData(true)
-                .build();
+                .customModelData(true);
 
+        Recipes.applyConfiguredEnchantments("EnchantsSwordBow", "SbowEnchantLevels", builder);
         if (config.isEnabled("EnchantsSwordBow")) {
-            int unbreaking = config.getInt("SwordBowEnchantLevels.Unbreaking", 0);
-            item.addUnsafeEnchantment(Enchantment.UNBREAKING, unbreaking);
+            int smite = config.getInt("SbowEnchantLevels.Smite", 0);
+            if (smite > 0) builder.enchant(Enchantment.SMITE, smite);
         }
-        return Recipes.createShapedRecipe("sword_bow", item, new String[]{" S ", "SCS", " S "}, 'S', Material.STICK, 'C', Material.DIAMOND_SWORD);
+
+        return Recipes.createShapedRecipe("sword_bow", builder.build(), new String[]{" S ", "SCS", " S "}, 'S', Material.STICK, 'C', Material.DIAMOND_SWORD);
     }
 
-    private ShapedRecipe getHeavySwordBowRecipe() {
+    private ShapedRecipe heavySword() {
         var attributeRoot = "aHeavySwordBow";
-        ItemStack item = new WeaponBuilder(Material.BOW, config)
-                .withConfiguredDamage(attributeRoot + ".damage", 12.0, ConfigValueOperation.SUBTRACT, 1.0)
+        var builder = new WeaponBuilder(Material.BOW, config)
+                .withConfiguredDamage(attributeRoot + ".damage", 11.0, ConfigValueOperation.SUBTRACT, 1.0)
                 .withConfiguredSpeed(attributeRoot + ".speed", 0.8, ConfigValueOperation.SUBTRACT, 4.0)
-                .withConfiguredKnockbackResistance(attributeRoot + ".knockbackResistance", 0.5, ConfigValueOperation.NONE, 0.0)
-                .name(config.getString("dHeavySwordBow.name", "Heavy Sword Bow"))
+                .withConfiguredKnockbackResistance(attributeRoot + ".KBResist", 5.0, ConfigValueOperation.NONE, 0.0)
+                .withConfiguredMovementSpeed(attributeRoot + ".moveSpeed", -0.05, ConfigValueOperation.NONE, 0.0)
+                .nameLegacy(config.getString("dHeavySwordBow.name", "Heavy Sword Bow"))
                 .id("heavy_sword_bow")
                 .category("sword_bows")
                 .loreConfigRange(config, "dHeavySwordBow", 1, 3)
-                .customModelData(true)
-                .build();
+                .customModelData(true);
 
+        Recipes.applyConfiguredEnchantments("EnchantsHeavySwordBow", "HSbowEnchantLevels", builder);
         if (config.isEnabled("EnchantsHeavySwordBow")) {
-            int unbreaking = config.getInt("HeavySwordBowEnchantLevels.Unbreaking", 0);
-            item.addUnsafeEnchantment(Enchantment.UNBREAKING, unbreaking);
+            int smite = config.getInt("HSbowEnchantLevels.Smite", 0);
+            if (smite > 0) builder.enchant(Enchantment.SMITE, smite);
+            int power = config.getInt("HSbowEnchantLevels.Power", 0);
+            if (power > 0) builder.enchant(Enchantment.POWER, power);
         }
-        return Recipes.createShapedRecipe("heavy_sword_bow", item, new String[]{" S ", "SCS", " S "}, 'S', Material.IRON_INGOT, 'C', Material.NETHERITE_SWORD);
+
+        return Recipes.createShapedRecipe("heavy_sword_bow", builder.build(), new String[]{" S ", "SCS", " S "}, 'S', Material.IRON_INGOT, 'C', Material.NETHERITE_SWORD);
     }
 
-    private ShapedRecipe getLongswordBowRecipe() {
+    private ShapedRecipe longswordBow() {
         ItemStack item = new WeaponBuilder(Material.BOW, config)
                 .withConfiguredDamage("aLongswordBow.damage", 8.0, ConfigValueOperation.NONE, 0.0)
-                .withConfiguredSpeed("aLongswordBow.speed", 1.0, ConfigValueOperation.NONE, 0.0)
-                .name(config.getString("dLongswordBow.name", "Longsword Bow"))
+                .withConfiguredSpeed("aLongswordBow.speed", 1.4, ConfigValueOperation.NONE, 0.0)
+                .nameLegacy(config.getString("dLongswordBow.name", "Longsword Bow"))
                 .id("longsword_bow")
                 .category("sword_bows")
+                .loreConfigRange(config, "dLongswordBow", 1, 7)
                 .customModelData(true)
                 .build();
-        return Recipes.createShapedRecipe("longsword_bow", item, new String[]{" S ", "SCS", " S "}, 'S', Material.STICK, 'C', Material.NETHERITE_SWORD);
+        return Recipes.createShapedRecipe("longsword_bow", item, new String[]{" L ", "LBL", " L "}, 'L', Material.IRON_SWORD, 'B', Material.BOW);
     }
 
-    private ShapedRecipe getRedstoneBowRecipe() {
+    private ShapedRecipe redstoneBow() {
         ItemStack item = new WeaponBuilder(Material.BOW, config)
                 .withConfiguredDamage("aRedstoneBow.damage", 7.0, ConfigValueOperation.NONE, 0.0)
                 .withConfiguredSpeed("aRedstoneBow.speed", 1.0, ConfigValueOperation.NONE, 0.0)
-                .name(config.getString("dRedstoneBow.name", "Redstone Bow"))
+                .nameLegacy(config.getString("dRedstoneBow.name", "Redstone Bow"))
                 .id("redstone_bow")
                 .category("bows")
+                .loreConfigRange(config, "dRedstoneBow", 1, 6)
                 .customModelData(true)
                 .build();
         return Recipes.createShapedRecipe("redstone_bow", item, new String[]{" R ", "RBR", " R "}, 'R', Material.REDSTONE, 'B', Material.BOW);
     }
 
-    private ShapedRecipe getTridentBowRecipe() {
+    private ShapedRecipe tridentBow() {
         ItemStack item = new WeaponBuilder(Material.BOW, config)
                 .withConfiguredDamage("aTridentBow.damage", 9.0, ConfigValueOperation.NONE, 0.0)
                 .withConfiguredSpeed("aTridentBow.speed", 1.0, ConfigValueOperation.NONE, 0.0)
-                .name(config.getString("dTridentBow.name", "Trident Bow"))
+                .nameLegacy(config.getString("dTridentBow.name", "Trident Bow"))
                 .id("trident_bow")
                 .category("bows")
                 .customModelData(true)
@@ -150,32 +161,32 @@ public class Bows implements RecipeGroupRegistrar {
     @Override
     public Recipe[] recipes() {
         return new Recipe[] {
-                getLongBowRecipe(),
-                getRecurveBowRecipe(),
-                getCompoundBowRecipe(),
-                getRepeatingCrossbowRecipe(),
-                getBurstCrossbowRecipe(),
-                getSwordBowRecipe(),
-                getHeavySwordBowRecipe(),
-                getLongswordBowRecipe(),
-                getRedstoneBowRecipe(),
-                getTridentBowRecipe()
+            longBow(),
+            recurveBow(),
+            compoundBow(),
+            repeatingCrossbow(),
+            burstCrossbow(),
+            swordBow(),
+            heavySword(),
+            longswordBow(),
+            redstoneBow(),
+            tridentBow()
         };
     }
 
     @Override
     public String[] keys() {
         return new String[] {
-                "long_bow",
-                "recurve_bow",
-                "compound_bow",
-                "repeating_crossbow",
-                "burst_crossbow",
-                "sword_bow",
-                "heavy_sword_bow",
-                "longsword_bow",
-                "redstone_bow",
-                "trident_bow"
+            "long_bow",
+            "recurve_bow",
+            "compound_bow",
+            "repeating_crossbow",
+            "burst_crossbow",
+            "sword_bow",
+            "heavy_sword_bow",
+            "longsword_bow",
+            "redstone_bow",
+            "trident_bow"
         };
     }
 }

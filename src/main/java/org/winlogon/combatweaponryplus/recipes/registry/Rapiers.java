@@ -8,11 +8,7 @@ import org.bukkit.inventory.ShapedRecipe;
 import org.winlogon.combatweaponryplus.items.builders.WeaponBuilder;
 import org.winlogon.combatweaponryplus.util.ConfigHelper;
 import org.winlogon.combatweaponryplus.util.ConfigValueOperation;
-import org.winlogon.combatweaponryplus.util.Format;
 import org.winlogon.combatweaponryplus.util.Recipes;
-
-import java.util.ArrayList;
-import java.util.List;
 
 public class Rapiers implements RecipeGroupRegistrar {
     private final ConfigHelper config;
@@ -21,17 +17,17 @@ public class Rapiers implements RecipeGroupRegistrar {
         this.config = config;
     }
 
-    private ShapedRecipe getWoodenRapierRecipe() {
+    private ShapedRecipe woodenRapier() {
         ItemStack item = new WeaponBuilder(Material.WOODEN_SWORD, config)
-                .name(Format.convertLegacyToSection(config.getString("dWoodenRapier.name", null)))
+                .withConfiguredDamage("aWoodenRapier.damage", 3.0, ConfigValueOperation.SUBTRACT, 1.0)
+                .withConfiguredSpeed("aWoodenRapier.speed", 1.9, ConfigValueOperation.SUBTRACT, 4.0)
+                .nameLegacy(config.getString("dWoodenRapier.name", "Wooden Rapier"))
                 .id("wooden_rapier")
                 .category("rapiers")
-                .customModelData(true)
-                .hideFlags(true)
                 .loreConfigRange(config, "RapierDescription", 1, 7)
                 .loreConfigRange(config, "dWoodenRapier", 8, 10)
-                .withConfiguredDamage("aWoodenRapier.damage", 2.0, ConfigValueOperation.SUBTRACT, 1.0)
-                .withConfiguredSpeed("aWoodenRapier.speed", -2.1, ConfigValueOperation.SUBTRACT, 4.0)
+                .customModelData(true)
+                .hideFlags(true)
                 .build();
 
         return Recipes.createShapedRecipe(
@@ -42,10 +38,11 @@ public class Rapiers implements RecipeGroupRegistrar {
         );
     }
 
-    private ShapedRecipe getStoneRapierRecipe() {
+    private ShapedRecipe stoneRapier() {
         ItemStack item = new WeaponBuilder(Material.STONE_SWORD, config)
+                .withConfiguredDamage("aStoneRapier.damage", 3.5, ConfigValueOperation.SUBTRACT, 1.0)
                 .withConfiguredSpeed("aStoneRapier.speed", 1.9, ConfigValueOperation.SUBTRACT, 4.0)
-                .name(config.getString("dStoneRapier.name", "Stone Rapier"))
+                .nameLegacy(config.getString("dStoneRapier.name", "Stone Rapier"))
                 .id("stone_rapier")
                 .category("rapiers")
                 .loreConfigRange(config, "RapierDescription", 1, 7)
@@ -56,11 +53,11 @@ public class Rapiers implements RecipeGroupRegistrar {
         return Recipes.createShapedRecipe("stone_rapier", item, new String[]{"  C", "CC ", "SC "}, 'C', Material.COBBLESTONE, 'S', Material.STICK);
     }
 
-    private ShapedRecipe getGoldenRapierRecipe() {
+    private ShapedRecipe goldenRapier() {
         ItemStack item = new WeaponBuilder(Material.GOLDEN_SWORD, config)
                 .withConfiguredDamage("aGoldenRapier.damage", 3.0, ConfigValueOperation.SUBTRACT, 1.0)
                 .withConfiguredSpeed("aGoldenRapier.speed", 2.4, ConfigValueOperation.SUBTRACT, 4.0)
-                .name(config.getString("dGoldenRapier.name", "Golden Rapier"))
+                .nameLegacy(config.getString("dGoldenRapier.name", "Golden Rapier"))
                 .id("golden_rapier")
                 .category("rapiers")
                 .loreConfigRange(config, "RapierDescription", 1, 7)
@@ -71,71 +68,62 @@ public class Rapiers implements RecipeGroupRegistrar {
         return Recipes.createShapedRecipe("golden_rapier", item, new String[]{"  C", "CC ", "SC "}, 'C', Material.GOLD_INGOT, 'S', Material.STICK);
     }
 
-    private ShapedRecipe getIronRapierRecipe() {
-        List<String> lore = new ArrayList<>(config.getStringList("RapierDescription"));
-
+    private ShapedRecipe ironRapier() {
         ItemStack item = new WeaponBuilder(Material.IRON_SWORD, config)
                 .withConfiguredDamage("aIronRapier.damage", 4.0, ConfigValueOperation.SUBTRACT, 1.0)
                 .withConfiguredSpeed("aIronRapier.speed", 1.9, ConfigValueOperation.SUBTRACT, 4.0)
-                .name(config.getString("dIronRapier.name", "Iron Rapier"))
+                .nameLegacy(config.getString("dIronRapier.name", "Iron Rapier"))
                 .id("iron_rapier")
                 .category("rapiers")
-                .lore(lore)
+                .loreConfigRange(config, "RapierDescription", 1, 7)
+                .loreConfigRange(config, "dIronRapier", 8, 10)
                 .customModelData(true)
                 .hideFlags(true)
                 .build();
         return Recipes.createShapedRecipe("iron_rapier", item, new String[]{"  C", "CC ", "SC "}, 'C', Material.IRON_INGOT, 'S', Material.STICK);
     }
 
-    private ShapedRecipe getEmeraldRapierRecipe() {
-        List<String> lore = new ArrayList<>(config.getStringList("RapierDescription"));
-
-        ItemStack item = new WeaponBuilder(Material.GOLDEN_SWORD, config)
+    private ShapedRecipe emeraldRapier() {
+        var builder = new WeaponBuilder(Material.GOLDEN_SWORD, config)
                 .withConfiguredDamage("aEmeraldRapier.damage", 4.0, ConfigValueOperation.SUBTRACT, 1.0)
                 .withConfiguredSpeed("aEmeraldRapier.speed", 2.4, ConfigValueOperation.SUBTRACT, 4.0)
-                .name(config.getString("dEmeraldRapier.name", "Emerald Rapier"))
+                .nameLegacy(config.getString("dEmeraldRapier.name", "&2Emerald Rapier"))
                 .id("emerald_rapier")
                 .category("rapiers")
-                .lore(lore)
+                .loreConfigRange(config, "RapierDescription", 1, 7)
+                .loreConfigRange(config, "dEmeraldRapier", 8, 10)
                 .customModelData(true)
-                .hideFlags(true)
-                .build();
+                .hideFlags(true);
 
-        if (config.isEnabled("EnchantsOnEmeraldGear")) {
-            int unbreaking = config.getInt("EmeraldGearEnchantLevels.Unbreaking", 0);
-            int mending = config.getInt("EmeraldGearEnchantLevels.Mending", 0);
-            item.addUnsafeEnchantment(Enchantment.UNBREAKING, unbreaking);
-            item.addUnsafeEnchantment(Enchantment.MENDING, mending);
-        }
-        return Recipes.createShapedRecipe("emerald_rapier", item, new String[]{"  C", "CC ", "SC "}, 'C', Material.EMERALD, 'S', Material.STICK);
+        Recipes.applyConfiguredEnchantments("EnchantsOnEmeraldGear", "EmeraldGearEnchantLevels", builder);
+
+        return Recipes.createShapedRecipe("emerald_rapier", builder.build(), new String[]{"  C", "CC ", "SC "}, 'C', Material.EMERALD, 'S', Material.STICK);
     }
 
-    private ShapedRecipe getDiamondRapierRecipe() {
-        List<String> lore = new ArrayList<>(config.getStringList("RapierDescription"));
-
+    private ShapedRecipe diamondRapier() {
         ItemStack item = new WeaponBuilder(Material.DIAMOND_SWORD, config)
                 .withConfiguredDamage("aDiamondRapier.damage", 5.0, ConfigValueOperation.SUBTRACT, 1.0)
                 .withConfiguredSpeed("aDiamondRapier.speed", 1.9, ConfigValueOperation.SUBTRACT, 4.0)
-                .name(config.getString("dDiamondRapier.name", "Diamond Rapier"))
+                .nameLegacy(config.getString("dDiamondRapier.name", "Diamond Rapier"))
                 .id("diamond_rapier")
                 .category("rapiers")
-                .lore(lore)
+                .loreConfigRange(config, "RapierDescription", 1, 7)
+                .loreConfigRange(config, "dDiamondRapier", 8, 10)
                 .customModelData(true)
                 .hideFlags(true)
                 .build();
         return Recipes.createShapedRecipe("diamond_rapier", item, new String[]{"  C", "CC ", "SC "}, 'C', Material.DIAMOND, 'S', Material.STICK);
     }
 
-    private ShapedRecipe getNetheriteRapierRecipe() {
-        List<String> lore = new ArrayList<>(config.getStringList("RapierDescription"));
-
+    private ShapedRecipe netheriteRapier() {
         ItemStack item = new WeaponBuilder(Material.NETHERITE_SWORD, config)
                 .withConfiguredDamage("aNetheriteRapier.damage", 6.0, ConfigValueOperation.SUBTRACT, 1.0)
                 .withConfiguredSpeed("aNetheriteRapier.speed", 1.9, ConfigValueOperation.SUBTRACT, 4.0)
-                .name(config.getString("dNetheriteRapier.name", "Netherite Rapier"))
+                .nameLegacy(config.getString("dNetheriteRapier.name", "Netherite Rapier"))
                 .id("netherite_rapier")
                 .category("rapiers")
-                .lore(lore)
+                .loreConfigRange(config, "RapierDescription", 1, 7)
+                .loreConfigRange(config, "dNetheriteRapier", 8, 10)
                 .customModelData(true)
                 .hideFlags(true)
                 .build();
@@ -147,26 +135,26 @@ public class Rapiers implements RecipeGroupRegistrar {
     @Override
     public Recipe[] recipes() {
         return new Recipe[] {
-                getWoodenRapierRecipe(),
-                getStoneRapierRecipe(),
-                getGoldenRapierRecipe(),
-                getIronRapierRecipe(),
-                getEmeraldRapierRecipe(),
-                getDiamondRapierRecipe(),
-                getNetheriteRapierRecipe()
+            woodenRapier(),
+            stoneRapier(),
+            goldenRapier(),
+            ironRapier(),
+            emeraldRapier(),
+            diamondRapier(),
+            netheriteRapier()
         };
     }
 
     @Override
     public String[] keys() {
         return new String[] {
-                "wooden_rapier",
-                "stone_rapier",
-                "golden_rapier",
-                "iron_rapier",
-                "emerald_rapier",
-                "diamond_rapier",
-                "netherite_rapier"
+            "wooden_rapier",
+            "stone_rapier",
+            "golden_rapier",
+            "iron_rapier",
+            "emerald_rapier",
+            "diamond_rapier",
+            "netherite_rapier"
         };
     }
 }

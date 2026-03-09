@@ -1,6 +1,5 @@
 package org.winlogon.combatweaponryplus.recipes.registry;
 
-import net.kyori.adventure.text.minimessage.MiniMessage;
 import org.bukkit.Material;
 import org.bukkit.attribute.Attribute;
 import org.bukkit.attribute.AttributeModifier;
@@ -13,10 +12,7 @@ import org.winlogon.combatweaponryplus.util.ConfigHelper;
 import org.winlogon.combatweaponryplus.util.Recipes;
 
 public class Charms implements RecipeGroupRegistrar {
-    private ConfigHelper config;
-    private final MiniMessage mm = MiniMessage.miniMessage();
-
-    private Charms() { }
+    private final ConfigHelper config;
 
     public Charms(ConfigHelper config) {
         this.config = config;
@@ -24,24 +20,24 @@ public class Charms implements RecipeGroupRegistrar {
 
     private ShapedRecipe featherCharm() {
         ItemStack item = new ItemBuilder<>(Material.RABBIT_FOOT)
-                .name("Feather Charm")
-                .lore("Prevents fall damage")
+                .nameLegacy(config.getString("descriptions.feather_charm.name", "&fFeather Charm"))
                 .id("feather_charm")
                 .category("charms")
+                .loreConfigRange(config, "descriptions.feather_charm", 1, 2)
                 .customModelData(true)
                 .build();
         return Recipes.createShapedRecipe("feather_charm", item, new String[]{"FFF", "F F", "FFF"}, 'F', Material.FEATHER);
     }
 
     private ShapedRecipe emeraldCharm() {
-        double health = config.getDouble("aEmeraldCharm.BonusHealth", 4.0);
-        double armor = config.getDouble("aEmeraldCharm.BonusArmor", -2.0);
+        double health = config.getDouble("attributes.emerald_charm.bonus_health", 4.0);
+        double armor = config.getDouble("attributes.emerald_charm.bonus_armor", -2.0);
 
         ItemStack item = new ItemBuilder<>(Material.EMERALD)
-                .name("Emerald Charm")
-                .lore("Grants Luck")
+                .nameLegacy(config.getString("descriptions.emerald_charm.name", "&2Emerald Charm"))
                 .id("emerald_charm")
                 .category("charms")
+                .loreConfigRange(config, "descriptions.emerald_charm", 1, 3)
                 .customModelData(true)
                 .attribute(Attribute.MAX_HEALTH, health, AttributeModifier.Operation.ADD_NUMBER, EquipmentSlotGroup.OFFHAND)
                 .attribute(Attribute.ARMOR, armor, AttributeModifier.Operation.ADD_NUMBER, EquipmentSlotGroup.OFFHAND)
@@ -50,14 +46,14 @@ public class Charms implements RecipeGroupRegistrar {
     }
 
     private ShapedRecipe blazeCharm() {
-        double damage = config.getDouble("aBlazeCharm.BonusDamage", 4.0);
-        double health = config.getDouble("aBlazeCharm.BonusHealth", -2.0);
+        double damage = config.getDouble("attributes.blaze_charm.bonus_damage", 4.0);
+        double health = config.getDouble("attributes.blaze_charm.bonus_health", -2.0);
 
         ItemStack item = new ItemBuilder<>(Material.BLAZE_ROD)
-                .name("Blaze Charm")
-                .lore("Grants Fire Resistance")
+                .nameLegacy(config.getString("descriptions.blaze_charm.name", "&6Blaze Charm"))
                 .id("blaze_charm")
                 .category("charms")
+                .loreConfigRange(config, "descriptions.blaze_charm", 1, 3)
                 .customModelData(true)
                 .attribute(Attribute.ATTACK_DAMAGE, damage, AttributeModifier.Operation.ADD_NUMBER, EquipmentSlotGroup.OFFHAND)
                 .attribute(Attribute.MAX_HEALTH, health, AttributeModifier.Operation.ADD_NUMBER, EquipmentSlotGroup.OFFHAND)
@@ -66,14 +62,14 @@ public class Charms implements RecipeGroupRegistrar {
     }
 
     private ShapedRecipe goldCharm() {
-        double attackSpeed = config.getDouble("aGoldCharm.BonusAttackSpeedPercent", 30.0) / 100.0;
-        double moveSpeed = config.getDouble("aGoldCharm.BonusMoveSpeedPercent", -15.0) / 100.0;
+        double attackSpeed = config.getDouble("attributes.gold_charm.bonus_attack_speed_percent", 30.0) / 100.0;
+        double moveSpeed = config.getDouble("attributes.gold_charm.bonus_move_speed_percent", -15.0) / 100.0;
 
         ItemStack item = new ItemBuilder<>(Material.GOLD_INGOT)
-                .name("Gold Charm")
-                .lore("Grants Haste")
+                .nameLegacy(config.getString("descriptions.gold_charm.name", "&eGold Charm"))
                 .id("gold_charm")
                 .category("charms")
+                .loreConfigRange(config, "descriptions.gold_charm", 1, 3)
                 .customModelData(true)
                 .attribute(Attribute.ATTACK_SPEED, attackSpeed, AttributeModifier.Operation.MULTIPLY_SCALAR_1, EquipmentSlotGroup.OFFHAND)
                 .attribute(Attribute.MOVEMENT_SPEED, moveSpeed, AttributeModifier.Operation.MULTIPLY_SCALAR_1, EquipmentSlotGroup.OFFHAND)
@@ -83,10 +79,10 @@ public class Charms implements RecipeGroupRegistrar {
 
     private ShapedRecipe starCharm() {
         ItemStack item = new ItemBuilder<>(Material.NETHER_STAR)
-                .name("Star Charm")
-                .lore("Grants Regeneration")
+                .nameLegacy(config.getString("descriptions.star_charm.name", "&dStar Charm"))
                 .id("star_charm")
                 .category("charms")
+                .loreConfigRange(config, "descriptions.star_charm", 1, 2)
                 .customModelData(true)
                 .build();
         return Recipes.createShapedRecipe("star_charm", item, new String[]{"SSS", "S S", "SSS"}, 'S', Material.NETHER_STAR);
@@ -94,15 +90,16 @@ public class Charms implements RecipeGroupRegistrar {
 
     private ShapedRecipe frostCharm() {
         ItemStack item = new ItemBuilder<>(Material.ICE)
-                .name("Frost Charm")
-                .lore("Grants Slowness to nearby enemies")
+                .nameLegacy(config.getString("descriptions.frost_charm.name", "&bFrost Charm"))
                 .id("frost_charm")
                 .category("charms")
+                .loreConfigRange(config, "descriptions.frost_charm", 1, 4)
                 .customModelData(true)
                 .build();
         return Recipes.createShapedRecipe("frost_charm", item, new String[]{"III", "I I", "III"}, 'I', Material.ICE);
     }
 
+    @Override
     public Recipe[] recipes() {
         return new Recipe[] {
             featherCharm(),
