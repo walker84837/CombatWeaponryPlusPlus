@@ -30,6 +30,7 @@ public class CombatWeaponryPlus extends JavaPlugin {
 
     @Override
     public void onEnable() {
+        saveDefaultConfig();
         var cooldown = new Cooldown();
 
         ConfigMigrator.migrate(this);
@@ -40,7 +41,6 @@ public class CombatWeaponryPlus extends JavaPlugin {
         Recipes.init(this, configHelper);
 
         getServer().getPluginManager().registerEvents(serverListeners, this);
-        saveDefaultConfig();
 
         var recipeProvider = new RecipeProvider(configHelper);
         recipeProvider.registerRecipes();

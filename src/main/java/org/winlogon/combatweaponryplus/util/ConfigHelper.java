@@ -25,6 +25,13 @@ public class ConfigHelper {
         return config.getBoolean(path, false);
     }
 
+    public boolean areEnabled(@NonNull String... paths) {
+        for (String path : paths) {
+            if (!isEnabled(path)) return false;
+        }
+        return true;
+    }
+
     public double getDouble(@NonNull String path, double def) {
         return config.getDouble(path, def);
     }
@@ -66,8 +73,9 @@ public class ConfigHelper {
         return config.getBoolean(group + ".items." + id + ".enabled", true);
     }
 
-    public @NonNull String getItemName(@NonNull String group, @NonNull String id, @NonNull String def) {
-        return Objects.requireNonNull(config.getString(group + ".items." + id + ".name", def));
+    public @NonNull String getItemName(@NonNull String group, @NonNull String id, @Nullable String def) {
+        String name = config.getString(group + ".items." + id + ".name", def);
+        return name != null ? name : id;
     }
 
     public double getItemAttribute(@NonNull String group, @NonNull String id, @NonNull String attribute, double def) {

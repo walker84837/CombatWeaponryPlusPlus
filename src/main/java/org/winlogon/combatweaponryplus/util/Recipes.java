@@ -69,7 +69,17 @@ public final class Recipes {
         recipe.shape(shape);
 
         for (int i = 0; i < ingredients.length; i += 2) {
-            recipe.setIngredient((char) ingredients[i], (Material) ingredients[i + 1]);
+            char symbol = (char) ingredients[i];
+            boolean found = false;
+            for (String row : shape) {
+                if (row.indexOf(symbol) != -1) {
+                    found = true;
+                    break;
+                }
+            }
+            if (found) {
+                recipe.setIngredient(symbol, (Material) ingredients[i + 1]);
+            }
         }
         return recipe;
     }

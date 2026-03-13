@@ -32,9 +32,14 @@ public class Katanas implements RecipeGroupRegistrar {
             Recipes.applyConfiguredEnchantments("emerald_gear", builder);
         }
 
-        Material base = material == Material.NETHERITE_SWORD
-            ? (config.isEnabled("netherite_ingots") ? Material.NETHERITE_INGOT : Material.NETHERITE_SCRAP)
-            : getBaseMaterial(material);
+        Material base;
+        if (id.startsWith("emerald_")) {
+            base = Material.EMERALD;
+        } else if (material == Material.NETHERITE_SWORD) {
+            base = config.isEnabled("netherite_ingots") ? Material.NETHERITE_INGOT : Material.NETHERITE_SCRAP;
+        } else {
+            base = getBaseMaterial(material);
+        }
 
         return Recipes.createShapedRecipe(id, builder.build(), new String[]{"  C", " C ", "C  "}, 'C', base);
     }

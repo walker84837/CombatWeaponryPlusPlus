@@ -31,9 +31,14 @@ public class Scythes implements RecipeGroupRegistrar {
             Recipes.applyConfiguredEnchantments("emerald_gear", builder);
         }
 
-        Object[] ingredients = material == Material.NETHERITE_SWORD
-            ? new Object[]{'S', Material.STICK, 'N', config.isEnabled("netherite_ingots") ? Material.NETHERITE_INGOT : Material.NETHERITE_SCRAP}
-            : new Object[]{'S', Material.STICK, 'I', getBaseMaterial(material)};
+        Object[] ingredients;
+        if (id.startsWith("emerald_")) {
+            ingredients = new Object[]{'S', Material.STICK, 'I', Material.EMERALD};
+        } else if (material == Material.NETHERITE_SWORD) {
+            ingredients = new Object[]{'S', Material.STICK, 'N', config.isEnabled("netherite_ingots") ? Material.NETHERITE_INGOT : Material.NETHERITE_SCRAP};
+        } else {
+            ingredients = new Object[]{'S', Material.STICK, 'I', getBaseMaterial(material)};
+        }
 
         return Recipes.createShapedRecipe(id, builder.build(), shape, ingredients);
     }
@@ -55,7 +60,7 @@ public class Scythes implements RecipeGroupRegistrar {
     private ShapedRecipe ironScythe() { return getScytheRecipe(Material.IRON_SWORD, "iron_scythe", 8.0, 1.0, "III", "  S", "  S"); }
     private ShapedRecipe diamondScythe() { return getScytheRecipe(Material.DIAMOND_SWORD, "diamond_scythe", 9.0, 1.0, "III", "  S", "  S"); }
     private ShapedRecipe netheriteScythe() { return getScytheRecipe(Material.NETHERITE_SWORD, "netherite_scythe", 10.0, 1.0, "NNN", "  S", "  S"); }
-    private ShapedRecipe emeraldScythe() { return getScytheRecipe(Material.GOLDEN_SWORD, "emerald_scythe", 8.0, 1.2, "EEE", "  S", "  S"); }
+    private ShapedRecipe emeraldScythe() { return getScytheRecipe(Material.GOLDEN_SWORD, "emerald_scythe", 8.0, 1.2, "III", "  S", "  S"); }
 
     @Override
     public Recipe[] recipes() {

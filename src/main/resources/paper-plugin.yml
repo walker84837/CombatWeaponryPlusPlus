@@ -1,0 +1,7 @@
+name: CombatWeaponry++
+version: '${project.version}'
+main: org.winlogon.combatweaponryplus.CombatWeaponryPlus
+api-version: '1.21'
+author: winlogon
+description: A major and comprehensive refactor of CombatWeaponryPlus.
+website: https://github.com/walker84837/CombatWeaponryPlusPlus
