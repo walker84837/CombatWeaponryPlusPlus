@@ -1,8 +1,6 @@
 package org.winlogon.combatweaponryplus.recipes.registry;
 
 import org.bukkit.Material;
-import org.bukkit.enchantments.Enchantment;
-import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.Recipe;
 import org.bukkit.inventory.ShapedRecipe;
 import org.winlogon.combatweaponryplus.items.builders.WeaponBuilder;
@@ -12,143 +10,70 @@ import org.winlogon.combatweaponryplus.util.Recipes;
 
 public class Spears implements RecipeGroupRegistrar {
     private final ConfigHelper config;
+    private static final String GROUP = "spears";
 
     public Spears(ConfigHelper config) {
         this.config = config;
     }
 
-    private ShapedRecipe woodenSpear() {
-        ItemStack item = new WeaponBuilder(Material.WOODEN_SWORD, config)
-                .withConfiguredDamage("attributes.wooden_spear.damage", 2.0, ConfigValueOperation.SUBTRACT, 1.0)
-                .withConfiguredSpeed("attributes.wooden_spear.speed", 2.5, ConfigValueOperation.SUBTRACT, 4.0)
-                .nameLegacy(config.getString("descriptions.wooden_spear.name", "Wooden Spear"))
-                .id("wooden_spear")
-                .category("spears")
-                .loreConfigList(config, "descriptions.spear_description")
-                .loreConfigRange(config, "descriptions.wooden_spear", 10, 12)
-                .customModelData(true)
-                .hideFlags(true)
-                .build();
-        return Recipes.createShapedRecipe("wooden_spear", item, new String[]{" SS", " SS", "S  "}, 'S', Material.STICK);
-    }
-
-    private ShapedRecipe stoneSpear() {
-        ItemStack item = new WeaponBuilder(Material.STONE_SWORD, config)
-                .withConfiguredDamage("attributes.stone_spear.damage", 2.5, ConfigValueOperation.SUBTRACT, 1.0)
-                .withConfiguredSpeed("attributes.stone_spear.speed", 2.5, ConfigValueOperation.SUBTRACT, 4.0)
-                .nameLegacy(config.getString("descriptions.stone_spear.name", "Stone Spear"))
-                .id("stone_spear")
-                .category("spears")
-                .loreConfigList(config, "descriptions.spear_description")
-                .loreConfigRange(config, "descriptions.stone_spear", 10, 12)
-                .customModelData(true)
-                .hideFlags(true)
-                .build();
-        return Recipes.createShapedRecipe("stone_spear", item, new String[]{" CC", " CC", "C  "}, 'C', Material.COBBLESTONE);
-    }
-
-    private ShapedRecipe goldenSpear() {
-        ItemStack item = new WeaponBuilder(Material.GOLDEN_SWORD, config)
-                .withConfiguredDamage("attributes.golden_spear.damage", 2.0, ConfigValueOperation.SUBTRACT, 1.0)
-                .withConfiguredSpeed("attributes.golden_spear.speed", 2.8, ConfigValueOperation.SUBTRACT, 4.0)
-                .nameLegacy(config.getString("descriptions.golden_spear.name", "Golden Spear"))
-                .id("golden_spear")
-                .category("spears")
-                .loreConfigList(config, "descriptions.spear_description")
-                .loreConfigRange(config, "descriptions.golden_spear", 10, 12)
-                .customModelData(true)
-                .hideFlags(true)
-                .build();
-        return Recipes.createShapedRecipe("golden_spear", item, new String[]{" GG", " GG", "G  "}, 'G', Material.GOLD_INGOT);
-    }
-
-    private ShapedRecipe ironSpear() {
-        ItemStack item = new WeaponBuilder(Material.IRON_SWORD, config)
-                .withConfiguredDamage("attributes.iron_spear.damage", 3.0, ConfigValueOperation.SUBTRACT, 1.0)
-                .withConfiguredSpeed("attributes.iron_spear.speed", 2.5, ConfigValueOperation.SUBTRACT, 4.0)
-                .nameLegacy(config.getString("descriptions.iron_spear.name", "Iron Spear"))
-                .id("iron_spear")
-                .category("spears")
-                .loreConfigList(config, "descriptions.spear_description")
-                .loreConfigRange(config, "descriptions.iron_spear", 10, 12)
-                .customModelData(true)
-                .hideFlags(true)
-                .build();
-        return Recipes.createShapedRecipe("iron_spear", item, new String[]{" II", " II", "I  "}, 'I', Material.IRON_INGOT);
-    }
-
-    private ShapedRecipe emeraldSpear() {
-        var builder = new WeaponBuilder(Material.GOLDEN_SWORD, config)
-                .withConfiguredDamage("attributes.emerald_spear.damage", 3.0, ConfigValueOperation.SUBTRACT, 1.0)
-                .withConfiguredSpeed("attributes.emerald_spear.speed", 2.8, ConfigValueOperation.SUBTRACT, 4.0)
-                .nameLegacy(config.getString("descriptions.emerald_spear.name", "&2Emerald Spear"))
-                .id("emerald_spear")
-                .category("spears")
-                .loreConfigList(config, "descriptions.spear_description")
-                .loreConfigRange(config, "descriptions.emerald_spear", 10, 12)
+    private ShapedRecipe getSpearRecipe(Material material, String id, double dmg, double spd) {
+        var builder = new WeaponBuilder(material, config)
+                .withConfiguredDamage(GROUP + ".items." + id + ".attributes.damage", dmg, ConfigValueOperation.SUBTRACT, 1.0)
+                .withConfiguredSpeed(GROUP + ".items." + id + ".attributes.speed", spd, ConfigValueOperation.SUBTRACT, 4.0)
+                .nameLegacy(config.getItemName(GROUP, id, null))
+                .id(id)
+                .category(GROUP)
+                .lore(config.getItemLore(GROUP, id))
                 .customModelData(true)
                 .hideFlags(true);
 
-        Recipes.applyConfiguredEnchantments("enchantments_on_emerald_gear", "emerald_gear_enchant_levels", builder);
+        if (id.equals("emerald_spear")) {
+            Recipes.applyConfiguredEnchantments("emerald_gear", builder);
+        }
 
-        return Recipes.createShapedRecipe("emerald_spear", builder.build(), new String[]{" EE", " EE", "E  "}, 'E', Material.EMERALD);
+        Material base = material == Material.NETHERITE_SWORD
+            ? (config.isEnabled("netherite_ingots") ? Material.NETHERITE_INGOT : Material.NETHERITE_SCRAP)
+            : getBaseMaterial(material);
+
+        return Recipes.createShapedRecipe(id, builder.build(), new String[]{"  C", " S ", "S  "}, 'C', base, 'S', Material.STICK);
     }
 
-    private ShapedRecipe diamondSpear() {
-        ItemStack item = new WeaponBuilder(Material.DIAMOND_SWORD, config)
-                .withConfiguredDamage("attributes.diamond_spear.damage", 4.0, ConfigValueOperation.SUBTRACT, 1.0)
-                .withConfiguredSpeed("attributes.diamond_spear.speed", 2.5, ConfigValueOperation.SUBTRACT, 4.0)
-                .nameLegacy(config.getString("descriptions.diamond_spear.name", "Diamond Spear"))
-                .id("diamond_spear")
-                .category("spears")
-                .loreConfigList(config, "descriptions.spear_description")
-                .loreConfigRange(config, "descriptions.diamond_spear", 10, 12)
-                .customModelData(true)
-                .hideFlags(true)
-                .build();
-        return Recipes.createShapedRecipe("diamond_spear", item, new String[]{" DD", " DD", "D  "}, 'D', Material.DIAMOND);
+    private Material getBaseMaterial(Material tool) {
+        return switch (tool) {
+            case WOODEN_SWORD -> Material.OAK_PLANKS;
+            case STONE_SWORD -> Material.COBBLESTONE;
+            case GOLDEN_SWORD -> Material.GOLD_INGOT;
+            case IRON_SWORD -> Material.IRON_INGOT;
+            case DIAMOND_SWORD -> Material.DIAMOND;
+            default -> Material.EMERALD;
+        };
     }
 
-    private ShapedRecipe netheriteSpear() {
-        ItemStack item = new WeaponBuilder(Material.NETHERITE_SWORD, config)
-                .withConfiguredDamage("attributes.netherite_spear.damage", 5.0, ConfigValueOperation.SUBTRACT, 1.0)
-                .withConfiguredSpeed("attributes.netherite_spear.speed", 2.5, ConfigValueOperation.SUBTRACT, 4.0)
-                .nameLegacy(config.getString("descriptions.netherite_spear.name", "Netherite Spear"))
-                .id("netherite_spear")
-                .category("spears")
-                .loreConfigList(config, "descriptions.spear_description")
-                .loreConfigRange(config, "descriptions.netherite_spear", 10, 12)
-                .customModelData(true)
-                .hideFlags(true)
-                .build();
-
-        Material netheriteMaterial = config.isEnabled("netherite_ingots") ? Material.NETHERITE_INGOT : Material.NETHERITE_SCRAP;
-        return Recipes.createShapedRecipe("netherite_spear", item, new String[]{" NN", " NN", "N  "}, 'N', netheriteMaterial);
-    }
+    private ShapedRecipe woodenSpear() { return getSpearRecipe(Material.WOODEN_SWORD, "wooden_spear", 2.0, 2.5); }
+    private ShapedRecipe stoneSpear() { return getSpearRecipe(Material.STONE_SWORD, "stone_spear", 2.5, 2.5); }
+    private ShapedRecipe goldenSpear() { return getSpearRecipe(Material.GOLDEN_SWORD, "golden_spear", 2.0, 2.8); }
+    private ShapedRecipe ironSpear() { return getSpearRecipe(Material.IRON_SWORD, "iron_spear", 3.0, 2.5); }
+    private ShapedRecipe diamondSpear() { return getSpearRecipe(Material.DIAMOND_SWORD, "diamond_spear", 4.0, 2.5); }
+    private ShapedRecipe netheriteSpear() { return getSpearRecipe(Material.NETHERITE_SWORD, "netherite_spear", 5.0, 2.5); }
+    private ShapedRecipe emeraldSpear() { return getSpearRecipe(Material.GOLDEN_SWORD, "emerald_spear", 3.0, 2.8); }
 
     @Override
     public Recipe[] recipes() {
         return new Recipe[] {
-            woodenSpear(),
-            stoneSpear(),
-            goldenSpear(),
-            ironSpear(),
-            emeraldSpear(),
-            diamondSpear(),
-            netheriteSpear()
+                woodenSpear(),
+                stoneSpear(),
+                goldenSpear(),
+                ironSpear(),
+                diamondSpear(),
+                netheriteSpear(),
+                emeraldSpear()
         };
     }
 
     @Override
     public String[] keys() {
         return new String[] {
-            "wooden_spear",
-            "stone_spear",
-            "golden_spear",
-            "iron_spear",
-            "emerald_spear",
-            "diamond_spear",
-            "netherite_spear"
+                "wooden_spear", "stone_spear", "golden_spear", "iron_spear", "emerald_spear", "diamond_spear", "netherite_spear"
         };
     }
 }

@@ -104,15 +104,14 @@ class Listeners implements Listener {
     @EventHandler
     public void onJoin(PlayerJoinEvent event) {
         var player = event.getPlayer();
-        // Avoid sending resource packs if they're disabled in config
-        if (!config.isEnabled("resource-pack.enabled")) return;
 
-        var url = config.getString("resource-pack.link", "");
+        var url = config.getString("settings.resource_pack.link", "");
+        if (url.isEmpty()) return;
+
         try {
-            var prompt = config.getString("resource-pack.prompt", "<gold>CombatWeaponryPlus</gold> <gray>requires a resource pack for custom item textures. <white>Would you like to download it?");
+            var prompt = config.getString("settings.resource_pack.prompt", "<gold>CombatWeaponryPlus</gold> <gray>requires a resource pack for custom item textures. <white>Would you like to download it?");
             var request = createResourcePackRequest(plugin, prompt);
             player.sendResourcePacks(request);
-            player.sendRichMessage("Sending resource pack: " + url);
         } catch (IllegalArgumentException e) {
             player.sendRichMessage("Failed to send resource pack: " + e.getMessage());
             System.err.println("Error sending resource pack to " + player.getName() + ": " + e.getMessage());
@@ -228,7 +227,7 @@ class Listeners implements Listener {
             return;
         }
 
-        double multiplier = config.getDouble("multipliers." + category, 1.0);
+        double multiplier = config.getGroupMultiplier(category);
         var offHandItem = attacker.getInventory().getItemInOffHand();
 
         // Category-based logic
@@ -341,204 +340,38 @@ class Listeners implements Listener {
 
     @EventHandler
     void onSmithingTableEvent(PrepareSmithingEvent event) {
-        new SmithingRecipeBuilder(plugin, config)
-            .toolType(Material.NETHERITE_SWORD)
-            .modifierType(Material.PRISMARINE_SHARD)
-            .requiredModelData(1000001)
-            .resultModelData(1210001)
-            .nameKey("Prismarine")
-            .configKey("dPrismarineSword")
-            .amountOfLines(4)
-            .damageAddedConfigPath(1.0)
-            .damageAddedKey("Damage")
-            .build(event);
+        String group = "prismarine_gear";
+        Material mod = Material.PRISMARINE_SHARD;
+        Material res = Material.PRISMARINE_SHARD;
 
-        new SmithingRecipeBuilder(plugin, config)
-            .toolType(Material.NETHERITE_PICKAXE)
-            .modifierType(Material.PRISMARINE_SHARD)
-            .requiredModelData(0)
-            .resultModelData(1210002)
-            .nameKey("Prismarine")
-            .configKey("dPrismarinePickaxe")
-            .amountOfLines(4)
-            .damageAddedConfigPath(1.0)
-            .damageAddedKey("Damage")
-            .build(event);
-        new SmithingRecipeBuilder(plugin, config)
-            .toolType(Material.NETHERITE_AXE)
-            .modifierType(Material.PRISMARINE_SHARD)
-            .requiredModelData(0)
-            .resultModelData(1220001)
-            .nameKey("Prismarine")
-            .configKey("dPrismarineAxe")
-            .amountOfLines(4)
-            .damageAddedConfigPath(1.0)
-            .damageAddedKey("Damage")
-            .build(event);
-        new SmithingRecipeBuilder(plugin, config)
-            .toolType(Material.NETHERITE_SHOVEL)
-            .modifierType(Material.PRISMARINE_SHARD)
-            .requiredModelData(0)
-            .resultModelData(1210004)
-            .nameKey("Prismarine")
-            .configKey("dPrismarineShovel")
-            .amountOfLines(4)
-            .damageAddedConfigPath(1.0)
-            .damageAddedKey("Damage")
-            .build(event);
-        new SmithingRecipeBuilder(plugin, config)
-            .toolType(Material.NETHERITE_HOE)
-            .modifierType(Material.PRISMARINE_SHARD)
-            .requiredModelData(0)
-            .resultModelData(1210005)
-            .nameKey("Prismarine")
-            .configKey("dPrismarineHoe")
-            .amountOfLines(4)
-            .damageAddedConfigPath(1.0)
-            .damageAddedKey("Damage")
-            .build(event);
+        // Base Weapons
+        new SmithingRecipeBuilder(plugin, config).toolType(Material.NETHERITE_SWORD).modifierType(mod).resultMaterial(res).requiredModelData(1000001).resultModelData(1210001).nameKey("Prismarine").item(group, "prismarine_sword").bonusAttribute("damage", 1.0).build(event);
+        new SmithingRecipeBuilder(plugin, config).toolType(Material.NETHERITE_PICKAXE).modifierType(mod).resultMaterial(res).requiredModelData(0).resultModelData(1210002).nameKey("Prismarine").item(group, "prismarine_pickaxe").bonusAttribute("damage", 1.0).build(event);
+        new SmithingRecipeBuilder(plugin, config).toolType(Material.NETHERITE_AXE).modifierType(mod).resultMaterial(res).requiredModelData(0).resultModelData(1220001).nameKey("Prismarine").item(group, "prismarine_axe").bonusAttribute("damage", 1.0).build(event);
+        new SmithingRecipeBuilder(plugin, config).toolType(Material.NETHERITE_SHOVEL).modifierType(mod).resultMaterial(res).requiredModelData(0).resultModelData(1210004).nameKey("Prismarine").item(group, "prismarine_shovel").bonusAttribute("damage", 1.0).build(event);
+        new SmithingRecipeBuilder(plugin, config).toolType(Material.NETHERITE_HOE).modifierType(mod).resultMaterial(res).requiredModelData(0).resultModelData(1210005).nameKey("Prismarine").item(group, "prismarine_hoe").bonusAttribute("damage", 1.0).build(event);
 
-        // Prismarine Armor
-        new SmithingRecipeBuilder(plugin, config)
-            .toolType(Material.NETHERITE_HELMET)
-            .modifierType(Material.PRISMARINE_SHARD)
-            .requiredModelData(0)
-            .resultModelData(1220001)
-            .nameKey("Prismarine")
-            .configKey("dPrismarineHelmet")
-            .amountOfLines(0)
-            .damageAddedConfigPath(1.0)
-            .damageAddedKey("Armor")
-            .build(event);
-        new SmithingRecipeBuilder(plugin, config)
-            .toolType(Material.NETHERITE_CHESTPLATE)
-            .modifierType(Material.PRISMARINE_SHARD)
-            .requiredModelData(0)
-            .resultModelData(1220002)
-            .nameKey("Prismarine")
-            .configKey("dPrismarineChestplate")
-            .amountOfLines(0)
-            .damageAddedConfigPath(1.0)
-            .damageAddedKey("Armor")
-            .build(event);
-        new SmithingRecipeBuilder(plugin, config)
-            .toolType(Material.NETHERITE_LEGGINGS)
-            .modifierType(Material.PRISMARINE_SHARD)
-            .requiredModelData(0)
-            .resultModelData(1220003)
-            .nameKey("Prismarine")
-            .configKey("dPrismarineLeggings")
-            .amountOfLines(0)
-            .damageAddedConfigPath(1.0)
-            .damageAddedKey("Armor")
-            .build(event);
-        new SmithingRecipeBuilder(plugin, config)
-            .toolType(Material.NETHERITE_BOOTS)
-            .modifierType(Material.PRISMARINE_SHARD)
-            .requiredModelData(0)
-            .resultModelData(1220004)
-            .nameKey("Prismarine")
-            .configKey("dPrismarineBoots")
-            .amountOfLines(0)
-            .damageAddedConfigPath(1.0)
-            .damageAddedKey("Armor")
-            .build(event);
+        // Armor
+        new SmithingRecipeBuilder(plugin, config).toolType(Material.NETHERITE_HELMET).modifierType(mod).resultMaterial(res).requiredModelData(0).resultModelData(1220001).nameKey("Prismarine").item(group, "prismarine_helmet").bonusAttribute("armor", 1.0).build(event);
+        new SmithingRecipeBuilder(plugin, config).toolType(Material.NETHERITE_CHESTPLATE).modifierType(mod).resultMaterial(res).requiredModelData(0).resultModelData(1220002).nameKey("Prismarine").item(group, "prismarine_chestplate").bonusAttribute("armor", 1.0).build(event);
+        new SmithingRecipeBuilder(plugin, config).toolType(Material.NETHERITE_LEGGINGS).modifierType(mod).resultMaterial(res).requiredModelData(0).resultModelData(1220003).nameKey("Prismarine").item(group, "prismarine_leggings").bonusAttribute("armor", 1.0).build(event);
+        new SmithingRecipeBuilder(plugin, config).toolType(Material.NETHERITE_BOOTS).modifierType(mod).resultMaterial(res).requiredModelData(0).resultModelData(1220004).nameKey("Prismarine").item(group, "prismarine_boots").bonusAttribute("armor", 1.0).build(event);
 
-        // Prismarine Custom Weapons
-        new SmithingRecipeBuilder(plugin, config)
-            .toolType(Material.NETHERITE_SWORD)
-            .modifierType(Material.PRISMARINE_SHARD)
-            .requiredModelData(1000001)
-            .resultModelData(1200001)
-            .nameKey("Prismarine")
-            .configKey("dPrismarineLongsword")
-            .amountOfLines(8)
-            .damageAddedConfigPath(1.0)
-            .damageAddedKey("Damage")
-            .build(event);
-        new SmithingRecipeBuilder(plugin, config)
-            .toolType(Material.NETHERITE_SWORD)
-            .modifierType(Material.PRISMARINE_SHARD)
-            .requiredModelData(1000003)
-            .resultModelData(1200003)
-            .nameKey("Prismarine")
-            .configKey("dPrismarineScythe")
-            .amountOfLines(10)
-            .damageAddedConfigPath(1.0)
-            .damageAddedKey("Damage")
-            .build(event);
-        new SmithingRecipeBuilder(plugin, config)
-            .toolType(Material.NETHERITE_SWORD)
-            .modifierType(Material.PRISMARINE_SHARD)
-            .requiredModelData(1000005)
-            .resultModelData(1200005)
-            .nameKey("Prismarine")
-            .configKey("dPrismarineRapier")
-            .amountOfLines(10)
-            .damageAddedConfigPath(1.0)
-            .damageAddedKey("Damage")
-            .build(event);
-        new SmithingRecipeBuilder(plugin, config)
-            .toolType(Material.NETHERITE_SWORD)
-            .modifierType(Material.PRISMARINE_SHARD)
-            .requiredModelData(1000004)
-            .resultModelData(1200004)
-            .nameKey("Prismarine")
-            .configKey("dPrismarineSpear")
-            .amountOfLines(12)
-            .damageAddedConfigPath(1.0)
-            .damageAddedKey("Damage")
-            .build(event);
-        new SmithingRecipeBuilder(plugin, config)
-            .toolType(Material.NETHERITE_SWORD)
-            .modifierType(Material.PRISMARINE_SHARD)
-            .requiredModelData(1000002)
-            .resultModelData(1200002)
-            .nameKey("Prismarine")
-            .configKey("dPrismarineKatana")
-            .amountOfLines(14)
-            .damageAddedConfigPath(1.0)
-            .damageAddedKey("Damage")
-            .build(event);
-        new SmithingRecipeBuilder(plugin, config)
-            .toolType(Material.NETHERITE_SWORD)
-            .modifierType(Material.PRISMARINE_SHARD)
-            .requiredModelData(1000006)
-            .resultModelData(1200006)
-            .nameKey("Prismarine")
-            .configKey("dPrismarineKnife")
-            .amountOfLines(9)
-            .damageAddedConfigPath(1.0)
-            .damageAddedKey("Damage")
-            .build(event);
-        new SmithingRecipeBuilder(plugin, config)
-            .toolType(Material.NETHERITE_SWORD)
-            .modifierType(Material.PRISMARINE_SHARD)
-            .requiredModelData(1000010)
-            .resultModelData(1200010)
-            .nameKey("Prismarine")
-            .configKey("dPrismarineSaber")
-            .amountOfLines(7)
-            .damageAddedConfigPath(1.0)
-            .damageAddedKey("Damage")
-            .build(event);
-        new SmithingRecipeBuilder(plugin, config)
-            .toolType(Material.NETHERITE_SWORD)
-            .modifierType(Material.PRISMARINE_SHARD)
-            .requiredModelData(1000021)
-            .resultModelData(1200021)
-            .nameKey("Prismarine")
-            .configKey("dPrismarineCleaver")
-            .amountOfLines(12)
-            .damageAddedConfigPath(1.0)
-            .damageAddedKey("Damage")
-            .build(event);
+        // Custom Weapons
+        new SmithingRecipeBuilder(plugin, config).toolType(Material.NETHERITE_SWORD).modifierType(mod).resultMaterial(res).requiredModelData(1000001).resultModelData(1200001).nameKey("Prismarine").item(group, "prismarine_longsword").bonusAttribute("damage", 1.0).build(event);
+        new SmithingRecipeBuilder(plugin, config).toolType(Material.NETHERITE_SWORD).modifierType(mod).resultMaterial(res).requiredModelData(1000003).resultModelData(1200003).nameKey("Prismarine").item(group, "prismarine_scythe").bonusAttribute("damage", 1.0).build(event);
+        new SmithingRecipeBuilder(plugin, config).toolType(Material.NETHERITE_SWORD).modifierType(mod).resultMaterial(res).requiredModelData(1000005).resultModelData(1200005).nameKey("Prismarine").item(group, "prismarine_rapier").bonusAttribute("damage", 1.0).build(event);
+        new SmithingRecipeBuilder(plugin, config).toolType(Material.NETHERITE_SWORD).modifierType(mod).resultMaterial(res).requiredModelData(1000004).resultModelData(1200004).nameKey("Prismarine").item(group, "prismarine_spear").bonusAttribute("damage", 1.0).build(event);
+        new SmithingRecipeBuilder(plugin, config).toolType(Material.NETHERITE_SWORD).modifierType(mod).resultMaterial(res).requiredModelData(1000002).resultModelData(1200002).nameKey("Prismarine").item(group, "prismarine_katana").bonusAttribute("damage", 1.0).build(event);
+        new SmithingRecipeBuilder(plugin, config).toolType(Material.NETHERITE_SWORD).modifierType(mod).resultMaterial(res).requiredModelData(1000006).resultModelData(1200006).nameKey("Prismarine").item(group, "prismarine_knife").bonusAttribute("damage", 1.0).build(event);
+        new SmithingRecipeBuilder(plugin, config).toolType(Material.NETHERITE_SWORD).modifierType(mod).resultMaterial(res).requiredModelData(1000010).resultModelData(1200010).nameKey("Prismarine").item(group, "prismarine_saber").bonusAttribute("damage", 1.0).build(event);
+        new SmithingRecipeBuilder(plugin, config).toolType(Material.NETHERITE_SWORD).modifierType(mod).resultMaterial(res).requiredModelData(1000021).resultModelData(1200021).nameKey("Prismarine").item(group, "prismarine_cleaver").bonusAttribute("damage", 1.0).build(event);
     }
 
     @EventHandler
     public void playerBowShoot(EntityShootBowEvent event) {
         LivingEntity entity = event.getEntity();
-        float speed = event.getForce();
+        float force = event.getForce();
         Arrow arrow = (Arrow) event.getProjectile();
 
         if (!(entity instanceof Player player)) return;
@@ -549,16 +382,20 @@ class Listeners implements Listener {
 
         ItemStack mainHandItem = player.getInventory().getItemInMainHand();
 
-        if (!mainHandItem.hasItemMeta() || !ItemModelData.hasModelData(mainHandItem.getItemMeta())) return;
+        if (!mainHandItem.hasItemMeta()) return;
 
-        int customModelData = ItemModelData.get(mainHandItem.getItemMeta());
+        String category = PersistentDataManager.getPersistentData(mainHandItem, PersistentDataManager.CATEGORY_KEY);
+        String id = PersistentDataManager.getPersistentData(mainHandItem, PersistentDataManager.ID_KEY);
+
+        if (id == null) return;
+
         Vector vector = player.getLocation().getDirection();
         World world = player.getWorld();
 
-        switch (customModelData) {
-            case 1069691: // Trident Bow
+        switch (id) {
+            case "trident_bow":
                 arrow.remove();
-                Trident trident = player.launchProjectile(Trident.class, vector.multiply(speed * 5.0));
+                Trident trident = player.launchProjectile(Trident.class, vector.multiply(force * 5.0));
                 trident.setPierceLevel(20);
                 trident.setCritical(true);
                 trident.setFireTicks(100);
@@ -573,23 +410,21 @@ class Listeners implements Listener {
 
                 world.playSound(player.getLocation(), Sound.ITEM_TRIDENT_THROW, 10.0f, 1.0f);
                 break;
-            case 3330001: // Longbow
-            case 3330004: // Longsword Bow
-                applyBowConfigToArrow(arrow, vector, speed, "aLongBow");
+            case "long_bow":
+            case "longsword_bow":
+                applyBowConfigToArrow(arrow, vector, force, "bows.items." + id);
                 break;
-            case 3330002: // Recurve Bow
-                applyBowConfigToArrow(arrow, vector, speed, "aRecurveBow");
+            case "recurve_bow":
+            case "compound_bow":
+                applyBowConfigToArrow(arrow, vector, force, "bows.items." + id);
                 break;
-            case 3330003: // Compound Bow
-                applyBowConfigToArrow(arrow, vector, speed, "aCompoundBow");
-                break;
-            case 5552001: // Repeating Crossbow
+            case "repeating_crossbow":
                 handleRepeatingCrossbow(player, event);
                 break;
-            case 5552002: // Burst Crossbow
+            case "burst_crossbow":
                 handleBurstCrossbow(player, event);
                 break;
-            case 3330005: // Redstone Bow
+            case "redstone_bow":
                 handleRedstoneBow(player, event);
                 break;
         }

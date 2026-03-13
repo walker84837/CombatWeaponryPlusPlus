@@ -1,8 +1,6 @@
 package org.winlogon.combatweaponryplus.recipes.registry;
 
 import org.bukkit.Material;
-import org.bukkit.enchantments.Enchantment;
-import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.Recipe;
 import org.bukkit.inventory.ShapedRecipe;
 import org.winlogon.combatweaponryplus.items.builders.WeaponBuilder;
@@ -12,119 +10,52 @@ import org.winlogon.combatweaponryplus.util.Recipes;
 
 public class Scythes implements RecipeGroupRegistrar {
     private final ConfigHelper config;
+    private static final String GROUP = "scythes";
 
     public Scythes(ConfigHelper config) {
         this.config = config;
     }
 
-    private ShapedRecipe woodenScythe() {
-        ItemStack item = new WeaponBuilder(Material.WOODEN_SWORD, config)
-                .withConfiguredDamage("attributes.wooden_scythe.damage", 7.0, ConfigValueOperation.SUBTRACT, 1.0)
-                .withConfiguredSpeed("attributes.wooden_scythe.speed", 1.0, ConfigValueOperation.SUBTRACT, 4.0)
-                .nameLegacy(config.getString("descriptions.wooden_scythe.name", "Wooden Scythe"))
-                .id("wooden_scythe")
-                .category("scythes")
-                .loreConfigList(config, "descriptions.scythe_description")
-                .loreConfigRange(config, "descriptions.wooden_scythe", 8, 10)
-                .customModelData(true)
-                .hideFlags(true)
-                .build();
-        return Recipes.createShapedRecipe("wooden_scythe", item, new String[]{"SSS", "  S", "  S"}, 'S', Material.STICK);
-    }
-
-    private ShapedRecipe stoneScythe() {
-        ItemStack item = new WeaponBuilder(Material.STONE_SWORD, config)
-                .withConfiguredDamage("attributes.stone_scythe.damage", 7.5, ConfigValueOperation.SUBTRACT, 1.0)
-                .withConfiguredSpeed("attributes.stone_scythe.speed", 1.0, ConfigValueOperation.SUBTRACT, 4.0)
-                .nameLegacy(config.getString("descriptions.stone_scythe.name", "Stone Scythe"))
-                .id("stone_scythe")
-                .category("scythes")
-                .loreConfigList(config, "descriptions.scythe_description")
-                .loreConfigRange(config, "descriptions.stone_scythe", 8, 10)
-                .customModelData(true)
-                .hideFlags(true)
-                .build();
-        return Recipes.createShapedRecipe("stone_scythe", item, new String[]{"CCC", "  S", "  S"}, 'S', Material.STICK, 'C', Material.COBBLESTONE);
-    }
-
-    private ShapedRecipe goldenScythe() {
-        ItemStack item = new WeaponBuilder(Material.GOLDEN_SWORD, config)
-                .withConfiguredDamage("attributes.golden_scythe.damage", 7.0, ConfigValueOperation.SUBTRACT, 1.0)
-                .withConfiguredSpeed("attributes.golden_scythe.speed", 1.2, ConfigValueOperation.SUBTRACT, 4.0)
-                .nameLegacy(config.getString("descriptions.golden_scythe.name", "Golden Scythe"))
-                .id("golden_scythe")
-                .category("scythes")
-                .loreConfigList(config, "descriptions.scythe_description")
-                .loreConfigRange(config, "descriptions.golden_scythe", 8, 10)
-                .customModelData(true)
-                .hideFlags(true)
-                .build();
-        return Recipes.createShapedRecipe("golden_scythe", item, new String[]{"GGG", "  S", "  S"}, 'S', Material.STICK, 'G', Material.GOLD_INGOT);
-    }
-
-    private ShapedRecipe ironScythe() {
-        ItemStack item = new WeaponBuilder(Material.IRON_SWORD, config)
-                .withConfiguredDamage("attributes.iron_scythe.damage", 8.0, ConfigValueOperation.SUBTRACT, 1.0)
-                .withConfiguredSpeed("attributes.iron_scythe.speed", 1.0, ConfigValueOperation.SUBTRACT, 4.0)
-                .nameLegacy(config.getString("descriptions.iron_scythe.name", "Iron Scythe"))
-                .id("iron_scythe")
-                .category("scythes")
-                .loreConfigList(config, "descriptions.scythe_description")
-                .loreConfigRange(config, "descriptions.iron_scythe", 8, 10)
-                .customModelData(true)
-                .hideFlags(true)
-                .build();
-        return Recipes.createShapedRecipe("iron_scythe", item, new String[]{"III", "  S", "  S"}, 'S', Material.STICK, 'I', Material.IRON_INGOT);
-    }
-
-    private ShapedRecipe diamondScythe() {
-        ItemStack item = new WeaponBuilder(Material.DIAMOND_SWORD, config)
-                .withConfiguredDamage("attributes.diamond_scythe.damage", 9.0, ConfigValueOperation.SUBTRACT, 1.0)
-                .withConfiguredSpeed("attributes.diamond_scythe.speed", 1.0, ConfigValueOperation.SUBTRACT, 4.0)
-                .nameLegacy(config.getString("descriptions.diamond_scythe.name", "Diamond Scythe"))
-                .id("diamond_scythe")
-                .category("scythes")
-                .loreConfigList(config, "descriptions.scythe_description")
-                .loreConfigRange(config, "descriptions.diamond_scythe", 8, 10)
-                .customModelData(true)
-                .hideFlags(true)
-                .build();
-        return Recipes.createShapedRecipe("diamond_scythe", item, new String[]{"DDD", "  S", "  S"}, 'S', Material.STICK, 'D', Material.DIAMOND);
-    }
-
-    private ShapedRecipe netheriteScythe() {
-        ItemStack item = new WeaponBuilder(Material.NETHERITE_SWORD, config)
-                .withConfiguredDamage("attributes.netherite_scythe.damage", 10.0, ConfigValueOperation.SUBTRACT, 1.0)
-                .withConfiguredSpeed("attributes.netherite_scythe.speed", 1.0, ConfigValueOperation.SUBTRACT, 4.0)
-                .nameLegacy(config.getString("descriptions.netherite_scythe.name", "Netherite Scythe"))
-                .id("netherite_scythe")
-                .category("scythes")
-                .loreConfigList(config, "descriptions.scythe_description")
-                .loreConfigRange(config, "descriptions.netherite_scythe", 8, 10)
-                .customModelData(true)
-                .hideFlags(true)
-                .build();
-
-        Material netheriteMaterial = config.isEnabled("netherite_ingots") ? Material.NETHERITE_INGOT : Material.NETHERITE_SCRAP;
-        return Recipes.createShapedRecipe("netherite_scythe", item, new String[]{"NNN", "  S", "  S"}, 'S', Material.STICK, 'N', netheriteMaterial);
-    }
-
-    private ShapedRecipe emeraldScythe() {
-        var builder = new WeaponBuilder(Material.GOLDEN_SWORD, config)
-                .withConfiguredDamage("attributes.emerald_scythe.damage", 8.0, ConfigValueOperation.SUBTRACT, 1.0)
-                .withConfiguredSpeed("attributes.emerald_scythe.speed", 1.2, ConfigValueOperation.SUBTRACT, 4.0)
-                .nameLegacy(config.getString("descriptions.emerald_scythe.name", "&2Emerald Scythe"))
-                .id("emerald_scythe")
-                .category("scythes")
-                .loreConfigList(config, "descriptions.scythe_description")
-                .loreConfigList(config, "descriptions.emerald_scythe.main_hand")
+    private ShapedRecipe getScytheRecipe(Material material, String id, double dmg, double spd, String... shape) {
+        var builder = new WeaponBuilder(material, config)
+                .withConfiguredDamage(GROUP + ".items." + id + ".attributes.damage", dmg, ConfigValueOperation.SUBTRACT, 1.0)
+                .withConfiguredSpeed(GROUP + ".items." + id + ".attributes.speed", spd, ConfigValueOperation.SUBTRACT, 4.0)
+                .nameLegacy(config.getItemName(GROUP, id, null))
+                .id(id)
+                .category(GROUP)
+                .lore(config.getItemLore(GROUP, id))
                 .customModelData(true)
                 .hideFlags(true);
 
-        Recipes.applyConfiguredEnchantments("enchantments_on_emerald_gear", "emerald_gear_enchant_levels", builder);
+        if (id.equals("emerald_scythe")) {
+            Recipes.applyConfiguredEnchantments("emerald_gear", builder);
+        }
 
-        return Recipes.createShapedRecipe("emerald_scythe", builder.build(), new String[]{"EEE", "  S", "  S"}, 'S', Material.STICK, 'E', Material.EMERALD);
+        Object[] ingredients = material == Material.NETHERITE_SWORD
+            ? new Object[]{'S', Material.STICK, 'N', config.isEnabled("netherite_ingots") ? Material.NETHERITE_INGOT : Material.NETHERITE_SCRAP}
+            : new Object[]{'S', Material.STICK, 'I', getBaseMaterial(material)};
+
+        return Recipes.createShapedRecipe(id, builder.build(), shape, ingredients);
     }
+
+    private Material getBaseMaterial(Material tool) {
+        return switch (tool) {
+            case WOODEN_SWORD -> Material.OAK_PLANKS;
+            case STONE_SWORD -> Material.COBBLESTONE;
+            case GOLDEN_SWORD -> Material.GOLD_INGOT;
+            case IRON_SWORD -> Material.IRON_INGOT;
+            case DIAMOND_SWORD -> Material.DIAMOND;
+            default -> Material.EMERALD;
+        };
+    }
+
+    private ShapedRecipe woodenScythe() { return getScytheRecipe(Material.WOODEN_SWORD, "wooden_scythe", 7.0, 1.0, "III", "  S", "  S"); }
+    private ShapedRecipe stoneScythe() { return getScytheRecipe(Material.STONE_SWORD, "stone_scythe", 7.5, 1.0, "III", "  S", "  S"); }
+    private ShapedRecipe goldenScythe() { return getScytheRecipe(Material.GOLDEN_SWORD, "golden_scythe", 7.0, 1.2, "III", "  S", "  S"); }
+    private ShapedRecipe ironScythe() { return getScytheRecipe(Material.IRON_SWORD, "iron_scythe", 8.0, 1.0, "III", "  S", "  S"); }
+    private ShapedRecipe diamondScythe() { return getScytheRecipe(Material.DIAMOND_SWORD, "diamond_scythe", 9.0, 1.0, "III", "  S", "  S"); }
+    private ShapedRecipe netheriteScythe() { return getScytheRecipe(Material.NETHERITE_SWORD, "netherite_scythe", 10.0, 1.0, "NNN", "  S", "  S"); }
+    private ShapedRecipe emeraldScythe() { return getScytheRecipe(Material.GOLDEN_SWORD, "emerald_scythe", 8.0, 1.2, "EEE", "  S", "  S"); }
 
     @Override
     public Recipe[] recipes() {
@@ -142,13 +73,7 @@ public class Scythes implements RecipeGroupRegistrar {
     @Override
     public String[] keys() {
         return new String[] {
-                "wooden_scythe",
-                "stone_scythe",
-                "golden_scythe",
-                "iron_scythe",
-                "diamond_scythe",
-                "netherite_scythe",
-                "emerald_scythe"
+                "wooden_scythe", "stone_scythe", "golden_scythe", "iron_scythe", "diamond_scythe", "netherite_scythe", "emerald_scythe"
         };
     }
 }

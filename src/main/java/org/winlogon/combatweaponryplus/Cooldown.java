@@ -9,7 +9,7 @@ import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
 
 public class Cooldown {
-    private ConcurrentHashMap<UUID, Double> cooldowns;
+    private final ConcurrentHashMap<UUID, Double> cooldowns;
 
     public Cooldown() {
         this.cooldowns = new ConcurrentHashMap<>();

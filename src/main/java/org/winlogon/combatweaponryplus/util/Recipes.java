@@ -22,21 +22,27 @@ public final class Recipes {
 
     /**
      * Adds the configured values for unbreaking and mending for a group of recipes, if they exist.
-     * @param toggleKey The configuration key to check if enchants are enabled
-     * @param levelKeyPrefix The prefix for enchantment level keys (e.g. "EmeraldGearEnchantLevels")
+     * Uses the new hierarchical group structure.
+     *
+     * @param group The item group (e.g., "emerald_gear")
      * @param item The item builder
      */
-    public static void applyConfiguredEnchantments(@NonNull String toggleKey, @NonNull String levelKeyPrefix, @NonNull ItemBuilder<?> item) {
-        if (config.isEnabled(toggleKey)) {
-            int unbreaking = config.getInt(levelKeyPrefix + ".Unbreaking", 0);
-            if (unbreaking > 0) {
-                item.enchant(Enchantment.UNBREAKING, unbreaking);
-            }
+    public static void applyConfiguredEnchantments(@NonNull String group, @NonNull ItemBuilder<?> item) {
+        if (config.areEnchantmentsEnabled(group)) {
+            int unbreaking = config.getEnchantmentLevel(group, "unbreaking", 0);
+            if (unbreaking > 0) item.enchant(Enchantment.UNBREAKING, unbreaking);
 
-            int mending = config.getInt(levelKeyPrefix + ".Mending", 0);
-            if (mending > 0) {
-                item.enchant(Enchantment.MENDING, mending);
-            }
+            int mending = config.getEnchantmentLevel(group, "mending", 0);
+            if (mending > 0) item.enchant(Enchantment.MENDING, mending);
+
+            int knockback = config.getEnchantmentLevel(group, "knockback", 0);
+            if (knockback > 0) item.enchant(Enchantment.KNOCKBACK, knockback);
+
+            int power = config.getEnchantmentLevel(group, "power", 0);
+            if (power > 0) item.enchant(Enchantment.POWER, power);
+
+            int smite = config.getEnchantmentLevel(group, "smite", 0);
+            if (smite > 0) item.enchant(Enchantment.SMITE, smite);
         }
     }
 
