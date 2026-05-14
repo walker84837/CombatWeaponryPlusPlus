@@ -69,7 +69,8 @@ public final class Recipes {
         recipe.shape(shape);
 
         for (int i = 0; i < ingredients.length; i += 2) {
-            char symbol = (char) ingredients[i];
+            if (!(ingredients[i] instanceof Character symbolChar) || !(ingredients[i + 1] instanceof Material material)) continue;
+            char symbol = symbolChar;
             boolean found = false;
             for (String row : shape) {
                 if (row.indexOf(symbol) != -1) {
@@ -78,12 +79,23 @@ public final class Recipes {
                 }
             }
             if (found) {
-                recipe.setIngredient(symbol, (Material) ingredients[i + 1]);
+                recipe.setIngredient(symbol, material);
             }
         }
         return recipe;
     }
     private static NamespacedKey createNamespacedKey(String key) {
         return new NamespacedKey(plugin, key);
+    }
+
+    public static Material getBaseMaterial(Material tool) {
+        return switch (tool) {
+            case WOODEN_SWORD -> Material.OAK_PLANKS;
+            case STONE_SWORD -> Material.COBBLESTONE;
+            case GOLDEN_SWORD -> Material.GOLD_INGOT;
+            case IRON_SWORD -> Material.IRON_INGOT;
+            case DIAMOND_SWORD -> Material.DIAMOND;
+            default -> Material.EMERALD;
+        };
     }
 }

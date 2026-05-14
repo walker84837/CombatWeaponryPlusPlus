@@ -37,21 +37,10 @@ public class Scythes implements RecipeGroupRegistrar {
         } else if (material == Material.NETHERITE_SWORD) {
             ingredients = new Object[]{'S', Material.STICK, 'N', config.isEnabled("netherite_ingots") ? Material.NETHERITE_INGOT : Material.NETHERITE_SCRAP};
         } else {
-            ingredients = new Object[]{'S', Material.STICK, 'I', getBaseMaterial(material)};
+            ingredients = new Object[]{'S', Material.STICK, 'I', Recipes.getBaseMaterial(material)};
         }
 
         return Recipes.createShapedRecipe(id, builder.build(), shape, ingredients);
-    }
-
-    private Material getBaseMaterial(Material tool) {
-        return switch (tool) {
-            case WOODEN_SWORD -> Material.OAK_PLANKS;
-            case STONE_SWORD -> Material.COBBLESTONE;
-            case GOLDEN_SWORD -> Material.GOLD_INGOT;
-            case IRON_SWORD -> Material.IRON_INGOT;
-            case DIAMOND_SWORD -> Material.DIAMOND;
-            default -> Material.EMERALD;
-        };
     }
 
     private ShapedRecipe woodenScythe() { return getScytheRecipe(Material.WOODEN_SWORD, "wooden_scythe", 7.0, 1.0, "III", "  S", "  S"); }

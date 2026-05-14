@@ -220,9 +220,9 @@ public class ConfigMigrator {
         migrateSharedLore(config, "rapiers", "rapier_description");
 
         // Final cleanup of legacy structures
-        if (config.contains("attributes") && (config.get("attributes") == null || config.getConfigurationSection("attributes").getKeys(false).isEmpty())) config.set("attributes", null);
-        if (config.contains("descriptions") && (config.get("descriptions") == null || config.getConfigurationSection("descriptions").getKeys(false).isEmpty())) config.set("descriptions", null);
-        if (config.contains("multipliers") && (config.get("multipliers") == null || config.getConfigurationSection("multipliers").getKeys(false).isEmpty())) config.set("multipliers", null);
+        if (config.contains("attributes") && config.get("attributes") instanceof ConfigurationSection attrSection && attrSection.getKeys(false).isEmpty()) config.set("attributes", null);
+        if (config.contains("descriptions") && config.get("descriptions") instanceof ConfigurationSection descSection && descSection.getKeys(false).isEmpty()) config.set("descriptions", null);
+        if (config.contains("multipliers") && config.get("multipliers") instanceof ConfigurationSection mulSection && mulSection.getKeys(false).isEmpty()) config.set("multipliers", null);
 
         return changed;
     }

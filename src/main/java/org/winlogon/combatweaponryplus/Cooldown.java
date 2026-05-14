@@ -40,7 +40,7 @@ public class Cooldown {
             return Optional.empty();
         }
         var currentTime = (double)System.currentTimeMillis() / 1000.0;
-        var playerCooldown = cooldowns.get(uuid);
+        var playerCooldown = cooldowns.get(uuid) / 1000.0;
         var round = Math.round(playerCooldown - currentTime);
         try {
             return Optional.of(Math.toIntExact(round));

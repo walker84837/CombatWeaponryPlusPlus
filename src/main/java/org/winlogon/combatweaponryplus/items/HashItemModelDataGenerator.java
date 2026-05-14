@@ -84,13 +84,7 @@ public class HashItemModelDataGenerator implements ItemModelDataGenerator {
 
         var compositeIdentifier = compositeIdentifierBuilder.toString();
 
-        // Fallback if no properties contribute to the identifier (should ideally not happen for valid items)
-        if (compositeIdentifier.isEmpty()) {
-            compositeIdentifier = "DEFAULT_EMPTY_ITEM";
-        }
-
-        // Make sure the result is positive as custom model data typically expects positive integers
-        return Math.abs((compositeIdentifier.hashCode() * 31) + seed);
+        return (compositeIdentifier.hashCode() * 31 + seed) & Integer.MAX_VALUE;
     }
 
     /**
