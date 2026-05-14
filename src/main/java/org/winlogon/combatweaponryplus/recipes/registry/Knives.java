@@ -37,21 +37,10 @@ public class Knives implements RecipeGroupRegistrar {
         } else if (material == Material.NETHERITE_SWORD) {
             base = config.isEnabled("netherite_ingots") ? Material.NETHERITE_INGOT : Material.NETHERITE_SCRAP;
         } else {
-            base = getBaseMaterial(material);
+            base = Recipes.getBaseMaterial(material);
         }
 
         return Recipes.createShapedRecipe(id, builder.build(), new String[]{"   ", " C ", " S "}, 'C', base, 'S', Material.STICK);
-    }
-
-    private Material getBaseMaterial(Material tool) {
-        return switch (tool) {
-            case WOODEN_SWORD -> Material.OAK_PLANKS;
-            case STONE_SWORD -> Material.COBBLESTONE;
-            case GOLDEN_SWORD -> Material.GOLD_INGOT;
-            case IRON_SWORD -> Material.IRON_INGOT;
-            case DIAMOND_SWORD -> Material.DIAMOND;
-            default -> Material.EMERALD;
-        };
     }
 
     private ShapedRecipe woodenKnife() { return getKnifeRecipe(Material.WOODEN_SWORD, "wooden_knife", 2.0, 3.0); }

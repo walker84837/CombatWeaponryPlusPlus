@@ -48,7 +48,6 @@ public class CombatWeaponryPlus extends JavaPlugin {
 
     @Override
     public void onDisable() {
-        // config = null;
     }
 
     public MiniMessage getMiniMessage() {

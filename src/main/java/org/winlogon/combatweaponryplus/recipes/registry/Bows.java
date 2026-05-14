@@ -29,9 +29,10 @@ public class Bows implements RecipeGroupRegistrar {
 
         Recipes.applyConfiguredEnchantments(GROUP, builder);
 
-        Object[] ingredients = id.contains("crossbow")
-            ? new Object[]{'C', Material.CROSSBOW, 'R', Material.REDSTONE, 'I', Material.IRON_INGOT}
-            : new Object[]{'B', Material.BOW, 'S', Material.STICK, 'I', Material.IRON_INGOT, 'D', Material.DIAMOND, 'T', Material.TRIDENT, 'W', Material.NETHERITE_SWORD};
+        Object[] ingredients = switch (id) {
+            case "repeating_crossbow", "burst_crossbow" -> new Object[]{'C', Material.CROSSBOW, 'R', Material.REDSTONE, 'I', Material.IRON_INGOT};
+            default -> new Object[]{'B', Material.BOW, 'S', Material.STICK, 'I', Material.IRON_INGOT, 'D', Material.DIAMOND, 'T', Material.TRIDENT, 'W', Material.NETHERITE_SWORD};
+        };
 
         return Recipes.createShapedRecipe(id, builder.build(), shape, ingredients);
     }

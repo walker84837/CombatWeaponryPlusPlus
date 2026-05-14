@@ -150,7 +150,6 @@ public class SmithingRecipeBuilder {
         ItemStack modifier = event.getInventory().getInputMineral();
 
         if (base == null || modifier == null || base.getType() != toolType || modifier.getType() != modifierType) {
-            // TODO: should this throw an IllegalStateException/IllegalArgumentException or is it fine that it returns?
             return;
         }
 
@@ -163,10 +162,8 @@ public class SmithingRecipeBuilder {
         var resultMeta = result.getItemMeta();
         if (resultMeta == null) return;
 
-        Objects.requireNonNull(base.getItemMeta());
-
         // Apply new name and model data
-        String name = config.getItemName(group, itemId, nameKey + " " + (resultMaterial != null ? "" : baseMeta.displayName()));
+        String name = config.getItemName(group, itemId, nameKey + " " + (resultMaterial != null ? "" : baseMeta != null ? baseMeta.displayName() : ""));
         resultMeta.displayName(plugin.getMiniMessage().deserialize(name));
         ItemModelData.set(resultMeta, resultModelData);
 

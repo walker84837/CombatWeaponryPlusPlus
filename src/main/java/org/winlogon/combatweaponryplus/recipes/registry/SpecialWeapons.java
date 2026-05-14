@@ -46,7 +46,7 @@ public class SpecialWeapons implements RecipeGroupRegistrar {
     private ShapedRecipe volcanicBlade() { return getSpecialWeaponRecipe(Material.NETHERITE_SWORD, "special_swords", "volcanic_blade", 8.0, 1.6, " V ", " V ", " S "); }
     private ShapedRecipe chorusBlade() { return getSpecialWeaponRecipe(Material.NETHERITE_SWORD, "special_swords", "chorus_blade", 4.0, 10.0, " C ", " C ", " S "); }
     private ShapedRecipe awakenedSword() { return getSpecialWeaponRecipe(Material.NETHERITE_SWORD, "special_swords", "awakened_sword", 10.0, 1.6, " A ", " A ", " S "); }
-    private ShapedRecipe opSword() { return getSpecialWeaponRecipe(Material.NETHERITE_SWORD, "special_swords", "op_sword", 69696969.0, 1.6, "GGG", "GSG", "GGG"); }
+    private ShapedRecipe opSword() { return getSpecialWeaponRecipe(Material.NETHERITE_SWORD, "special_swords", "op_sword", 20.0, 1.6, "GGG", "GSG", "GGG"); }
 
     private ShapedRecipe volcanicSpear() { return getSpecialWeaponRecipe(Material.NETHERITE_SWORD, "special_weapons", "volcanic_spear", 5.0, 2.5, "  V", " S ", "S  "); }
     private ShapedRecipe volcanicAxe() { return getSpecialWeaponRecipe(Material.NETHERITE_AXE, "special_weapons", "volcanic_axe", 10.0, 1.0, "VV ", "VS ", " S "); }

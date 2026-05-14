@@ -37,6 +37,7 @@ import org.bukkit.persistence.PersistentDataType;
 import org.winlogon.combatweaponryplus.items.builders.ItemBuilder;
 import org.winlogon.combatweaponryplus.util.ConfigHelper;
 import org.winlogon.combatweaponryplus.util.PersistentDataManager;
+import org.winlogon.combatweaponryplus.items.CustomModelDataIds;
 import org.winlogon.combatweaponryplus.items.ItemModelData;
 import org.winlogon.combatweaponryplus.recipes.SmithingRecipeBuilder;
 
@@ -50,12 +51,13 @@ import java.net.URI;
 import java.net.URISyntaxException;
 import java.nio.charset.StandardCharsets;
 import java.util.Objects;
-import java.util.Optional;
 import java.util.Random;
 import java.util.UUID;
 import java.util.stream.IntStream;
 
 class Listeners implements Listener {
+    private static final Material[] VALID_BLOCKS = new Material[]{Material.NETHERITE_SWORD, Material.DIAMOND_SWORD, Material.IRON_SWORD, Material.GOLDEN_SWORD, Material.STONE_SWORD, Material.WOODEN_SWORD};
+
     private final CombatWeaponryPlus plugin;
     private final ConfigHelper config;
     private final Random random;
@@ -94,11 +96,13 @@ class Listeners implements Listener {
     }
 
     private void spawnParticles(Location location, Particle particle, int count) {
-        location.getWorld().spawnParticle(particle, location, count);
+        var world = location.getWorld();
+        if (world != null) world.spawnParticle(particle, location, count);
     }
 
     private void playSound(Location location, Sound sound, float volume, float pitch) {
-        location.getWorld().playSound(location, sound, volume, pitch);
+        var world = location.getWorld();
+        if (world != null) world.playSound(location, sound, volume, pitch);
     }
 
     @EventHandler
@@ -139,7 +143,7 @@ class Listeners implements Listener {
     public void onBlockClick(PlayerInteractEvent event) {
         var player = event.getPlayer();
 
-        if (!isValidItem(player, Material.NETHERITE_PICKAXE, 1000001)) return;
+        if (!isValidItem(player, Material.NETHERITE_PICKAXE, CustomModelDataIds.OBSIDIAN_PICKAXE)) return;
         if (event.getAction() != Action.LEFT_CLICK_BLOCK) return;
 
         player.addPotionEffect(new PotionEffect(PotionEffectType.HASTE, 40, 2));
@@ -155,10 +159,7 @@ class Listeners implements Listener {
 
         int customModelData = ItemModelData.get(mainHandItem.getItemMeta());
 
-        final Material[] validBlocks = new Material[]{Material.NETHERITE_SWORD, Material.DIAMOND_SWORD, Material.IRON_SWORD, Material.GOLDEN_SWORD, Material.STONE_SWORD, Material.WOODEN_SWORD};
-
-        // Knife logic
-        if (customModelData != 1000006 || customModelData != 1200006 || customModelData != 1000016 || customModelData != 4000006);
+        final var validBlocks = VALID_BLOCKS;
 
         if (!attacker.hasCooldown(Material.NETHERITE_SWORD)) {
             // Apply cooldowns to all sword materials
@@ -187,30 +188,30 @@ class Listeners implements Listener {
 
         // Specific item effects based on custom model data
         if (event.getEntity() instanceof Player damagedPlayer) {
-            if (isValidItem(damagedPlayer, Material.NETHERITE_SWORD, 1222225) || isValidItem(damagedPlayer, Material.NETHERITE_SWORD, 2222225)) {
+            if (isValidItem(damagedPlayer, Material.NETHERITE_SWORD, CustomModelDataIds.FIRE_SWORD) || isValidItem(damagedPlayer, Material.NETHERITE_SWORD, CustomModelDataIds.FIRE_SWORD_ALT)) {
                 event.setDamage(event.getDamage() * 1.5);
             }
         }
 
-        if (isValidItem(attacker, Material.NETHERITE_SWORD, 1222224) || isValidItem(attacker, Material.NETHERITE_SWORD, 2222224)) {
+        if (isValidItem(attacker, Material.NETHERITE_SWORD, CustomModelDataIds.WITHER_SWORD) || isValidItem(attacker, Material.NETHERITE_SWORD, CustomModelDataIds.WITHER_SWORD_ALT)) {
             if (event.getEntity() instanceof LivingEntity entity) {
                 entity.addPotionEffect(new PotionEffect(PotionEffectType.WITHER, 60, 1));
             }
         }
 
-        if (isValidItem(attacker, Material.NETHERITE_SWORD, 1222225) || isValidItem(attacker, Material.NETHERITE_SWORD, 2222225)) {
+        if (isValidItem(attacker, Material.NETHERITE_SWORD, CustomModelDataIds.FIRE_SWORD) || isValidItem(attacker, Material.NETHERITE_SWORD, CustomModelDataIds.FIRE_SWORD_ALT)) {
             event.setDamage(event.getDamage() * 1.5);
         }
 
         // Shield blocking logic
         if (event.getEntity() instanceof Player player) {
-            int[] shieldModelData = {1222223, 1222224, 1222225, 1222226, 1222227, 1222228, 1222229};
+            int[] shieldModelData = {CustomModelDataIds.SHIELD_BASE, CustomModelDataIds.SHIELD_WITHER, CustomModelDataIds.SHIELD_FIRE, CustomModelDataIds.SHIELD_ICE, CustomModelDataIds.SHIELD_THUNDER, CustomModelDataIds.SHIELD_LIGHT, CustomModelDataIds.SHIELD_DARK};
             for (int data : shieldModelData) {
                 if (isValidItem(player, Material.NETHERITE_SWORD, data)) {
                     var itemInHand = player.getInventory().getItemInMainHand();
                     itemInHand.editMeta(meta -> {
                         // Increment model data
-                        ItemModelData.set(meta, data + 1000000);
+                        ItemModelData.set(meta, data + CustomModelDataIds.SHIELD_MODEL_SHIFT);
                     });
                     event.setCancelled(true);
                     player.getWorld().playSound(player.getLocation(), Sound.ITEM_SHIELD_BLOCK, 10.0f, 1.0f);
@@ -256,7 +257,7 @@ class Listeners implements Listener {
                     multiplier *= 1.3;
                 }
                 if (event.getEntity() instanceof Player targetPlayer) {
-                    if (targetPlayer.isBlocking() && attacker.getAttackCooldown() == 1.0) {
+                    if (targetPlayer.isBlocking() && Math.abs(attacker.getAttackCooldown() - 1.0) < 0.001) {
                         targetPlayer.setCooldown(Material.SHIELD, 20);
                         playSound(targetPlayer.getLocation(), Sound.ITEM_SHIELD_BREAK, 10.0f, 1.0f);
                         event.setCancelled(true);
@@ -272,7 +273,7 @@ class Listeners implements Listener {
             case "rapiers":
                 spawnParticles(event.getEntity().getLocation(), Particle.EXPLOSION_EMITTER, 1);
                 if (event.getEntity() instanceof Player targetPlayer) {
-                    if (targetPlayer.isBlocking() && attacker.getAttackCooldown() == 1.0) {
+                    if (targetPlayer.isBlocking() && Math.abs(attacker.getAttackCooldown() - 1.0) < 0.001) {
                         targetPlayer.setCooldown(Material.SHIELD, 40);
                         playSound(targetPlayer.getLocation(), Sound.ITEM_SHIELD_BREAK, 10.0f, 1.0f);
                         event.setCancelled(true);
@@ -311,7 +312,7 @@ class Listeners implements Listener {
                 break;
         }
 
-        if (multiplier != 1.0) {
+        if (Math.abs(multiplier - 1.0) >= 0.001) {
             event.setDamage(event.getDamage() * multiplier);
         }
     }
@@ -430,23 +431,22 @@ class Listeners implements Listener {
         }
     }
 
+    private boolean hasRedstoneCore(@org.jspecify.annotations.Nullable ItemStack chestplate) {
+        return chestplate != null
+            && chestplate.getType() == Material.IRON_CHESTPLATE
+            && chestplate.hasItemMeta()
+            && ItemModelData.get(chestplate.getItemMeta()) == CustomModelDataIds.REDSTONE_CORE;
+    }
+
     private void handleRepeatingCrossbow(Player player, EntityShootBowEvent event) {
         var inventory = player.getInventory();
-        var chestplate = inventory.getChestplate();
 
-        if (chestplate != null && chestplate.getType() == Material.IRON_CHESTPLATE) {
-            Optional.ofNullable(chestplate.getItemMeta())
-                    .filter(meta -> ItemModelData.get(meta) == 1231234)
-                    .ifPresent(meta -> {
-                        return; // Redstone Core check
-                    });
+        if (!hasRedstoneCore(inventory.getChestplate())) {
+            if (inventory.getItemInOffHand().getType() != Material.REDSTONE) return;
+            var offHandItem = inventory.getItemInOffHand();
+            offHandItem.setAmount(offHandItem.getAmount() - 1);
         }
 
-        if (inventory.getItemInOffHand().getType() != Material.REDSTONE) return;
-
-        var offHandItem = inventory.getItemInOffHand();
-
-        offHandItem.setAmount(offHandItem.getAmount() - 1);
         IntStream.range(0, 4).forEach(i ->
             plugin.getServer().getScheduler().runTaskLater(plugin, () -> {
                 var playerDirection = player.getLocation().getDirection();
@@ -461,41 +461,26 @@ class Listeners implements Listener {
     }
 
     private void handleBurstCrossbow(Player player, EntityShootBowEvent event) {
-        Material chestplateMaterial = Material.IRON_CHESTPLATE;
-        int customModelData = 1231234;
         double arrowSpeed = 5.0;
 
-        // Check if:
-        // - the player's chestplate is not null
-        // - is of a specific type
-        // - has item metadata
-        // - matches a specified custom model data
-        // if all conditions are met, it skips further processing
-        Optional.ofNullable(player.getInventory().getChestplate())
-            .filter(chestplate -> chestplate.getType() == chestplateMaterial)
-            .filter(ItemStack::hasItemMeta)
-            .filter(chestplate -> ItemModelData.get(chestplate.getItemMeta()) == customModelData)
-            .ifPresent(chestplate -> {
-                return; // Redstone Core check
-            });
-
-        var offHandItem = player.getInventory().getItemInOffHand();
-        if (offHandItem.getType() == Material.REDSTONE) {
+        if (!hasRedstoneCore(player.getInventory().getChestplate())) {
+            var offHandItem = player.getInventory().getItemInOffHand();
+            if (offHandItem.getType() != Material.REDSTONE) return;
             offHandItem.setAmount(offHandItem.getAmount() - 1);
-            var loc = player.getLocation();
-
-            double totalAngle1 = loc.getPitch() + 80.0;
-            double totalAngle2 = loc.getPitch() + 100.0;
-
-            Vector arrowDir1 = createArrowDirection(loc, totalAngle1, arrowSpeed);
-            Vector arrowDir2 = createArrowDirection(loc, totalAngle2, arrowSpeed);
-
-            launchArrow(player, arrowDir1);
-            launchArrow(player, arrowDir2);
-
-            playSoundWithDelay(plugin, player, 2L);
-            playSoundWithDelay(plugin, player, 4L);
         }
+
+        var loc = player.getLocation();
+        double totalAngle1 = loc.getPitch() + 80.0;
+        double totalAngle2 = loc.getPitch() + 100.0;
+
+        Vector arrowDir1 = createArrowDirection(loc, totalAngle1, arrowSpeed);
+        Vector arrowDir2 = createArrowDirection(loc, totalAngle2, arrowSpeed);
+
+        launchArrow(player, arrowDir1);
+        launchArrow(player, arrowDir2);
+
+        playSoundWithDelay(plugin, player, 2L);
+        playSoundWithDelay(plugin, player, 4L);
     }
 
     private Vector createArrowDirection(Location loc, double totalAngle, double speed) {
@@ -516,16 +501,8 @@ class Listeners implements Listener {
 
     private void handleRedstoneBow(Player player, EntityShootBowEvent event) {
         var inventory = player.getInventory();
-        var chestplate = inventory.getChestplate();
 
-        var isPlayerWearingChestplate = chestplate != null;
-
-        var ironChestplateFound = isPlayerWearingChestplate && chestplate.getType() == Material.IRON_CHESTPLATE;
-        var customModelDataMatch = isPlayerWearingChestplate && chestplate.hasItemMeta() && ItemModelData.get(chestplate.getItemMeta()) == 1231234;
-
-        if (ironChestplateFound && customModelDataMatch) {
-            return; // Redstone Core check
-        }
+        if (hasRedstoneCore(inventory.getChestplate())) return;
 
         var offHandItem = inventory.getItemInOffHand();
 
@@ -564,7 +541,7 @@ class Listeners implements Listener {
 
             var playerLocation = player.getLocation();
             player.getWorld().playSound(playerLocation, Sound.ENTITY_PHANTOM_FLAP, 10.0f, 1.0f);
-            player.setVelocity(playerLocation.getDirection().multiply(2));
+            player.setVelocity(playerLocation.getDirection().clone().multiply(2));
         }
     }
 
@@ -622,8 +599,8 @@ class Listeners implements Listener {
         }
 
         var modelId = ItemModelData.get(meta);
-        var isStandardElytra = modelId == 1560001;
-        var isFallResistantElytra = modelId == 1560002;
+        var isStandardElytra = modelId == CustomModelDataIds.STANDARD_ELYTRA;
+        var isFallResistantElytra = modelId == CustomModelDataIds.FALL_RESISTANT_ELYTRA;
 
         // Apply generic damage reduction for both custom elytras
         if (isStandardElytra || isFallResistantElytra) {

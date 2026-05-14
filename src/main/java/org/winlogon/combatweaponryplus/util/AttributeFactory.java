@@ -19,7 +19,7 @@ public class AttributeFactory {
      * @return The {@link AttributeModifier}
      */
     public static @NonNull AttributeModifier createAttributeModifier(@NonNull Attribute attribute, double amount, AttributeModifier.@NonNull Operation operation, @NonNull EquipmentSlotGroup slotGroup) {
-        var key = PersistentDataManager.createNamespacedKey(attribute.getKey().getKey().toLowerCase() + "_" + UUID.randomUUID().toString());
+        var key = PersistentDataManager.createNamespacedKey(attribute.getKey().getKey().toLowerCase());
         return new AttributeModifier(key, amount, operation, slotGroup);
     }
 
