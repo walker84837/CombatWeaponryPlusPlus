@@ -3,11 +3,12 @@ package org.winlogon.combatweaponryplus.recipes.registry;
 import org.bukkit.Material;
 import org.bukkit.inventory.Recipe;
 import org.bukkit.inventory.ShapedRecipe;
-import org.winlogon.combatweaponryplus.items.builders.WeaponBuilder;
+import org.winlogon.combatweaponryplus.recipes.WeaponRecipeHelper;
 import org.winlogon.combatweaponryplus.util.ConfigHelper;
-import org.winlogon.combatweaponryplus.util.ConfigValueOperation;
-import org.winlogon.combatweaponryplus.util.Recipes;
 
+/**
+ * Registrar for katana recipes.
+ */
 public class Katanas implements RecipeGroupRegistrar {
     private final ConfigHelper config;
     private static final String GROUP = "katanas";
@@ -16,32 +17,18 @@ public class Katanas implements RecipeGroupRegistrar {
         this.config = config;
     }
 
+    /**
+     * Creates a katana recipe.
+     *
+     * @param material The base material for the weapon.
+     * @param id       The item ID.
+     * @param dmg      The base attack damage for this weapon type before configuration overrides.
+     * @param spd      The base attack speed for this weapon type before configuration overrides.
+     * @param ms       The base movement speed for this weapon type before configuration overrides.
+     * @return A configured shaped recipe.
+     */
     private ShapedRecipe getKatanaRecipe(Material material, String id, double dmg, double spd, double ms) {
-        var builder = new WeaponBuilder(material, config)
-                .withConfiguredDamage(GROUP + ".items." + id + ".attributes.damage", dmg, ConfigValueOperation.SUBTRACT, 1.0)
-                .withConfiguredSpeed(GROUP + ".items." + id + ".attributes.speed", spd, ConfigValueOperation.SUBTRACT, 4.0)
-                .withConfiguredMovementSpeed(GROUP + ".items." + id + ".attributes.movement_speed", ms, ConfigValueOperation.NONE, 0.0)
-                .nameLegacy(config.getItemName(GROUP, id, null))
-                .id(id)
-                .category(GROUP)
-                .lore(config.getItemLore(GROUP, id))
-                .customModelData(true)
-                .hideFlags(true);
-
-        if (id.equals("emerald_katana")) {
-            Recipes.applyConfiguredEnchantments("emerald_gear", builder);
-        }
-
-        Material base;
-        if (id.startsWith("emerald_")) {
-            base = Material.EMERALD;
-        } else if (material == Material.NETHERITE_SWORD) {
-            base = config.isEnabled("netherite_ingots") ? Material.NETHERITE_INGOT : Material.NETHERITE_SCRAP;
-        } else {
-            base = Recipes.getBaseMaterial(material);
-        }
-
-        return Recipes.createShapedRecipe(id, builder.build(), new String[]{"  C", " C ", "C  "}, 'C', base);
+        return WeaponRecipeHelper.createStandardWeaponRecipe(config, GROUP, id, material, dmg, spd, ms, new String[]{"  C", " C ", "C  "});
     }
 
     private ShapedRecipe woodenKatana() { return getKatanaRecipe(Material.WOODEN_SWORD, "wooden_katana", 3.5, 1.7, 0.02); }

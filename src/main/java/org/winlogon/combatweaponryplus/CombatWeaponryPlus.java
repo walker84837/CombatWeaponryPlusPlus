@@ -3,6 +3,10 @@ package org.winlogon.combatweaponryplus;
 import net.kyori.adventure.text.minimessage.MiniMessage;
 
 import org.bukkit.plugin.java.JavaPlugin;
+import org.winlogon.combatweaponryplus.items.WeaponAbilityRegistry;
+import org.winlogon.combatweaponryplus.items.registry.PhantomWingedElytraAbility;
+import org.winlogon.combatweaponryplus.items.registry.SpringStepElytraAbility;
+import org.winlogon.combatweaponryplus.items.registry.TridentBowAbility;
 import org.winlogon.combatweaponryplus.recipes.RecipeProvider;
 import org.winlogon.combatweaponryplus.util.ConfigHelper;
 import org.winlogon.combatweaponryplus.util.ConfigMigrator;
@@ -14,6 +18,7 @@ public class CombatWeaponryPlus extends JavaPlugin {
 
     private MiniMessage mm;
     private RetroHue rh;
+    private WeaponAbilityRegistry weaponAbilityRegistry;
 
     private static CombatWeaponryPlus instance;
 
@@ -35,7 +40,11 @@ public class CombatWeaponryPlus extends JavaPlugin {
 
         ConfigMigrator.migrate(this);
         var configHelper = new ConfigHelper(getConfig());
-        var serverListeners = new Listeners(this, configHelper, cooldown);
+
+        this.weaponAbilityRegistry = new WeaponAbilityRegistry();
+        registerAbilities();
+
+        var serverListeners = new Listeners(this, configHelper, cooldown, weaponAbilityRegistry);
 
         Format.initialize(mm, rh);
         Recipes.init(this, configHelper);
@@ -52,5 +61,11 @@ public class CombatWeaponryPlus extends JavaPlugin {
 
     public MiniMessage getMiniMessage() {
         return this.mm;
+    }
+
+    private void registerAbilities() {
+        weaponAbilityRegistry.register("trident_bow", new TridentBowAbility());
+        weaponAbilityRegistry.register("phantom_winged_elytra", new PhantomWingedElytraAbility(this));
+        weaponAbilityRegistry.register("spring_step_elytra", new SpringStepElytraAbility(this));
     }
 }

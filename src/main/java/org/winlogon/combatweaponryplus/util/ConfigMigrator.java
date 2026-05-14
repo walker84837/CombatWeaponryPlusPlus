@@ -95,19 +95,31 @@ public class ConfigMigrator {
             String oldKey = entry.getKey();
             String newKey = entry.getValue();
 
-            if (config.contains(oldKey) && !config.contains(newKey)) {
-                config.set(newKey, config.get(oldKey));
-                config.set(oldKey, null);
-                changed = true;
+            if (config.contains(oldKey)) {
+                if (config.contains(newKey)) {
+                    plugin.getLogger().warning("Conflict during migration: both '" + oldKey + "' and '" + newKey + "' exist. Keeping existing '" + newKey + "'.");
+                } else {
+                    config.set(newKey, config.get(oldKey));
+                    config.set(oldKey, null);
+                    changed = true;
+                }
             }
         }
 
         // Migrate sections (attributes and descriptions) if they haven't been moved yet
-        changed |= migrateSection(config, "a", "attributes");
-        changed |= migrateSection(config, "d", "descriptions");
+        try {
+            changed |= migrateSection(config, "a", "attributes");
+            changed |= migrateSection(config, "d", "descriptions");
+        } catch (Exception e) {
+            plugin.getLogger().severe("Failed to migrate attributes or descriptions: " + e.getMessage());
+        }
 
         // Stage 2: Restructure into idiomatic hierarchy
-        changed |= restructure(config);
+        try {
+            changed |= restructure(config, plugin);
+        } catch (Exception e) {
+            plugin.getLogger().severe("Failed to restructure configuration: " + e.getMessage());
+        }
 
         if (changed) {
             plugin.saveConfig();
@@ -115,7 +127,7 @@ public class ConfigMigrator {
         }
     }
 
-    private static boolean restructure(FileConfiguration config) {
+    private static boolean restructure(FileConfiguration config, CombatWeaponryPlus plugin) {
         boolean changed = false;
 
         // Define groupings
@@ -157,8 +169,12 @@ public class ConfigMigrator {
 
             // 1. Migrate Group Toggle
             if (config.contains(group) && !(config.get(group) instanceof ConfigurationSection)) {
-                config.set(group + ".enabled", config.get(group));
-                changed = true;
+                if (config.contains(group + ".enabled")) {
+                    plugin.getLogger().warning("Conflict migrating group '" + group + "': target '.enabled' already exists.");
+                } else {
+                    config.set(group + ".enabled", config.get(group));
+                    changed = true;
+                }
             }
 
             // 2. Migrate Group Multiplier
@@ -203,9 +219,13 @@ public class ConfigMigrator {
 
                 // Item Toggle (if was top-level)
                 if (config.contains(item)) {
-                    config.set(itemPath + ".enabled", config.get(item));
-                    config.set(item, null);
-                    changed = true;
+                    if (config.contains(itemPath + ".enabled")) {
+                        plugin.getLogger().warning("Conflict migrating item '" + item + "': target '" + itemPath + ".enabled' already exists.");
+                    } else {
+                        config.set(itemPath + ".enabled", config.get(item));
+                        config.set(item, null);
+                        changed = true;
+                    }
                 }
             }
         }

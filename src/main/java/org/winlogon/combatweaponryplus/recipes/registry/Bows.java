@@ -20,7 +20,7 @@ public class Bows implements RecipeGroupRegistrar {
         var builder = new WeaponBuilder(material, config)
                 .withConfiguredDamage(GROUP + ".items." + id + ".attributes.damage", dmg, ConfigValueOperation.SUBTRACT, 1.0)
                 .withConfiguredSpeed(GROUP + ".items." + id + ".attributes.speed", spd, ConfigValueOperation.SUBTRACT, 4.0)
-                .nameLegacy(config.getItemName(GROUP, id, null))
+                .nameLegacy(config.getItemName(GROUP, id, id))
                 .id(id)
                 .category(GROUP)
                 .lore(config.getItemLore(GROUP, id))

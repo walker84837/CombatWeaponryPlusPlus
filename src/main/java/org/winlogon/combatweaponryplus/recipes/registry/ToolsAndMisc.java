@@ -21,7 +21,7 @@ public class ToolsAndMisc implements RecipeGroupRegistrar {
         var builder = new WeaponBuilder(material, config)
                 .withConfiguredDamage(group + ".items." + id + ".attributes.damage", dmg, ConfigValueOperation.SUBTRACT, 1.0)
                 .withConfiguredSpeed(group + ".items." + id + ".attributes.speed", spd, ConfigValueOperation.SUBTRACT, 4.0)
-                .nameLegacy(config.getItemName(group, id, null))
+                .nameLegacy(config.getItemName(group, id, id))
                 .id(id)
                 .category(group)
                 .lore(config.getItemLore(group, id))
@@ -35,7 +35,7 @@ public class ToolsAndMisc implements RecipeGroupRegistrar {
     private ShapedRecipe getMiscRecipe(Material material, String id, String... shape) {
         var group = "misc";
         var builder = new ItemBuilder<>(material)
-                .nameLegacy(config.getItemName(group, id, null))
+                .nameLegacy(config.getItemName(group, id, id))
                 .id(id)
                 .category(group)
                 .lore(config.getItemLore(group, id))

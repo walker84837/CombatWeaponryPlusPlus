@@ -27,7 +27,7 @@ public class Armor implements RecipeGroupRegistrar {
     private ShapedRecipe getPlatedChainmailRecipe(Material material, String id, EquipmentSlotGroup slot, double def, Material base, String... shape) {
         var group = "plated_chainmail";
         var builder = new ItemBuilder<>(material)
-                .nameLegacy(config.getItemName(group, id, null))
+                .nameLegacy(config.getItemName(group, id, id))
                 .id(id)
                 .category(group)
                 .unbreakable(true)
@@ -40,7 +40,7 @@ public class Armor implements RecipeGroupRegistrar {
     private ShapedRecipe getWitherArmorRecipe(Material material, String id, EquipmentSlotGroup slot, double kbr, double hp, Material base, String... shape) {
         var group = "wither_armor";
         var builder = new ItemBuilder<>(material)
-                .nameLegacy(config.getItemName(group, id, null))
+                .nameLegacy(config.getItemName(group, id, id))
                 .id(id)
                 .category(group)
                 .lore(config.getItemLore(group, id))

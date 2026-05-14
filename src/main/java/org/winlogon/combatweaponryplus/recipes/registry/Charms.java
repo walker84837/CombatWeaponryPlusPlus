@@ -17,7 +17,7 @@ public class Charms implements RecipeGroupRegistrar {
 
     private ShapedRecipe getCharmRecipe(Material material, String id, Material core) {
         var builder = new ItemBuilder<>(material)
-                .nameLegacy(config.getItemName(GROUP, id, null))
+                .nameLegacy(config.getItemName(GROUP, id, id))
                 .id(id)
                 .category(GROUP)
                 .lore(config.getItemLore(GROUP, id))

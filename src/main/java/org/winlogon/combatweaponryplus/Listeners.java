@@ -39,6 +39,7 @@ import org.winlogon.combatweaponryplus.util.ConfigHelper;
 import org.winlogon.combatweaponryplus.util.PersistentDataManager;
 import org.winlogon.combatweaponryplus.items.CustomModelDataIds;
 import org.winlogon.combatweaponryplus.items.ItemModelData;
+import org.winlogon.combatweaponryplus.items.WeaponAbilityRegistry;
 import org.winlogon.combatweaponryplus.recipes.SmithingRecipeBuilder;
 
 import com.google.common.base.Strings;
@@ -62,12 +63,14 @@ class Listeners implements Listener {
     private final ConfigHelper config;
     private final Random random;
     private final Cooldown cooldown;
+    private final WeaponAbilityRegistry weaponAbilityRegistry;
     private final PlainTextComponentSerializer plainText;
 
-    public Listeners(CombatWeaponryPlus plugin, ConfigHelper config, Cooldown cooldown) {
+    public Listeners(CombatWeaponryPlus plugin, ConfigHelper config, Cooldown cooldown, WeaponAbilityRegistry weaponAbilityRegistry) {
         this.plugin = plugin;
         this.config = config;
         this.cooldown = cooldown;
+        this.weaponAbilityRegistry = weaponAbilityRegistry;
         this.random = new Random();
         this.plainText = PlainTextComponentSerializer.plainText();
     }
@@ -393,28 +396,13 @@ class Listeners implements Listener {
         Vector vector = player.getLocation().getDirection();
         World world = player.getWorld();
 
+        if (weaponAbilityRegistry.handleShoot(id, event)) {
+            return;
+        }
+
         switch (id) {
-            case "trident_bow":
-                arrow.remove();
-                Trident trident = player.launchProjectile(Trident.class, vector.multiply(force * 5.0));
-                trident.setPierceLevel(20);
-                trident.setCritical(true);
-                trident.setFireTicks(100);
-                trident.setGravity(false);
-                trident.setPickupStatus(AbstractArrow.PickupStatus.DISALLOWED);
-                trident.customName(Component.text("Bob"));
-                trident.setCustomNameVisible(true);
-
-                ItemStack bowClone = mainHandItem.clone();
-                bowClone.addUnsafeEnchantment(Enchantment.PUNCH, 10);
-                trident.setWeapon(bowClone);
-
-                world.playSound(player.getLocation(), Sound.ITEM_TRIDENT_THROW, 10.0f, 1.0f);
-                break;
             case "long_bow":
             case "longsword_bow":
-                applyBowConfigToArrow(arrow, vector, force, "bows.items." + id);
-                break;
             case "recurve_bow":
             case "compound_bow":
                 applyBowConfigToArrow(arrow, vector, force, "bows.items." + id);
@@ -525,24 +513,8 @@ class Listeners implements Listener {
 
         if (chestplate == null) return;
 
-        String category = PersistentDataManager.getPersistentData(chestplate, PersistentDataManager.CATEGORY_KEY);
         String id = PersistentDataManager.getPersistentData(chestplate, PersistentDataManager.ID_KEY);
-
-        if (!"elytra".equals(category) || !"phantom_winged_elytra".equals(id)) return;
-
-        boolean rightClick = event.getAction() == Action.RIGHT_CLICK_AIR;
-        boolean gliding = player.isGliding();
-
-        if (rightClick && gliding) {
-            var meta = chestplate.getItemMeta();
-            meta.getPersistentDataContainer().set(PersistentDataManager.STATE_KEY, PersistentDataType.STRING, "boosted");
-            chestplate.setItemMeta(meta);
-            ItemBuilder.refreshModelData(chestplate);
-
-            var playerLocation = player.getLocation();
-            player.getWorld().playSound(playerLocation, Sound.ENTITY_PHANTOM_FLAP, 10.0f, 1.0f);
-            player.setVelocity(playerLocation.getDirection().clone().multiply(2));
-        }
+        weaponAbilityRegistry.handleInteract(id, event);
     }
 
     @EventHandler
@@ -553,33 +525,8 @@ class Listeners implements Listener {
         var chestplate = player.getInventory().getChestplate();
         if (chestplate == null) return;
 
-        String category = PersistentDataManager.getPersistentData(chestplate, PersistentDataManager.CATEGORY_KEY);
-        if (!"elytra".equals(category)) return;
-
         String id = PersistentDataManager.getPersistentData(chestplate, PersistentDataManager.ID_KEY);
-
-        // Player is gliding -> schedule a model-reset after a short delay
-        if (player.isGliding() && !player.isDead()) {
-            if ("phantom_winged_elytra".equals(id)) {
-                plugin.getServer().getScheduler().runTaskLater(plugin, () -> {
-                    ItemStack currentChest = player.getInventory().getChestplate();
-                    if (currentChest == null) return;
-
-                    var currentMeta = currentChest.getItemMeta();
-                    if (currentMeta == null) return;
-
-                    currentMeta.getPersistentDataContainer().remove(PersistentDataManager.STATE_KEY);
-                    currentChest.setItemMeta(currentMeta);
-                    ItemBuilder.refreshModelData(currentChest);
-                }, 10L);
-            }
-            return;
-        }
-
-        // Player is not gliding -> give a small upward boost if it's a Spring-Step Elytra
-        if ("spring_step_elytra".equals(id)) {
-            player.setVelocity(new Vector(0, 1, 0));
-        }
+        weaponAbilityRegistry.handleToggleGlide(id, event);
     }
 
     @EventHandler
@@ -593,36 +540,13 @@ class Listeners implements Listener {
             return;
         }
 
-        var meta = chestplate.getItemMeta();
-        if (meta == null || !ItemModelData.hasModelData(meta) || !meta.hasLore()) {
-            return;
-        }
+        String id = PersistentDataManager.getPersistentData(chestplate, PersistentDataManager.ID_KEY);
+        if (id == null) return;
 
-        var modelId = ItemModelData.get(meta);
-        var isStandardElytra = modelId == CustomModelDataIds.STANDARD_ELYTRA;
-        var isFallResistantElytra = modelId == CustomModelDataIds.FALL_RESISTANT_ELYTRA;
+        weaponAbilityRegistry.handleDamage(id, damageEvent);
 
-        // Apply generic damage reduction for both custom elytras
-        if (isStandardElytra || isFallResistantElytra) {
-            damageEvent.setDamage(damageEvent.getDamage() * 0.5);
-        }
-
-        // Extra effects only for the fall‑resistant variant
-        if (damageEvent.getCause() == EntityDamageEvent.DamageCause.FALL && isFallResistantElytra) {
-            var playerLocation = player.getLocation();
-
-            player.addPotionEffect(new PotionEffect(PotionEffectType.REGENERATION, 60, 2));
-            player.setVelocity(new Vector(0.0, 0.5, 0.0));
-            World world = playerLocation.getWorld();
-            world.createExplosion(
-                    playerLocation.getX(),
-                    playerLocation.getY(),
-                    playerLocation.getZ(),
-                    2.0f, false, false
-            );
-
-            // Spawn a cloud to show the effect area
-            world.spawnEntity(playerLocation, EntityType.AREA_EFFECT_CLOUD);
+        if (damageEvent.getCause() == EntityDamageEvent.DamageCause.FALL) {
+            weaponAbilityRegistry.handleFall(id, damageEvent);
         }
     }
 

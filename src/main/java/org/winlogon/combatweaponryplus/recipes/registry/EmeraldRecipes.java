@@ -24,7 +24,7 @@ public class EmeraldRecipes implements RecipeGroupRegistrar {
         var builder = new WeaponBuilder(material, config)
                 .withConfiguredDamage(group + ".items." + id + ".attributes.damage", dmg, ConfigValueOperation.SUBTRACT, 1.0)
                 .withConfiguredSpeed(group + ".items." + id + ".attributes.speed", spd, ConfigValueOperation.SUBTRACT, 4.0)
-                .nameLegacy(config.getItemName(group, id, null))
+                .nameLegacy(config.getItemName(group, id, id))
                 .id(id)
                 .category(group)
                 .lore(config.getItemLore(group, id))
@@ -38,7 +38,7 @@ public class EmeraldRecipes implements RecipeGroupRegistrar {
     private ShapedRecipe getEmeraldArmorRecipe(Material material, String id, EquipmentSlotGroup slot, double def, String... shape) {
         var group = "emerald_armor";
         var builder = new ItemBuilder<>(material)
-                .nameLegacy(config.getItemName(group, id, null))
+                .nameLegacy(config.getItemName(group, id, id))
                 .id(id)
                 .category(group)
                 .customModelData(true)

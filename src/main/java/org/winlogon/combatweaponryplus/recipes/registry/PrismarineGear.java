@@ -25,7 +25,7 @@ public class PrismarineGear implements RecipeGroupRegistrar {
         var builder = new WeaponBuilder(Material.PRISMARINE_SHARD, config)
                 .withConfiguredDamage(GROUP + ".items." + id + ".attributes.damage", 9.0, ConfigValueOperation.SUBTRACT, 1.0)
                 .withConfiguredSpeed(GROUP + ".items." + id + ".attributes.speed", 1.6, ConfigValueOperation.SUBTRACT, 4.0)
-                .nameLegacy(config.getItemName(GROUP, id, null))
+                .nameLegacy(config.getItemName(GROUP, id, id))
                 .id(id)
                 .category(GROUP)
                 .lore(config.getItemLore(GROUP, id))
@@ -40,7 +40,7 @@ public class PrismarineGear implements RecipeGroupRegistrar {
         var builder = new WeaponBuilder(Material.PRISMARINE_SHARD, config)
                 .withConfiguredDamage(GROUP + ".items." + id + ".attributes.damage", 7.0, ConfigValueOperation.SUBTRACT, 1.0)
                 .withConfiguredSpeed(GROUP + ".items." + id + ".attributes.speed", 1.2, ConfigValueOperation.SUBTRACT, 4.0)
-                .nameLegacy(config.getItemName(GROUP, id, null))
+                .nameLegacy(config.getItemName(GROUP, id, id))
                 .id(id)
                 .category(GROUP)
                 .lore(config.getItemLore(GROUP, id))
@@ -55,7 +55,7 @@ public class PrismarineGear implements RecipeGroupRegistrar {
         var builder = new WeaponBuilder(Material.PRISMARINE_SHARD, config)
                 .withConfiguredDamage(GROUP + ".items." + id + ".attributes.damage", 11.0, ConfigValueOperation.SUBTRACT, 1.0)
                 .withConfiguredSpeed(GROUP + ".items." + id + ".attributes.speed", 1.0, ConfigValueOperation.SUBTRACT, 4.0)
-                .nameLegacy(config.getItemName(GROUP, id, null))
+                .nameLegacy(config.getItemName(GROUP, id, id))
                 .id(id)
                 .category(GROUP)
                 .lore(config.getItemLore(GROUP, id))
@@ -70,7 +70,7 @@ public class PrismarineGear implements RecipeGroupRegistrar {
         var builder = new WeaponBuilder(Material.PRISMARINE_SHARD, config)
                 .withConfiguredDamage(GROUP + ".items." + id + ".attributes.damage", 7.5, ConfigValueOperation.SUBTRACT, 1.0)
                 .withConfiguredSpeed(GROUP + ".items." + id + ".attributes.speed", 1.0, ConfigValueOperation.SUBTRACT, 4.0)
-                .nameLegacy(config.getItemName(GROUP, id, null))
+                .nameLegacy(config.getItemName(GROUP, id, id))
                 .id(id)
                 .category(GROUP)
                 .lore(config.getItemLore(GROUP, id))
@@ -85,7 +85,7 @@ public class PrismarineGear implements RecipeGroupRegistrar {
         var builder = new WeaponBuilder(Material.PRISMARINE_SHARD, config)
                 .withConfiguredDamage(GROUP + ".items." + id + ".attributes.damage", 2.0, ConfigValueOperation.SUBTRACT, 1.0)
                 .withConfiguredSpeed(GROUP + ".items." + id + ".attributes.speed", 4.0, ConfigValueOperation.SUBTRACT, 4.0)
-                .nameLegacy(config.getItemName(GROUP, id, null))
+                .nameLegacy(config.getItemName(GROUP, id, id))
                 .id(id)
                 .category(GROUP)
                 .lore(config.getItemLore(GROUP, id))
@@ -98,7 +98,7 @@ public class PrismarineGear implements RecipeGroupRegistrar {
     private ShapedRecipe prismarineHelmet() {
         var id = "prismarine_helmet";
         var builder = new ItemBuilder<>(Material.PRISMARINE_SHARD)
-                .nameLegacy(config.getItemName(GROUP, id, null))
+                .nameLegacy(config.getItemName(GROUP, id, id))
                 .id(id)
                 .category(GROUP)
                 .customModelData(true)
@@ -113,7 +113,7 @@ public class PrismarineGear implements RecipeGroupRegistrar {
     private ShapedRecipe prismarineChestplate() {
         var id = "prismarine_chestplate";
         var builder = new ItemBuilder<>(Material.PRISMARINE_SHARD)
-                .nameLegacy(config.getItemName(GROUP, id, null))
+                .nameLegacy(config.getItemName(GROUP, id, id))
                 .id(id)
                 .category(GROUP)
                 .customModelData(true)
@@ -128,7 +128,7 @@ public class PrismarineGear implements RecipeGroupRegistrar {
     private ShapedRecipe prismarineLeggings() {
         var id = "prismarine_leggings";
         var builder = new ItemBuilder<>(Material.PRISMARINE_SHARD)
-                .nameLegacy(config.getItemName(GROUP, id, null))
+                .nameLegacy(config.getItemName(GROUP, id, id))
                 .id(id)
                 .category(GROUP)
                 .customModelData(true)
@@ -143,7 +143,7 @@ public class PrismarineGear implements RecipeGroupRegistrar {
     private ShapedRecipe prismarineBoots() {
         var id = "prismarine_boots";
         var builder = new ItemBuilder<>(Material.PRISMARINE_SHARD)
-                .nameLegacy(config.getItemName(GROUP, id, null))
+                .nameLegacy(config.getItemName(GROUP, id, id))
                 .id(id)
                 .category(GROUP)
                 .customModelData(true)
