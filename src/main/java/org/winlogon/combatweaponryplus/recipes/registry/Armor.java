@@ -87,9 +87,9 @@ public class Armor implements RecipeGroupRegistrar {
     @Override
     public String[] keys() {
         return new String[] {
-                "chainmail_helmet", "chainmail_chestplate", "chainmail_leggings", "chainmail_boots",
-                "plated_chainmail_helmet", "plated_chainmail_chestplate", "plated_chainmail_leggings", "plated_chainmail_boots",
-                "wither_helmet", "wither_chestplate", "wither_leggings", "wither_boots"
+                "chainmail", "chainmail", "chainmail", "chainmail",
+                "plated_chainmail", "plated_chainmail", "plated_chainmail", "plated_chainmail",
+                "wither_armor", "wither_armor", "wither_armor", "wither_armor"
         };
     }
 }

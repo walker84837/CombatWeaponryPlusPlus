@@ -431,7 +431,7 @@ class Listeners implements Listener {
         }
     }
 
-    private boolean hasRedstoneCore(@org.jspecify.annotations.Nullable ItemStack chestplate) {
+    private boolean hasRedstoneCore(@Nullable ItemStack chestplate) {
         return chestplate != null
             && chestplate.getType() == Material.IRON_CHESTPLATE
             && chestplate.hasItemMeta()
