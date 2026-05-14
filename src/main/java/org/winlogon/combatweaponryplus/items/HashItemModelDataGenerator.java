@@ -46,7 +46,12 @@ public class HashItemModelDataGenerator implements ItemModelDataGenerator {
         }
 
         if (itemMeta.hasDisplayName()) {
-            compositeIdentifierBuilder.append("NAME:").append(normalizeString(itemMeta.displayName().toString())).append("|");
+            var itemName = Objects.requireNonNull(itemMeta.customName());
+            var normalizedName = normalizeString(itemName.toString());
+
+            compositeIdentifierBuilder.append("NAME:")
+                    .append(normalizedName)
+                    .append("|");
         }
 
         if (itemMeta.hasLore()) {

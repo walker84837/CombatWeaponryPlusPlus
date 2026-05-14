@@ -13,14 +13,14 @@ import org.jspecify.annotations.NonNull;
 import org.winlogon.combatweaponryplus.CombatWeaponryPlus;
 import org.winlogon.combatweaponryplus.items.WeaponAbility;
 
+import java.util.Objects;
+
 /**
  * Ability for the Spring-Step Elytra.
  */
 public class SpringStepElytraAbility implements WeaponAbility {
-    private final CombatWeaponryPlus plugin;
-
     public SpringStepElytraAbility(CombatWeaponryPlus plugin) {
-        this.plugin = plugin;
+        Objects.requireNonNull(plugin);
     }
 
     @Override

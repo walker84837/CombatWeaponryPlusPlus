@@ -1,8 +1,11 @@
 package org.winlogon.combatweaponryplus.items.builders;
 
 import com.google.common.base.Preconditions;
+
+import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.minimessage.MiniMessage;
-import org.bukkit.Material;
+
+import org.apache.commons.lang3.StringUtils;
 import org.bukkit.attribute.Attribute;
 import org.bukkit.attribute.AttributeModifier;
 import org.bukkit.enchantments.Enchantment;
@@ -10,9 +13,10 @@ import org.bukkit.inventory.EquipmentSlotGroup;
 import org.bukkit.inventory.ItemFlag;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
+import org.bukkit.Material;
+import org.bukkit.persistence.PersistentDataType;
 import org.jspecify.annotations.NonNull;
 import org.jspecify.annotations.Nullable;
-import org.bukkit.persistence.PersistentDataType;
 import org.winlogon.combatweaponryplus.items.HashItemModelDataGenerator;
 import org.winlogon.combatweaponryplus.items.ItemModelData;
 import org.winlogon.combatweaponryplus.items.ItemModelDataGenerator;
@@ -20,8 +24,6 @@ import org.winlogon.combatweaponryplus.util.AttributeFactory;
 import org.winlogon.combatweaponryplus.util.ConfigHelper;
 import org.winlogon.combatweaponryplus.util.Format;
 import org.winlogon.combatweaponryplus.util.PersistentDataManager;
-
-import net.kyori.adventure.text.Component;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -162,7 +164,7 @@ public class ItemBuilder<Builder extends ItemBuilder<Builder>> {
 
         for (int i = from; i <= to; i++) {
             String line = config.getString(configEntry + ".line" + i, null);
-            if (line != null && !line.isEmpty()) {
+            if (StringUtils.isNotEmpty(line)) {
                 lore.add(line);
             }
         }

@@ -1,5 +1,7 @@
 package org.winlogon.combatweaponryplus.util;
 
+import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.text.WordUtils;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.jspecify.annotations.NonNull;
 import org.jspecify.annotations.Nullable;
@@ -75,8 +77,18 @@ public class ConfigHelper {
 
     public @NonNull String getItemName(@NonNull String group, @NonNull String id, @NonNull String def) {
         Objects.requireNonNull(def, "Default name cannot be null");
-        String name = config.getString(group + ".items." + id + ".name", def);
-        return name != null ? name : def;
+        String name = config.getString(group + ".items." + id + ".name");
+        return StringUtils.defaultIfBlank(name, def);
+    }
+
+    /**
+     * Converts an internal ID (e.g., "wooden_scythe") into a human-readable name (e.g., "Wooden Scythe").
+     *
+     * @param id The internal ID.
+     * @return A capitalized, space-separated name.
+     */
+    public static @NonNull String toFriendlyName(@NonNull String id) {
+        return WordUtils.capitalizeFully(id.replace('_', ' '));
     }
 
     public double getItemAttribute(@NonNull String group, @NonNull String id, @NonNull String attribute, double def) {
