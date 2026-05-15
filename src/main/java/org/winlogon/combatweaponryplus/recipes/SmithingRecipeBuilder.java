@@ -9,7 +9,9 @@ import org.bukkit.inventory.ItemStack;
 import org.bukkit.persistence.PersistentDataType;
 import org.jspecify.annotations.NonNull;
 import org.winlogon.combatweaponryplus.CombatWeaponryPlus;
+import org.winlogon.combatweaponryplus.items.HashItemModelDataGenerator;
 import org.winlogon.combatweaponryplus.items.ItemModelData;
+import org.winlogon.combatweaponryplus.items.ItemModelDataGenerator;
 import org.winlogon.combatweaponryplus.util.AttributeFactory;
 import org.winlogon.combatweaponryplus.util.ConfigHelper;
 import org.winlogon.combatweaponryplus.util.PersistentDataManager;
@@ -22,12 +24,16 @@ import java.util.Objects;
  * with specific materials and applying custom model data, names, lore, and attributes.
  */
 public class SmithingRecipeBuilder {
+    private static final ItemModelDataGenerator itemModelDataGenerator = new HashItemModelDataGenerator();
+
     private final CombatWeaponryPlus plugin;
     private final ConfigHelper config;
     private Material toolType;
     private Material modifierType;
+    private String requiredId;
     private int requiredModelData;
     private int resultModelData;
+    private boolean generateResultModelData = true;
     private String nameKey;
     private String group;
     private String itemId;
@@ -81,6 +87,17 @@ public class SmithingRecipeBuilder {
     }
 
     /**
+     * Sets the required persistent ID for the base tool.
+     *
+     * @param requiredId The ID required on the base item.
+     * @return This builder instance.
+     */
+    public SmithingRecipeBuilder requiredId(String requiredId) {
+        this.requiredId = requiredId;
+        return this;
+    }
+
+    /**
      * Sets the required custom model data for the base tool.
      * If set to 0, any model data (or none) is accepted.
      *
@@ -94,12 +111,14 @@ public class SmithingRecipeBuilder {
 
     /**
      * Sets the custom model data to be applied to the resulting item.
+     * Calling this disables automatic model data generation.
      *
      * @param resultModelData The model data value for the result item.
      * @return This builder instance.
      */
     public SmithingRecipeBuilder resultModelData(int resultModelData) {
         this.resultModelData = resultModelData;
+        this.generateResultModelData = false;
         return this;
     }
 
@@ -154,7 +173,16 @@ public class SmithingRecipeBuilder {
         }
 
         var baseMeta = base.getItemMeta();
-        if (requiredModelData != 0 && (baseMeta == null || ItemModelData.get(baseMeta) != requiredModelData)) {
+        if (baseMeta == null) return;
+
+        // Match by ID if provided
+        if (requiredId != null) {
+            String baseId = PersistentDataManager.getPersistentData(base, PersistentDataManager.ID_KEY);
+            if (!requiredId.equals(baseId)) return;
+        }
+
+        // Fallback to model data matching (legacy)
+        if (requiredModelData != 0 && ItemModelData.get(baseMeta) != requiredModelData) {
             return;
         }
 
@@ -162,14 +190,13 @@ public class SmithingRecipeBuilder {
         var resultMeta = result.getItemMeta();
         if (resultMeta == null) return;
 
-        // Apply new name and model data
-        String name = config.getItemName(group, itemId, nameKey + " " + (resultMaterial != null ? "" : baseMeta != null ? baseMeta.displayName() : ""));
-        resultMeta.displayName(plugin.getMiniMessage().deserialize(name));
-        ItemModelData.set(resultMeta, resultModelData);
-
         // Identity
         resultMeta.getPersistentDataContainer().set(PersistentDataManager.CATEGORY_KEY, PersistentDataType.STRING, group);
         resultMeta.getPersistentDataContainer().set(PersistentDataManager.ID_KEY, PersistentDataType.STRING, itemId);
+
+        // Apply new name
+        String name = config.getItemName(group, itemId, nameKey + " " + (resultMaterial != null ? "" : baseMeta.displayName()));
+        resultMeta.displayName(plugin.getMiniMessage().deserialize(name));
 
         // Lore
         resultMeta.lore(config.getItemLore(group, itemId).stream().map(plugin.getMiniMessage()::deserialize).toList());
@@ -183,6 +210,15 @@ public class SmithingRecipeBuilder {
         }
 
         resultMeta.addItemFlags(ItemFlag.HIDE_ATTRIBUTES);
+
+        // Apply model data (hashed or explicit)
+        if (generateResultModelData) {
+            int customModelData = itemModelDataGenerator.generate(result.getType(), resultMeta);
+            ItemModelData.set(resultMeta, customModelData);
+        } else {
+            ItemModelData.set(resultMeta, resultModelData);
+        }
+
         result.setItemMeta(resultMeta);
         event.setResult(result);
     }

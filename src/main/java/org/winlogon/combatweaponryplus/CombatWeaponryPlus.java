@@ -66,6 +66,6 @@ public class CombatWeaponryPlus extends JavaPlugin {
     private void registerAbilities() {
         weaponAbilityRegistry.register("trident_bow", new TridentBowAbility());
         weaponAbilityRegistry.register("phantom_winged_elytra", new PhantomWingedElytraAbility(this));
-        weaponAbilityRegistry.register("spring_step_elytra", new SpringStepElytraAbility(this));
+        weaponAbilityRegistry.register("spring_step_elytra", new SpringStepElytraAbility());
     }
 }

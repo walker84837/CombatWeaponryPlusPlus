@@ -1,6 +1,5 @@
 package org.winlogon.combatweaponryplus.items.registry;
 
-import net.kyori.adventure.text.Component;
 import org.bukkit.enchantments.Enchantment;
 import org.bukkit.Material;
 import org.bukkit.Sound;
@@ -33,8 +32,6 @@ public class TridentBowAbility implements WeaponAbility {
         trident.setFireTicks(100);
         trident.setGravity(false);
         trident.setPickupStatus(AbstractArrow.PickupStatus.DISALLOWED);
-        trident.customName(Component.text("Bob"));
-        trident.setCustomNameVisible(true);
 
         ItemStack bowClone = event.getBow() != null ? event.getBow().clone() : new ItemStack(Material.BOW);
         bowClone.addUnsafeEnchantment(Enchantment.PUNCH, 10);

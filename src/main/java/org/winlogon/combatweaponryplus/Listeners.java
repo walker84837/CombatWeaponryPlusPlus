@@ -1,20 +1,17 @@
 package org.winlogon.combatweaponryplus;
 
-import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.minimessage.MiniMessage;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.Particle;
 import org.bukkit.Sound;
 import org.bukkit.World;
-import org.bukkit.enchantments.Enchantment;
 import org.bukkit.entity.AbstractArrow;
 import org.bukkit.entity.Arrow;
 import org.bukkit.entity.EnderPearl;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
-import org.bukkit.entity.Trident;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.block.Action;
@@ -26,7 +23,6 @@ import org.bukkit.event.inventory.PrepareSmithingEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.inventory.ItemStack;
-import org.bukkit.inventory.PlayerInventory;
 import org.bukkit.plugin.Plugin;
 import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
@@ -37,16 +33,14 @@ import org.bukkit.persistence.PersistentDataType;
 import org.winlogon.combatweaponryplus.items.builders.ItemBuilder;
 import org.winlogon.combatweaponryplus.util.ConfigHelper;
 import org.winlogon.combatweaponryplus.util.PersistentDataManager;
-import org.winlogon.combatweaponryplus.items.CustomModelDataIds;
 import org.winlogon.combatweaponryplus.items.ItemModelData;
 import org.winlogon.combatweaponryplus.items.WeaponAbilityRegistry;
-import org.winlogon.combatweaponryplus.recipes.SmithingRecipeBuilder;
+import org.winlogon.combatweaponryplus.recipes.SmithingProvider;
 
 import com.google.common.base.Strings;
 
 import net.kyori.adventure.resource.ResourcePackInfo;
 import net.kyori.adventure.resource.ResourcePackRequest;
-import net.kyori.adventure.text.serializer.plain.PlainTextComponentSerializer;
 
 import java.net.URI;
 import java.net.URISyntaxException;
@@ -64,38 +58,23 @@ class Listeners implements Listener {
     private final Random random;
     private final Cooldown cooldown;
     private final WeaponAbilityRegistry weaponAbilityRegistry;
-    private final PlainTextComponentSerializer plainText;
+    private final SmithingProvider smithingProvider;
 
     public Listeners(CombatWeaponryPlus plugin, ConfigHelper config, Cooldown cooldown, WeaponAbilityRegistry weaponAbilityRegistry) {
         this.plugin = plugin;
         this.config = config;
         this.cooldown = cooldown;
         this.weaponAbilityRegistry = weaponAbilityRegistry;
+        this.smithingProvider = new SmithingProvider(plugin, config);
         this.random = new Random();
-        this.plainText = PlainTextComponentSerializer.plainText();
     }
 
-    private ItemStack[] getPlayerArmor(PlayerInventory inv) {
-        ItemStack[] armor = new ItemStack[4];
-
-        armor[0] = inv.getHelmet();
-        armor[1] = inv.getChestplate();
-        armor[2] = inv.getLeggings();
-        armor[3] = inv.getBoots();
-
-        return armor;
-    }
-
-    private boolean isValidItem(Player player, Material material, int modelData) {
+    private boolean isValidItem(Player player, Material material, String id) {
         var item = player.getInventory().getItemInMainHand();
-        if (item.hasItemMeta()) {
-            var meta = item.getItemMeta();
+        if (item.getType() != material) return false;
 
-            return item.getType() == material
-                && ItemModelData.hasModelData(meta)
-                && ItemModelData.get(meta) == modelData;
-        }
-        return false;
+        String itemId = PersistentDataManager.getPersistentData(item, PersistentDataManager.ID_KEY);
+        return Objects.equals(id, itemId);
     }
 
     private void spawnParticles(Location location, Particle particle, int count) {
@@ -146,7 +125,7 @@ class Listeners implements Listener {
     public void onBlockClick(PlayerInteractEvent event) {
         var player = event.getPlayer();
 
-        if (!isValidItem(player, Material.NETHERITE_PICKAXE, CustomModelDataIds.OBSIDIAN_PICKAXE)) return;
+        if (!isValidItem(player, Material.NETHERITE_PICKAXE, "obsidian_pickaxe")) return;
         if (event.getAction() != Action.LEFT_CLICK_BLOCK) return;
 
         player.addPotionEffect(new PotionEffect(PotionEffectType.HASTE, 40, 2));
@@ -189,43 +168,32 @@ class Listeners implements Listener {
             attacker.addPotionEffect(new PotionEffect(PotionEffectType.STRENGTH, 15, 0));
         }
 
-        // Specific item effects based on custom model data
-        if (event.getEntity() instanceof Player damagedPlayer) {
-            if (isValidItem(damagedPlayer, Material.NETHERITE_SWORD, CustomModelDataIds.FIRE_SWORD) || isValidItem(damagedPlayer, Material.NETHERITE_SWORD, CustomModelDataIds.FIRE_SWORD_ALT)) {
-                event.setDamage(event.getDamage() * 1.5);
-            }
-        }
-
-        if (isValidItem(attacker, Material.NETHERITE_SWORD, CustomModelDataIds.WITHER_SWORD) || isValidItem(attacker, Material.NETHERITE_SWORD, CustomModelDataIds.WITHER_SWORD_ALT)) {
+        if (isValidItem(attacker, Material.NETHERITE_SWORD, "awakened_sword")) {
             if (event.getEntity() instanceof LivingEntity entity) {
                 entity.addPotionEffect(new PotionEffect(PotionEffectType.WITHER, 60, 1));
             }
         }
 
-        if (isValidItem(attacker, Material.NETHERITE_SWORD, CustomModelDataIds.FIRE_SWORD) || isValidItem(attacker, Material.NETHERITE_SWORD, CustomModelDataIds.FIRE_SWORD_ALT)) {
+        if (isValidItem(attacker, Material.NETHERITE_SWORD, "volcanic_blade")) {
             event.setDamage(event.getDamage() * 1.5);
         }
 
         // Shield blocking logic
         if (event.getEntity() instanceof Player player) {
-            int[] shieldModelData = {CustomModelDataIds.SHIELD_BASE, CustomModelDataIds.SHIELD_WITHER, CustomModelDataIds.SHIELD_FIRE, CustomModelDataIds.SHIELD_ICE, CustomModelDataIds.SHIELD_THUNDER, CustomModelDataIds.SHIELD_LIGHT, CustomModelDataIds.SHIELD_DARK};
-            for (int data : shieldModelData) {
-                if (isValidItem(player, Material.NETHERITE_SWORD, data)) {
-                    var itemInHand = player.getInventory().getItemInMainHand();
-                    itemInHand.editMeta(meta -> {
-                        // Increment model data
-                        ItemModelData.set(meta, data + CustomModelDataIds.SHIELD_MODEL_SHIFT);
-                    });
-                    event.setCancelled(true);
-                    player.getWorld().playSound(player.getLocation(), Sound.ITEM_SHIELD_BLOCK, 10.0f, 1.0f);
-                    break;
-                }
+            var itemInHand = player.getInventory().getItemInMainHand();
+            String itemCategory = PersistentDataManager.getPersistentData(itemInHand, PersistentDataManager.CATEGORY_KEY);
+            if ("shields".equals(itemCategory)) {
+                itemInHand.editMeta(meta -> {
+                    meta.getPersistentDataContainer().set(PersistentDataManager.STATE_KEY, PersistentDataType.STRING, "blocking");
+                    ItemBuilder.refreshModelData(itemInHand);
+                });
+                event.setCancelled(true);
+                player.getWorld().playSound(player.getLocation(), Sound.ITEM_SHIELD_BLOCK, 10.0f, 1.0f);
             }
         }
 
         // Damage multipliers and special effects based on identity
         String category = PersistentDataManager.getPersistentData(mainHandItem, PersistentDataManager.CATEGORY_KEY);
-        String id = PersistentDataManager.getPersistentData(mainHandItem, PersistentDataManager.ID_KEY);
 
         if (category == null) {
             return;
@@ -344,32 +312,7 @@ class Listeners implements Listener {
 
     @EventHandler
     void onSmithingTableEvent(PrepareSmithingEvent event) {
-        String group = "prismarine_gear";
-        Material mod = Material.PRISMARINE_SHARD;
-        Material res = Material.PRISMARINE_SHARD;
-
-        // Base Weapons
-        new SmithingRecipeBuilder(plugin, config).toolType(Material.NETHERITE_SWORD).modifierType(mod).resultMaterial(res).requiredModelData(1000001).resultModelData(1210001).nameKey("Prismarine").item(group, "prismarine_sword").bonusAttribute("damage", 1.0).build(event);
-        new SmithingRecipeBuilder(plugin, config).toolType(Material.NETHERITE_PICKAXE).modifierType(mod).resultMaterial(res).requiredModelData(0).resultModelData(1210002).nameKey("Prismarine").item(group, "prismarine_pickaxe").bonusAttribute("damage", 1.0).build(event);
-        new SmithingRecipeBuilder(plugin, config).toolType(Material.NETHERITE_AXE).modifierType(mod).resultMaterial(res).requiredModelData(0).resultModelData(1220001).nameKey("Prismarine").item(group, "prismarine_axe").bonusAttribute("damage", 1.0).build(event);
-        new SmithingRecipeBuilder(plugin, config).toolType(Material.NETHERITE_SHOVEL).modifierType(mod).resultMaterial(res).requiredModelData(0).resultModelData(1210004).nameKey("Prismarine").item(group, "prismarine_shovel").bonusAttribute("damage", 1.0).build(event);
-        new SmithingRecipeBuilder(plugin, config).toolType(Material.NETHERITE_HOE).modifierType(mod).resultMaterial(res).requiredModelData(0).resultModelData(1210005).nameKey("Prismarine").item(group, "prismarine_hoe").bonusAttribute("damage", 1.0).build(event);
-
-        // Armor
-        new SmithingRecipeBuilder(plugin, config).toolType(Material.NETHERITE_HELMET).modifierType(mod).resultMaterial(res).requiredModelData(0).resultModelData(1220001).nameKey("Prismarine").item(group, "prismarine_helmet").bonusAttribute("armor", 1.0).build(event);
-        new SmithingRecipeBuilder(plugin, config).toolType(Material.NETHERITE_CHESTPLATE).modifierType(mod).resultMaterial(res).requiredModelData(0).resultModelData(1220002).nameKey("Prismarine").item(group, "prismarine_chestplate").bonusAttribute("armor", 1.0).build(event);
-        new SmithingRecipeBuilder(plugin, config).toolType(Material.NETHERITE_LEGGINGS).modifierType(mod).resultMaterial(res).requiredModelData(0).resultModelData(1220003).nameKey("Prismarine").item(group, "prismarine_leggings").bonusAttribute("armor", 1.0).build(event);
-        new SmithingRecipeBuilder(plugin, config).toolType(Material.NETHERITE_BOOTS).modifierType(mod).resultMaterial(res).requiredModelData(0).resultModelData(1220004).nameKey("Prismarine").item(group, "prismarine_boots").bonusAttribute("armor", 1.0).build(event);
-
-        // Custom Weapons
-        new SmithingRecipeBuilder(plugin, config).toolType(Material.NETHERITE_SWORD).modifierType(mod).resultMaterial(res).requiredModelData(1000001).resultModelData(1200001).nameKey("Prismarine").item(group, "prismarine_longsword").bonusAttribute("damage", 1.0).build(event);
-        new SmithingRecipeBuilder(plugin, config).toolType(Material.NETHERITE_SWORD).modifierType(mod).resultMaterial(res).requiredModelData(1000003).resultModelData(1200003).nameKey("Prismarine").item(group, "prismarine_scythe").bonusAttribute("damage", 1.0).build(event);
-        new SmithingRecipeBuilder(plugin, config).toolType(Material.NETHERITE_SWORD).modifierType(mod).resultMaterial(res).requiredModelData(1000005).resultModelData(1200005).nameKey("Prismarine").item(group, "prismarine_rapier").bonusAttribute("damage", 1.0).build(event);
-        new SmithingRecipeBuilder(plugin, config).toolType(Material.NETHERITE_SWORD).modifierType(mod).resultMaterial(res).requiredModelData(1000004).resultModelData(1200004).nameKey("Prismarine").item(group, "prismarine_spear").bonusAttribute("damage", 1.0).build(event);
-        new SmithingRecipeBuilder(plugin, config).toolType(Material.NETHERITE_SWORD).modifierType(mod).resultMaterial(res).requiredModelData(1000002).resultModelData(1200002).nameKey("Prismarine").item(group, "prismarine_katana").bonusAttribute("damage", 1.0).build(event);
-        new SmithingRecipeBuilder(plugin, config).toolType(Material.NETHERITE_SWORD).modifierType(mod).resultMaterial(res).requiredModelData(1000006).resultModelData(1200006).nameKey("Prismarine").item(group, "prismarine_knife").bonusAttribute("damage", 1.0).build(event);
-        new SmithingRecipeBuilder(plugin, config).toolType(Material.NETHERITE_SWORD).modifierType(mod).resultMaterial(res).requiredModelData(1000010).resultModelData(1200010).nameKey("Prismarine").item(group, "prismarine_saber").bonusAttribute("damage", 1.0).build(event);
-        new SmithingRecipeBuilder(plugin, config).toolType(Material.NETHERITE_SWORD).modifierType(mod).resultMaterial(res).requiredModelData(1000021).resultModelData(1200021).nameKey("Prismarine").item(group, "prismarine_cleaver").bonusAttribute("damage", 1.0).build(event);
+        smithingProvider.handleSmithing(event);
     }
 
     @EventHandler
@@ -420,10 +363,9 @@ class Listeners implements Listener {
     }
 
     private boolean hasRedstoneCore(@Nullable ItemStack chestplate) {
-        return chestplate != null
-            && chestplate.getType() == Material.IRON_CHESTPLATE
-            && chestplate.hasItemMeta()
-            && ItemModelData.get(chestplate.getItemMeta()) == CustomModelDataIds.REDSTONE_CORE;
+        if (chestplate == null) return false;
+        String id = PersistentDataManager.getPersistentData(chestplate, PersistentDataManager.ID_KEY);
+        return "redstone_core".equals(id);
     }
 
     private void handleRepeatingCrossbow(Player player, EntityShootBowEvent event) {
@@ -477,7 +419,7 @@ class Listeners implements Listener {
     }
 
     private void launchArrow(Player player, Vector direction) {
-        var arrow = (Arrow) player.launchProjectile(Arrow.class, direction);
+        var arrow = player.launchProjectile(Arrow.class, direction);
         arrow.setPickupStatus(AbstractArrow.PickupStatus.DISALLOWED);
     }
 

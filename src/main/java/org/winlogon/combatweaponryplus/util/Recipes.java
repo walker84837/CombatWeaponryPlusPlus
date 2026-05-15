@@ -8,6 +8,7 @@ import org.bukkit.inventory.ShapedRecipe;
 import org.jspecify.annotations.NonNull;
 import org.winlogon.combatweaponryplus.CombatWeaponryPlus;
 import org.winlogon.combatweaponryplus.items.builders.ItemBuilder;
+import org.winlogon.combatweaponryplus.recipes.WeaponRecipeHelper;
 
 import java.util.Objects;
 
@@ -89,13 +90,6 @@ public final class Recipes {
     }
 
     public static Material getBaseMaterial(Material tool) {
-        return switch (tool) {
-            case WOODEN_SWORD -> Material.OAK_PLANKS;
-            case STONE_SWORD -> Material.COBBLESTONE;
-            case GOLDEN_SWORD -> Material.GOLD_INGOT;
-            case IRON_SWORD -> Material.IRON_INGOT;
-            case DIAMOND_SWORD -> Material.DIAMOND;
-            default -> Material.EMERALD;
-        };
+        return Materials.getBaseMaterial(tool);
     }
 }

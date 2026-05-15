@@ -10,18 +10,13 @@ import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
 import org.bukkit.util.Vector;
 import org.jspecify.annotations.NonNull;
-import org.winlogon.combatweaponryplus.CombatWeaponryPlus;
 import org.winlogon.combatweaponryplus.items.WeaponAbility;
-
-import java.util.Objects;
 
 /**
  * Ability for the Spring-Step Elytra.
  */
 public class SpringStepElytraAbility implements WeaponAbility {
-    public SpringStepElytraAbility(CombatWeaponryPlus plugin) {
-        Objects.requireNonNull(plugin);
-    }
+    public SpringStepElytraAbility() {}
 
     @Override
     public void onToggleGlide(@NonNull EntityToggleGlideEvent event) {

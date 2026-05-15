@@ -7,6 +7,7 @@ import org.jspecify.annotations.NonNull;
 import org.winlogon.combatweaponryplus.items.builders.WeaponBuilder;
 import org.winlogon.combatweaponryplus.util.ConfigHelper;
 import org.winlogon.combatweaponryplus.util.ConfigValueOperation;
+import org.winlogon.combatweaponryplus.util.Materials;
 import org.winlogon.combatweaponryplus.util.Recipes;
 
 import java.util.Objects;
@@ -134,7 +135,7 @@ public final class WeaponRecipeHelper {
         } else if (material == Material.NETHERITE_SWORD) {
             base = config.isEnabled("netherite_ingots") ? Material.NETHERITE_INGOT : Material.NETHERITE_SCRAP;
         } else {
-            base = getBaseMaterial(material);
+            base = Materials.getBaseMaterial(material);
         }
 
         return Recipes.createShapedRecipe(id, builder.build(), shape, materialSymbol, base, stickSymbol, Material.STICK);
@@ -166,22 +167,5 @@ public final class WeaponRecipeHelper {
             char stickSymbol
     ) {
         return createShapedWeaponRecipe(config, group, id, material, baseDmg, baseSpd, 0.0, shape, materialSymbol, stickSymbol);
-    }
-
-    /**
-     * Maps a weapon material to its primary crafting ingredient.
-     *
-     * @param tool The weapon material.
-     * @return The corresponding base material.
-     */
-    public static @NonNull Material getBaseMaterial(@NonNull Material tool) {
-        return switch (tool) {
-            case WOODEN_SWORD -> Material.OAK_PLANKS;
-            case STONE_SWORD -> Material.COBBLESTONE;
-            case GOLDEN_SWORD -> Material.GOLD_INGOT;
-            case IRON_SWORD -> Material.IRON_INGOT;
-            case DIAMOND_SWORD -> Material.DIAMOND;
-            default -> Material.EMERALD;
-        };
     }
 }
