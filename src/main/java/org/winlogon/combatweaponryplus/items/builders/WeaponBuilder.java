@@ -23,7 +23,7 @@ public class WeaponBuilder extends ItemBuilder<WeaponBuilder> {
      * @param material The {@link Material} of the weapon. Must not be null.
      * @param configHelper The {@link ConfigHelper} instance for accessing plugin configuration. Must not be null.
      */
-    public @NonNull WeaponBuilder(@NonNull Material material, @NonNull ConfigHelper configHelper) {
+    public WeaponBuilder(@NonNull Material material, @NonNull ConfigHelper configHelper) {
         super(material);
         this.configHelper = configHelper;
     }
