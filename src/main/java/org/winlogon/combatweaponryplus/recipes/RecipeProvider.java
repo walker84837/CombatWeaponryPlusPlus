@@ -28,8 +28,10 @@ public class RecipeProvider {
             new Bows(config),
             new Sabers(config),
             new Cleavers(config),
+            new Shields(config),
             new Armor(config),
             new ToolsAndMisc(config),
+            new ParrySwords(config),
             new SpecialWeapons(config)
         };
 

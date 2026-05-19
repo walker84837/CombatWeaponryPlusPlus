@@ -1,6 +1,11 @@
 package org.winlogon.combatweaponryplus;
 
+import com.google.common.base.Strings;
+
 import net.kyori.adventure.text.minimessage.MiniMessage;
+import net.kyori.adventure.resource.ResourcePackInfo;
+import net.kyori.adventure.resource.ResourcePackRequest;
+
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.Particle;
@@ -34,13 +39,9 @@ import org.winlogon.combatweaponryplus.items.builders.ItemBuilder;
 import org.winlogon.combatweaponryplus.util.ConfigHelper;
 import org.winlogon.combatweaponryplus.util.PersistentDataManager;
 import org.winlogon.combatweaponryplus.items.ItemModelData;
+import org.winlogon.combatweaponryplus.items.LegacyIdMapper;
 import org.winlogon.combatweaponryplus.items.WeaponAbilityRegistry;
 import org.winlogon.combatweaponryplus.recipes.SmithingProvider;
-
-import com.google.common.base.Strings;
-
-import net.kyori.adventure.resource.ResourcePackInfo;
-import net.kyori.adventure.resource.ResourcePackRequest;
 
 import java.net.URI;
 import java.net.URISyntaxException;
@@ -139,8 +140,6 @@ class Listeners implements Listener {
 
         if (!mainHandItem.hasItemMeta() || !ItemModelData.hasModelData(mainHandItem.getItemMeta())) return;
 
-        int customModelData = ItemModelData.get(mainHandItem.getItemMeta());
-
         final var validBlocks = VALID_BLOCKS;
 
         if (!attacker.hasCooldown(Material.NETHERITE_SWORD)) {
@@ -182,6 +181,7 @@ class Listeners implements Listener {
         if (event.getEntity() instanceof Player player) {
             var itemInHand = player.getInventory().getItemInMainHand();
             String itemCategory = PersistentDataManager.getPersistentData(itemInHand, PersistentDataManager.CATEGORY_KEY);
+            if (itemCategory == null) itemCategory = getLegacyCategory(itemInHand);
             if ("shields".equals(itemCategory)) {
                 itemInHand.editMeta(meta -> {
                     meta.getPersistentDataContainer().set(PersistentDataManager.STATE_KEY, PersistentDataType.STRING, "blocking");
@@ -194,7 +194,9 @@ class Listeners implements Listener {
 
         // Damage multipliers and special effects based on identity
         String category = PersistentDataManager.getPersistentData(mainHandItem, PersistentDataManager.CATEGORY_KEY);
-
+        if (category == null) {
+            category = getLegacyCategory(mainHandItem);
+        }
         if (category == null) {
             return;
         }
@@ -288,9 +290,30 @@ class Listeners implements Listener {
         }
     }
 
-    private boolean hasAnyArmor(Player player) {
+    private boolean hasAnyArmor(@NonNull Player player) {
         var inv = player.getInventory();
         return inv.getHelmet() != null || inv.getChestplate() != null || inv.getLeggings() != null || inv.getBoots() != null;
+    }
+
+    /**
+     * Falls back to legacy numeric custom model data to derive the category string.
+     * Used for backwards compatibility with items crafted before the persistent ID migration.
+     */
+    private @Nullable String getLegacyCategory(@NonNull ItemStack item) {
+        if (!item.hasItemMeta()) return null;
+        int cmd = ItemModelData.get(item.getItemMeta());
+        if (cmd == 0) return null;
+        return LegacyIdMapper.getCategory(cmd);
+    }
+
+    /**
+     * Falls back to legacy numeric custom model data to derive the item ID string.
+     */
+    private @Nullable String getLegacyId(@NonNull ItemStack item) {
+        if (!item.hasItemMeta()) return null;
+        int cmd = ItemModelData.get(item.getItemMeta());
+        if (cmd == 0) return null;
+        return LegacyIdMapper.getItemId(cmd);
     }
 
     @EventHandler
@@ -302,6 +325,9 @@ class Listeners implements Listener {
             if (offHandItem.getType() != Material.AIR) {
                 String category = PersistentDataManager.getPersistentData(offHandItem, PersistentDataManager.CATEGORY_KEY);
                 String id = PersistentDataManager.getPersistentData(offHandItem, PersistentDataManager.ID_KEY);
+
+                if (category == null) category = getLegacyCategory(offHandItem);
+                if (id == null) id = getLegacyId(offHandItem);
 
                 if ("charms".equals(category) && "feather_charm".equals(id)) {
                     event.setCancelled(true);
@@ -319,7 +345,7 @@ class Listeners implements Listener {
     public void playerBowShoot(EntityShootBowEvent event) {
         LivingEntity entity = event.getEntity();
         float force = event.getForce();
-        Arrow arrow = (Arrow) event.getProjectile();
+        var arrow = (Arrow) event.getProjectile();
 
         if (!(entity instanceof Player player)) return;
 
@@ -331,12 +357,15 @@ class Listeners implements Listener {
 
         if (!mainHandItem.hasItemMeta()) return;
 
+        // TODO: "Variable 'category' is never used"
         String category = PersistentDataManager.getPersistentData(mainHandItem, PersistentDataManager.CATEGORY_KEY);
         String id = PersistentDataManager.getPersistentData(mainHandItem, PersistentDataManager.ID_KEY);
 
+        if (id == null) id = getLegacyId(mainHandItem);
         if (id == null) return;
 
         Vector vector = player.getLocation().getDirection();
+        // TODO: "Variable 'world' is never used "
         World world = player.getWorld();
 
         if (weaponAbilityRegistry.handleShoot(id, event)) {
@@ -456,18 +485,19 @@ class Listeners implements Listener {
         if (chestplate == null) return;
 
         String id = PersistentDataManager.getPersistentData(chestplate, PersistentDataManager.ID_KEY);
+        if (id == null) id = getLegacyId(chestplate);
         weaponAbilityRegistry.handleInteract(id, event);
     }
 
     @EventHandler
     public void onToggleGlide(EntityToggleGlideEvent event) {
-        // Only handle players
         if (!(event.getEntity() instanceof Player player)) return;
 
         var chestplate = player.getInventory().getChestplate();
         if (chestplate == null) return;
 
         String id = PersistentDataManager.getPersistentData(chestplate, PersistentDataManager.ID_KEY);
+        if (id == null) id = getLegacyId(chestplate);
         weaponAbilityRegistry.handleToggleGlide(id, event);
     }
 
@@ -478,11 +508,10 @@ class Listeners implements Listener {
         }
 
         ItemStack chestplate = player.getInventory().getChestplate();
-        if (chestplate == null) {
-            return;
-        }
+        if (chestplate == null) return;
 
         String id = PersistentDataManager.getPersistentData(chestplate, PersistentDataManager.ID_KEY);
+        if (id == null) id = getLegacyId(chestplate);
         if (id == null) return;
 
         weaponAbilityRegistry.handleDamage(id, damageEvent);

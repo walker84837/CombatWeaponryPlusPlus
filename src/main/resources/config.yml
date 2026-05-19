@@ -102,6 +102,8 @@ VolcanicBlade: false
 VolcanicSpear: false
 VolcanicAxe: false
 VolcanicCleaver: false
+ThunderSword: false
+DarkSword: false
 #The test katana is a diamond katana with different abilities.
 #Those abilities will most likely not be added to the regular katanas since it was really complicated to make.
 #However, I might add the abilities to a new unique weapon in the future.

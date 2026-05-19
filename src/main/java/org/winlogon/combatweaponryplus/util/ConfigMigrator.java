@@ -74,6 +74,8 @@ public class ConfigMigrator {
         MIGRATIONS.put("EnchantsObsidianPick", "enchantments_on_obsidian_pickaxe");
         MIGRATIONS.put("EnchantsDiamondShield", "enchantments_on_diamond_shield");
         MIGRATIONS.put("EnchantsNetheriteShield", "enchantments_on_netherite_shield");
+        MIGRATIONS.put("DShieldEnchantLevels", "dshield_enchant_levels");
+        MIGRATIONS.put("NShieldEnchantLevels", "nshield_enchant_levels");
 
         // Multipliers
         MIGRATIONS.put("mKnives", "multipliers.knives");
@@ -193,7 +195,12 @@ public class ConfigMigrator {
                     changed = true;
                 }
                 if (config.contains(enchantPaths[1])) {
-                    config.set(group + ".enchantments.levels", config.getConfigurationSection(enchantPaths[1]));
+                    var levelSection = config.getConfigurationSection(enchantPaths[1]);
+                    if (levelSection != null) {
+                        for (String key : levelSection.getKeys(false)) {
+                            config.set(group + ".enchantments.levels." + key.toLowerCase(), levelSection.get(key));
+                        }
+                    }
                     config.set(enchantPaths[1], null);
                     changed = true;
                 }

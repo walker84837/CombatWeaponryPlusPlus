@@ -60,7 +60,7 @@ public final class Recipes {
      *                     Example: <pre>createShapedRecipe("my_recipe", new ItemStack(Material.DIAMOND), new String[]{" X ", " X ", " X "}, 'X', Material.STICK);</pre>
      * @return a fully configured {@link ShapedRecipe}
      */
-    public static ShapedRecipe createShapedRecipe(@NonNull String keyName, @NonNull ItemStack result, @NonNull String[] shape, Object... ingredients) {
+    public static ShapedRecipe createShapedRecipe(@NonNull String keyName, @NonNull ItemStack result, @NonNull String[] shape, @NonNull Object... ingredients) {
         Objects.requireNonNull(keyName);
         Objects.requireNonNull(result);
         Objects.requireNonNull(shape);
