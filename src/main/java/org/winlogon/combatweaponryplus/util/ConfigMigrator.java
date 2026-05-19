@@ -72,6 +72,8 @@ public class ConfigMigrator {
         MIGRATIONS.put("EnchantsHeavySwordBow", "enchantments_on_heavy_sword_bow");
         MIGRATIONS.put("EnchantsPlatedChainmail", "enchantments_on_plated_chainmail");
         MIGRATIONS.put("EnchantsObsidianPick", "enchantments_on_obsidian_pickaxe");
+        MIGRATIONS.put("DiamondShield", "diamond_shield");
+        MIGRATIONS.put("NetheriteShield", "netherite_shield");
         MIGRATIONS.put("EnchantsDiamondShield", "enchantments_on_diamond_shield");
         MIGRATIONS.put("EnchantsNetheriteShield", "enchantments_on_netherite_shield");
         MIGRATIONS.put("DShieldEnchantLevels", "dshield_enchant_levels");

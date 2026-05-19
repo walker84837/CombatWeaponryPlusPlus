@@ -74,6 +74,25 @@ LongswordBow: true
 BurstCrossbow: true
 RedstoneBow: true
 #Shields
+shields:
+  enabled: true
+  damage_multiplier: 1
+  enchantments:
+    enabled: true
+    levels:
+      unbreaking: 5
+  items:
+    diamond_shield:
+      enabled: true
+      name: "&fDiamond Shield"
+    netherite_shield:
+      enabled: true
+      name: "&8Netherite Shield"
+shields_netherite:
+  enchantments:
+    enabled: true
+    levels:
+      unbreaking: 10
 DiamondShield: true
 NetheriteShield: true
 #Enable or disable special items:======================================================================================
