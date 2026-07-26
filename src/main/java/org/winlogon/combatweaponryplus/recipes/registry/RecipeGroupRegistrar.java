@@ -6,6 +6,7 @@ import org.winlogon.combatweaponryplus.recipes.RecipeRegistrar;
 public interface RecipeGroupRegistrar {
     Recipe[] recipes();
     String[] keys();
+    String group();
 
     default void registerAll(RecipeRegistrar registrar) {
         Recipe[] recipes = recipes();
@@ -18,7 +19,7 @@ public interface RecipeGroupRegistrar {
         for (int i = 0; i < recipes.length; i++) {
             Recipe recipe = recipes[i];
             String key = keys[i];
-            registrar.register(key, () -> recipe);
+            registrar.register(group(), key, () -> recipe);
         }
     }
 }

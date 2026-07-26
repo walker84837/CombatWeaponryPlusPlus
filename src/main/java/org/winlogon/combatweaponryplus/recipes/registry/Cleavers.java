@@ -52,9 +52,15 @@ public class Cleavers implements RecipeGroupRegistrar {
     }
 
     @Override
+    public String group() { return GROUP; }
+
+    @Override
     public String[] keys() {
         return new String[] {
-                "wooden_cleaver", "stone_cleaver", "golden_cleaver", "iron_cleaver", "emerald_cleaver", "diamond_cleaver", "netherite_cleaver"
+                "wooden_cleaver", "stone_cleaver",
+                "golden_cleaver", "iron_cleaver",
+                "emerald_cleaver", "diamond_cleaver",
+                "netherite_cleaver"
         };
     }
 }

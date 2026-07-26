@@ -52,6 +52,9 @@ public class Rapiers implements RecipeGroupRegistrar {
     }
 
     @Override
+    public String group() { return GROUP; }
+
+    @Override
     public String[] keys() {
         return new String[] {
                 "wooden_rapier", "stone_rapier", "golden_rapier", "iron_rapier", "emerald_rapier", "diamond_rapier", "netherite_rapier"

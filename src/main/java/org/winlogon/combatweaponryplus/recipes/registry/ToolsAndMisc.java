@@ -5,6 +5,7 @@ import org.bukkit.inventory.Recipe;
 import org.bukkit.inventory.ShapedRecipe;
 import org.winlogon.combatweaponryplus.items.builders.ItemBuilder;
 import org.winlogon.combatweaponryplus.items.builders.WeaponBuilder;
+import org.winlogon.combatweaponryplus.recipes.RecipeRegistrar;
 import org.winlogon.combatweaponryplus.util.ConfigHelper;
 import org.winlogon.combatweaponryplus.util.ConfigValueOperation;
 import org.winlogon.combatweaponryplus.util.Recipes;
@@ -58,6 +59,14 @@ public class ToolsAndMisc implements RecipeGroupRegistrar {
     private ShapedRecipe explosiveStaff() { return getMiscRecipe(Material.STICK, "explosive_staff", "  T", " S ", "F  "); }
 
     @Override
+    public void registerAll(RecipeRegistrar registrar) {
+        registrar.register("tools", "obsidian_pickaxe", this::obsidianPickaxe);
+        registrar.register("misc", "redstone_core", this::redstoneCore);
+        registrar.register("misc", "prismarine_alloy", this::prismarineAlloy);
+        registrar.register("misc", "explosive_staff", this::explosiveStaff);
+    }
+
+    @Override
     public Recipe[] recipes() {
         return new Recipe[] {
                 obsidianPickaxe(),
@@ -66,6 +75,9 @@ public class ToolsAndMisc implements RecipeGroupRegistrar {
                 explosiveStaff()
         };
     }
+
+    @Override
+    public String group() { return "tools"; }
 
     @Override
     public String[] keys() {

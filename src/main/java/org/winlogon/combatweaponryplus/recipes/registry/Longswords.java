@@ -52,6 +52,9 @@ public class Longswords implements RecipeGroupRegistrar {
     }
 
     @Override
+    public String group() { return GROUP; }
+
+    @Override
     public String[] keys() {
         return new String[] {
                 "wooden_longsword", "stone_longsword", "golden_longsword", "iron_longsword", "emerald_longsword", "diamond_longsword", "netherite_longsword"

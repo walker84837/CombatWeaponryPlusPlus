@@ -52,6 +52,9 @@ public class Sabers implements RecipeGroupRegistrar {
     }
 
     @Override
+    public String group() { return GROUP; }
+
+    @Override
     public String[] keys() {
         return new String[] {
                 "wooden_saber", "stone_saber", "golden_saber", "iron_saber", "emerald_saber", "diamond_saber", "netherite_saber"

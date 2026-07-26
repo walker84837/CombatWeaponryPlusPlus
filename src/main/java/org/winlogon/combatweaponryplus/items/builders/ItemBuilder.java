@@ -91,11 +91,13 @@ public class ItemBuilder<Builder extends ItemBuilder<Builder>> {
     }
 
     /**
-     * Sets the display name of the item from a configuration file's key as legacy-formatted.
-     * @param config
-     * @param key
-     * @param fallback
-     * @return
+     * Reads a legacy-formatted string from a config path, converts color codes
+     * via {@link Format#convertLegacyToComponent}, and applies it as the display name.
+     *
+     * @param config   the {@link ConfigHelper} to read from
+     * @param key      the configuration path for the name string
+     * @param fallback the fallback name if the config key is absent
+     * @return this Builder instance
      */
     public @NonNull Builder nameFromConfig(@NonNull ConfigHelper config, @NonNull String key, @Nullable String fallback) {
         var name = Format.convertLegacyToComponent(config.getString(key, fallback));

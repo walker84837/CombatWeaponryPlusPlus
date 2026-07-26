@@ -4,6 +4,7 @@ import org.bukkit.Material;
 import org.bukkit.inventory.Recipe;
 import org.bukkit.inventory.ShapedRecipe;
 import org.winlogon.combatweaponryplus.items.builders.WeaponBuilder;
+import org.winlogon.combatweaponryplus.recipes.RecipeRegistrar;
 import org.winlogon.combatweaponryplus.util.ConfigHelper;
 import org.winlogon.combatweaponryplus.util.ConfigValueOperation;
 import org.winlogon.combatweaponryplus.util.Recipes;
@@ -33,9 +34,7 @@ public class SpecialWeapons implements RecipeGroupRegistrar {
             case "volcanic_blade" -> new Object[]{'V', Material.MAGMA_CREAM, 'S', Material.NETHERITE_SWORD};
             case "chorus_blade" -> new Object[]{'C', Material.CHORUS_FRUIT, 'S', Material.NETHERITE_SWORD};
             case "awakened_sword" -> new Object[]{'A', Material.AMETHYST_SHARD, 'S', Material.NETHERITE_SWORD};
-            case "volcanic_spear" -> new Object[]{'V', Material.MAGMA_CREAM, 'S', Material.STICK};
-            case "volcanic_axe" -> new Object[]{'V', Material.MAGMA_CREAM, 'S', Material.STICK};
-            case "volcanic_cleaver" -> new Object[]{'V', Material.MAGMA_CREAM, 'S', Material.STICK};
+            case "volcanic_spear", "volcanic_axe", "volcanic_cleaver" -> new Object[]{'V', Material.MAGMA_CREAM, 'S', Material.STICK};
             default -> new Object[]{'G', Material.GOLD_BLOCK, 'S', Material.NETHERITE_SWORD};
         };
 
@@ -53,6 +52,18 @@ public class SpecialWeapons implements RecipeGroupRegistrar {
     private ShapedRecipe volcanicCleaver() { return getSpecialWeaponRecipe(Material.NETHERITE_SWORD, "special_weapons", "volcanic_cleaver", 13.0, 0.4, " VV", " VV", " S "); }
 
     @Override
+    public void registerAll(RecipeRegistrar registrar) {
+        registrar.register("special_swords", "wind_blade", this::windBlade);
+        registrar.register("special_swords", "volcanic_blade", this::volcanicBlade);
+        registrar.register("special_swords", "chorus_blade", this::chorusBlade);
+        registrar.register("special_swords", "awakened_sword", this::awakenedSword);
+        registrar.register("special_swords", "op_sword", this::opSword);
+        registrar.register("special_weapons", "volcanic_spear", this::volcanicSpear);
+        registrar.register("special_weapons", "volcanic_axe", this::volcanicAxe);
+        registrar.register("special_weapons", "volcanic_cleaver", this::volcanicCleaver);
+    }
+
+    @Override
     public Recipe[] recipes() {
         return new Recipe[] {
                 windBlade(),
@@ -65,6 +76,9 @@ public class SpecialWeapons implements RecipeGroupRegistrar {
                 volcanicCleaver()
         };
     }
+
+    @Override
+    public String group() { return "special_swords"; }
 
     @Override
     public String[] keys() {

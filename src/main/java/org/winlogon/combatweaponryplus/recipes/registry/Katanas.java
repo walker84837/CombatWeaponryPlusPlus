@@ -53,6 +53,9 @@ public class Katanas implements RecipeGroupRegistrar {
     }
 
     @Override
+    public String group() { return GROUP; }
+
+    @Override
     public String[] keys() {
         return new String[] {
                 "wooden_katana", "stone_katana", "golden_katana", "iron_katana", "emerald_katana", "diamond_katana", "netherite_katana"

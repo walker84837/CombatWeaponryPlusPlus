@@ -46,11 +46,14 @@ public class ParrySwords implements RecipeGroupRegistrar {
     }
 
     @Override
+    public String group() { return GROUP; }
+
+    @Override
     public String[] keys() {
         return new String[] {
-            "Vessel", "InfusedVessel", "CursedVessel",
-            "AwakenedVesselWhite", "AwakenedVesselPurple",
-            "ThunderSword", "DarkSword"
+            "vessel", "infused_vessel", "cursed_vessel",
+            "awakened_vessel_white", "awakened_vessel_purple",
+            "thunder_sword", "dark_sword"
         };
     }
 

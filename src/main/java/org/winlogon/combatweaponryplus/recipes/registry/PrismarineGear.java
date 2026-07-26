@@ -171,6 +171,9 @@ public class PrismarineGear implements RecipeGroupRegistrar {
     }
 
     @Override
+    public String group() { return GROUP; }
+
+    @Override
     public String[] keys() {
         return new String[] {
                 "prismarine_sword", "prismarine_pickaxe", "prismarine_axe", "prismarine_shovel", "prismarine_hoe",

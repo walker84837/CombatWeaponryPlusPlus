@@ -111,8 +111,6 @@ public class MigrationAndIdentityTest {
         assertEquals("elytra", LegacyIdMapper.getCategory(1560002));
     }
 
-    // Config Migration tests
-
     @Test
     public void testShieldEnchantMigration() {
         var config = plugin.getConfig();

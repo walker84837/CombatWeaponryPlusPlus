@@ -8,6 +8,7 @@ import org.bukkit.inventory.Recipe;
 import org.bukkit.inventory.ShapedRecipe;
 import org.winlogon.combatweaponryplus.items.builders.ItemBuilder;
 import org.winlogon.combatweaponryplus.items.builders.WeaponBuilder;
+import org.winlogon.combatweaponryplus.recipes.RecipeRegistrar;
 import org.winlogon.combatweaponryplus.util.ConfigHelper;
 import org.winlogon.combatweaponryplus.util.ConfigValueOperation;
 import org.winlogon.combatweaponryplus.util.Recipes;
@@ -60,6 +61,19 @@ public class EmeraldRecipes implements RecipeGroupRegistrar {
     private ShapedRecipe emeraldBoots() { return getEmeraldArmorRecipe(Material.GOLDEN_BOOTS, "emerald_boots", EquipmentSlotGroup.FEET, 3.0, "   ", "E E", "E E"); }
 
     @Override
+    public void registerAll(RecipeRegistrar registrar) {
+        registrar.register("emerald_gear", "emerald_sword", this::emeraldSword);
+        registrar.register("emerald_gear", "emerald_pickaxe", this::emeraldPickaxe);
+        registrar.register("emerald_gear", "emerald_axe", this::emeraldAxe);
+        registrar.register("emerald_gear", "emerald_shovel", this::emeraldShovel);
+        registrar.register("emerald_gear", "emerald_hoe", this::emeraldHoe);
+        registrar.register("emerald_armor", "emerald_helmet", this::emeraldHelmet);
+        registrar.register("emerald_armor", "emerald_chestplate", this::emeraldChestplate);
+        registrar.register("emerald_armor", "emerald_leggings", this::emeraldLeggings);
+        registrar.register("emerald_armor", "emerald_boots", this::emeraldBoots);
+    }
+
+    @Override
     public Recipe[] recipes() {
         return new Recipe[] {
                 emeraldSword(),
@@ -75,10 +89,13 @@ public class EmeraldRecipes implements RecipeGroupRegistrar {
     }
 
     @Override
+    public String group() { return "emerald_gear"; }
+
+    @Override
     public String[] keys() {
         return new String[] {
-                "emerald_gear", "emerald_gear", "emerald_gear", "emerald_gear", "emerald_gear",
-                "emerald_armor", "emerald_armor", "emerald_armor", "emerald_armor"
+                "emerald_sword", "emerald_pickaxe", "emerald_axe", "emerald_shovel", "emerald_hoe",
+                "emerald_helmet", "emerald_chestplate", "emerald_leggings", "emerald_boots"
         };
     }
 }

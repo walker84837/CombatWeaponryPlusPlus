@@ -65,6 +65,9 @@ public class Bows implements RecipeGroupRegistrar {
     }
 
     @Override
+    public String group() { return GROUP; }
+
+    @Override
     public String[] keys() {
         return new String[] {
                 "long_bow", "recurve_bow", "compound_bow", "repeating_crossbow", "burst_crossbow",

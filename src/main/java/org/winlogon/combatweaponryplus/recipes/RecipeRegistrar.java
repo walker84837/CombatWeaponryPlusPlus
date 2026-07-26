@@ -15,9 +15,20 @@ public class RecipeRegistrar {
         this.config = Objects.requireNonNull(config, "ConfigHelper cannot be null");
     }
 
+    public void register(@NonNull String group, @NonNull String id, @NonNull Supplier<Recipe> recipe) {
+        Objects.requireNonNull(group, "Group cannot be null");
+        Objects.requireNonNull(id, "Item ID cannot be null");
+        Objects.requireNonNull(recipe, "Recipe supplier cannot be null");
+
+        if (config.isItemEnabled(group, id)) {
+            Bukkit.addRecipe(recipe.get());
+        }
+    }
+
     public void register(@NonNull String key, @NonNull Supplier<Recipe> recipe) {
         Objects.requireNonNull(key, "Recipe key cannot be null");
         Objects.requireNonNull(recipe, "Recipe supplier cannot be null");
+
         if (config.isEnabled(key)) {
             Bukkit.addRecipe(recipe.get());
         }
@@ -26,6 +37,7 @@ public class RecipeRegistrar {
     public void register(@NonNull String[] keys, @NonNull Supplier<Recipe> recipe) {
         Objects.requireNonNull(keys, "Recipe keys array cannot be null");
         Objects.requireNonNull(recipe, "Recipe supplier cannot be null");
+
         if (config.areEnabled(keys)) {
             Bukkit.addRecipe(recipe.get());
         }

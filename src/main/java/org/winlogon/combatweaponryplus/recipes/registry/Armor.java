@@ -7,6 +7,7 @@ import org.bukkit.inventory.EquipmentSlotGroup;
 import org.bukkit.inventory.Recipe;
 import org.bukkit.inventory.ShapedRecipe;
 import org.winlogon.combatweaponryplus.items.builders.ItemBuilder;
+import org.winlogon.combatweaponryplus.recipes.RecipeRegistrar;
 import org.winlogon.combatweaponryplus.util.ConfigHelper;
 import org.winlogon.combatweaponryplus.util.Recipes;
 
@@ -67,6 +68,22 @@ public class Armor implements RecipeGroupRegistrar {
     private ShapedRecipe witherHelmet() { return getWitherArmorRecipe(Material.NETHERITE_HELMET, "wither_helmet", EquipmentSlotGroup.HEAD, 2.0, 5.0, Material.NETHERITE_HELMET, "WWW", "WHW", "   "); }
 
     @Override
+    public void registerAll(RecipeRegistrar registrar) {
+        registrar.register("chainmail", "chainmail_helmet", this::chainmailHelmet);
+        registrar.register("chainmail", "chainmail_chestplate", this::chainmailChestplate);
+        registrar.register("chainmail", "chainmail_leggings", this::chainmailLeggings);
+        registrar.register("chainmail", "chainmail_boots", this::chainmailBoots);
+        registrar.register("plated_chainmail", "plated_chainmail_helmet", this::platedChainmailHelmet);
+        registrar.register("plated_chainmail", "plated_chainmail_chestplate", this::platedChainmailChestplate);
+        registrar.register("plated_chainmail", "plated_chainmail_leggings", this::platedChainmailLeggings);
+        registrar.register("plated_chainmail", "plated_chainmail_boots", this::platedChainmailBoots);
+        registrar.register("wither_armor", "wither_helmet", this::witherHelmet);
+        registrar.register("wither_armor", "wither_chestplate", this::witherChestplate);
+        registrar.register("wither_armor", "wither_leggings", this::witherLeggings);
+        registrar.register("wither_armor", "wither_boots", this::witherBoots);
+    }
+
+    @Override
     public Recipe[] recipes() {
         return new Recipe[] {
                 chainmailHelmet(),
@@ -85,11 +102,14 @@ public class Armor implements RecipeGroupRegistrar {
     }
 
     @Override
+    public String group() { return "chainmail"; }
+
+    @Override
     public String[] keys() {
         return new String[] {
-                "chainmail", "chainmail", "chainmail", "chainmail",
-                "plated_chainmail", "plated_chainmail", "plated_chainmail", "plated_chainmail",
-                "wither_armor", "wither_armor", "wither_armor", "wither_armor"
+                "chainmail_helmet", "chainmail_chestplate", "chainmail_leggings", "chainmail_boots",
+                "plated_chainmail_helmet", "plated_chainmail_chestplate", "plated_chainmail_leggings", "plated_chainmail_boots",
+                "wither_helmet", "wither_chestplate", "wither_leggings", "wither_boots"
         };
     }
 }

@@ -52,6 +52,9 @@ public class Spears implements RecipeGroupRegistrar {
     }
 
     @Override
+    public String group() { return GROUP; }
+
+    @Override
     public String[] keys() {
         return new String[] {
                 "wooden_spear", "stone_spear", "golden_spear", "iron_spear", "emerald_spear", "diamond_spear", "netherite_spear"

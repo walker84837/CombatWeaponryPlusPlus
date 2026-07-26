@@ -53,6 +53,9 @@ public class Scythes implements RecipeGroupRegistrar {
     }
 
     @Override
+    public String group() { return GROUP; }
+
+    @Override
     public String[] keys() {
         return new String[] {
                 "wooden_scythe", "stone_scythe", "golden_scythe", "iron_scythe", "diamond_scythe", "netherite_scythe", "emerald_scythe"

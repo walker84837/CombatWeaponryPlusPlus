@@ -53,6 +53,9 @@ public class Knives implements RecipeGroupRegistrar {
     }
 
     @Override
+    public String group() { return GROUP; }
+
+    @Override
     public String[] keys() {
         return new String[] {
                 "wooden_knife", "stone_knife", "golden_knife", "iron_knife", "emerald_knife", "diamond_knife", "netherite_knife"

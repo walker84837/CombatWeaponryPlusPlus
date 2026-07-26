@@ -47,6 +47,9 @@ public class Charms implements RecipeGroupRegistrar {
     }
 
     @Override
+    public String group() { return GROUP; }
+
+    @Override
     public String[] keys() {
         return new String[] {
                 "feather_charm", "emerald_charm", "blaze_charm", "gold_charm", "star_charm", "frost_charm"

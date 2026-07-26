@@ -357,16 +357,12 @@ class Listeners implements Listener {
 
         if (!mainHandItem.hasItemMeta()) return;
 
-        // TODO: "Variable 'category' is never used"
-        String category = PersistentDataManager.getPersistentData(mainHandItem, PersistentDataManager.CATEGORY_KEY);
         String id = PersistentDataManager.getPersistentData(mainHandItem, PersistentDataManager.ID_KEY);
 
         if (id == null) id = getLegacyId(mainHandItem);
         if (id == null) return;
 
         Vector vector = player.getLocation().getDirection();
-        // TODO: "Variable 'world' is never used "
-        World world = player.getWorld();
 
         if (weaponAbilityRegistry.handleShoot(id, event)) {
             return;

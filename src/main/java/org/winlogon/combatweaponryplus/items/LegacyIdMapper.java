@@ -135,7 +135,7 @@ public final class LegacyIdMapper {
     );
 
     /** Maps legacy numeric CMD -> category string for damage multiplier logic. */
-    private static final Map<Integer, String> CATEGORY_MAP = Map.ofEntries(
+    private static final Map<Integer, String> CATEGORY_MAP = Map.<Integer, String>ofEntries(
         // Longswords
         Map.entry(1000001, "longswords"),
         Map.entry(1200001, "longswords"),
