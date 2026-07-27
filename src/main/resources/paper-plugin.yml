@@ -1,4 +1,4 @@
-name: CombatWeaponry++
+name: CombatWeaponryPlusPlus
 version: '${project.version}'
 main: org.winlogon.combatweaponryplus.CombatWeaponryPlus
 api-version: '1.21'
