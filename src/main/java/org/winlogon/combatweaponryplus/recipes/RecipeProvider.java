@@ -24,7 +24,6 @@ public class RecipeProvider {
             new Knives(config),
             new Spears(config),
             new Katanas(config),
-            new PrismarineGear(config),
             new Bows(config),
             new Sabers(config),
             new Cleavers(config),

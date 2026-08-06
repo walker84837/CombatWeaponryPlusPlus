@@ -385,49 +385,90 @@ prismarine_gear:
   enabled: true
   items:
     prismarine_sword:
+      name: "&aPrismarine Sword"
       attributes:
         damage: 9
         speed: 1.6
     prismarine_pickaxe:
+      name: "&aPrismarine Pickaxe"
       attributes:
         damage: 7
         speed: 1.2
     prismarine_axe:
+      name: "&aPrismarine Axe"
       attributes:
         damage: 11
         speed: 1
     prismarine_shovel:
+      name: "&aPrismarine Shovel"
       attributes:
         damage: 7.5
         speed: 1
     prismarine_hoe:
+      name: "&aPrismarine Hoe"
       attributes:
         damage: 2
         speed: 4
     prismarine_helmet:
+      name: "&aPrismarine Helmet"
       attributes:
         armor: 4
         armor_toughness: 3
         knockback_resistance: 1
         bonus_health: 1
     prismarine_chestplate:
+      name: "&aPrismarine Chestplate"
       attributes:
         armor: 9
         armor_toughness: 3
         knockback_resistance: 1
         bonus_health: 2
     prismarine_leggings:
+      name: "&aPrismarine Leggings"
       attributes:
         armor: 7
         armor_toughness: 3
         knockback_resistance: 1
         bonus_health: 2
     prismarine_boots:
+      name: "&aPrismarine Boots"
       attributes:
         armor: 4
         armor_toughness: 3
         knockback_resistance: 1
         bonus_health: 1
+    prismarine_longsword:
+      name: "&aPrismarine Longsword"
+      attributes:
+        damage: 1
+    prismarine_katana:
+      name: "&aPrismarine Katana"
+      attributes:
+        damage: 1
+    prismarine_scythe:
+      name: "&aPrismarine Scythe"
+      attributes:
+        damage: 1
+    prismarine_spear:
+      name: "&aPrismarine Spear"
+      attributes:
+        damage: 1
+    prismarine_rapier:
+      name: "&aPrismarine Rapier"
+      attributes:
+        damage: 1
+    prismarine_knife:
+      name: "&aPrismarine Knife"
+      attributes:
+        damage: 1
+    prismarine_saber:
+      name: "&aPrismarine Saber"
+      attributes:
+        damage: 1
+    prismarine_cleaver:
+      name: "&aPrismarine Cleaver"
+      attributes:
+        damage: 1
 
 # Charms
 charms:

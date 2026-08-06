@@ -58,4 +58,11 @@ public final class PersistentDataManager {
         var namespacedKey = createNamespacedKey(key);
         return data.has(namespacedKey, PersistentDataType.STRING);
     }
+
+    public static boolean hasPersistentData(ItemStack item, NamespacedKey key) {
+        if (item == null || !item.hasItemMeta()) return false;
+        var meta = item.getItemMeta();
+        var data = meta.getPersistentDataContainer();
+        return data.has(key, PersistentDataType.STRING);
+    }
 }
